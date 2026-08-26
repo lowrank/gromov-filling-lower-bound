@@ -1,4 +1,8 @@
 import GromovFilling.Constants
+import GromovFilling.FourierBoundary
+import GromovFilling.Universal
+import GromovFilling.JacobianBudget
+import GromovFilling.DominantHarmonic
 import GromovFilling.Oriented
 import GromovFilling.Numerics
 
