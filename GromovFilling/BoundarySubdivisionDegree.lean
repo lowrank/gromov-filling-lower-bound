@@ -202,6 +202,44 @@ theorem sum_cyclicDegreeTurn {n : ℕ} (d : ℤ) :
   classical
   simp [cyclicDegreeTurn]
 
+/-- The cyclic endpoint-turn sum is independent of the chosen real
+representatives at the vertices.  The representative corrections cancel
+because cyclic successor is a permutation; the sole surviving term is
+the period jump of the degree lift. -/
+theorem sum_cyclic_endpoint_turn
+    {n : ℕ} (lift : ℝ → ℝ) (d : ℤ)
+    (hperiod : ∀ t : ℝ, lift (t + 1) = lift t + (d : ℝ))
+    (vertexLift : Fin (n + 1) → ℝ) :
+    (∑ k : Fin (n + 1),
+      ((lift (cyclicVertexParameter k) - vertexLift k) -
+        (lift (cyclicEdgeFinishParameter k) -
+          vertexLift (cyclicSucc k)))) = (-d : ℝ) := by
+  let correction : Fin (n + 1) → ℝ := fun k ↦
+    lift (cyclicVertexParameter k) - vertexLift k
+  calc
+    (∑ k : Fin (n + 1),
+        ((lift (cyclicVertexParameter k) - vertexLift k) -
+          (lift (cyclicEdgeFinishParameter k) -
+            vertexLift (cyclicSucc k)))) =
+        ∑ k : Fin (n + 1),
+          ((cyclicDegreeTurn d k : ℝ) +
+            (correction k - correction (cyclicSucc k))) := by
+      apply Finset.sum_congr rfl
+      intro k _hk
+      rw [cyclicDegreeTurn_endpoint_identity lift d hperiod k]
+      simp only [correction]
+      ring
+    _ = (∑ k : Fin (n + 1), (cyclicDegreeTurn d k : ℝ)) +
+        ((∑ k : Fin (n + 1), correction k) -
+          ∑ k : Fin (n + 1), correction (cyclicSucc k)) := by
+      simp only [Finset.sum_add_distrib, Finset.sum_sub_distrib]
+    _ = ∑ k : Fin (n + 1), (cyclicDegreeTurn d k : ℝ) := by
+      rw [cyclicSucc_bijective.sum_comp correction]
+      ring
+    _ = (-d : ℝ) := by
+      rw [← Int.cast_sum, sum_cyclicDegreeTurn]
+      norm_num
+
 /-- A degree lift canonically supplies the boundary edge lifts and turn
 sum required by the combinatorial mod-2 obstruction, for every nonempty
 cyclic subdivision. -/

@@ -33,13 +33,20 @@ runs both checks on every push and pull request.
 - the finite mod-2 cochain/Stokes obstruction, continuous local circle
   phases away from facewise cuts, and the compactness estimate that makes
   such cuts available below one uniform mesh size;
+- the assembled finite-polygonal form of Lemma 5.4's contradiction: from
+  ordinary one-face/two-face incidence, cyclic face and boundary data, an
+  odd-degree boundary map, and a half-turn mesh estimate, Lean constructs
+  the cuts, all real lifts and integer edge turns, proves the exact signed
+  boundary-turn identity, and derives the mod-2 contradiction;
 - the algebraic/numerical conclusions of the orientation-free and oriented
   certificates at their stated geometric interfaces.
 
 ## Not yet end-to-end
 
-Lemma 5.4 is **not yet fully formalized**. Its current formalization proves
-the radial-degree and finite mod-2 obstruction mechanisms, but still needs:
+Lemma 5.4 is **not yet fully formalized**. Its finite-mesh topological
+contradiction is assembled without auxiliary lift or turn assumptions, but
+the passage from an arbitrary compact surface to that finite data still
+needs:
 
 1. a theorem furnishing the required arbitrarily fine finite
    triangulation/cell structure for every compact surface with one boundary
