@@ -2,7 +2,10 @@ import GromovFilling.Constants
 import GromovFilling.FourierBoundary
 import GromovFilling.Universal
 import GromovFilling.JacobianBudget
+import GromovFilling.Givens
 import GromovFilling.DominantHarmonic
+import GromovFilling.BoundaryCertificate
+import GromovFilling.ModTwoDegree
 import GromovFilling.Oriented
 import GromovFilling.Numerics
 
