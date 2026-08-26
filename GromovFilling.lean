@@ -9,6 +9,7 @@ import GromovFilling.FourierArea
 import GromovFilling.ModTwoDegree
 import GromovFilling.RadialProjection
 import GromovFilling.CircleDegree
+import GromovFilling.BoundarySubdivisionDegree
 import GromovFilling.DominantHarmonicDegree
 import GromovFilling.BoundaryDegree
 import GromovFilling.RadialDegreeStability
