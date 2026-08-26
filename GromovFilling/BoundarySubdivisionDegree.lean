@@ -33,6 +33,118 @@ theorem cyclicSucc_val_of_ne_last {n : ℕ} (k : Fin (n + 1))
     simpa using hval
   omega
 
+theorem cyclicSucc_injective {n : ℕ} :
+    Function.Injective (cyclicSucc : Fin (n + 1) → Fin (n + 1)) := by
+  intro k l hkl
+  by_cases hk : k = Fin.last n
+  · subst k
+    by_cases hl : l = Fin.last n
+    · exact hl.symm
+    · have hval := congrArg Fin.val hkl
+      rw [cyclicSucc_last, cyclicSucc_val_of_ne_last l hl] at hval
+      simp at hval
+  · by_cases hl : l = Fin.last n
+    · subst l
+      have hval := congrArg Fin.val hkl
+      rw [cyclicSucc_last, cyclicSucc_val_of_ne_last k hk] at hval
+      simp at hval
+    · apply Fin.ext
+      have hval := congrArg Fin.val hkl
+      rw [cyclicSucc_val_of_ne_last k hk,
+        cyclicSucc_val_of_ne_last l hl] at hval
+      omega
+
+theorem cyclicSucc_bijective {n : ℕ} :
+    Function.Bijective (cyclicSucc : Fin (n + 1) → Fin (n + 1)) :=
+  Finite.injective_iff_bijective.mp cyclicSucc_injective
+
+/-- Every vertex of a cyclic polygon occurs twice in its unoriented edge
+boundary, hence has zero incidence over `ZMod 2`. -/
+theorem cyclic_face_vertex_incidence_even {n : ℕ} (v : Fin (n + 1)) :
+    (∑ k : Fin (n + 1),
+      ((if v = k then (1 : ZMod 2) else 0) +
+        if v = cyclicSucc k then (1 : ZMod 2) else 0)) = 0 := by
+  rw [Finset.sum_add_distrib]
+  have hstart :
+      (∑ k : Fin (n + 1), if v = k then (1 : ZMod 2) else 0) = 1 := by
+    simp
+  have hfinish :
+      (∑ k : Fin (n + 1),
+        if v = cyclicSucc k then (1 : ZMod 2) else 0) = 1 := by
+    calc
+      (∑ k : Fin (n + 1),
+          if v = cyclicSucc k then (1 : ZMod 2) else 0) =
+          ∑ k : Fin (n + 1), if v = k then (1 : ZMod 2) else 0 :=
+        (cyclicSucc_bijective.sum_comp
+          (fun k : Fin (n + 1) ↦
+            if v = k then (1 : ZMod 2) else 0))
+      _ = 1 := hstart
+  rw [hstart, hfinish]
+  change (2 : ZMod 2) = 0
+  exact ZMod.natCast_self 2
+
+/-- The same even-incidence fact after injectively labelling the vertices
+of the polygon by vertices of a global cell complex. -/
+theorem mapped_cyclic_face_vertex_incidence_even
+    {V : Type*} [DecidableEq V] {n : ℕ} (faceVertex : Fin (n + 1) → V)
+    (hfaceVertex : Function.Injective faceVertex) (v : V) :
+    (∑ k : Fin (n + 1),
+      ((if v = faceVertex k then (1 : ZMod 2) else 0) +
+        if v = faceVertex (cyclicSucc k) then (1 : ZMod 2) else 0)) = 0 := by
+  by_cases hv : v ∈ Set.range faceVertex
+  · obtain ⟨w, rfl⟩ := hv
+    simpa [hfaceVertex.eq_iff] using cyclic_face_vertex_incidence_even w
+  · have hne (k : Fin (n + 1)) : v ≠ faceVertex k := by
+      intro hvk
+      exact hv ⟨k, hvk.symm⟩
+    simp [hne]
+
+/-- Cyclic vertex/edge data for every face discharge the `hfaceEven`
+hypothesis of the mod-2 obstruction.  Triangulations use `n = 2`, while
+the statement also applies to polygonal cell decompositions. -/
+theorem faceEven_of_cyclic_face_data
+    {V E F : Type*} [DecidableEq V] [DecidableEq E]
+    (edgeEnds : E → V × V) (faceEdges : F → Finset E)
+    {n : ℕ} (faceVertex : F → Fin (n + 1) → V)
+    (faceEdge : F → Fin (n + 1) → E)
+    (hfaceVertex : ∀ f, Function.Injective (faceVertex f))
+    (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
+    (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
+    (hends : ∀ f k, edgeEnds (faceEdge f k) =
+      (faceVertex f k, faceVertex f (cyclicSucc k))) :
+    ∀ (f : F) (v : V),
+      (∑ e ∈ faceEdges f,
+        ((if v = (edgeEnds e).1 then (1 : ZMod 2) else 0) +
+          if v = (edgeEnds e).2 then (1 : ZMod 2) else 0)) = 0 := by
+  intro f v
+  rw [hfaceEdges f, Finset.sum_image
+    (fun x _hx y _hy hxy ↦ hfaceEdge f hxy)]
+  simp_rw [hends]
+  exact mapped_cyclic_face_vertex_incidence_even
+    (faceVertex f) (hfaceVertex f) v
+
+/-- The usual surface incidence rule—one incident face for a boundary
+edge and two for an interior edge—implies the mod-2 incidence identity
+used by combinatorial Stokes. -/
+theorem modTwo_incidence_of_face_count
+    {E F : Type*} [Fintype F] [DecidableEq E]
+    (faceEdges : F → Finset E) (boundaryEdges : Finset E)
+    (hcount : ∀ e : E,
+      (Finset.univ.filter fun f ↦ e ∈ faceEdges f).card =
+        if e ∈ boundaryEdges then 1 else 2) :
+    ∀ e : E,
+      (∑ f : F, if e ∈ faceEdges f then (1 : ZMod 2) else 0) =
+        if e ∈ boundaryEdges then 1 else 0 := by
+  classical
+  intro e
+  rw [← Finset.sum_filter]
+  simp only [Finset.sum_const, nsmul_eq_mul, mul_one]
+  rw [hcount e]
+  by_cases he : e ∈ boundaryEdges
+  · simp [he]
+  · simp only [he, ↓reduceIte]
+    exact ZMod.natCast_self 2
+
 /-- The real parameter assigned to a boundary vertex. -/
 def cyclicVertexParameter {n : ℕ} (k : Fin (n + 1)) : ℝ :=
   k.val / (n + 1 : ℕ)
@@ -148,6 +260,45 @@ theorem no_odd_integer_degree_of_cyclic_boundary
     (hodd : Odd degree) : False := by
   apply no_odd_integer_boundary_degree_extension faceEdges boundaryEdges
     hincidence turn hclosed (-degree)
+  · rw [hboundary, Finset.sum_image
+      (fun x _hx y _hy hxy ↦ hboundaryEdge hxy)]
+    simp_rw [hturn]
+    exact sum_cyclicDegreeTurn degree
+  · exact hodd.neg
+
+/-- End-to-end finite polygonal-surface obstruction from the ordinary
+one-face/two-face incidence rule, cyclic face boundaries, local lift
+transitions, and a cyclically indexed boundary component. -/
+theorem no_odd_integer_degree_of_polygonal_surface_local_lifts
+    {V E F : Type*} [Fintype V] [Fintype E] [Fintype F]
+    [DecidableEq V] [DecidableEq E]
+    (edgeEnds : E → V × V) (faceEdges : F → Finset E)
+    (boundaryEdges : Finset E)
+    (hcount : ∀ e : E,
+      (Finset.univ.filter fun f ↦ e ∈ faceEdges f).card =
+        if e ∈ boundaryEdges then 1 else 2)
+    {faceSize : ℕ} (faceVertex : F → Fin (faceSize + 1) → V)
+    (faceEdge : F → Fin (faceSize + 1) → E)
+    (hfaceVertex : ∀ f, Function.Injective (faceVertex f))
+    (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
+    (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
+    (hends : ∀ f k, edgeEnds (faceEdge f k) =
+      (faceVertex f k, faceVertex f (cyclicSucc k)))
+    (transition : F → V → ℤ) (turn : E → ℤ)
+    (hlocal : ∀ (f : F) (e : E), e ∈ faceEdges f →
+      turn e = transition f (edgeEnds e).1 -
+        transition f (edgeEnds e).2)
+    {boundarySize : ℕ} (boundaryEdge : Fin (boundarySize + 1) → E)
+    (hboundaryEdge : Function.Injective boundaryEdge)
+    (hboundary : boundaryEdges = Finset.univ.image boundaryEdge)
+    (degree : ℤ)
+    (hturn : ∀ k, turn (boundaryEdge k) = cyclicDegreeTurn degree k)
+    (hodd : Odd degree) : False := by
+  apply no_odd_integer_degree_of_local_lifts edgeEnds faceEdges boundaryEdges
+    (modTwo_incidence_of_face_count faceEdges boundaryEdges hcount)
+    (faceEven_of_cyclic_face_data edgeEnds faceEdges faceVertex faceEdge
+      hfaceVertex hfaceEdge hfaceEdges hends)
+    transition turn hlocal (-degree)
   · rw [hboundary, Finset.sum_image
       (fun x _hx y _hy hxy ↦ hboundaryEdge hxy)]
     simp_rw [hturn]
