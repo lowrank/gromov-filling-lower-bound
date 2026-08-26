@@ -1,5 +1,6 @@
 import GromovFilling.BoundaryDegreeComponents
 import Mathlib.Topology.Connected.Clopen
+import JordanCurveTheorem.JordanCurveTheoremStatement
 
 /-!
 # Mixed boundary curves as topological Jordan curves
@@ -79,6 +80,131 @@ structure IsJordanPartition
   region₁_curve_disjoint : Disjoint region₁ curve
   region₂_curve_disjoint : Disjoint region₂ curve
   cover : region₁ ∪ region₂ ∪ curve = Set.univ
+
+/-- The interval-parametrized simple-closed-curve predicate used by the
+upstream Jordan theorem follows from the intrinsic homeomorphism-to-circle
+form used in this project. -/
+theorem upstream_simpleClosedCurve_of_homeomorph_circle
+    (C : Set (EuclideanSpace ℝ (Fin 2)))
+    (hC : Nonempty (C ≃ₜ UnitAddCircle)) :
+    IsSimpleClosedCurve C := by
+  obtain ⟨e⟩ := hC
+  refine ⟨fun t ↦ ↑(e.symm (↑t : UnitAddCircle)), ?_, ?_, ?_, ?_⟩
+  · ext c
+    simp only [Set.mem_image]
+    constructor
+    · intro hc
+      set q := e ⟨c, hc⟩
+      have ht := (AddCircle.equivIco 1 0 q).2
+      refine ⟨(AddCircle.equivIco 1 0 q).1,
+        Set.Ico_subset_Icc_self (by simpa using ht), ?_⟩
+      change (e.symm (↑(AddCircle.equivIco 1 0 q).1 : UnitAddCircle) :
+        EuclideanSpace ℝ (Fin 2)) = c
+      rw [(AddCircle.equivIco 1 0).injective
+        ((AddCircle.equivIco_coe_eq ht).trans rfl)]
+      exact congrArg Subtype.val (e.symm_apply_apply ⟨c, hc⟩)
+    · rintro ⟨t, _, rfl⟩
+      exact (e.symm (↑t : UnitAddCircle)).2
+  · exact continuous_subtype_val.comp
+      (e.symm.continuous.comp (AddCircle.continuous_mk' 1))
+  · intro a ha b hb hab
+    exact (AddCircle.coe_eq_coe_iff_of_mem_Ico
+      ⟨ha.1, by linarith [ha.2]⟩
+      ⟨hb.1, by linarith [hb.2]⟩).mp
+        (e.symm.injective (Subtype.val_injective hab))
+  · change (e.symm (↑(0 : ℝ) : UnitAddCircle) :
+      EuclideanSpace ℝ (Fin 2)) =
+      (e.symm (↑(1 : ℝ) : UnitAddCircle) : EuclideanSpace ℝ (Fin 2))
+    exact congrArg (fun x ↦ (e.symm x : EuclideanSpace ℝ (Fin 2)))
+      (by simp [AddCircle.coe_period])
+
+/-- The Jordan curve theorem transported from Euclidean two-space to the
+complex plane.  This removes the previously explicit `IsJordanPartition`
+hypothesis for every curve intrinsically homeomorphic to the circle. -/
+theorem exists_jordanPartition_of_homeomorph_circle_complex
+    (C : Set ℂ) (hC : Nonempty (C ≃ₜ UnitAddCircle)) :
+    ∃ region₁ region₂ : Set ℂ, IsJordanPartition C region₁ region₂ := by
+  let e : ℂ ≃ₜ EuclideanSpace ℝ (Fin 2) :=
+    Complex.orthonormalBasisOneI.repr.toHomeomorph
+  have hImageCircle : Nonempty ((e '' C) ≃ₜ UnitAddCircle) := by
+    obtain ⟨h⟩ := hC
+    exact ⟨(e.image C).symm.trans h⟩
+  have hSimple : IsSimpleClosedCurve (e '' C) :=
+    upstream_simpleClosedCurve_of_homeomorph_circle (e '' C) hImageCircle
+  obtain ⟨A, B, hAOpen, hBOpen, hAConnected, hBConnected,
+      hAB, hAC, hBC, hcover⟩ :=
+    JordanCurveTheorem.jordan_curve_theorem hSimple
+  refine ⟨e.symm '' A, e.symm '' B, ?_⟩
+  have hcurve : e.symm '' (e '' C) = C := by
+    simp only [Set.image_image, e.symm_apply_apply, Set.image_id']
+  refine
+    { region₁_open := e.symm.isOpenMap A hAOpen
+      region₂_open := e.symm.isOpenMap B hBOpen
+      region₁_connected := (e.symm.isConnected_image).2 hAConnected
+      region₂_connected := (e.symm.isConnected_image).2 hBConnected
+      regions_disjoint := Set.disjoint_image_of_injective e.symm.injective hAB
+      region₁_curve_disjoint := ?_
+      region₂_curve_disjoint := ?_
+      cover := ?_ }
+  · rw [← hcurve]
+    exact Set.disjoint_image_of_injective e.symm.injective hAC
+  · rw [← hcurve]
+    exact Set.disjoint_image_of_injective e.symm.injective hBC
+  · have himageCover := congrArg (fun S : Set (EuclideanSpace ℝ (Fin 2)) ↦
+        e.symm '' S) hcover
+    simpa only [Set.image_union, hcurve, Set.image_univ,
+      e.symm.surjective.range_eq] using himageCover
+
+/-- Swap the two complementary regions of a Jordan partition. -/
+theorem IsJordanPartition.swap
+    {Y : Type*} [TopologicalSpace Y]
+    {curve region₁ region₂ : Set Y}
+    (h : IsJordanPartition curve region₁ region₂) :
+    IsJordanPartition curve region₂ region₁ where
+  region₁_open := h.region₂_open
+  region₂_open := h.region₁_open
+  region₁_connected := h.region₂_connected
+  region₂_connected := h.region₁_connected
+  regions_disjoint := h.regions_disjoint.symm
+  region₁_curve_disjoint := h.region₂_curve_disjoint
+  region₂_curve_disjoint := h.region₁_curve_disjoint
+  cover := by
+    simpa only [Set.union_comm region₂ region₁] using h.cover
+
+/-- A point outside a complex Jordan curve can be placed in the first
+region of a Jordan partition. -/
+theorem exists_jordanPartition_at_point_complex
+    (C : Set ℂ) (hC : Nonempty (C ≃ₜ UnitAddCircle))
+    (y : ℂ) (hy : y ∉ C) :
+    ∃ region₁ region₂ : Set ℂ,
+      IsJordanPartition C region₁ region₂ ∧ y ∈ region₁ := by
+  obtain ⟨A, B, hpartition⟩ :=
+    exists_jordanPartition_of_homeomorph_circle_complex C hC
+  have hyRegions : y ∈ A ∨ y ∈ B := by
+    have hyCover : y ∈ A ∪ B ∪ C := by
+      rw [hpartition.cover]
+      exact Set.mem_univ y
+    rcases hyCover with hyAB | hyC
+    · exact hyAB
+    · exact False.elim (hy hyC)
+  rcases hyRegions with hyA | hyB
+  · exact ⟨A, B, hpartition, hyA⟩
+  · exact ⟨B, A, hpartition.swap, hyB⟩
+
+/-- The mixed Givens boundary curve has an actual Jordan partition whose
+first region contains the origin. -/
+theorem exists_givensBoundaryCurve_jordanPartition_at_origin
+    {N : ℕ} (j : Fin N) :
+    ∃ region₁ region₂ : Set ℂ,
+      IsJordanPartition
+        (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂ ∧
+      0 ∈ region₁ :=
+  exists_jordanPartition_at_point_complex
+    (Set.range (givensBoundaryCurveAddCircle j))
+    (givensBoundaryCurve_range_homeomorph_circle j) 0
+    (fun hzero ↦ by
+      obtain ⟨t, ht⟩ := hzero
+      exact givensBoundaryCurveAddCircle_ne_zero j t ht)
 
 /-- In a Jordan partition, the region containing `y` is exactly the
 connected component of `y` in the curve complement. -/

@@ -87,9 +87,11 @@ theorem zetaThree_lower_from_prefix {offset : ℕ} (hoffset : 0 < offset) :
   calc
     (∑ k ∈ Finset.range offset, 1 / (k : ℝ) ^ 3) + zetaTailLower offset ≤
         (∑ k ∈ Finset.range offset, f k) + ∑' k : ℕ, f (k + offset) := by
-          exact add_le_add_left htail _
+          simpa only [f] using
+            add_le_add_right htail (∑ k ∈ Finset.range offset, f k)
     _ = zetaThree := by
-      simpa only [f, zetaThree] using sum_add_tsum_nat_add offset summable_zetaThree
+      simpa only [f, zetaThree] using
+        summable_zetaThree.sum_add_tsum_nat_add offset
 
 /-- A nine-decimal rational lower enclosure, sufficient for the strict
 `5.38982446` theorem. -/
@@ -266,7 +268,7 @@ theorem nonlinearCertificate_point_zero_three_gt :
       (538982446 / 100000000 : ℝ) * comassBoundUpper < boundaryActionLower := by
     norm_num [comassBoundUpper, boundaryActionLower, piLower, piUpper, zetaLower]
   unfold nonlinearCertificate
-  rw [lt_div_iff hCpos]
+  rw [lt_div_iff₀ hCpos]
   calc
     (538982446 / 100000000 : ℝ) * comassBound (3 / 100) ≤
         (538982446 / 100000000 : ℝ) * comassBoundUpper := by gcongr

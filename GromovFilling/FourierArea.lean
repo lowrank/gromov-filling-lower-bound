@@ -1,4 +1,5 @@
 import GromovFilling.BoundaryCertificate
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
 # Green area of a finite Fourier curve
@@ -37,21 +38,31 @@ theorem hasDerivAt_fourierCurveX {ι : Type*} [Fintype ι]
     (m : ι → ℕ) (a : ι → ℝ) (t : ℝ) :
     HasDerivAt (fourierCurveX m a) (fourierCurveDX m a t) t := by
   unfold fourierCurveX fourierCurveDX
-  apply HasDerivAt.sum
-  intro k _
-  convert ((Real.hasDerivAt_cos ((m k : ℝ) * t)).comp t
-    ((hasDerivAt_id t).const_mul (m k : ℝ))).const_mul (a k) using 1
-  all_goals ring
+  have hsum : HasDerivAt
+      (∑ k, fun s : ℝ ↦ a k * Real.cos ((m k : ℝ) * s))
+      (∑ k, -((m k : ℝ) * a k * Real.sin ((m k : ℝ) * t))) t := by
+    apply HasDerivAt.sum
+    intro k _
+    convert ((Real.hasDerivAt_cos ((m k : ℝ) * t)).comp t
+      ((hasDerivAt_id t).const_mul (m k : ℝ))).const_mul (a k) using 1
+    all_goals ring
+  rw [Finset.sum_fn] at hsum
+  exact hsum
 
 theorem hasDerivAt_fourierCurveY {ι : Type*} [Fintype ι]
     (m : ι → ℕ) (a : ι → ℝ) (t : ℝ) :
     HasDerivAt (fourierCurveY m a) (fourierCurveDY m a t) t := by
   unfold fourierCurveY fourierCurveDY
-  apply HasDerivAt.sum
-  intro k _
-  convert ((Real.hasDerivAt_sin ((m k : ℝ) * t)).comp t
-    ((hasDerivAt_id t).const_mul (m k : ℝ))).const_mul (a k) using 1
-  all_goals ring
+  have hsum : HasDerivAt
+      (∑ k, fun s : ℝ ↦ a k * Real.sin ((m k : ℝ) * s))
+      (∑ k, (m k : ℝ) * a k * Real.cos ((m k : ℝ) * t)) t := by
+    apply HasDerivAt.sum
+    intro k _
+    convert ((Real.hasDerivAt_sin ((m k : ℝ) * t)).comp t
+      ((hasDerivAt_id t).const_mul (m k : ℝ))).const_mul (a k) using 1
+    all_goals ring
+  rw [Finset.sum_fn] at hsum
+  exact hsum
 
 /-- Green's signed-area functional for the finite Fourier curve. -/
 def fourierGreenArea {ι : Type*} [Fintype ι]

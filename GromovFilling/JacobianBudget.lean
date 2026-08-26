@@ -1,4 +1,5 @@
 import GromovFilling.Universal
+import Mathlib.Analysis.InnerProductSpace.Orthonormal
 
 /-!
 # The pointwise orthogonal Jacobian budget
@@ -70,16 +71,16 @@ theorem orthogonal_mulVec_energy {ι : Type*} [Fintype ι] [DecidableEq ι]
     (∑ j, (U.mulVec x j) ^ 2) = ∑ k, x k ^ 2 := by
   calc
     (∑ j, (U.mulVec x j) ^ 2) =
-        Matrix.dotProduct (U.mulVec x) (U.mulVec x) := by
-          simp [Matrix.dotProduct, pow_two]
-    _ = Matrix.dotProduct (Matrix.vecMul (U.mulVec x) U) x :=
+        dotProduct (U.mulVec x) (U.mulVec x) := by
+          simp [dotProduct, pow_two]
+    _ = dotProduct (Matrix.vecMul (U.mulVec x) U) x :=
       Matrix.dotProduct_mulVec _ _ _
-    _ = Matrix.dotProduct (U.transpose.mulVec (U.mulVec x)) x := by
+    _ = dotProduct (U.transpose.mulVec (U.mulVec x)) x := by
       rw [Matrix.mulVec_transpose]
-    _ = Matrix.dotProduct ((U.transpose * U).mulVec x) x := by
+    _ = dotProduct ((U.transpose * U).mulVec x) x := by
       rw [Matrix.mulVec_mulVec]
-    _ = Matrix.dotProduct x x := by rw [horth, Matrix.one_mulVec]
-    _ = ∑ k, x k ^ 2 := by simp [Matrix.dotProduct, pow_two]
+    _ = dotProduct x x := by rw [horth, Matrix.one_mulVec]
+    _ = ∑ k, x k ^ 2 := by simp [dotProduct, pow_two]
 
 /-- In particular, every column of a real orthogonal matrix has squared norm
 one, in the exact form used by `finite_universal_certificate`. -/

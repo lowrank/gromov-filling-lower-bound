@@ -127,6 +127,7 @@ theorem radialMap_degree_stable
   have hfactor : curve x - y = base x * correction x := by
     dsimp only [base, correction]
     field_simp [sub_ne_zero.mpr (havoid₀ x)]
+    ring
   rw [hfactor]
 
 lemma curve_ne_of_norm_lt

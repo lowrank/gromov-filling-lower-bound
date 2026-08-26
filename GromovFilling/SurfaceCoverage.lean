@@ -147,6 +147,30 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_fine_models
   exact givensBoundaryCurve_origin_component_subset_range_of_fine_models
     j boundary hfine G hG hboundary
 
+/-- The Jordan region needed in the coverage conclusion exists: no
+separation hypothesis is required from callers. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_fine_models
+    {X : Type*} [TopologicalSpace X]
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → X)
+    (hfine : HasFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G := by
+  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
+    exists_givensBoundaryCurve_jordanPartition_at_origin j
+  exact ⟨region₁, hpartition.region₁_open,
+    hpartition.region₁_connected,
+    givensBoundaryCurve_jordan_region_at_origin_bounded
+      j hpartition hzero,
+    hzero,
+    givensBoundaryCurve_jordan_region_subset_range_of_fine_models
+      j boundary hfine G hG hboundary hpartition hzero⟩
+
 /-- Surface-form coverage from the map-independent geometric input.  On a
 compact metric domain, arbitrary geometric mesh refinement supplies the
 map-dependent half-turn model automatically by uniform continuity. -/
@@ -166,6 +190,24 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_arbitrarily_fine_model
   givensBoundaryCurve_jordan_region_subset_range_of_fine_models
     j boundary (hasFinePolygonalModels_of_arbitrarilyFine hmodels)
     G hG hboundary hpartition hzero
+
+/-- The separation-free coverage conclusion from arbitrarily fine
+geometric polygonal models. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_arbitrarily_fine_models
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → X)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_fine_models
+    j boundary (hasFinePolygonalModels_of_arbitrarilyFine hmodels)
+    G hG hboundary
 
 end
 

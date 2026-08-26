@@ -2,7 +2,8 @@
 
 Lean formalization accompanying
 `fourier_resonant_filling_area_v3.tex`. The project is pinned to Lean
-4.12.0 and mathlib 4.12.0.
+4.29.0 and mathlib 4.29.0. The Jordan separation input is pinned to the
+EPFL LARA `JordanCurveTheorem` package at commit `e442525`.
 
 ## Verification
 
@@ -29,8 +30,10 @@ runs both checks on every push and pull request.
   factoring the dominant first harmonic and controlling the correction;
 - the fact that each mixed boundary image is a compact topological Jordan
   curve, exhibited by a homeomorphism between its range and the circle;
-  given a Jordan partition, Lean identifies the region containing the
-  origin with the bounded degree-one component and proves it is covered;
+  the imported formal Jordan curve theorem supplies its two open connected
+  complementary regions, and Lean transports that theorem to `ℂ`, selects
+  the region containing the origin, identifies it with the bounded
+  degree-one component, and proves it is covered;
 - local constancy of radial degree in the puncture, constancy on connected
   complement components, degree zero at infinity, and boundedness of the
   nonzero-degree origin component;
@@ -71,10 +74,7 @@ needs:
    fine finite triangulations/cell structures and their compatible cyclic
    boundary subdivisions (the compact uniform-continuity passage from this
    geometric statement to `HasFinePolygonalModels` is now formalized);
-2. a Jordan separation theorem supplying the two open connected regions
-   for this topological Jordan curve (their identification with the proved
-   bounded/nonzero-degree component is already formalized); and
-3. globalization of the proved Lipschitz planar area inequality through
+2. globalization of the proved Lipschitz planar area inequality through
    Riemannian surface charts, including identification of the coordinate
    determinant density with the intrinsic `J₂ G`.
 

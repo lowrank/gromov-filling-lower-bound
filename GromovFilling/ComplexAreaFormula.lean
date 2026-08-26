@@ -2,6 +2,7 @@ import GromovFilling.EuclideanAreaFormula
 import GromovFilling.SurfaceCoverage
 import Mathlib.MeasureTheory.Measure.Haar.Unique
 import Mathlib.MeasureTheory.Measure.Lebesgue.Complex
+import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 
 /-!
 # The Lipschitz area inequality for complex-valued planar maps
@@ -27,7 +28,7 @@ theorem complex_hausdorffMeasure_two_eq_zero_iff (s : Set ℂ) :
     simpa only [Complex.finrank_real_complex, Nat.cast_ofNat] using
       (inferInstance :
         IsAddHaarMeasure
-          (μH[(FiniteDimensional.finrank ℝ ℂ : ℝ)] : Measure ℂ))
+          (μH[(Module.finrank ℝ ℂ : ℝ)] : Measure ℂ))
   letI := hhausdorffHaar
   constructor
   · intro hs
@@ -171,6 +172,32 @@ theorem givens_jordan_region_volume_le_complex_jacobian
   simpa only [Measure.restrict_univ] using
     (complex_volume_le_lintegral_abs_det_fderiv_of_subset_range
       G Set.univ region₁ MeasurableSet.univ hGLipschitz hcoverage')
+
+/-- Jordan separation and coverage can be discharged internally: there is
+a bounded open connected region containing the origin whose volume is
+controlled by the Jacobian integral of the extension. -/
+theorem exists_givens_bounded_region_volume_le_complex_jacobian
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (hfine : HasFinePolygonalModels boundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
+    exists_givensBoundaryCurve_jordanPartition_at_origin j
+  exact ⟨region₁, hpartition.region₁_open,
+    hpartition.region₁_connected,
+    givensBoundaryCurve_jordan_region_at_origin_bounded
+      j hpartition hzero,
+    hzero,
+    givens_jordan_region_volume_le_complex_jacobian
+      j boundary hfine G hG hboundary hpartition hzero hGLipschitz⟩
 
 end
 

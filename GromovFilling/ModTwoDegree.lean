@@ -1,5 +1,5 @@
 import GromovFilling.DominantHarmonic
-import Mathlib.Topology.Instances.AddCircle
+import Mathlib.Topology.Instances.AddCircle.Real
 
 /-!
 # The mod-2 degree obstruction

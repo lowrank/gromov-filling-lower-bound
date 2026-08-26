@@ -1,4 +1,5 @@
 import GromovFilling.Constants
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
 # Exact Fourier coefficients of the boundary distance profile
@@ -49,6 +50,7 @@ private lemma integral_mul_cos_nat (n : ℕ) (hn : n ≠ 0) :
   dsimp [F]
   rw [hsinpi, hcospi]
   field_simp [hnR]
+  norm_num
 
 /-- Exact cosine coefficient of the triangle wave `|x|` on `[-π,π]`. -/
 theorem triangleWave_cos_coefficient (n : ℕ) (hn : n ≠ 0) :

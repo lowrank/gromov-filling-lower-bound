@@ -35,7 +35,6 @@ lemma oddMode_mul_boundaryRadius (k : ℕ) :
   unfold boundaryRadius oddWeight oddMode
   push_cast
   field_simp [Real.pi_ne_zero, hk]
-  ring
 
 /-- Turn a higher-mode index into its index in the full `N`-mode vector. -/
 def higherFinIndex {N : ℕ} (k : Fin (N - 1)) : Fin N :=

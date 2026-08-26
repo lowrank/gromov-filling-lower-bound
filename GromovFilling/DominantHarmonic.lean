@@ -23,7 +23,7 @@ lemma norm_pow_sub_pow_le (z w : ℂ) (hz : ‖z‖ ≤ 1) (hw : ‖w‖ ≤ 1) 
       rw [Nat.cast_succ]
       have hzn : ‖z ^ n‖ ≤ 1 := by
         rw [norm_pow]
-        exact pow_le_one n (norm_nonneg z) hz
+        exact pow_le_one₀ (norm_nonneg z) hz
       calc
         ‖z ^ (n + 1) - w ^ (n + 1)‖ =
             ‖z ^ n * (z - w) + (z ^ n - w ^ n) * w‖ := by

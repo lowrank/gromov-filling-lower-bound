@@ -1,4 +1,4 @@
-import Mathlib
+import Mathlib.Analysis.PSeries
 
 /-!
 # Constants in the Fourier filling-area certificates

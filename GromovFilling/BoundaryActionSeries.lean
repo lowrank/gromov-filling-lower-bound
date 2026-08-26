@@ -1,5 +1,6 @@
 import GromovFilling.Oriented
 import GromovFilling.Universal
+import Mathlib.NumberTheory.ZetaValues
 
 /-!
 # Series in the nonlinear boundary action
@@ -132,7 +133,7 @@ theorem hasSum_boundaryLinearCore :
   have hsquareShift :
       HasSum (fun k : ℕ ↦ oddSquareTerm (k + 1))
         (Real.pi ^ 2 / 8 - 1) := by
-    have hsplit := sum_add_tsum_nat_add 1 summable_oddSquareTerm
+    have hsplit := summable_oddSquareTerm.sum_add_tsum_nat_add 1
     simp only [Finset.sum_range_one] at hsplit
     change oddSquareTerm 0 + (∑' i : ℕ, oddSquareTerm (i + 1)) =
       ∑' i : ℕ, oddSquareTerm i at hsplit
@@ -192,8 +193,8 @@ lemma summable_boundaryQuadraticCore : Summable (fun k : ℕ ↦
 theorem tsum_boundaryQuadraticCore :
     (∑' k : ℕ, (oddMode k : ℝ) / ((oddMode k + 2 : ℕ) : ℝ) ^ 4) =
       (7 / 8 : ℝ) * zetaThree + 1 - Real.pi ^ 4 / 48 := by
-  have hcubicShift := sum_add_tsum_nat_add 1 summable_oddCubicTerm
-  have hfourthShift := sum_add_tsum_nat_add 1 summable_oddFourthTerm
+  have hcubicShift := summable_oddCubicTerm.sum_add_tsum_nat_add 1
+  have hfourthShift := summable_oddFourthTerm.sum_add_tsum_nat_add 1
   simp only [Finset.sum_range_one] at hcubicShift hfourthShift
   change oddCubicTerm 0 + (∑' i : ℕ, oddCubicTerm (i + 1)) =
     ∑' i : ℕ, oddCubicTerm i at hcubicShift
@@ -212,7 +213,7 @@ theorem tsum_boundaryQuadraticCore :
           2 * oddFourthTerm (k + 1)) := tsum_congr boundaryQuadraticCore_eq
     _ = (∑' k : ℕ, oddCubicTerm (k + 1)) -
         2 * ∑' k : ℕ, oddFourthTerm (k + 1) := by
-          rw [tsum_sub ((summable_nat_add_iff 1).2 summable_oddCubicTerm)
+          rw [((summable_nat_add_iff 1).2 summable_oddCubicTerm).tsum_sub
             (((summable_nat_add_iff 1).2 summable_oddFourthTerm).mul_left 2),
             tsum_mul_left]
     _ = (7 / 8 : ℝ) * zetaThree + 1 - Real.pi ^ 4 / 48 := by

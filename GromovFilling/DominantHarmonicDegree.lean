@@ -21,6 +21,7 @@ theorem radialProjection_zero_mul (a b : ℂ) (ha : a ≠ 0) (hb : b ≠ 0) :
   apply Subtype.ext
   simp only [radialProjection, complexUnitCircleMul, sub_zero]
   rw [norm_mul]
+  push_cast
   have hna : (‖a‖ : ℂ) ≠ 0 := by
     exact_mod_cast (norm_ne_zero_iff.mpr ha)
   have hnb : (‖b‖ : ℂ) ≠ 0 := by
@@ -173,9 +174,18 @@ theorem dominantHarmonicCurve_factor
   apply Finset.sum_congr rfl
   intro k _hk
   have hmk : m k = (m k - 1) + 1 := (Nat.sub_add_cancel (hm k)).symm
-  rw [hmk, pow_succ]
+  have hpow :
+      (unitAddCircleEquivComplexUnitCircle x : ℂ) ^ m k =
+        (unitAddCircleEquivComplexUnitCircle x : ℂ) ^ (m k - 1) *
+          (unitAddCircleEquivComplexUnitCircle x : ℂ) := by
+    calc
+      (unitAddCircleEquivComplexUnitCircle x : ℂ) ^ m k =
+          (unitAddCircleEquivComplexUnitCircle x : ℂ) ^ ((m k - 1) + 1) :=
+        congrArg (fun n : ℕ ↦
+          (unitAddCircleEquivComplexUnitCircle x : ℂ) ^ n) hmk
+      _ = _ := pow_succ _ _
+  rw [hpow]
   field_simp [ha₁]
-  ring
 
 /-- Under ordinary (unweighted) strict dominance, the correction remains
 strictly inside the open unit ball centered at `1`. -/
@@ -201,7 +211,8 @@ theorem dominantHarmonicCorrection_sub_one_norm_lt_one
       intro k _hk
       rw [norm_mul, norm_div, norm_pow,
         (unitAddCircleEquivComplexUnitCircle x).property, one_pow, mul_one]
-    _ = (∑ k, ‖a k‖) / ‖a₁‖ := by rw [Finset.sum_div]
+    _ = (∑ k, ‖a k‖) / ‖a₁‖ := by
+      simp only [div_eq_mul_inv, Finset.sum_mul]
     _ < 1 := hratio
 
 theorem dominantHarmonicCorrection_ne_zero

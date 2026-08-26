@@ -98,8 +98,8 @@ theorem givensC_sq_add_givensS_sq (k : ℕ) :
   have hsqrt : Real.sqrt (1 + 4 * oddWeight k ^ 2) ≠ 0 := by positivity
   unfold givensS givensC
   rw [div_pow]
-  field_simp [hsqrt, Real.sq_sqrt hrad]
-  ring
+  field_simp [hsqrt]
+  nlinarith [Real.sq_sqrt hrad]
 
 /-- A telescoping potential for reciprocal-square tails. -/
 private def oddTailPotential (k : ℕ) : ℝ := 1 / (4 * k)
@@ -120,7 +120,7 @@ private lemma oddWeight_sq_le_potential_drop (k : ℕ) (hk : 0 < k) :
   push_cast
   rw [div_pow]
   simp only [one_pow]
-  rw [div_le_div_iff (by positivity) (by positivity)]
+  rw [div_le_div_iff₀ (by positivity) (by positivity)]
   nlinarith
 
 private lemma sum_potential_drop (start N : ℕ) (hstartN : start ≤ N) :
@@ -328,10 +328,10 @@ theorem givensRotate_energy (N k : ℕ) (hk0 : k ≠ 0) (hkN : k < N)
       ∑ i ∈ Finset.range N, x i ^ 2 := by
   have h0N : 0 ∈ Finset.range N := by simp [Nat.zero_lt_of_lt hkN]
   have hkMem : k ∈ (Finset.range N \ {0}) := by simp [hkN, hk0]
-  rw [Finset.sum_eq_add_sum_diff_singleton h0N,
-    Finset.sum_eq_add_sum_diff_singleton h0N,
-    Finset.sum_eq_add_sum_diff_singleton hkMem,
-    Finset.sum_eq_add_sum_diff_singleton hkMem]
+  rw [Finset.sum_eq_add_sum_diff_singleton_of_mem h0N,
+    Finset.sum_eq_add_sum_diff_singleton_of_mem h0N,
+    Finset.sum_eq_add_sum_diff_singleton_of_mem hkMem,
+    Finset.sum_eq_add_sum_diff_singleton_of_mem hkMem]
   have hrest :
       (∑ i ∈ ((Finset.range N \ {0}) \ {k}), givensRotate k x i ^ 2) =
         ∑ i ∈ ((Finset.range N \ {0}) \ {k}), x i ^ 2 := by
