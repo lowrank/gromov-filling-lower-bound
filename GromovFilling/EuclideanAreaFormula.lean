@@ -9,8 +9,8 @@ This file derives the image-measure inequality used in Lemma 5.4 from
 Rademacher's theorem and mathlib's differentiable Jacobian image bound.
 -/
 
-open MeasureTheory Set
-open scoped NNReal ENNReal
+open Filter MeasureTheory Set
+open scoped NNReal ENNReal Topology
 
 namespace GromovFilling
 
@@ -77,6 +77,48 @@ theorem volume_image_le_lintegral_abs_det_fderiv
     _ ≤ ∫⁻ x in s,
         ENNReal.ofReal |(fderiv ℝ f x).det| ∂volume := by
       exact lintegral_mono_set (inter_subset_left)
+
+/-- Local form for a map which is only Lipschitz on an open planar set.
+The coordinatewise McShane extension gives a global Lipschitz map agreeing
+on the open set; openness makes their Fréchet derivatives agree there. -/
+theorem volume_image_le_lintegral_abs_det_fderiv_of_isOpen
+    (f : EuclideanPlane → EuclideanPlane) (s : Set EuclideanPlane)
+    (hs : IsOpen s) {K : ℝ≥0} (hf : LipschitzOnWith K f s) :
+    volume (f '' s) ≤
+      ∫⁻ x in s, ENNReal.ofReal |(fderiv ℝ f x).det| ∂volume := by
+  obtain ⟨g, hg, hfg⟩ := hf.extend_pi
+  have himage : f '' s = g '' s := by
+    ext y
+    constructor
+    · rintro ⟨x, hx, rfl⟩
+      exact ⟨x, hx, (hfg hx).symm⟩
+    · rintro ⟨x, hx, rfl⟩
+      exact ⟨x, hx, hfg hx⟩
+  have hderiv (x : EuclideanPlane) (hx : x ∈ s) :
+      fderiv ℝ f x = fderiv ℝ g x := by
+    have heq : f =ᶠ[𝓝 x] g := by
+      filter_upwards [hs.mem_nhds hx] with y hy
+      exact hfg hy
+    exact heq.fderiv_eq
+  rw [himage]
+  refine (volume_image_le_lintegral_abs_det_fderiv
+    g s hs.measurableSet hg).trans_eq ?_
+  apply lintegral_congr_ae
+  rw [Filter.EventuallyEq,
+    ae_restrict_iff' (μ := volume) hs.measurableSet]
+  filter_upwards with x hx
+  rw [hderiv x hx]
+
+/-- Coverage version of the local open-set area inequality. -/
+theorem volume_le_lintegral_abs_det_fderiv_of_isOpen_of_subset_range
+    (f : EuclideanPlane → EuclideanPlane)
+    (s omega : Set EuclideanPlane) (hs : IsOpen s)
+    {K : ℝ≥0} (hf : LipschitzOnWith K f s)
+    (hcoverage : omega ⊆ f '' s) :
+    volume omega ≤
+      ∫⁻ x in s, ENNReal.ofReal |(fderiv ℝ f x).det| ∂volume :=
+  (measure_mono hcoverage).trans
+    (volume_image_le_lintegral_abs_det_fderiv_of_isOpen f s hs hf)
 
 /-- Coverage of a measurable planar region, together with the Lipschitz
 area formula, bounds its measure by the Jacobian integral. -/
