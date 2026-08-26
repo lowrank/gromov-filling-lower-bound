@@ -1,5 +1,5 @@
 import GromovFilling.FinePolygonalModel
-import GromovFilling.BoundaryDegreeComponents
+import GromovFilling.JordanBoundary
 
 /-!
 # Coverage from the odd boundary-degree obstruction
@@ -126,6 +126,26 @@ theorem givensBoundaryCurve_origin_component_subset_range_of_fine_models
   givensBoundaryCurve_origin_component_subset_range j boundary
     (hasOddBoundaryDegreeObstruction_of_finePolygonalModels hfine)
     G hG hboundary
+
+/-- Once Jordan separation supplies its two regions, the region containing
+the origin is covered by every extension over a domain with fine
+polygonal models. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_fine_models
+    {X : Type*} [TopologicalSpace X]
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → X)
+    (hfine : HasFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G := by
+  rw [givensBoundaryCurve_jordan_region_at_origin j hpartition hzero]
+  exact givensBoundaryCurve_origin_component_subset_range_of_fine_models
+    j boundary hfine G hG hboundary
 
 end
 

@@ -29,6 +29,8 @@ runs both checks on every push and pull request.
   factoring the dominant first harmonic and controlling the correction;
 - the fact that each mixed boundary image is a compact topological Jordan
   curve, exhibited by a homeomorphism between its range and the circle;
+  given a Jordan partition, Lean identifies the region containing the
+  origin with the bounded degree-one component and proves it is covered;
 - local constancy of radial degree in the puncture, constancy on connected
   complement components, degree zero at infinity, and boundedness of the
   nonzero-degree origin component;
@@ -63,9 +65,9 @@ needs:
    with one boundary component—equivalently, furnishing the required fine
    finite triangulation/cell structure and its compatible cyclic boundary
    subdivision;
-2. a Jordan separation theorem identifying the already proved bounded
-   nonzero-degree component of this topological Jordan curve with the
-   bounded component of its complement; and
+2. a Jordan separation theorem supplying the two open connected regions
+   for this topological Jordan curve (their identification with the proved
+   bounded/nonzero-degree component is already formalized); and
 3. globalization of the proved Lipschitz planar area inequality through
    Riemannian surface charts, including identification of the coordinate
    determinant density with the intrinsic `J₂ G`.
