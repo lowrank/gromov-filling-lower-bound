@@ -53,7 +53,7 @@ def givensBoundaryCurve {N : ℕ} (j : Fin N) : ComplexUnitCircle → ℂ :=
       ((boundaryRadius (oddMode (k + 1)) *
         givensMatrix N j (higherFinIndex k) : ℝ) : ℂ))
 
-private lemma higher_index_sum {N : ℕ} (j : Fin N) :
+lemma higher_index_sum {N : ℕ} (j : Fin N) :
     (∑ k : Fin (N - 1),
         oddWeight (k + 1) *
           |givensMatrix N j (higherFinIndex k)|) =
@@ -72,11 +72,15 @@ private lemma higher_index_sum {N : ℕ} (j : Fin N) :
       rw [Finset.sum_Ico_eq_sum_range]
       simp only [Nat.add_comm]
 
-/-- Every mixed boundary curve in the finite universal certificate is a
-Jordan parametrization (injective on the unit circle). -/
-theorem givensBoundaryCurve_injective {N : ℕ} (j : Fin N) :
-    Function.Injective (givensBoundaryCurve j) := by
-  apply dominantHarmonicCurve_injective
+/-- The exact derivative-weighted dominance inequality behind both
+injectivity and degree one of a mixed boundary row. -/
+theorem givensBoundaryCurve_dominance {N : ℕ} (j : Fin N) :
+    (∑ k : Fin (N - 1),
+        (oddMode (k + 1) : ℝ) *
+          ‖((boundaryRadius (oddMode (k + 1)) *
+            givensMatrix N j (higherFinIndex k) : ℝ) : ℂ)‖) <
+      ‖((boundaryRadius (oddMode 0) *
+        givensMatrix N j ⟨0, Nat.zero_lt_of_lt j.isLt⟩ : ℝ) : ℂ)‖ := by
   have hrho : 0 < boundaryRadius (oddMode 0) := boundaryRadius_oddMode_pos _
   have hrow := givensMix_row_dominance N j j.isLt
   have hscaled := mul_lt_mul_of_pos_left hrow hrho
@@ -106,6 +110,13 @@ theorem givensBoundaryCurve_injective {N : ℕ} (j : Fin N) :
           givensMatrix N j ⟨0, Nat.zero_lt_of_lt j.isLt⟩ : ℝ) : ℂ)‖ := by
           rw [Complex.norm_real, Real.norm_eq_abs, abs_mul, abs_of_pos hrho]
           rfl
+
+/-- Every mixed boundary curve in the finite universal certificate is a
+Jordan parametrization (injective on the unit circle). -/
+theorem givensBoundaryCurve_injective {N : ℕ} (j : Fin N) :
+    Function.Injective (givensBoundaryCurve j) := by
+  apply dominantHarmonicCurve_injective
+  exact givensBoundaryCurve_dominance j
 
 end
 

@@ -77,6 +77,40 @@ lemma exists_face_cuts_of_small_edge_images
   exact (ne_unitAddCircle_antipode_of_dist_lt_half
     (H (faceCenter f)) (H (edgeToX e x)) (hsmall f e he x)) hxAntipode
 
+/-- Heine--Cantor supplies a single mesh radius on a compact metric space
+for which every circle image has diameter less than half a turn. -/
+lemma exists_uniform_half_turn_radius
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (H : X → UnitAddCircle) (hH : Continuous H) :
+    ∃ δ > 0, ∀ {x y : X}, dist x y < δ → dist (H x) (H y) < 1 / 2 := by
+  exact Metric.uniformContinuous_iff.mp
+    (CompactSpace.uniformContinuous_of_continuous hH) (1 / 2) (by norm_num)
+
+/-- A compact domain has one mesh threshold which works for every face:
+if each incident edge lies within that threshold of its chosen face
+center, then the circle map on those edges admits a facewise avoided cut.
+
+This isolates the analytic input needed from a sufficiently fine
+triangulation.  The remaining triangulation theorem only has to produce
+the stated mesh estimate. -/
+theorem exists_mesh_radius_for_face_cuts
+    {X E F : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (faceEdges : F → Finset E)
+    (EdgePoint : E → Type*) (edgeToX : ∀ e : E, EdgePoint e → X)
+    (H : X → UnitAddCircle) (hH : Continuous H) :
+    ∃ δ > 0, ∀ faceCenter : F → X,
+      (∀ (f : F) (e : E), e ∈ faceEdges f → ∀ x : EdgePoint e,
+        dist (faceCenter f) (edgeToX e x) < δ) →
+      ∃ cut : F → ℝ, ∀ (f : F) (e : E), e ∈ faceEdges f → ∀ x,
+        H (edgeToX e x) ≠ (cut f : UnitAddCircle) := by
+  obtain ⟨δ, hδ, huniform⟩ := exists_uniform_half_turn_radius H hH
+  refine ⟨δ, hδ, ?_⟩
+  intro faceCenter hmesh
+  apply exists_face_cuts_of_small_edge_images faceEdges EdgePoint edgeToX H
+    faceCenter
+  intro f e he x
+  exact huniform (hmesh f e he x)
+
 /-- A real phase of an additive-circle map, using the cut represented by
 `cut`.  It is continuous wherever the map avoids that cut. -/
 def circlePhaseAway {X : Type*} (cut : ℝ) (H : X → UnitAddCircle) : X → ℝ :=
