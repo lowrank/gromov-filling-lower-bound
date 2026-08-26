@@ -1,0 +1,2752 @@
+
+\documentclass[11pt]{article}
+
+\usepackage[margin=1.03in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{array}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{definition}[theorem]{Definition}
+
+\newcommand{\Area}{\operatorname{Area}}
+\newcommand{\Jac}{\operatorname{Jac}}
+\newcommand{\T}{\mathbb T}
+\newcommand{\dd}{\,d}
+\newcommand{\C}{\mathbb C}
+\newcommand{\R}{\mathbb R}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\ip}[2]{\langle #1,#2\rangle}
+
+\title{\bfseries Fourier and Resonant Nonlinear Bounds for\\
+Gromov's Filling Area Problem}
+\author{}
+\date{Draft, August 26, 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Let $M$ be a compact Riemannian surface whose boundary is isometric to the
+Riemannian circle of length $2\pi$, and assume that $M$ introduces no
+shortcuts between boundary points.  We develop a Fourier method for lower
+bounds on $\Area(M)$.
+
+First, by taking the odd Fourier coefficients of the boundary-distance
+family and applying an explicit orthogonal ``untwisting'', we obtain the
+orientation-free bound
+\[
+        \boxed{\Area(M)\ge \frac{14\zeta(3)}{\pi}}
+        =5.3567723444\ldots .
+\]
+The proof uses only Lipschitz distance functions, Bessel's inequality,
+elementary Givens rotations, the area formula, and mod-$2$ degree.
+A refinement keeps the antipodal slack and gives the exact defect estimate
+\[
+ \Area(M)\ge\frac{14\zeta(3)}{\pi}
+ +\frac1{2\pi}\int_M\int_0^{2\pi}
+ \left|\nabla\frac{
+ u_\theta+u_{\theta+\pi}-\pi}{2}\right|^2
+ \,d\theta\,dA .
+\]
+
+Second, in the oriented case we exploit genuinely nonlinear relations
+between the Fourier modes.  If
+\[
+ z_n=A_n+iB_n,\qquad n=1,3,5,\ldots,
+\]
+we introduce the resonant deformation
+\[
+        G_n=z_n+\lambda\,\overline{z_1}^{\,2}z_{n+2}.
+\]
+On the boundary the nonlinear term has exactly the same phase as $z_n$, so
+the boundary symplectic action increases linearly in $\lambda$.  At every
+plane saturating the original Fourier comass, however, the first variation
+of the comass vanishes by the Hardy-space autocorrelation identity
+\[
+        \sum_{n>0,\ n\ {\rm odd}}c_n\overline{c_{n+2}}=0.
+\]
+A quantitative version of this cancellation gives an explicit global
+comass estimate and, for $\lambda=0.03$,
+\[
+        \boxed{\Area(M)>5.38982446}
+\]
+for every oriented Riemannian isometric filling.  Optimizing the explicit
+one-parameter estimate gives approximately $5.38984897$.
+
+We also record two barriers.  Scalar, separable $1$-Lipschitz nonlinear
+reparametrizations of the distance functions cannot improve
+$14\zeta(3)/\pi$, and any argument which treats the Fourier coefficient
+space merely as a Euclidean Hilbert space is blocked by a holomorphic disk
+of area $14\zeta(3)/\pi$.  Thus the nonlinear gain necessarily uses the
+special $L^\infty$ geometry of genuine distance profiles.  Finally, we
+describe an infinite hierarchy of phase-resonant perturbations whose
+first-order comass cost vanishes on the entire linear saturation set.  For
+the normalized one-high-leg hierarchy we prove a complementary spectral
+ceiling: every certificate obtained from a global ambient comass estimate is
+strictly smaller than
+\[
+        5.466.
+\]
+The ceiling is the norm of an explicit positive trace-class resonance matrix.
+This shows that higher powers of the same phase-correction mechanism cannot
+approach the conjectural value $2\pi$ and points instead toward profile-adapted
+geometry, including a Fourier--Z\"ust hybrid and a de Sitter reformulation of
+Z\"ust's kernel.
+
+Briggs and Wells recently state that their bound
+$(\sqrt3/4)\pi^2$ appears to be the first quantitative lower bound applying
+to arbitrary isometric fillings.  Z\"ust records the oriented global bound
+$\pi^2/2$ and proves a substantially deeper almost-calibration theorem near
+the hemisphere.  To our knowledge, the estimates in this note are new.
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction}
+
+Let
+\[
+        \T=\R/2\pi\Z
+\]
+be the Riemannian circle of circumference $2\pi$, with intrinsic distance
+\[
+        d_{\T}(s,t)=\min_{k\in\Z}|s-t+2\pi k|.
+\]
+Let $M$ be a compact connected Riemannian surface with one boundary
+component, and let
+\[
+        \gamma:\T\longrightarrow\partial M
+\]
+be an arclength parametrization.  We call $M$ an \emph{isometric filling}
+of $\T$ if
+\begin{equation}\label{eq:isometric}
+        d_M(\gamma(s),\gamma(t))=d_{\T}(s,t)
+        \qquad(s,t\in\T).
+\end{equation}
+The reverse inequality
+$d_M(\gamma(s),\gamma(t))\le d_{\T}(s,t)$ is automatic by traveling along
+the shorter boundary arc, so \eqref{eq:isometric} is precisely the
+``no-shortcuts'' condition.
+
+Gromov's filling area conjecture asserts that every \emph{orientable}
+Riemannian isometric filling satisfies
+\[
+        \Area(M)\ge 2\pi,
+\]
+with equality for the unit round hemisphere \cite{Gromov1983}.  Gromov
+proved the disk case.  Bangert--Croke--Ivanov--Katz proved the genus-one
+case, in fact in a hyperelliptic setting
+\cite{BangertCrokeIvanovKatz2005}.  The general conjecture remains open.
+
+Briggs and Wells recently proved, without orientability,
+\[
+        \Area(M)\ge\frac{\sqrt3}{4}\pi^2
+        =4.2736640683\ldots,
+\]
+and state that, as far as they are aware, this is the first quantitative
+bound that applies to arbitrary isometric fillings
+\cite{BriggsWells2026}.  Z\"ust records the oriented current-theoretic
+projection estimate
+\[
+        \Area(M)\ge\frac{\pi^2}{2}
+        =4.9348022005\ldots
+\]
+in the Riemannian setting, and proves a much finer almost-calibration
+theorem near the hemisphere \cite{Zuest2025}.
+
+The purpose of this note is to develop a direct Fourier approach.  Its
+linear part is almost elementary and already gives a substantially stronger
+universal estimate.  A nonlinear phase resonance then yields a further
+strict improvement for the oriented conjecture.
+
+Our first main theorem is orientation-free.
+
+\begin{theorem}[Universal Fourier bound]\label{thm:universal}
+Every compact connected Riemannian isometric filling of the Riemannian
+circle of circumference $2\pi$, orientable or not, satisfies
+\[
+        \boxed{\Area(M)\ge\frac{14\zeta(3)}{\pi}}
+        =5.3567723444\ldots .
+\]
+\end{theorem}
+
+The second main theorem uses orientation.
+
+\begin{theorem}[Explicit nonlinear improvement]\label{thm:nonlinear-main}
+Every compact connected \emph{oriented} Riemannian isometric filling of
+the Riemannian circle of circumference $2\pi$ satisfies
+\[
+        \boxed{\Area(M)>5.38982446}.
+\]
+More precisely, Theorem~\ref{thm:nonlinear-formula} below gives an explicit
+one-parameter family of lower bounds.  Its numerical optimum is
+approximately
+\[
+        5.38984897.
+\]
+\end{theorem}
+
+Thus the successive universal/oriented constants discussed here are
+\[
+\begin{array}{c|c|c}
+\text{bound}&\text{value}&\text{fraction of }2\pi\\ \hline
+(\sqrt3/4)\pi^2
+&4.2736640683\ldots&0.68017\ldots\\
+\pi^2/2
+&4.9348022005\ldots&0.78539\ldots\\
+14\zeta(3)/\pi
+&5.3567723444\ldots&0.85255\ldots\\
+\text{nonlinear Fourier}
+&5.38982446\ldots&0.85781\ldots\\
+2\pi
+&6.2831853071\ldots&1.
+\end{array}
+\]
+
+\subsection*{Structure of the argument}
+
+For each boundary point $\gamma(\theta)$ define
+\[
+        u_\theta(x)=d_M(x,\gamma(\theta)).
+\]
+The odd Fourier coefficients of the family $\theta\mapsto u_\theta(x)$
+give planar maps
+\[
+        F_n=(A_n,B_n):M\to\R^2,\qquad n=1,3,5,\ldots.
+\]
+A pointwise Bessel estimate gives a common unit budget for the sum of their
+Jacobian determinants.  On the boundary, the $n$th map is the $n$-fold
+circle
+\[
+        -\frac4{\pi n^2}e^{ins}.
+\]
+In the orientable case, integer degree immediately converts the winding
+$n$ into area.  Without orientability, a finite orthogonal mixing of the
+Fourier modes turns all of these multiple circles into Jordan curves, whose
+interiors are detected by mod-$2$ degree.  This proves
+Theorem~\ref{thm:universal}.
+
+The nonlinear part starts from the observation that the boundary phases
+satisfy
+\[
+ \overline{z_1}^{\,2}z_{n+2}\sim e^{ins}.
+\]
+Thus the cubic monomial is resonant with the $n$th Fourier coordinate.
+The boundary action therefore improves to first order.  At a plane which
+saturates the original Fourier comass, the associated boundary-direction
+function is an analytic or anti-analytic inner function, and all its
+nonzero autocorrelations vanish.  This kills the first variation of the
+comass.  Quantifying this cancellation leads to
+Theorem~\ref{thm:nonlinear-main}.
+
+The same phase algebra generates an infinite sequence of higher resonances.
+Section~\ref{sec:one-high-leg-ceiling} shows, however, that this direction has
+a genuine quantitative endpoint: after normalization, all one-high-leg
+resonances are controlled by one positive trace-class matrix whose operator
+norm is $<5.466$.  Section~\ref{sec:beyond-ceiling} then isolates the
+mechanisms which can evade that spectral obstruction.
+
+\section{Odd boundary-distance profiles}
+
+For $\theta\in\T$, set
+\begin{equation}\label{eq:u}
+        u_\theta(x)=d_M(x,\gamma(\theta)).
+\end{equation}
+Each $u_\theta$ is $1$-Lipschitz in $x$:
+\[
+        |u_\theta(x)-u_\theta(y)|\le d_M(x,y).
+\]
+Moreover,
+\[
+        |u_\theta(x)-u_\varphi(y)|
+        \le d_M(x,y)+d_{\T}(\theta,\varphi),
+\]
+so $(x,\theta)\mapsto u_\theta(x)$ is jointly Lipschitz in local
+coordinates.
+
+The odd part of the distance profile will be more convenient.
+
+\begin{definition}\label{def:odd-slack}
+Define
+\begin{align}
+ a_\theta(x)
+ &:=\frac{u_\theta(x)-u_{\theta+\pi}(x)}{2},
+ \label{eq:oddprofile}\\
+ \sigma_\theta(x)
+ &:=\frac{u_\theta(x)+u_{\theta+\pi}(x)-\pi}{2}.
+ \label{eq:slack}
+\end{align}
+\end{definition}
+
+The triangle inequality and \eqref{eq:isometric} give
+\[
+        \sigma_\theta(x)\ge0.
+\]
+Also
+\[
+        a_{\theta+\pi}=-a_\theta,\qquad
+        \sigma_{\theta+\pi}=\sigma_\theta.
+\]
+On the boundary,
+\begin{equation}\label{eq:boundary-odd}
+        a_\theta(\gamma(s))
+        =d_{\T}(\theta,s)-\frac{\pi}{2},
+        \qquad
+        \sigma_\theta(\gamma(s))=0.
+\end{equation}
+
+Both $\theta\mapsto a_\theta(x)$ and $x\mapsto a_\theta(x)$ are
+$1$-Lipschitz.  Indeed, $a$ is the average of two differences of
+$1$-Lipschitz functions.
+
+We shall use the following standard eikonal fact in a form which is
+convenient for the present argument.
+
+\begin{lemma}[Eikonal identity for boundary distance functions]
+\label{lem:eikonal-distance}
+For every fixed $\theta$, the distance function
+\[
+        u_\theta(x)=d_M(x,\gamma(\theta))
+\]
+satisfies
+\[
+        |\nabla u_\theta(x)|=1
+\]
+at every interior point at which it is differentiable.  Consequently,
+\[
+        |\nabla_xu_\theta(x)|=1
+\]
+for almost every $(x,\theta)\in M^\circ\times\T$.
+\end{lemma}
+
+\begin{proof}
+Since $u_\theta$ is $1$-Lipschitz, differentiability at $x$ immediately
+gives
+\[
+        |\nabla u_\theta(x)|\le1.
+\]
+For the reverse inequality choose a unit-speed minimizing geodesic
+\[
+        \eta:[0,L]\to M,\qquad
+        \eta(0)=\gamma(\theta),\quad \eta(L)=x,
+\]
+where $L=d_M(\gamma(\theta),x)$.  Every initial subsegment is minimizing,
+so
+\[
+        u_\theta(\eta(t))=t,\qquad0\le t\le L.
+\]
+Indeed, a strict shortening to an intermediate point would concatenate
+with the remaining part of $\eta$ to shorten the path to $x$.
+
+Writing $v=\dot\eta(L)$, we therefore have
+\[
+ \frac{
+ u_\theta(x)-u_\theta(\eta(L-h))
+ }{h}=1.
+\]
+If $u_\theta$ is differentiable at $x$, then letting $h\downarrow0$ gives
+\[
+        du_\theta(x)(v)=1.
+\]
+Since $|v|=1$,
+\[
+        |\nabla u_\theta(x)|\ge1,
+\]
+and hence equality holds.
+
+Rademacher's theorem gives differentiability almost everywhere for every
+fixed $\theta$.  Fubini then yields the product almost-everywhere
+statement.
+\end{proof}
+
+Applying Lemma~\ref{lem:eikonal-distance} to $\theta$ and
+$\theta+\pi$, the parallelogram identity yields
+\begin{equation}\label{eq:parallelogram-slack}
+        \boxed{
+        |\nabla a_\theta|^2+|\nabla\sigma_\theta|^2=1
+        }
+\end{equation}
+for almost every $(x,\theta)$.
+
+\begin{remark}
+The map
+\[
+        f_x(\theta):=\frac{\pi}{2}+a_\theta(x)
+\]
+is anti-periodic:
+$f_x(\theta+\pi)=\pi-f_x(\theta)$.
+It is the canonical odd projection of the boundary-distance profile and
+is closely related to the standard realization of the injective hull
+$E(S^1)$ used by Z\"ust.  The slack $\sigma$ measures the part discarded
+by this projection.
+\end{remark}
+
+\section{Fourier coordinates and the Jacobian budget}
+
+For $n\ge1$ define
+\begin{align}
+ A_n(x)&:=\frac1\pi\int_0^{2\pi}
+             a_\theta(x)\cos(n\theta)\,d\theta,
+ \label{eq:An}\\
+ B_n(x)&:=\frac1\pi\int_0^{2\pi}
+             a_\theta(x)\sin(n\theta)\,d\theta,
+ \label{eq:Bn}\\
+ z_n(x)&:=A_n(x)+iB_n(x).
+ \label{eq:zn}
+\end{align}
+Since $a_{\theta+\pi}=-a_\theta$, all even coefficients vanish.  The odd
+coefficients agree with those of the original family $u_\theta$.
+
+Let
+\[
+        F_n=(A_n,B_n):M\to\R^2.
+\]
+
+\begin{lemma}[Differentiating the coefficients]\label{lem:diff}
+There is a full-measure subset of $M$ such that for every $x$ in this set,
+for almost every $\theta$, $a_\theta$ is differentiable at $x$, and for
+every $v\in T_xM$,
+\begin{align*}
+ dA_n(v)&=\frac1\pi\int_0^{2\pi}
+               da_\theta(v)\cos(n\theta)\,d\theta,\\
+ dB_n(v)&=\frac1\pi\int_0^{2\pi}
+               da_\theta(v)\sin(n\theta)\,d\theta.
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+This follows from joint Lipschitz regularity, Rademacher's theorem, Fubini,
+and weak differentiation under the $\theta$-integral.
+\end{proof}
+
+We first state the usual unit Jacobian budget, and then its sharper slack
+version.
+
+\begin{proposition}[Orthogonal Jacobian budget]\label{prop:budget}
+Let $m_1,\ldots,m_N$ be distinct positive odd integers and
+$U=(u_{jk})\in O(N)$.  Put
+\[
+        G_j=\sum_{k=1}^Nu_{jk}F_{m_k}.
+\]
+Then almost everywhere,
+\begin{equation}\label{eq:budget-unit}
+        \sum_{j=1}^NJ_2G_j\le1.
+\end{equation}
+More precisely,
+\begin{equation}\label{eq:budget-defect}
+ \boxed{
+ \sum_{j=1}^NJ_2G_j(x)
+ \le
+ 1-\frac1{2\pi}\int_0^{2\pi}
+       |\nabla\sigma_\theta(x)|^2\,d\theta.}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Fix an orthonormal basis $(e_1,e_2)$ at a regular point and set
+\[
+        f(\theta)=da_\theta(e_1),\qquad
+        g(\theta)=da_\theta(e_2).
+\]
+For the original Fourier maps set
+\[
+        p_k=dF_{m_k}(e_1),\qquad
+        q_k=dF_{m_k}(e_2)\in\R^2.
+\]
+Bessel's inequality gives
+\[
+ \sum_k|p_k|^2\le\frac1\pi\int f^2,\qquad
+ \sum_k|q_k|^2\le\frac1\pi\int g^2.
+\]
+Orthogonal mixing preserves these square sums.  Hence
+\[
+\begin{aligned}
+ \sum_jJ_2G_j
+ &\le\frac12\sum_j
+     \bigl(|dG_j(e_1)|^2+|dG_j(e_2)|^2\bigr)\\
+ &\le\frac1{2\pi}\int_0^{2\pi}
+       \bigl(f(\theta)^2+g(\theta)^2\bigr)\,d\theta\\
+ &=\frac1{2\pi}\int_0^{2\pi}|\nabla a_\theta|^2\,d\theta.
+\end{aligned}
+\]
+Now use \eqref{eq:parallelogram-slack}.  Dropping the nonnegative defect
+gives \eqref{eq:budget-unit}.
+\end{proof}
+
+\section{Exact boundary Fourier coefficients}
+
+Let
+\[
+        q(t)=d_{\T}(t,0)-\frac{\pi}{2}.
+\]
+On $[-\pi,\pi]$, $q(t)=|t|-\pi/2$.
+
+\begin{lemma}[Triangle-wave coefficients]\label{lem:triangle}
+For $n\ge1$,
+\[
+ \frac1\pi\int_{-\pi}^{\pi}|t|\cos(nt)\,dt
+ =
+ \begin{cases}
+ -\dfrac4{\pi n^2},&n\text{ odd},\\[1.5mm]
+ 0,&n\text{ even}.
+ \end{cases}
+\]
+\end{lemma}
+
+\begin{proof}
+By evenness,
+\[
+ \frac2\pi\int_0^\pi t\cos(nt)\,dt
+ =
+ \frac{2}{\pi n^2}\bigl((-1)^n-1\bigr).
+\]
+\end{proof}
+
+Consequently, for every positive odd $n$,
+\begin{equation}\label{eq:boundary-zn}
+        \boxed{
+        z_n(\gamma(s))
+        =-\rho_n e^{ins},
+        \qquad
+        \rho_n:=\frac4{\pi n^2}.}
+\end{equation}
+
+\section{The universal orientation-free bound}
+
+We include the complete untwisting argument because it is what removes the
+orientation hypothesis.
+
+Fix $N$ and set
+\[
+        m_k=2k-1,\qquad w_k=\frac1{m_k},
+        \qquad1\le k\le N.
+\]
+For $k\ge2$ define
+\[
+ c_k=(1+4w_k^2)^{-1/2},
+ \qquad
+ s_k=2w_k(1+4w_k^2)^{-1/2}.
+\]
+Let $R_k\in O(N)$ be the identity outside the $(1,k)$ coordinate plane and
+have block
+\[
+        \begin{pmatrix}c_k&-s_k\\ s_k&c_k\end{pmatrix}
+\]
+on that plane.  Set
+\[
+        U_N=R_2R_3\cdots R_N=(u_{jk}).
+\]
+
+\begin{lemma}[Entries of the Givens product]\label{lem:Givens-entries}
+The first row satisfies
+\[
+ u_{11}=\prod_{\ell=2}^Nc_\ell,\qquad
+ u_{1k}=-s_k\prod_{\ell=2}^{k-1}c_\ell.
+\]
+For $j\ge2$,
+\[
+\begin{aligned}
+ u_{j1}&=s_j\prod_{\ell=j+1}^Nc_\ell,\\
+ u_{jk}&=0\quad(2\le k<j),\\
+ u_{jj}&=c_j,\\
+ u_{jk}&=-s_js_k\prod_{\ell=j+1}^{k-1}c_\ell
+ \quad(k>j).
+\end{aligned}
+\]
+\end{lemma}
+
+\begin{proof}
+Multiply successively on the right.  Before $R_k$ is inserted, column $k$
+is still $e_k$.  The rotation replaces the first column $C_1$ and the
+$k$th column by
+\[
+        c_kC_1+s_ke_k,\qquad -s_kC_1+c_ke_k.
+\]
+The formulas follow by induction.
+\end{proof}
+
+\begin{lemma}[First-harmonic dominance]\label{lem:dominance}
+Every row of $U_N$ satisfies
+\begin{equation}\label{eq:row-dominance}
+        \boxed{
+        |u_{j1}|>
+        \sum_{k=2}^N\frac{|u_{jk}|}{m_k}.}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+We use
+\[
+ c_k=(1+4w_k^2)^{-1/2}
+ \ge \exp(-2w_k^2).
+\]
+Hence, for any finite set $I$,
+\[
+        \prod_{k\in I}c_k
+        \ge1-2\sum_{k\in I}w_k^2.
+\]
+
+For the first row, let $S=\sum_{k=2}^Nw_k^2$.  Then
+\[
+ \sum_{k=2}^Nw_k|u_{1k}|
+ \le2S,
+ \qquad
+ |u_{11}|\ge1-2S.
+\]
+The strictly convex function $f(x)=(2x-1)^{-2}$ satisfies
+\[
+ \sum_{k=2}^{\infty}\frac1{(2k-1)^2}
+ <
+ \int_{3/2}^{\infty}\frac{dx}{(2x-1)^2}
+ =\frac14.
+\]
+Thus $1-2S>2S$.
+
+For $j\ge2$ let
+\[
+        S_j=\sum_{k=j+1}^Nw_k^2.
+\]
+The formulas of Lemma~\ref{lem:Givens-entries} give
+\[
+ |u_{j1}|\ge2w_jc_j(1-2S_j)
+\]
+and
+\[
+ \sum_{k=2}^Nw_k|u_{jk}|
+ \le w_jc_j(1+4S_j).
+\]
+It suffices that $S_j<1/8$.  Since $j\ge2$,
+\[
+ \sum_{k=3}^{\infty}\frac1{(2k-1)^2}
+ <
+ \int_{5/2}^{\infty}\frac{dx}{(2x-1)^2}
+ =\frac18.
+\]
+\end{proof}
+
+\begin{lemma}[Dominant first harmonic]\label{lem:jordan}
+Let
+\[
+        z(s)=\sum_{k=1}^Na_ke^{im_ks},
+        \qquad1=m_1<m_2<\cdots<m_N,
+\]
+and assume
+\[
+        |a_1|>\sum_{k=2}^Nm_k|a_k|.
+\]
+Then $z:S^1\to\C$ is an embedding, has winding number $+1$ around $0$, and
+its enclosed area is
+\begin{equation}\label{eq:jordan-area}
+        |\Omega_z|=\pi\sum_{k=1}^Nm_k|a_k|^2.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+For every positive integer $m$,
+\[
+        |e^{ims}-e^{imt}|
+        \le m|e^{is}-e^{it}|.
+\]
+Therefore, if $s\ne t$,
+\[
+ |z(s)-z(t)|
+ \ge
+ \left(
+ |a_1|-\sum_{k=2}^Nm_k|a_k|
+ \right)|e^{is}-e^{it}|>0.
+\]
+Thus $z$ is a Jordan curve.  The higher-frequency part has modulus strictly
+smaller than $|a_1|$, so straight-line homotopy to $a_1e^{is}$ avoids the
+origin and the winding number is $+1$.  Green's formula and Fourier
+orthogonality give \eqref{eq:jordan-area}.
+\end{proof}
+
+\begin{lemma}[Jordan coverage without orientation]\label{lem:mod2}
+Let $M$ be any compact connected surface with one boundary component and
+$G:M\to\R^2$ continuous.  If $G|_{\partial M}$ is a Jordan curve $C$, then
+the bounded component $\Omega_C$ of $\R^2\setminus C$ lies in $G(M)$.
+Consequently, if $G$ is Lipschitz,
+\[
+        \int_MJ_2G\,dA\ge|\Omega_C|.
+\]
+\end{lemma}
+
+\begin{proof}
+If $y\in\Omega_C\setminus G(M)$, radial projection around $y$ gives a map
+$M\to S^1$ whose restriction to $\partial M$ has odd degree.  This is
+impossible over $\Z_2$: the boundary class maps to zero in
+$H_1(M;\Z_2)$ because it is the boundary of the relative fundamental class
+$[M,\partial M]_2$.  The area conclusion is the ordinary two-dimensional
+area formula.
+\end{proof}
+
+We now prove the finite certificate.  Define
+\[
+        G_j=\sum_{k=1}^Nu_{jk}F_{m_k}.
+\]
+By \eqref{eq:boundary-zn}, its boundary is, up to an overall sign,
+\[
+        \sum_{k=1}^Nu_{jk}\rho_{m_k}e^{im_ks}.
+\]
+Since
+\[
+        m_k\rho_{m_k}
+        =\rho_1\,\frac1{m_k},
+\]
+Lemma~\ref{lem:dominance} implies the hypothesis of
+Lemma~\ref{lem:jordan} for every row.
+
+\begin{proposition}[Finite universal certificate]\label{prop:finite-univ}
+For every $N\ge1$,
+\[
+        \boxed{
+        \Area(M)\ge
+        \frac{16}{\pi}
+        \sum_{k=1}^N\frac1{(2k-1)^3}.}
+\]
+No orientability assumption is required.
+\end{proposition}
+
+\begin{proof}
+Lemma~\ref{lem:jordan} gives
+\[
+ |\Omega_j|
+ =
+ \pi\sum_{k=1}^Nm_k\rho_{m_k}^2u_{jk}^2.
+\]
+By Lemma~\ref{lem:mod2} and Proposition~\ref{prop:budget},
+\[
+\begin{aligned}
+ \Area(M)
+ &\ge\sum_{j=1}^N\int_MJ_2G_j\,dA\\
+ &\ge\sum_{j=1}^N|\Omega_j|\\
+ &=\pi\sum_{k=1}^Nm_k\rho_{m_k}^2
+   \sum_{j=1}^Nu_{jk}^2\\
+ &=\frac{16}{\pi}
+   \sum_{k=1}^N\frac1{m_k^3}.
+\end{aligned}
+\]
+\end{proof}
+
+Letting $N\to\infty$ and using
+\[
+ \sum_{k=1}^{\infty}\frac1{(2k-1)^3}
+ =\left(1-\frac18\right)\zeta(3)
+ =\frac78\zeta(3)
+\]
+proves Theorem~\ref{thm:universal}.
+
+\section{An antipodal-slack defect refinement}
+
+Keeping the sharper budget \eqref{eq:budget-defect} instead of discarding
+the slack gives a useful nonlinear refinement.
+
+\begin{theorem}[Antipodal defect]\label{thm:slack}
+Every compact Riemannian isometric filling, orientable or not, satisfies
+\begin{equation}\label{eq:slack-bound}
+ \boxed{
+ \Area(M)\ge\frac{14\zeta(3)}{\pi}
+ +\frac1{2\pi}\int_M\int_0^{2\pi}
+          |\nabla\sigma_\theta(x)|^2\,d\theta\,dA(x),}
+\end{equation}
+where
+\[
+        \sigma_\theta
+        =\frac{u_\theta+u_{\theta+\pi}-\pi}{2}\ge0.
+\]
+\end{theorem}
+
+\begin{proof}
+Use \eqref{eq:budget-defect} in the proof of
+Proposition~\ref{prop:finite-univ}.  It yields
+\[
+ \Area(M)
+ -
+ \frac1{2\pi}
+ \int_M\int_0^{2\pi}|\nabla\sigma_\theta|^2
+ \ge
+ \frac{16}{\pi}\sum_{k=1}^N\frac1{(2k-1)^3}.
+\]
+Let $N\to\infty$.
+\end{proof}
+
+\begin{remark}
+The defect vanishes exactly when the antipodal equalities
+\[
+        u_\theta+u_{\theta+\pi}=\pi
+\]
+hold infinitesimally.  These equalities characterize the anti-periodic
+distance-profile geometry underlying the injective hull.  Thus
+Theorem~\ref{thm:slack} quantifies how much area is lost when one projects a
+general boundary-distance profile to its anti-periodic part.
+\end{remark}
+
+\section{The oriented linear calibration}
+
+For the nonlinear analysis it is convenient to return to oriented tangent
+planes and complex notation.
+
+Let $\mathcal O=\{1,3,5,\ldots\}$ and
+\[
+        \mathcal H=\ell^2(\mathcal O;\C).
+\]
+The Fourier coefficient map is
+\[
+        Z:M\to\mathcal H,\qquad
+        Z(x)=(z_n(x))_{n\in\mathcal O}.
+\]
+Bessel's inequality shows that $Z$ is Lipschitz.
+
+On $\mathcal H$ consider the standard symplectic form
+\[
+        \omega(p,q)
+        =\sum_{n\in\mathcal O}\operatorname{Im}
+          (\overline{p_n}q_n).
+\]
+It has primitive
+\[
+        \alpha_z(v)=\frac12\omega(z,v).
+\]
+
+\begin{lemma}[Hilbert-valued Stokes]\label{lem:Hilbert-Stokes}
+The map $Z:M\to\mathcal H$ is Lipschitz.  More generally, if
+$G:M\to\mathcal H$ is a Lipschitz map, then
+\[
+        \int_M G^*\omega=\int_{\partial M}G^*\alpha.
+\]
+\end{lemma}
+
+\begin{proof}
+If $x,y\in M$, then
+$|a_\theta(x)-a_\theta(y)|\le d_M(x,y)$.  Bessel's inequality therefore
+implies
+\[
+ \|Z(x)-Z(y)\|_{\ell^2}^2
+ \le\frac1\pi\int_0^{2\pi}
+       |a_\theta(x)-a_\theta(y)|^2\,d\theta
+ \le2d_M(x,y)^2.
+\]
+Thus $Z$ is Lipschitz.
+
+For the Stokes identity let $P_N$ be projection onto the first $N$ odd
+coordinates.  Ordinary weak Stokes applied componentwise gives
+\[
+ \int_M(P_NG)^*\omega
+ =\int_{\partial M}(P_NG)^*\alpha.
+\]
+At almost every point $DG$ is a bounded linear map into $\mathcal H$, and
+$P_NDG\to DG$ strongly.  The symplectic integrands converge pointwise and
+are dominated by
+$\|DG(e_1)\|\,\|DG(e_2)\|$, which is integrable for a Lipschitz map on the
+compact surface.  The boundary primitives converge in the same way.  Let
+$N\to\infty$.
+\end{proof}
+
+Fix an oriented orthonormal frame $(e_1,e_2)$ and set
+\[
+        W(\theta)
+        =da_\theta(e_1)+i\,da_\theta(e_2).
+\]
+Write
+\[
+        W(\theta)=\sum_{k\in\Z}c_ke^{ik\theta}
+\]
+with the standard normalization
+\[
+        c_k=\frac1{2\pi}\int_0^{2\pi}
+             W(\theta)e^{-ik\theta}\,d\theta.
+\]
+Because $a_{\theta+\pi}=-a_\theta$, only odd $k$ occur.  Since
+$|W(\theta)|\le1$,
+\[
+        \sum_k|c_k|^2\le1.
+\]
+
+A direct calculation gives
+\begin{equation}\label{eq:base-density}
+ \boxed{
+ (Z^*\omega)(e_1,e_2)
+ =
+ \sum_{n\in\mathcal O}
+ \bigl(|c_n|^2-|c_{-n}|^2\bigr).}
+\end{equation}
+Thus the comass is at most one.  Equality $+1$ occurs precisely when
+$|W|=1$ almost everywhere and all negative Fourier coefficients vanish;
+equality $-1$ is the anti-analytic analogue.
+
+On the boundary,
+\[
+        z_n(\gamma(s))=-\rho_ne^{ins}.
+\]
+Therefore
+\[
+\begin{aligned}
+ \int_{\partial M}Z^*\alpha
+ &=
+ \pi\sum_{n\in\mathcal O}n\rho_n^2\\
+ &=
+ \frac{16}{\pi}\sum_{n\in\mathcal O}\frac1{n^3}\\
+ &=
+ \frac{14\zeta(3)}{\pi}.
+\end{aligned}
+\]
+This recovers the oriented linear bound.
+
+\section{A barrier for separable nonlinear reparametrizations}
+
+One natural attempt is to replace the scalar distance $u_\theta$ by
+$\psi(u_\theta)$ for a $1$-Lipschitz scalar function $\psi$ and then repeat
+the Fourier calibration.  This cannot improve the linear constant.
+
+\begin{proposition}[Separable nonlinear barrier]\label{prop:separable}
+Let $\psi:[0,\pi]\to\R$ be absolutely continuous with
+$|\psi'|\le1$ almost everywhere.  Apply the oriented Fourier calibration
+to the family $\psi(u_\theta)$.  Its boundary action is at most
+\[
+        \frac{14\zeta(3)}{\pi}.
+\]
+The same conclusion holds for a Hilbert-valued collection of scalar
+features whose pointwise derivative vector has norm at most one.
+\end{proposition}
+
+\begin{proof}
+Put $p=\psi'$.  The $n$th cosine coefficient of the boundary function
+$\psi(d_{\T}(\theta,s))$ has radius
+\[
+ r_n^\psi
+ =
+ \frac{2}{\pi n}
+ \left|
+ \int_0^\pi p(t)\sin(nt)\,dt
+ \right|.
+\]
+Hence the total oriented boundary action is
+\begin{equation}\label{eq:Qp}
+ \mathcal Q(p)
+ =
+ \frac4\pi\sum_{n\ge1}\frac1n
+ \left(
+ \int_0^\pi p(t)\sin(nt)\,dt
+ \right)^2.
+\end{equation}
+The kernel of this quadratic form is
+\begin{equation}\label{eq:positive-kernel}
+ K(t,s)
+ =
+ \sum_{n\ge1}\frac{\sin(nt)\sin(ns)}{n}
+ =
+ \frac12\log
+ \frac{\sin((t+s)/2)}
+      {\sin(|t-s|/2)}.
+\end{equation}
+For $0<t,s<\pi$ this kernel is positive, because
+\[
+ \sin^2\frac{t+s}{2}
+ -
+ \sin^2\frac{|t-s|}{2}
+ =
+ \sin t\,\sin s>0.
+\]
+Therefore, under $|p|\le1$,
+\[
+ \mathcal Q(p)
+ \le
+ \frac4\pi\int_0^\pi\int_0^\pi K(t,s)\,dt\,ds
+ =
+ \mathcal Q(1).
+\]
+The choice $p\equiv1$ is the original distance function and gives
+$14\zeta(3)/\pi$.
+
+For a Hilbert-valued derivative $p(t)$ with $|p(t)|\le1$, replace
+$p(t)p(s)$ by $\langle p(t),p(s)\rangle$ and use
+$\langle p(t),p(s)\rangle\le|p(t)||p(s)|\le1$.
+\end{proof}
+
+Thus any improvement has to couple distinct boundary parameters or Fourier
+modes genuinely nonlinearly.
+
+\section{A Euclidean Hilbert-space barrier}
+
+There is a second useful obstruction.  Consider the boundary Fourier loop
+in $\mathcal H$,
+\[
+        \Gamma(s)=(-\rho_ne^{ins})_{n\in\mathcal O}.
+\]
+It spans the holomorphic disk
+\begin{equation}\label{eq:holodisk}
+        \Phi(\zeta)=(-\rho_n\zeta^n)_{n\in\mathcal O},
+        \qquad|\zeta|\le1.
+\end{equation}
+
+\begin{proposition}[Holomorphic-disk barrier]\label{prop:holodisk}
+The ordinary Euclidean area of the disk \eqref{eq:holodisk} in the Hilbert
+space $\mathcal H$ is exactly
+\[
+        \frac{14\zeta(3)}{\pi}.
+\]
+Consequently, no closed two-form on $\mathcal H$ with ordinary Euclidean
+comass at most one can have larger action on $\Gamma$.
+\end{proposition}
+
+\begin{proof}
+The holomorphic map $\Phi$ is conformal, and
+\[
+ \|\Phi'(\zeta)\|_{\ell^2}^2
+ =
+ \sum_{n\in\mathcal O}n^2\rho_n^2|\zeta|^{2n-2}.
+\]
+Therefore
+\[
+\begin{aligned}
+ \Area_{\rm Euc}(\Phi)
+ &=
+ 2\pi\int_0^1
+ \sum_{n\in\mathcal O}n^2\rho_n^2r^{2n-2}\,r\,dr\\
+ &=
+ \pi\sum_{n\in\mathcal O}n\rho_n^2
+ =
+ \frac{14\zeta(3)}{\pi}.
+\end{aligned}
+\]
+Stokes and the comass inequality give the second statement.
+\end{proof}
+
+\begin{remark}
+The nonlinear improvement below does not contradict
+Proposition~\ref{prop:holodisk}: its comass is controlled only on the much
+smaller class of tangent planes arising from pointwise-bounded
+distance-profile derivatives.  The special $L^\infty$ geometry, not the
+Euclidean Hilbert geometry, is what supplies the gain.
+\end{remark}
+
+\section{A phase-resonant nonlinear deformation}
+
+We now assume $M$ is oriented.
+
+For $\lambda\ge0$ define the nonlinear map
+\begin{equation}\label{eq:G-lambda}
+ \mathcal G_\lambda:\mathcal H\to\mathcal H,\qquad
+ (\mathcal G_\lambda(z))_n
+ =
+ z_n+\lambda\,\overline{z_1}^{\,2}z_{n+2},
+ \qquad n\in\mathcal O.
+\end{equation}
+Let
+\[
+        \Omega_\lambda
+        :=
+        (\mathcal G_\lambda\circ Z)^*\omega.
+\]
+The form is exact.  One may justify Stokes by projecting to finitely many
+coordinates and passing to the limit; all relevant derivative sequences
+are square summable.
+
+The reason for \eqref{eq:G-lambda} is the boundary resonance:
+\[
+ \overline{z_1(\gamma(s))}^{\,2}z_{n+2}(\gamma(s))
+ =
+ -\rho_1^2\rho_{n+2}e^{ins}.
+\]
+Thus
+\begin{equation}\label{eq:G-boundary}
+ (\mathcal G_\lambda\circ Z)_n(\gamma(s))
+ =
+ -\bigl(\rho_n+\lambda\rho_1^2\rho_{n+2}\bigr)e^{ins}.
+\end{equation}
+
+\subsection{Exact boundary action}
+
+Let
+\[
+        \mathcal B(\lambda)
+        :=
+        \int_{\partial M}
+        (\mathcal G_\lambda\circ Z)^*\alpha.
+\]
+By \eqref{eq:G-boundary},
+\begin{equation}\label{eq:B-series}
+ \mathcal B(\lambda)
+ =
+ \pi\sum_{n\in\mathcal O}
+ n\bigl(\rho_n+\lambda\rho_1^2\rho_{n+2}\bigr)^2.
+\end{equation}
+
+\begin{proposition}[Boundary action]\label{prop:B}
+One has
+\begin{equation}\label{eq:Bclosed}
+ \boxed{
+ \mathcal B(\lambda)
+ =
+ C_0+b\lambda+d\lambda^2,}
+\end{equation}
+where
+\begin{align}
+ C_0&=\frac{14\zeta(3)}{\pi},
+ \label{eq:C0}\\
+ b&=
+ \frac{512}{\pi^3}
+ \left(\frac34-\frac{\pi^2}{16}\right)
+ =
+ 2.1986728644\ldots,
+ \label{eq:b}\\
+ d&=
+ \frac{4096}{\pi^5}
+ \left(
+ \frac78\zeta(3)+1-\frac{\pi^4}{48}
+ \right)
+ =
+ 0.3004038975\ldots.
+ \label{eq:d}
+\end{align}
+In particular, $b>0$.
+\end{proposition}
+
+\begin{proof}
+The constant term is the linear Fourier action.  For the linear term,
+\[
+ \sum_{n\in\mathcal O}\frac1{n(n+2)^2}
+ =
+ \frac34-\frac{\pi^2}{16},
+\]
+which follows from the partial fraction decomposition
+\[
+ \frac1{n(n+2)^2}
+ =
+ \frac1{4n}-\frac1{4(n+2)}-\frac1{2(n+2)^2}.
+\]
+For the quadratic term,
+\[
+\begin{aligned}
+ \sum_{n\in\mathcal O}\frac{n}{(n+2)^4}
+ &=
+ \sum_{\substack{m\ge3\\m\ {\rm odd}}}
+ \left(\frac1{m^3}-\frac2{m^4}\right)\\
+ &=
+ \frac78\zeta(3)+1-\frac{\pi^4}{48}.
+\end{aligned}
+\]
+Substitution into \eqref{eq:B-series} gives the formulas.
+\end{proof}
+
+\section{The comass cancellation}
+
+Fix a regular point and an oriented orthonormal frame $(e_1,e_2)$.  Write
+\[
+ p_n=dz_n(e_1),\qquad q_n=dz_n(e_2).
+\]
+Let
+\[
+ W(\theta)
+ =da_\theta(e_1)+i\,da_\theta(e_2)
+ =\sum_{k\ {\rm odd}}c_ke^{ik\theta}.
+\]
+Then
+\begin{equation}\label{eq:pq-c}
+ p_n=c_{-n}+\overline{c_n},
+ \qquad
+ q_n=i(\overline{c_n}-c_{-n}).
+\end{equation}
+Consequently
+\[
+        \Omega_0(e_1,e_2)
+        =
+        \sum_{n\in\mathcal O}
+        (|c_n|^2-|c_{-n}|^2).
+\]
+
+Expand
+\[
+        \Omega_\lambda
+        =
+        \Omega_0+\lambda L+\lambda^2Q.
+\]
+
+Let
+\[
+        a=z_1,\qquad y_n=z_{n+2}.
+\]
+A direct calculation from \eqref{eq:G-lambda} gives the following exact
+formula.
+
+\begin{lemma}[Exact first variation]\label{lem:firstvar}
+At every regular oriented tangent plane,
+\[
+\begin{aligned}
+ L
+ &=
+ 2\operatorname{Re}\left[
+ \overline a^{\,2}
+ \sum_{n\in\mathcal O}
+ \left(
+ c_n\overline{c_{n+2}}
+ -
+ \overline{c_{-n}}c_{-(n+2)}
+ \right)
+ \right]\\
+ &\quad+
+ 4\operatorname{Re}\left[
+ \overline a
+ \sum_{n\in\mathcal O}
+ y_n
+ \left(
+ -\overline{c_{-n}}c_1
+ +\overline{c_{-1}}c_n
+ \right)
+ \right].
+\end{aligned}
+\]
+\end{lemma}
+
+\begin{proof}
+Differentiate
+\[
+        \overline{z_1}^{\,2}z_{n+2}.
+\]
+For a tangent vector with coefficient sequence $p$,
+\[
+        r_n(p)
+        =
+        2\overline a\,y_n\,\overline{p_1}
+        +\overline a^{\,2}p_{n+2}.
+\]
+The first variation of the $n$th symplectic Jacobian is
+\[
+ \operatorname{Im}
+ \bigl(\overline{r_n(p)}q_n+\overline{p_n}r_n(q)\bigr).
+\]
+For later reference, \eqref{eq:pq-c} gives the elementary identities
+\[
+ \frac1{2i}(d\overline z_j\wedge dz_k)(e_1,e_2)
+ =c_j\overline{c_k}-\overline{c_{-j}}c_{-k},
+\]
+\[
+ \frac1{2i}(d\overline z_j\wedge d\overline z_k)(e_1,e_2)
+ =-\overline{c_{-j}}c_k+\overline{c_{-k}}c_j.
+\]
+Expanding
+$d(\overline z_1^{\,2}z_{n+2})$ and pairing the two conjugate terms gives
+exactly the displayed formula for $L$.
+\end{proof}
+
+If $\Omega_0=1$, then $c_{-n}=0$, $|W|=1$, and
+\[
+ \sum_{n\in\mathcal O}c_n\overline{c_{n+2}}=0
+\]
+because it is the nonzero Fourier coefficient of $|W|^2\equiv1$.
+Therefore $L=0$.  The same holds at $\Omega_0=-1$.
+
+\begin{corollary}[First-order stationarity]\label{cor:stationary}
+The first variation $L$ vanishes on every plane at which
+$|\Omega_0|=1$.
+\end{corollary}
+
+This is the nonlinear mechanism: the boundary action changes to first
+order, while the comass does not.
+
+\section{Quantitative comass estimate}
+
+We now quantify Corollary~\ref{cor:stationary} with explicit constants.
+
+\subsection{Profile coefficient bounds}
+
+Because $\theta\mapsto a_\theta(x)$ is $1$-Lipschitz and periodic,
+\[
+        \sum_{n\ge1}n^2|z_n|^2
+        \le2.
+\]
+Moreover,
+\begin{equation}\label{eq:z1-bound}
+        |z_1|\le\frac4\pi.
+\end{equation}
+Indeed, integration by parts gives
+\[
+ z_1=-\frac1{i\pi}\int_0^{2\pi}
+          \partial_\theta a_\theta\,e^{i\theta}\,d\theta.
+\]
+After rotating the complex phase,
+\[
+ \left|
+ \int \partial_\theta a_\theta\,e^{i\theta}
+ \right|
+ \le\int_0^{2\pi}|\cos\theta|\,d\theta=4.
+\]
+
+Set
+\[
+        r=|z_1|,
+        \qquad
+        Y^2=\sum_{n\in\mathcal O}|z_{n+2}|^2.
+\]
+Then
+\begin{equation}\label{eq:Y-bound}
+        \boxed{
+        Y^2\le\frac{2-r^2}{9}.}
+\end{equation}
+
+\subsection{Fourier deficit}
+
+Assume first that $\Omega_0\ge0$ and put
+\[
+ P=\sum_{n\in\mathcal O}|c_n|^2,\qquad
+ N=\sum_{n\in\mathcal O}|c_{-n}|^2,
+\]
+\[
+        \delta=1-\Omega_0=1-P+N.
+\]
+Since $P+N\le1$,
+\begin{equation}\label{eq:Ndelta}
+        N\le\frac{\delta}{2}.
+\end{equation}
+Also
+\[
+        1-P-N=\delta-2N.
+\]
+
+Because $1-|W|^2\ge0$, every nonzero Fourier coefficient of $|W|^2$ has
+absolute value at most its mean deficit:
+\[
+ \left|
+ \sum_{k\in\Z}c_k\overline{c_{k+2}}
+ \right|
+ \le1-P-N=\delta-2N.
+\]
+Set
+\[
+ A:=\sum_{n\in\mathcal O}c_n\overline{c_{n+2}},\qquad
+ B:=\sum_{n\in\mathcal O}\overline{c_{-n}}c_{-(n+2)},\qquad
+ X:=c_{-1}\overline{c_1}.
+\]
+Since only odd coefficients occur, the full shift-two correlation is
+\[
+ \sum_{k\in\Z}c_k\overline{c_{k+2}}=A+B+X.
+\]
+Moreover $|B|\le N$ by Cauchy--Schwarz and
+$|X|\le\sqrt N$.  Hence
+\[
+ |A-B|
+ =|(A+B+X)-X-2B|
+ \le(\delta-2N)+\sqrt N+2N
+ =\delta+\sqrt N.
+\]
+Using $N\le\delta/2$ gives
+\begin{equation}\label{eq:Bcorr}
+ \boxed{
+ \left|
+ \sum_{n\in\mathcal O}
+ \left(
+ c_n\overline{c_{n+2}}
+ -
+ \overline{c_{-n}}c_{-(n+2)}
+ \right)
+ \right|
+ \le\delta+\sqrt{\delta/2}.}
+\end{equation}
+Furthermore, Cauchy--Schwarz gives
+\begin{equation}\label{eq:ycorr}
+ \left|
+ \sum_{n\in\mathcal O}
+ y_n
+ \left(
+ -\overline{c_{-n}}c_1
+ +\overline{c_{-1}}c_n
+ \right)
+ \right|
+ \le2Y\sqrt N
+ \le\sqrt2\,Y\sqrt\delta.
+\end{equation}
+
+Combining Lemma~\ref{lem:firstvar},
+\eqref{eq:Bcorr}, and \eqref{eq:ycorr} yields
+\begin{equation}\label{eq:L-r}
+ |L|
+ \le
+ 2r^2\delta
+ +
+ \sqrt2\bigl(r^2+4rY\bigr)\sqrt\delta.
+\end{equation}
+Using \eqref{eq:Y-bound},
+\[
+ \sqrt2(r^2+4rY)
+ \le
+ \sqrt2\left[
+ r^2+\frac43r\sqrt{2-r^2}
+ \right].
+\]
+Elementary calculus shows that the maximum occurs at $r^2=8/5$ and equals
+$8\sqrt2/3$; the critical point lies in the allowed interval because
+$\pi^2<10$.  Since $r\le4/\pi$, we obtain
+\begin{equation}\label{eq:Lbound}
+ \boxed{
+ |L|
+ \le C_*\sqrt\delta+D_*\delta,}
+\end{equation}
+where
+\begin{equation}\label{eq:CD}
+        C_*=\frac{8\sqrt2}{3},
+        \qquad
+        D_*=\frac{32}{\pi^2}.
+\end{equation}
+The case $\Omega_0\le0$ is identical after reversing the oriented frame.
+Hence \eqref{eq:Lbound} holds with
+\[
+        \delta=1-|\Omega_0|.
+\]
+
+\subsection{Quadratic term}
+
+For a derivative sequence $p=(p_n)_{n\in\mathcal O}$, write
+\[
+        R(p)_n
+        =
+        2\overline a\,y_n\,\overline{p_1}
+        +\overline a^{\,2}p_{n+2}.
+\]
+If
+\[
+        x=|p_1|,\qquad
+        y=\left(\sum_{n\ge3,\ n\ {\rm odd}}|p_n|^2\right)^{1/2},
+\]
+then
+\[
+ \|R(p)\|_{\ell^2}
+ \le2rYx+r^2y.
+\]
+Therefore
+\[
+ \|R(p)\|_{\ell^2}^2
+ \le
+ \bigl(r^4+4r^2Y^2\bigr)\|p\|_{\ell^2}^2.
+\]
+By \eqref{eq:Y-bound},
+\[
+ r^4+4r^2Y^2
+ \le
+ \frac59r^4+\frac89r^2.
+\]
+The right side is increasing in $r^2$, so using $r\le4/\pi$ gives
+\begin{equation}\label{eq:Qstar}
+        \boxed{
+        |Q|\le Q_*,
+        \qquad
+        Q_*=
+        \frac{128}{9\pi^2}
+        +\frac{1280}{9\pi^4}.}
+\end{equation}
+
+Indeed,
+\[
+ |Q|
+ \le\|R(p)\|_2\|R(q)\|_2
+ \le\frac{Q_*}{2}
+       \bigl(\|p\|_2^2+\|q\|_2^2\bigr)
+ \le Q_*,
+\]
+because Bessel gives
+$\|p\|_2^2+\|q\|_2^2\le2$.
+
+\subsection{Global comass}
+
+\begin{proposition}[Nonlinear comass bound]\label{prop:comass}
+For
+\[
+        0\le\lambda<\frac{\pi^2}{32},
+\]
+the nonlinear form satisfies
+\begin{equation}\label{eq:comass}
+ \boxed{
+ \|\Omega_\lambda\|_{\rm comass}
+ \le
+ \mathcal C(\lambda):=
+ 1+\lambda^2
+ \left[
+ Q_*+
+ \frac{C_*^2}{4(1-D_*\lambda)}
+ \right].}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+At an arbitrary oriented orthonormal plane let
+\[
+        \delta=1-|\Omega_0|\in[0,1].
+\]
+By \eqref{eq:Lbound} and \eqref{eq:Qstar},
+\[
+ |\Omega_\lambda|
+ \le
+ 1-\delta
+ +\lambda(C_*\sqrt\delta+D_*\delta)
+ +Q_*\lambda^2.
+\]
+Thus
+\[
+ |\Omega_\lambda|
+ \le
+ 1
+ -(1-D_*\lambda)\delta
+ +C_*\lambda\sqrt\delta
+ +Q_*\lambda^2.
+\]
+For $A>0$,
+\[
+        -A\delta+B\sqrt\delta
+        \le\frac{B^2}{4A}.
+\]
+Take
+$A=1-D_*\lambda$ and $B=C_*\lambda$.
+\end{proof}
+
+\section{The explicit nonlinear lower bound}
+
+Stokes gives
+\[
+        \int_M\Omega_\lambda=\mathcal B(\lambda).
+\]
+Combining Propositions~\ref{prop:B} and \ref{prop:comass} proves the
+following.
+
+\begin{theorem}[One-parameter nonlinear certificate]
+\label{thm:nonlinear-formula}
+For every compact oriented Riemannian isometric filling and every
+\[
+        0\le\lambda<\frac{\pi^2}{32},
+\]
+\begin{equation}\label{eq:nonlinear-master}
+ \boxed{
+ \Area(M)\ge
+ \frac{
+ C_0+b\lambda+d\lambda^2
+ }{
+ 1+\lambda^2
+ \left[
+ Q_*+
+ \dfrac{C_*^2}{4(1-D_*\lambda)}
+ \right]
+ }.}
+\end{equation}
+The constants are
+\[
+\begin{gathered}
+ C_0=\frac{14\zeta(3)}{\pi},\qquad
+ b=\frac{512}{\pi^3}
+ \left(\frac34-\frac{\pi^2}{16}\right),\\
+ d=\frac{4096}{\pi^5}
+ \left(\frac78\zeta(3)+1-\frac{\pi^4}{48}\right),\\
+ C_*=\frac{8\sqrt2}{3},\qquad
+ D_*=\frac{32}{\pi^2},\qquad
+ Q_*=\frac{128}{9\pi^2}+\frac{1280}{9\pi^4}.
+\end{gathered}
+\]
+\end{theorem}
+
+For $\lambda=0.03$,
+\[
+ \mathcal B(0.03)
+ =5.4230028938\ldots,
+\]
+\[
+ \mathcal C(0.03)
+ =1.0061557533\ldots,
+\]
+and therefore
+\[
+        \Area(M)
+        \ge5.3898244639\ldots.
+\]
+This proves Theorem~\ref{thm:nonlinear-main}.  Numerically optimizing the
+explicit right side of \eqref{eq:nonlinear-master} gives
+\[
+        \lambda\approx0.029227,
+        \qquad
+        \Area(M)\ge5.3898489672\ldots.
+\]
+
+\begin{remark}
+The gain is not merely a numerical accident.  The numerator has positive
+first derivative $b$ at $\lambda=0$, while the comass upper bound has zero
+first derivative.  Hence every sufficiently small positive $\lambda$
+strictly improves the linear Fourier constant.
+\end{remark}
+
+\section{The full resonant hierarchy}
+
+The cubic resonance is only the first member of a natural family.  For
+$j\ge1$ define
+\begin{equation}\label{eq:Tj}
+        (T_jz)_n
+        =
+        \overline{z_1}^{\,2j}z_{n+2j}.
+\end{equation}
+On the boundary,
+\[
+        (T_jZ(\gamma(s)))_n
+        =
+        -\rho_1^{2j}\rho_{n+2j}e^{ins}.
+\]
+Thus every $T_j$ increases the $n$th boundary radius coherently.
+
+Consider
+\[
+        \mathcal G_{\boldsymbol\lambda}(z)
+        =
+        z+\sum_{j=1}^J\lambda_jT_jz.
+\]
+Its boundary action has a positive linear part
+\[
+        C_0+\sum_{j=1}^Jb_j\lambda_j+O(|\boldsymbol\lambda|^2),
+\]
+where
+\begin{equation}\label{eq:bj}
+ b_j=
+ \frac{32}{\pi}
+ \left(\frac{16}{\pi^2}\right)^j
+ \sum_{n\in\mathcal O}
+ \frac1{n(n+2j)^2}>0.
+\end{equation}
+
+At a positive saturation plane,
+$W$ is an analytic inner function, so for every $j\ge1$,
+\begin{equation}\label{eq:all-autocorr}
+        \sum_{n\in\mathcal O}
+        c_n\overline{c_{n+2j}}=0.
+\end{equation}
+At a negative saturation plane the analogous anti-analytic identity holds.
+The same calculation as in Lemma~\ref{lem:firstvar} gives:
+
+\begin{proposition}[Infinite family of stationary resonances]
+\label{prop:hierarchy}
+For every finite linear combination
+$\sum_j\lambda_jT_j$, the first variation of the Fourier comass vanishes
+on the entire saturation set $|\Omega_0|=1$, while the boundary action has
+strictly positive first variation in every nonzero direction with
+$\lambda_j\ge0$.
+\end{proposition}
+
+Thus the nonlinear problem has an infinite-dimensional cone of directions
+with
+\[
+        \text{boundary gain}=O(|\boldsymbol\lambda|),
+        \qquad
+        \text{comass cost}=O(|\boldsymbol\lambda|^2).
+\]
+The next quantitative problem is to compute the true second-variation
+quadratic form on this cone.  The crude independent estimates used above
+suggest that the first shift $j=1$ is the most efficient single resonance,
+but they do not resolve the optimal coupled problem.
+
+
+\section{A rigorous ceiling for one-high-leg resonances}
+\label{sec:one-high-leg-ceiling}
+
+The preceding hierarchy raises a natural quantitative question: can one keep
+adding the resonances $\overline z_1^{\,2j}z_{n+2j}$ and eventually approach the
+hemisphere constant $2\pi$?  In this section we show that the answer is no for a
+precise and fairly large class of such deformations.  In fact, the entire
+normalized one-high-leg hierarchy has a rigorous ceiling below $5.466$.
+
+Set
+\[
+        R:=\rho_1=\frac4\pi.
+\]
+For $J\ge1$ and $\boldsymbol\mu=(\mu_1,\ldots,\mu_J)\in\R^J$, consider the
+normalized deformation
+\begin{equation}\label{eq:normalized-one-leg}
+ (\mathcal G_{\boldsymbol\mu}(z))_n
+ =z_n+\sum_{j=1}^J
+ \mu_j\left(\frac{\overline z_1}{R}\right)^{2j}z_{n+2j},
+ \qquad n\in\mathcal O.
+\end{equation}
+On the boundary, the normalizing factor has unit modulus and exactly removes
+$2j$ units of phase.  Hence
+\begin{equation}\label{eq:normalized-boundary}
+ (\mathcal G_{\boldsymbol\mu}(Z(\gamma(s))))_n
+ =-\left(\rho_n+\sum_{j=1}^J\mu_j\rho_{n+2j}\right)e^{ins}.
+\end{equation}
+
+The point of the normalization is that the unavoidable high-frequency comass
+cost becomes exactly the Euclidean square norm of the parameter vector.
+
+\begin{lemma}[High-mode test]\label{lem:high-mode-test}
+Let $\mathfrak C_J(\boldsymbol\mu)$ be any global ambient comass constant for the
+pullback of the standard symplectic form under
+$\mathcal G_{\boldsymbol\mu}$, where tangent planes are tested against all
+anti-periodic fields
+\[
+        W(\theta)=v(\theta)+iw(\theta),
+        \qquad |W(\theta)|\le1.
+\]
+Then
+\begin{equation}\label{eq:high-mode-cost}
+        \boxed{
+        \mathfrak C_J(\boldsymbol\mu)
+        \ge1+\sum_{j=1}^J\mu_j^2.}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Evaluate at the boundary coefficient profile $Z(\gamma(0))$ and choose an odd
+integer $m>2J$.  Take the unit-modulus positive Hardy mode
+\[
+        W_m(\theta)=e^{im\theta}.
+\]
+For the corresponding oriented plane, the Fourier derivative sequences satisfy
+$p_m=1$, $q_m=i$, and all other entries vanish.  Since $m>2J$, the derivative
+of the low-frequency factor $(\overline z_1/R)^{2j}$ vanishes on this plane,
+while the shifted term $z_{n+2j}$ contributes precisely in coordinate
+$n=m-2j$.  Thus
+\[
+ D\mathcal G_{\boldsymbol\mu}(p)
+ =e_m+\sum_{j=1}^J\mu_je_{m-2j},
+ \qquad
+ D\mathcal G_{\boldsymbol\mu}(q)
+ =iD\mathcal G_{\boldsymbol\mu}(p).
+\]
+The output coordinates are mutually orthogonal, so the standard symplectic form
+evaluates to
+\[
+        1+\sum_{j=1}^J\mu_j^2.
+\]
+This plane is admissible because $|W_m|=1$.
+\end{proof}
+
+\subsection{The resonance matrix}
+
+Put $x_0=1$ and $x_j=\mu_j$ for $1\le j\le J$.  The boundary action of
+\eqref{eq:normalized-one-leg} is
+\begin{equation}\label{eq:one-leg-boundary-action}
+ \mathcal B_J(\boldsymbol\mu)
+ =\pi\sum_{n\in\mathcal O}n
+ \left(\sum_{j=0}^Jx_j\rho_{n+2j}\right)^2
+ =x^TM^{(J)}x,
+\end{equation}
+where $M^{(J)}=(M_{jk})_{0\le j,k\le J}$ and
+\begin{equation}\label{eq:resonance-matrix}
+ \boxed{
+ M_{jk}
+ =\frac{16}{\pi}
+ \sum_{n\in\mathcal O}
+ \frac{n}{(n+2j)^2(n+2k)^2}.}
+\end{equation}
+The matrix is positive because it is a Gram matrix.
+
+\begin{theorem}[Finite one-high-leg ceiling]\label{thm:finite-one-leg-ceiling}
+For every $J$ and every parameter vector $\boldsymbol\mu$, any filling-area
+certificate obtained from \eqref{eq:normalized-one-leg} by a global ambient
+comass estimate satisfies
+\begin{equation}\label{eq:finite-rayleigh-ceiling}
+ \boxed{
+ \frac{\mathcal B_J(\boldsymbol\mu)}
+      {\mathfrak C_J(\boldsymbol\mu)}
+ \le\lambda_{\max}(M^{(J)}).}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{lem:high-mode-test},
+\[
+ \frac{\mathcal B_J(\boldsymbol\mu)}
+      {\mathfrak C_J(\boldsymbol\mu)}
+ \le
+ \frac{x^TM^{(J)}x}{x^Tx},
+\]
+and the right side is bounded by the largest eigenvalue.
+\end{proof}
+
+Let $M=(M_{jk})_{j,k\ge0}$ denote the infinite matrix on
+$\ell^2(\mathbb N_0)$.  Positivity and the following trace computation show that
+it is trace class.
+
+\begin{lemma}[Exact trace]\label{lem:resonance-trace}
+The positive operator $M$ is trace class and
+\begin{equation}\label{eq:trace-M}
+ \boxed{
+ \operatorname{tr}M
+ =\frac\pi2+\frac{7\zeta(3)}\pi+\frac{\pi^3}{24}.}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+By Tonelli,
+\[
+ \operatorname{tr}M
+ =\frac{16}{\pi}
+ \sum_{j\ge0}\sum_{n\in\mathcal O}
+ \frac{n}{(n+2j)^4}.
+\]
+Write $m=n+2j$.  For fixed positive odd $m$, the possible values of $n$ are
+$1,3,\ldots,m$, whose sum is $((m+1)/2)^2$.  Therefore
+\[
+\begin{aligned}
+ \operatorname{tr}M
+ &=\frac4\pi\sum_{m\in\mathcal O}
+ \frac{(m+1)^2}{m^4}\\
+ &=\frac4\pi\left(
+ \sum_{m\in\mathcal O}\frac1{m^2}
+ +2\sum_{m\in\mathcal O}\frac1{m^3}
+ +\sum_{m\in\mathcal O}\frac1{m^4}
+ \right)\\
+ &=\frac\pi2+\frac{7\zeta(3)}\pi+\frac{\pi^3}{24}.
+\end{aligned}
+\]
+\end{proof}
+
+It follows from the Rayleigh principle that the optimistic limit of all finite
+normalized one-high-leg resonances is at most
+\[
+        \|M\|.
+\]
+We next give a fully explicit analytic estimate for this norm.
+
+\subsection{A rigorous bound below \texorpdfstring{$5.466$}{5.466}}
+
+Write $M$ in block form
+\[
+        M=
+        \begin{pmatrix}
+        a&b^*\\ b&C
+        \end{pmatrix}
+\]
+relative to $\ell^2(\mathbb N_0)=\R e_0\oplus e_0^\perp$.  Then
+\begin{equation}\label{eq:a-c-values}
+ a=M_{00}=\frac{14\zeta(3)}\pi,
+ \qquad
+ c:=\operatorname{tr}C
+ =\frac\pi2-\frac{7\zeta(3)}\pi+\frac{\pi^3}{24}.
+\end{equation}
+Since $C\ge0$,
+\[
+        \|C\|\le\operatorname{tr}C=c.
+\]
+Consequently, for $s\in\R$ and $y\in e_0^\perp$,
+\[
+ \langle M(s,y),(s,y)\rangle
+ \le
+ a s^2+2\|b\||s|\|y\|+c\|y\|^2.
+\]
+Hence
+\begin{equation}\label{eq:block-upper}
+ \|M\|
+ \le
+ \lambda_{\max}
+ \begin{pmatrix}
+ a&\|b\|\\ \|b\|&c
+ \end{pmatrix}.
+\end{equation}
+
+We now bound $\|b\|$ by elementary arithmetic.  For $j\ge1$, partial
+fractions give
+\begin{equation}\label{eq:b-j-exact}
+\begin{aligned}
+ b_j=M_{0j}
+ &=\frac{16}{\pi}
+ \sum_{n\in\mathcal O}\frac1{n(n+2j)^2}\\
+ &=\frac1\pi\left(
+ \frac{4H_j^{\rm o}}{j^2}
+ +\frac{8K_j^{\rm o}}j
+ \right)-\frac\pi j,
+\end{aligned}
+\end{equation}
+where
+\[
+ H_j^{\rm o}=\sum_{r=0}^{j-1}\frac1{2r+1},
+ \qquad
+ K_j^{\rm o}=\sum_{r=0}^{j-1}\frac1{(2r+1)^2}.
+\]
+Using the classical bound $333/106<\pi$, the exact rational upper bounds
+obtained from \eqref{eq:b-j-exact} for $1\le j\le20$ have squared sum
+strictly smaller than $0.574$.  For completeness, upward-rounded values are
+listed below:
+\[
+\begin{array}{c|rrrrrrrrrr}
+ j&1&2&3&4&5&6&7&8&9&10\\ \hline
+ \overline b_j
+ &.678311&.268418&.146878&.093846&.065681
+ &.048814&.037858&.030310&.024874&.020818
+\end{array}
+\]
+\[
+\begin{array}{c|rrrrrrrrrr}
+ j&11&12&13&14&15&16&17&18&19&20\\ \hline
+ \overline b_j
+ &.017707&.015264&.013308&.011716&.010402
+ &.009303&.008375&.007583&.006902&.006311.
+\end{array}
+\]
+The displayed decimals are only for readability; the calculation is rational.
+An exact-arithmetic verification script accompanies this note.
+
+For the tail, split the defining sum for $b_j$ at $n=2j$.  This yields
+\begin{equation}\label{eq:b-tail-pre}
+ b_j
+ \le
+ \frac4{\pi j^2}\left(H_j^{\rm o}+\frac12\right).
+\end{equation}
+For $j\ge20$,
+\[
+        H_j^{\rm o}+\frac12\le\sqrt j.
+\]
+Indeed, the assertion is a direct rational check at $j=20$; if it holds at
+$j$, then
+\[
+ H_{j+1}^{\rm o}+\frac12
+ \le\sqrt j+\frac1{2j+1}
+ \le\sqrt{j+1},
+\]
+because
+$\sqrt{j+1}+\sqrt j\le2j+1$.
+Thus, for $j\ge21$,
+\[
+        b_j\le\frac4{\pi j^{3/2}}.
+\]
+Using again $333/106<\pi$ and the integral test,
+\[
+\begin{aligned}
+ \sum_{j\ge21}b_j^2
+ &\le\frac{16}{\pi^2}\sum_{j\ge21}\frac1{j^3}\\
+ &<16\left(\frac{106}{333}\right)^2
+ \int_{20}^{\infty}x^{-3}\,dx.
+\end{aligned}
+\]
+Combining the finite and tail estimates gives the convenient rational bound
+\begin{equation}\label{eq:b-norm-0576}
+        \boxed{\|b\|^2<0.576.}
+\end{equation}
+
+\begin{theorem}[Rigorous one-high-leg spectral ceiling]
+\label{thm:one-leg-5466}
+The positive trace-class resonance operator \eqref{eq:resonance-matrix}
+satisfies
+\begin{equation}\label{eq:5466-ceiling}
+        \boxed{\|M\|<5.466.}
+\end{equation}
+Consequently, every filling-area certificate based on the normalized
+one-high-leg hierarchy \eqref{eq:normalized-one-leg} and a global ambient
+comass estimate is strictly smaller than $5.466$.
+\end{theorem}
+
+\begin{proof}
+Besides $333/106<\pi<355/113$, the integral test applied through $n=300$
+gives the elementary rational enclosure
+\[
+        1.202056<\zeta(3)<1.202057.
+\]
+Hence \eqref{eq:a-c-values} implies
+\[
+        a<5.356915,
+        \qquad
+        c<0.184342.
+\]
+Together with \eqref{eq:b-norm-0576}, it is enough to check that the largest
+eigenvalue of
+\[
+        \begin{pmatrix}
+        5.356915&\sqrt{0.576}\\
+        \sqrt{0.576}&0.184342
+        \end{pmatrix}
+\]
+is smaller than $5.466$.  This check can be made without evaluating a square
+root: with $q=5.466$ one has
+\[
+        q>5.356915,\qquad q>0.184342,
+\]
+and
+\[
+ (q-5.356915)(q-0.184342)>0.576.
+\]
+Equivalently, $qI$ minus the displayed matrix is positive definite.  The
+companion script verifies the slightly sharper rational inequalities before
+decimal rounding.
+\end{proof}
+
+\begin{remark}[Numerical location of the ceiling]
+Finite principal sections suggest that the actual spectral norm is close to
+$5.465$.  For example, the largest eigenvalues of sections with a few dozen
+resonances stabilize rapidly near this value.  These computations are useful for
+orientation, but Theorem~\ref{thm:one-leg-5466} is independent of them.
+\end{remark}
+
+\begin{remark}[Scope of the ceiling]
+The theorem is deliberately not stated as a ceiling for ``all nonlinear Fourier
+methods.''  Arbitrary nonlinear functions of the full Fourier profile contain the
+same information as the profile itself and can encode constructions of Z\"ust type.
+The obstruction applies to the large but specific class of phase-corrected
+\emph{one-high-leg} resonances, and more generally to equivariant corrections for
+which a sufficiently high Hardy tangent mode sees only mutually orthogonal shifted
+copies of itself.
+\end{remark}
+
+\section{Beyond the one-high-leg ceiling}
+\label{sec:beyond-ceiling}
+
+The spectral ceiling changes the strategic picture.  Adding higher and higher
+powers of $\overline z_1$ cannot close the remaining gap to $2\pi$; one has to use
+information which the high-mode test does not see.  We record three concrete
+routes.
+
+
+\subsection{A Fourier--Z\"ust hybrid: current progress}
+\label{subsec:hybrid-progress}
+
+Let $\Omega_F$ denote the normalized signed Fourier form and let
+$\widetilde\omega_Z$ denote Z\"ust's profile-dependent exact two-form.
+Their boundary actions are respectively
+\[
+        C_F:=\frac{14\zeta(3)}{\pi}
+        \qquad\text{and}\qquad
+        C_Z:=2\pi.
+\]
+For $t\in[0,1]$ consider the exact hybrid
+\begin{equation}\label{eq:hybrid-form}
+        \Theta_t=(1-t)\Omega_F+t\widetilde\omega_Z.
+\end{equation}
+Its boundary action is
+\begin{equation}\label{eq:hybrid-action}
+        C(t)=C_F+t(C_Z-C_F).
+\end{equation}
+Hence any nonzero $t$ for which
+\begin{equation}\label{eq:hybrid-target}
+        \|\Theta_t\|_{\rm ir}\le1
+\end{equation}
+holds globally gives a strict improvement over the linear Fourier
+constant.  For instance,
+\[
+        C(1/2)
+        =\frac12\left(
+        \frac{14\zeta(3)}{\pi}+2\pi
+        \right)
+        =5.8199788\ldots.
+\]
+Thus the hybrid has substantially more numerical room than the polynomial
+one-high-leg resonance hierarchy.
+
+The calculations below explain why \eqref{eq:hybrid-target} is plausible
+locally and isolate the remaining global inequality.  The exact
+north-pole diagonalization is rigorous.  The higher-order profile
+expansions have been checked algebraically mode-by-mode; turning them into
+a complete local theorem in the full $L^\infty$ profile space still
+requires the uniform remainder estimates developed in Z\"ust's variation
+theory.
+
+\subsubsection{Exact diagonalization at the north-pole profile}
+
+Let
+\[
+        N(\alpha)\equiv\frac{\pi}{2}.
+\]
+At this profile Z\"ust's coefficient kernel is
+\[
+        p_{\alpha,\beta}(N)=1.
+\]
+Let $\gamma:[0,\pi]\to\C$ be an anti-periodic plane path and expand it on
+the doubled circle as
+\[
+        \gamma(\alpha)
+        =\sum_{k\in2\Z+1}c_ke^{ik\alpha}.
+\]
+With the normalization used throughout this note, the two forms satisfy
+the exact spectral identities
+\begin{align}
+ \Omega_F(\gamma)
+ &=
+ \sum_{k\in2\Z+1}
+ \operatorname{sgn}(k)|c_k|^2,
+ \label{eq:hybrid-F-diag}\\
+ \widetilde\omega_{Z,N}(\gamma)
+ &=
+ \sum_{k\in2\Z+1}
+ \frac{|c_k|^2}{k}.
+ \label{eq:hybrid-Z-diag}
+\end{align}
+Indeed, for a single odd mode $e^{ik\alpha}$,
+\[
+ \frac1\pi
+ \int_0^\pi\int_\alpha^\pi
+ \sin(k(\beta-\alpha))\,d\beta\,d\alpha
+ =\frac1k.
+\]
+
+Consequently,
+\begin{equation}\label{eq:hybrid-diag}
+ \Theta_{t,N}(\gamma)
+ =
+ \sum_{k\in2\Z+1}a_k(t)|c_k|^2,
+\end{equation}
+where
+\[
+ a_k(t)=
+ \begin{cases}
+ 1-t+t/k,&k>0,\\[1mm]
+ -1+t-t/|k|,&k<0.
+ \end{cases}
+\]
+Thus
+\[
+        |a_{\pm1}(t)|=1,
+\]
+whereas for every odd $|k|\ge3$,
+\begin{equation}\label{eq:hybrid-spectral-gap}
+        |a_k(t)|
+        \le1-\frac{2t}{3}.
+\end{equation}
+In particular, for every $0<t<1$, the huge analytic/anti-analytic
+inner-function saturation set of the pure Fourier form collapses at $N$ to
+the two first-harmonic planes
+\[
+        e^{i\phi}e^{i\alpha},
+        \qquad
+        e^{i\phi}e^{-i\alpha}.
+\]
+This spectral collapse is the main reason the hybrid is more promising
+than another polynomial resonance.
+
+\subsubsection{Quadratic profile variation}
+
+Consider an anti-periodic profile perturbation
+\[
+        f_\eps(\alpha)
+        =\frac{\pi}{2}+\eps q(\alpha),
+\]
+with
+\[
+ q(\alpha)
+ =
+ \sum_{\substack{n\ge1\\ n\ {\rm odd}}}
+ \left(a_n\cos n\alpha+b_n\sin n\alpha\right).
+\]
+At the positive first-harmonic path
+\[
+        \gamma_0(\alpha)=e^{i\alpha},
+\]
+the first profile variation of Z\"ust's kernel vanishes.  A direct
+second-order expansion gives the diagonal quadratic form
+\begin{equation}\label{eq:Z-profile-Hessian}
+ \widetilde\omega_{Z,f_\eps}(\gamma_0)
+ =
+ 1+\eps^2
+ \sum_{\substack{n\ge1\\n\ {\rm odd}}}
+ \lambda_n(a_n^2+b_n^2)
+ +O(\eps^4),
+\end{equation}
+where
+\begin{equation}\label{eq:lambda-n}
+ \lambda_n
+ =
+ 1
+ -
+ \sum_{j=1}^{(n+1)/2}\frac1{2j-1}
+ -
+ \sum_{j=1}^{(n-1)/2}\frac1{2j-1}.
+\end{equation}
+Equivalently,
+\begin{equation}\label{eq:lambda-integral}
+ \lambda_n
+ =
+ \frac12\int_0^\pi
+ \frac{\cos t\cos(nt)-\cos^2t}{\sin t}\,dt .
+\end{equation}
+Hence
+\[
+        \lambda_1=0,
+        \qquad
+        \lambda_3=-\frac43,
+        \qquad
+        \lambda_5=-\frac{28}{15},
+\]
+and in particular
+\begin{equation}\label{eq:profile-gap}
+        \lambda_n\le-\frac43
+        \qquad(n\ge3,\ n\ {\rm odd}).
+\end{equation}
+Thus all profile directions transverse to the hemisphere family have a
+strictly negative quadratic variation.  The sole zero eigenspace consists
+of the first harmonics, precisely the infinitesimal motions inside the
+hemisphere family.
+
+\subsubsection{Quadratic path variation}
+
+Now perturb only the maximizing path:
+\[
+ \gamma_\eps(\alpha)
+ =
+ e^{i(\alpha+\eps\eta(\alpha))},
+ \qquad
+ \eta(\alpha)
+ =
+ \sum_{m\ge1}
+ \bigl(A_m\cos2m\alpha+B_m\sin2m\alpha\bigr).
+\]
+At the north-pole profile one obtains
+\begin{align}
+ \Omega_F(\gamma_\eps)
+ &=
+ 1-\frac{\eps^2}{2}
+ \sum_{m\ge1}(A_m^2+B_m^2)+O(\eps^3),
+ \label{eq:F-path-Hessian}\\
+ \widetilde\omega_{Z,N}(\gamma_\eps)
+ &=
+ 1-\eps^2
+ \sum_{m\ge1}
+ \frac{2m^2}{4m^2-1}
+ (A_m^2+B_m^2)+O(\eps^3).
+ \label{eq:Z-path-Hessian}
+\end{align}
+Therefore
+\begin{equation}\label{eq:hybrid-path-Hessian}
+ \Theta_{t,N}(\gamma_\eps)
+ =
+ 1-\eps^2
+ \sum_{m\ge1}
+ \left[
+ \frac{1-t}{2}
+ +
+ t\frac{2m^2}{4m^2-1}
+ \right]
+ (A_m^2+B_m^2)
+ +O(\eps^3).
+\end{equation}
+Every path direction has a uniform negative quadratic coefficient.  At
+this base profile the profile and path variables decouple to second order,
+because the first profile derivative of
+$p_{\alpha,\beta}(f)$ vanishes at $N$.
+
+\subsubsection{The first-harmonic flat direction at fourth order}
+
+The only quadratic profile degeneracy is the first-harmonic direction.
+Set
+\[
+        f_r(\alpha)
+        =\frac{\pi}{2}+r\cos\alpha,
+\]
+and allow the maximizing path to move at its natural $r^2$ scale,
+\[
+        \gamma_{r,b}(\alpha)
+        =
+        e^{i(\alpha+r^2b\sin2\alpha)}.
+\]
+Direct fourth-order expansion gives
+\begin{equation}\label{eq:Z-quartic}
+ \widetilde\omega_{Z,f_r}(\gamma_{r,b})
+ =
+ 1+r^4
+ \left(
+ -\frac1{24}
+ +\frac b3
+ -\frac23b^2
+ \right)
+ +O(r^6),
+\end{equation}
+while
+\begin{equation}\label{eq:F-quartic}
+ \Omega_F(\gamma_{r,b})
+ =
+ 1-\frac12b^2r^4+O(r^6).
+\end{equation}
+For Z\"ust's form alone, the quartic coefficient in
+\eqref{eq:Z-quartic} is maximized at $b=1/4$ and equals zero, exactly as
+expected from motion along the nearby hemisphere family.  For the hybrid,
+optimization over $b$ gives
+\begin{equation}\label{eq:hybrid-bstar}
+        b_*(t)=\frac{t}{3+t}
+\end{equation}
+and
+\begin{equation}\label{eq:hybrid-quartic}
+ \max_b\Theta_t
+ =
+ 1-\frac{t(1-t)}{8(3+t)}\,r^4+O(r^6).
+\end{equation}
+Thus for every $0<t<1$ the quartic coefficient is strictly negative.
+Modulo uniform control of the remainders, the joint quadratic/quartic
+calculation strongly indicates that $\Theta_t$ is an actual local
+calibration near the hemisphere for every fixed $0<t<1$.
+
+\subsubsection{The Hardy--Z\"ust inequality}
+
+The global problem can be stated in a particularly clean form.  For a
+unit-modulus anti-periodic plane path
+\[
+        \gamma(\alpha)
+        =\sum_{k\in2\Z+1}c_ke^{ik\alpha},
+\]
+the positive-orientation Fourier defect is
+\begin{equation}\label{eq:hardy-defect-hybrid}
+        1-\Omega_F(\gamma)
+        =
+        2\sum_{k<0}|c_k|^2
+        =
+        2\|P_-\gamma\|_{L^2}^2
+\end{equation}
+under the normalized Fourier convention.  This suggests the following
+central inequality.
+
+\begin{question}[Hardy--Z\"ust inequality]\label{q:hardy-zust}
+Is it true that for every admissible profile $f\in E(S^1)$ and every
+unit-modulus anti-periodic path $\gamma$,
+\begin{equation}\label{eq:hardy-zust}
+ \boxed{
+ \widetilde\omega_{Z,f}(\gamma)-1
+ \le
+ 2\|P_-\gamma\|_{L^2}^2 ?}
+\end{equation}
+\end{question}
+
+If \eqref{eq:hardy-zust} holds, then
+\[
+        \frac12(\Omega_F+\widetilde\omega_Z)\le1
+\]
+pointwise, and the half-hybrid gives immediately
+\[
+        \Area(M)
+        \ge
+        \frac12\left(
+        \frac{14\zeta(3)}{\pi}+2\pi
+        \right)
+        =
+        5.8199788\ldots.
+\]
+More generally, it would already be valuable to prove
+\begin{equation}\label{eq:hardy-zust-kappa}
+ \widetilde\omega_{Z,f}(\gamma)-1
+ \le
+ \kappa\bigl(1-\Omega_F(\gamma)\bigr).
+\end{equation}
+Then every
+\[
+        t\le\frac1{1+\kappa}
+\]
+is admissible in the hybrid and yields the explicit bound
+\[
+        \Area(M)
+        \ge
+        C_F+
+        \frac{2\pi-C_F}{1+\kappa}.
+\]
+Even $\kappa=3$ would already give a bound about $5.5884$, well beyond
+the one-high-leg ceiling.
+
+A necessary first subproblem is the positive Hardy restriction
+\begin{equation}\label{eq:positive-hardy-target}
+ \boxed{
+ \widetilde\omega_{Z,f}(\gamma)\le1
+ \quad
+ \text{for every analytic odd inner path }\gamma.}
+\end{equation}
+Indeed, $\Omega_F(\gamma)=1$ on these paths.  The local calculations above
+show that \eqref{eq:positive-hardy-target} is stable at the hemisphere.
+
+\subsubsection{A nonlocal scalar reduction for the first harmonic}
+
+For the simplest analytic inner path
+\[
+        \gamma(\alpha)=e^{i\alpha},
+\]
+one can rearrange Z\"ust's kernel algebraically to obtain
+\begin{equation}\label{eq:first-harmonic-nonlocal}
+ \widetilde\omega_{Z,f}(e^{i\alpha})
+ =
+ \frac1\pi\int_0^\pi\csc^2f(\alpha)\,d\alpha
+ -
+ \frac1{2\pi}
+ \int_0^\pi\int_0^\pi
+ \frac{
+ \bigl(
+ \cos f(\alpha)
+ -
+ \cos(\beta-\alpha)\cos f(\beta)
+ \bigr)^2
+ }{
+ |\sin(\beta-\alpha)|
+ \sin^2f(\alpha)\sin^2f(\beta)
+ }
+ \,d\alpha\,d\beta ,
+\end{equation}
+with the diagonal interpreted in the limiting sense.
+Thus the desired estimate
+$\widetilde\omega_{Z,f}(e^{i\alpha})\le1$
+is equivalent to a concrete nonlocal Poincar\'e-type inequality.  This
+formulation appears more tractable than a pointwise estimate on
+$p_{\alpha,\beta}$; in particular, a natural pointwise geometric-mean
+bound for the kernel is false.
+
+\subsubsection{Cross-ratio and welding variables}
+
+Assume temporarily that $\operatorname{Lip}(f)<1$ and define
+\begin{equation}\label{eq:LR}
+        L(\alpha)=\alpha-f(\alpha),
+        \qquad
+        R(\alpha)=\alpha+f(\alpha).
+\end{equation}
+Both maps are strictly increasing.  The anti-periodicity
+$f(\alpha+\pi)=\pi-f(\alpha)$ implies that
+\[
+        h:=R\circ L^{-1}
+\]
+defines an increasing lift of a fixed-point-free circle involution,
+satisfying
+\begin{equation}\label{eq:h-involution}
+        h(h(x))=x+2\pi.
+\end{equation}
+For $\beta=\alpha+\delta$, introduce
+\begin{equation}\label{eq:X-crossratio}
+ X_\delta(\alpha)
+ =
+ \frac{
+ \sin\frac{\delta+f(\alpha+\delta)-f(\alpha)}{2}
+ \sin\frac{\delta+f(\alpha)-f(\alpha+\delta)}{2}
+ }{
+ \sin f(\alpha)\sin f(\alpha+\delta)
+ }.
+\end{equation}
+Then a direct trigonometric factorization gives
+\begin{equation}\label{eq:p-X}
+ \boxed{
+ p_{\alpha,\alpha+\delta}(f)\sin\delta
+ =
+ \frac{4X_\delta(\alpha)
+       (1-X_\delta(\alpha))}
+      {\sin\delta}.}
+\end{equation}
+The quantity $X_\delta(\alpha)$ is a circular cross-ratio expression for
+the four points
+\[
+        x,\ y,\ h(x),\ h(y),
+        \qquad
+        x=L(\alpha),\quad y=L(\alpha+\delta).
+\]
+Thus the positive-Hardy problem is naturally connected with conformal
+welding.
+
+Recent work of Fan--Viklund--Wang introduces an operator from the Fourier
+coefficients of the logarithmic chord-distortion kernel
+\[
+        (z,w)\longmapsto
+        \log\left|
+        \frac{\varphi(z)-\varphi(w)}{z-w}
+        \right|
+\]
+of a welding homeomorphism and proves a Grunsky-type contraction
+inequality.  This makes the following program concrete: determine whether
+the Hardy compression of Z\"ust's skew kernel is a positive transform, a
+mixed derivative, or a Schur complement of the welding/Grunsky operator
+associated with $h$.  Such an identity would potentially imply
+\eqref{eq:positive-hardy-target} from a classical or generalized Grunsky
+inequality.
+
+At present this welding identification is a research direction, not a
+proved equivalence.  The exact relations already established here are
+\eqref{eq:LR}--\eqref{eq:p-X} and the de Sitter formulas in
+Proposition~\ref{prop:desitter-identities} below.
+
+\subsection{A de Sitter reformulation of the profile geometry}
+
+There is an intrinsic way to see why Z\"ust's kernel contains information which the
+polynomial resonances miss.  Let $f:(0,\pi)\to(0,\pi)$ be an anti-periodic
+$1$-Lipschitz profile and define
+\begin{equation}\label{eq:desitter-map}
+ X_f(\alpha)
+ =\left(
+ \frac{\cos\alpha}{\sin f(\alpha)},
+ \frac{\sin\alpha}{\sin f(\alpha)},
+ \cot f(\alpha)
+ \right)\in\R^{2,1},
+\end{equation}
+where
+\[
+        \langle x,y\rangle_{2,1}=x_1y_1+x_2y_2-x_3y_3.
+\]
+Then
+\[
+        \langle X_f(\alpha),X_f(\alpha)\rangle_{2,1}=1,
+\]
+so $X_f$ lies on the two-dimensional de Sitter quadric.
+
+\begin{proposition}[de Sitter identities]\label{prop:desitter-identities}
+At almost every $\alpha$,
+\begin{equation}\label{eq:desitter-speed}
+ \boxed{
+ \langle X_f'(\alpha),X_f'(\alpha)\rangle_{2,1}
+ =\frac{1-f'(\alpha)^2}{\sin^2f(\alpha)}.}
+\end{equation}
+For $\alpha\ne\beta\pmod\pi$,
+\begin{equation}\label{eq:desitter-inner}
+ \langle X_f(\alpha),X_f(\beta)\rangle_{2,1}
+ =
+ \frac{
+ \cos(\beta-\alpha)-\cos f(\alpha)\cos f(\beta)
+ }{
+ \sin f(\alpha)\sin f(\beta)
+ }.
+\end{equation}
+Moreover, Z\"ust's coefficient kernel satisfies the exact algebraic identity
+\begin{equation}\label{eq:zust-desitter-kernel}
+ \boxed{
+ p_{\alpha,\beta}(f)
+ =
+ \frac{
+ 1-\langle X_f(\alpha),X_f(\beta)\rangle_{2,1}^2
+ }{
+ \sin^2(\beta-\alpha)
+ }.}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+The first two identities follow by direct differentiation and expansion.
+For the last one, abbreviate
+$d=\beta-\alpha$, $A=\cos f(\alpha)$, and
+$B=\cos f(\beta)$.  Then
+\[
+ 1-\langle X_f(\alpha),X_f(\beta)\rangle_{2,1}^2
+ =
+ \frac{
+ 1-\cos^2d-A^2-B^2+2AB\cos d
+ }{
+ \sin^2f(\alpha)\sin^2f(\beta)
+ }.
+\]
+Comparison with the defining formula for $p_{\alpha,\beta}(f)$ gives
+\eqref{eq:zust-desitter-kernel}.
+\end{proof}
+
+Thus an admissible profile is a spacelike graph on de Sitter space, and the
+kernel is a normalized pairwise de Sitter chord distortion.  Hemisphere profiles
+are exactly the intersections of the de Sitter quadric with planes through the
+origin: indeed, if $\cos h(\alpha)=a_1\cos\alpha+a_2\sin\alpha$, then
+\[
+        X_h^3=a_1X_h^1+a_2X_h^2.
+\]
+This reformulates the nonlinear problem as an integral-geometric inequality for
+antipodally symmetric spacelike de Sitter curves.  It is qualitatively different
+from a polynomial Fourier correction and is a plausible place to seek a much
+larger gain.
+
+\subsection{Genuinely multi-high-leg corrections}
+
+The high-mode test behind Theorem~\ref{thm:one-leg-5466} can only be evaded if a
+high Hardy tangent mode no longer produces an orthogonal list of shifted copies.
+This requires nonlinearities with more than one frequency-dependent ``high leg.''
+Such terms are possible, but the boundary coefficients satisfy
+$\rho_n\asymp n^{-2}$, so every additional high leg costs two further powers of
+$n$.  They therefore have rapidly decaying boundary tails and are unlikely to
+recover the missing $0.8$ units by a tail mechanism alone.  Their natural role is
+instead a finite-dimensional optimization of the first few modes.  This suggests a
+computer-assisted semidefinite search over low-mode equivariant polynomials,
+followed by a rigorous interval or sum-of-squares certificate if a worthwhile gain
+is found.
+
+The broader lesson is that the remaining gap is likely to require either
+profile-adapted geometry, as in \eqref{eq:hybrid-form} and
+Proposition~\ref{prop:desitter-identities}, or information coupling the distance
+profiles at different interior points (cut loci, geodesic order, or Jacobi-field
+constraints).  Purely pointwise one-high-leg Fourier algebra is now quantitatively
+exhausted.
+
+\section{Equality structure and Hardy-space defect}
+
+The complex notation also gives an exact interpretation of the loss in the
+linear oriented calibration.
+
+Let
+\[
+        P=\sum_{n>0,\ n\ {\rm odd}}|c_n|^2,\qquad
+        N=\sum_{n<0,\ n\ {\rm odd}}|c_n|^2.
+\]
+If the odd profile derivative has full pointwise norm $|W|=1$, then
+$P+N=1$ and
+\[
+        \Omega_0=P-N.
+\]
+Consequently
+\begin{equation}\label{eq:Hardy-defect}
+        \boxed{
+        1-\Omega_0=2N}
+\end{equation}
+for a positive orientation.  Without the equality $|W|=1$, the exact
+identity becomes
+\[
+        1-\Omega_0
+        =
+        \left(1-\sum_k|c_k|^2\right)
+        +2N.
+\]
+Thus the linear deficit has exactly two components:
+\begin{enumerate}[label=(\roman*)]
+\item loss of total eikonal energy in the odd projection;
+\item negative Hardy-space energy.
+\end{enumerate}
+The antipodal slack theorem quantifies the first component geometrically,
+while the resonant construction attacks the second through autocorrelation
+cancellation.
+
+\section{How the method compares with Z\"ust's approach}
+
+The Fourier method and Z\"ust's almost calibration share the same broad
+architecture: both encode a filling by functions on the boundary circle and
+bound area using a two-form.  The distinction is the level of nonlinearity.
+
+The linear Fourier form is translation invariant in the coefficient space.
+Its global constant is explicit and its proof is elementary.  The resonant
+form above is still explicit, but its coefficients depend polynomially on
+the current profile through $z_1$ and $z_{n+2}$.
+
+Z\"ust constructs a much more geometric point-dependent form directly on
+the injective hull $E(S^1)$.  Its comass is exactly one on the hemisphere
+and stationary there; this yields a near-sharp second-order estimate for
+fillings close to the hemisphere \cite{Zuest2025}.  The 49-page length of
+that work reflects this variational stability analysis, not merely the
+global numerical bound $\pi^2/2$ recorded separately in its final section.
+
+The present nonlinear resonance can be viewed as a very explicit
+finite-order model of the same philosophy:
+\[
+        \text{adapt the calibration to the profile}
+\]
+while retaining enough Fourier structure for a global estimate.
+
+\section{What remains open}
+
+The current rigorous constants are
+\[
+        5.35677234\ldots
+        \quad\text{without orientation},
+\]
+and
+\[
+        5.38982446\ldots
+        \quad\text{with orientation}.
+\]
+The conjectural value remains
+\[
+        2\pi=6.28318530\ldots.
+\]
+
+Several concrete subproblems emerge.
+
+\begin{question}[Beyond the one-high-leg ceiling]
+Theorem~\ref{thm:one-leg-5466} shows that the normalized one-high-leg resonant
+hierarchy cannot reach even $5.466$.  Can a Fourier--Z\"ust hybrid
+\eqref{eq:hybrid-form}, a de Sitter comparison inequality based on
+Proposition~\ref{prop:desitter-identities}, or a genuinely multi-high-leg
+low-mode correction produce a substantially larger constant?
+\end{question}
+
+\begin{question}[Universal nonlinear improvement]
+Can the resonant deformation be combined with the orthogonal untwisting so
+that the nonlinear improvement survives without orientability?  There is a
+concrete obstruction to simply repeating the oriented proof.  For the
+unsigned Jacobian estimate the relevant quadratic energy is
+\[
+ E_0=\frac12\bigl(\|p\|_2^2+\|q\|_2^2\bigr)
+    =\sum_{k\in\mathbb Z}|c_k|^2\le1.
+\]
+Thus its saturation set consists of all unit-modulus anti-periodic fields
+$|W|=1$, not only the analytic and anti-analytic inner fields.  At a mixed
+Hardy-spectrum saturator the first variation of the resonant energy contains
+terms involving $c_{-1}\overline{c_1}$ and the profile tail
+$(z_{n+2})$, and these do not vanish in general.  The cancellation behind
+Corollary~\ref{cor:stationary} is therefore genuinely signed.  A universal
+nonlinear improvement needs either a different resonance with stationarity
+on the full unit-modulus saturation set, or an argument that avoids a
+pointwise unsigned-energy relaxation.
+\end{question}
+
+\begin{question}[Using the slack defect]
+Can the Dirichlet defect in Theorem~\ref{thm:slack} be coupled to a
+Z\"ust-type nonlinear form on the anti-periodic projection to obtain a
+larger universal constant?
+\end{question}
+
+\begin{question}[Global comass of Z\"ust's form]
+Z\"ust's numerical computations suggest that his form is not an exact
+global calibration but is not far from one.  Any rigorous global comass
+bound sufficiently close to one would immediately give a strong global
+filling-area estimate.  It would be interesting to combine such a bound
+with the Fourier baseline rather than use either form in isolation.
+\end{question}
+
+\section{Literature and priority}
+
+Briggs and Wells state that their 2026 orientation-free estimate
+$(\sqrt3/4)\pi^2$ appears to be the first quantitative lower bound applying
+to arbitrary isometric fillings \cite{BriggsWells2026}.  Z\"ust's 2025
+paper explicitly records $\pi^2/2$ as a global lower bound in the oriented
+current setting and develops the much deeper almost-calibration theorem
+\cite{Zuest2025}.  Targeted searches for the constants
+$14\zeta(3)/\pi$ and the Fourier-resonant construction above did not locate
+earlier occurrences in the filling-area literature.
+
+Accordingly, the appropriate wording at this stage is that these estimates
+are new \emph{to our knowledge}.  A definitive priority determination
+should include direct communication with experts working on filling
+geometry.
+
+\section{Scaling}
+
+If the boundary circumference is $\ell$, rescaling lengths by
+$2\pi/\ell$ gives from Theorem~\ref{thm:universal}
+\[
+        \Area(M)
+        \ge
+        \frac{7\zeta(3)}{2\pi^3}\ell^2
+\]
+without orientability.  The nonlinear oriented estimate scales in the same
+quadratic way.
+
+\begin{thebibliography}{99}
+
+\bibitem{BangertCrokeIvanovKatz2005}
+V.~Bangert, C.~B.~Croke, S.~V.~Ivanov, and M.~G.~Katz,
+\newblock Filling area conjecture and ovalless real hyperelliptic surfaces,
+\newblock \emph{Geom. Funct. Anal.} \textbf{15} (2005), no.~3, 577--597.
+
+\bibitem{BriggsWells2026}
+J.~Briggs and C.~Wells,
+\newblock A discrete view of Gromov's filling area conjecture,
+\newblock arXiv:2602.17859, 2026.
+
+\bibitem{Cossarini2020}
+M.~Cossarini,
+\newblock Discrete surfaces with length and area and minimal fillings of the circle,
+\newblock arXiv:2009.02415, 2020.
+
+\bibitem{EvansGariepy}
+L.~C.~Evans and R.~F.~Gariepy,
+\newblock \emph{Measure Theory and Fine Properties of Functions},
+\newblock revised edition, CRC Press, 2015.
+
+
+\bibitem{FanViklundWang2026}
+S.~Fan, F.~Viklund, and Y.~Wang,
+\newblock On the Loewner energy of a welding homeomorphism,
+\newblock arXiv:2604.16737, 2026.
+
+\bibitem{Gromov1983}
+M.~Gromov,
+\newblock Filling Riemannian manifolds,
+\newblock \emph{J. Differential Geom.} \textbf{18} (1983), no.~1, 1--147.
+
+\bibitem{Hatcher}
+A.~Hatcher,
+\newblock \emph{Algebraic Topology},
+\newblock Cambridge University Press, 2002.
+
+\bibitem{Zuest2025}
+R.~Z\"ust,
+\newblock The Riemannian hemisphere is almost calibrated in the injective hull of its boundary,
+\newblock \emph{Calc. Var. Partial Differential Equations} \textbf{64} (2025),
+Art.~297.
+\newblock DOI: 10.1007/s00526-025-03133-z.
+
+\end{thebibliography}
+
+\end{document}
