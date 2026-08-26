@@ -45,6 +45,9 @@ runs both checks on every push and pull request.
 - a bundled `HasFinePolygonalModels` surface interface which reduces the
   remaining topological input to constructing one compatible fine finite
   model for each continuous circle-valued map;
+- a map-independent `HasArbitrarilyFinePolygonalModels` interface and the
+  compact uniform-continuity argument converting its geometric mesh bound
+  into the half-turn mesh needed for every continuous circle-valued map;
 - the resulting coverage implication: an odd radial boundary degree forces
   the puncture into the extension image, hence every point in the bounded
   nonzero-degree component of a mixed Givens curve is covered;
@@ -63,10 +66,11 @@ contradiction is assembled without auxiliary lift or turn assumptions, but
 the passage from an arbitrary compact surface to that finite data still
 needs:
 
-1. a theorem proving `HasFinePolygonalModels` for every compact surface
-   with one boundary component—equivalently, furnishing the required fine
-   finite triangulation/cell structure and its compatible cyclic boundary
-   subdivision;
+1. a theorem proving `HasArbitrarilyFinePolygonalModels` for every compact
+   surface with one boundary component—equivalently, furnishing arbitrarily
+   fine finite triangulations/cell structures and their compatible cyclic
+   boundary subdivisions (the compact uniform-continuity passage from this
+   geometric statement to `HasFinePolygonalModels` is now formalized);
 2. a Jordan separation theorem supplying the two open connected regions
    for this topological Jordan curve (their identification with the proved
    bounded/nonzero-degree component is already formalized); and

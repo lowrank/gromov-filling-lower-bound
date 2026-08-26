@@ -147,6 +147,26 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_fine_models
   exact givensBoundaryCurve_origin_component_subset_range_of_fine_models
     j boundary hfine G hG hboundary
 
+/-- Surface-form coverage from the map-independent geometric input.  On a
+compact metric domain, arbitrary geometric mesh refinement supplies the
+map-dependent half-turn model automatically by uniform continuity. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_arbitrarily_fine_models
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → X)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_fine_models
+    j boundary (hasFinePolygonalModels_of_arbitrarilyFine hmodels)
+    G hG hboundary hpartition hzero
+
 end
 
 end GromovFilling
