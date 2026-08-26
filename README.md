@@ -41,6 +41,9 @@ runs both checks on every push and pull request.
 - the resulting coverage implication: an odd radial boundary degree forces
   the puncture into the extension image, hence every point in the bounded
   nonzero-degree component of a mixed Givens curve is covered;
+- the genuine Lipschitz planar area inequality on measurable subsets of
+  `Fin 2 → ℝ`, derived from Rademacher's theorem, null-image control for
+  the exceptional set, and mathlib's Jacobian image bound;
 - the algebraic/numerical conclusions of the orientation-free and oriented
   certificates at their stated geometric interfaces.
 
@@ -57,8 +60,9 @@ needs:
    subdivision already constructed in Lean;
 2. a Jordan separation theorem identifying the proved bounded nonzero-degree
    component with the bounded component of the Jordan complement; and
-3. the two-dimensional Lipschitz area formula giving
-   `∫ J₂ G ≥ |Ω|` from coverage.
+3. globalization of the proved Lipschitz planar area inequality through
+   Riemannian surface charts, including identification of the coordinate
+   determinant density with the intrinsic `J₂ G`.
 
 Consequently, the headline theorems in `GromovFilling/Certificates.lean`
 remain conditional on their geometric coverage/Jacobian or
