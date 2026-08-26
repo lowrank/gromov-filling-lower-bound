@@ -1,4 +1,6 @@
 import GromovFilling.Constants
+import GromovFilling.Oriented
+import GromovFilling.Numerics
 
 /-!
 # Fourier certificates for Gromov's filling-area problem
