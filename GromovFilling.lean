@@ -9,6 +9,7 @@ import GromovFilling.FourierArea
 import GromovFilling.ModTwoDegree
 import GromovFilling.RadialProjection
 import GromovFilling.Oriented
+import GromovFilling.BoundaryActionSeries
 import GromovFilling.Numerics
 import GromovFilling.Certificates
 
