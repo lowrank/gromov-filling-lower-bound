@@ -5,7 +5,9 @@ import GromovFilling.JacobianBudget
 import GromovFilling.Givens
 import GromovFilling.DominantHarmonic
 import GromovFilling.BoundaryCertificate
+import GromovFilling.FourierArea
 import GromovFilling.ModTwoDegree
+import GromovFilling.RadialProjection
 import GromovFilling.Oriented
 import GromovFilling.Numerics
 

@@ -9,7 +9,7 @@ energies; the result below converts those bounds into a sum of absolute
 two-dimensional Jacobians.
 -/
 
-open scoped BigOperators
+open scoped BigOperators InnerProductSpace
 
 namespace GromovFilling
 
@@ -88,6 +88,39 @@ theorem orthogonal_column_energy {ι : Type*} [Fintype ι] [DecidableEq ι]
     (∑ j, U j k ^ 2) = 1 := by
   have hk := congr_fun (congr_fun horth k) k
   simpa [Matrix.mul_apply, pow_two] using hk
+
+/-- Bessel's inequality grouped into the cosine/sine pair belonging to each
+mode.  This is the Hilbert-space form of the two estimates used in
+Proposition 3.2. -/
+theorem paired_bessel_inequality
+    {ι E : Type*} [Fintype ι] [SeminormedAddCommGroup E]
+    [InnerProductSpace ℝ E]
+    (v : ι × Fin 2 → E) (hv : Orthonormal ℝ v) (f : E) :
+    (∑ k : ι, (
+      ⟪v (k, (0 : Fin 2)), f⟫_ℝ ^ 2 +
+        ⟪v (k, (1 : Fin 2)), f⟫_ℝ ^ 2)) ≤ ‖f‖ ^ 2 := by
+  have hb := hv.sum_inner_products_le f (s := Finset.univ)
+  simp only [Finset.mem_univ, Real.norm_eq_abs, sq_abs, Finset.sum_const_zero,
+    Fintype.sum_prod_type, Fin.sum_univ_two] at hb
+  exact hb
+
+/-- Applying paired Bessel estimates in two tangent directions supplies the
+energy hypotheses of the orthogonal Jacobian budget. -/
+theorem bessel_jacobian_budget
+    {ι E : Type*} [Fintype ι] [SeminormedAddCommGroup E]
+    [InnerProductSpace ℝ E]
+    (v : ι × Fin 2 → E) (hv : Orthonormal ℝ v) (f g : E)
+    (p q : ι → ℝ × ℝ)
+    (hp : ∀ k, p k =
+      (⟪v (k, (0 : Fin 2)), f⟫_ℝ, ⟪v (k, (1 : Fin 2)), f⟫_ℝ))
+    (hq : ∀ k, q k =
+      (⟪v (k, (0 : Fin 2)), g⟫_ℝ, ⟪v (k, (1 : Fin 2)), g⟫_ℝ))
+    (budget : ℝ) (hbudget : ‖f‖ ^ 2 + ‖g‖ ^ 2 ≤ 2 * budget) :
+    (∑ k, planarJacobian (p k) (q k)) ≤ budget := by
+  apply orthogonal_jacobian_budget p q (‖f‖ ^ 2) (‖g‖ ^ 2) budget
+  · simpa only [planarNormSq, hp] using paired_bessel_inequality v hv f
+  · simpa only [planarNormSq, hq] using paired_bessel_inequality v hv g
+  · exact hbudget
 
 end
 
