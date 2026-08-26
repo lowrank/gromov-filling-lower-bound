@@ -124,6 +124,12 @@ def HasComplexCircleDegree
     (H : UnitAddCircle → ComplexUnitCircle) (d : ℤ) : Prop :=
   HasCircleDegree (fun x ↦ unitAddCircleEquivComplexUnitCircle.symm (H x)) d
 
+theorem HasComplexCircleDegree.unique
+    {H : UnitAddCircle → ComplexUnitCircle} {d e : ℤ}
+    (hd : HasComplexCircleDegree H d)
+    (he : HasComplexCircleDegree H e) : d = e :=
+  HasCircleDegree.unique hd he
+
 /-- The standard additive-circle parametrization of the complex unit
 circle has degree one. -/
 theorem hasComplexCircleDegree_standard :

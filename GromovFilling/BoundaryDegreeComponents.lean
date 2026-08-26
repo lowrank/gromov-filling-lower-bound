@@ -51,6 +51,21 @@ theorem givensBoundaryCurve_degree_one_on_origin_component
     (givensBoundaryCurveAddCircle_ne_zero j)
   simpa [givensBoundaryCurveAddCircle] using givensBoundaryCurve_degree_one j
 
+/-- The origin component is a bounded component of the mixed curve
+complement, certified by its nonzero degree. -/
+theorem givensBoundaryCurve_origin_component_bounded
+    {N : ℕ} (j : Fin N) :
+    Bornology.IsBounded
+      (connectedComponentIn
+        (Set.range (givensBoundaryCurveAddCircle j))ᶜ 0) := by
+  apply complement_component_bounded_of_degree_ne_zero
+    (givensBoundaryCurveAddCircle j)
+    (continuous_givensBoundaryCurveAddCircle j) 0
+    (givensBoundaryCurveAddCircle_ne_zero j)
+    (by simpa [givensBoundaryCurveAddCircle] using
+      givensBoundaryCurve_degree_one j)
+  norm_num
+
 end
 
 end GromovFilling

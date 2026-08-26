@@ -129,6 +129,71 @@ theorem radialMap_degree_stable
     field_simp [sub_ne_zero.mpr (havoid₀ x)]
   rw [hfactor]
 
+lemma curve_ne_of_norm_lt
+    (curve : UnitAddCircle → ℂ) (y : ℂ)
+    (hbound : ∀ x, ‖curve x‖ < ‖y‖) (x : UnitAddCircle) :
+    curve x ≠ y := by
+  intro hxy
+  have hx := hbound x
+  rw [hxy] at hx
+  exact (lt_irrefl ‖y‖) hx
+
+/-- A puncture whose norm is larger than every norm on the curve sees
+degree zero.  In particular this supplies the degree on the unbounded
+component of a compact curve complement. -/
+theorem radialMap_degree_zero_of_norm_lt
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (y : ℂ) (hbound : ∀ x, ‖curve x‖ < ‖y‖) :
+    HasComplexCircleDegree
+      (radialMap curve y (curve_ne_of_norm_lt curve y hbound)) 0 := by
+  have hnormy : 0 < ‖y‖ :=
+    (norm_nonneg (curve (0 : UnitAddCircle))).trans_lt (hbound 0)
+  have hy : y ≠ 0 := norm_pos_iff.mp hnormy
+  let base : UnitAddCircle → ℂ := fun _ ↦ -y
+  have hbase : ∀ x, base x ≠ 0 := fun _ ↦ neg_ne_zero.mpr hy
+  let correction : UnitAddCircle → ℂ := fun x ↦ 1 - curve x / y
+  have hcorrectionBound (x : UnitAddCircle) :
+      ‖correction x - 1‖ < 1 := by
+    change ‖(1 - curve x / y) - 1‖ < 1
+    rw [show (1 : ℂ) - curve x / y - 1 = -(curve x / y) by ring,
+      norm_neg, norm_div]
+    exact (div_lt_one hnormy).mpr (hbound x)
+  have hcorrectionNe : ∀ x, correction x ≠ 0 := fun x ↦
+    ne_zero_of_norm_sub_one_lt_one (hcorrectionBound x)
+  have hcorrectionContinuous : Continuous correction := by
+    dsimp only [correction]
+    exact continuous_const.sub
+      (hcurve.div continuous_const (fun _ ↦ hy))
+  have hcorrectionDegree :
+      HasComplexCircleDegree (radialMap correction 0 hcorrectionNe) 0 := by
+    apply hasComplexCircleDegree_zero_of_avoids_cut
+      (radialMap correction 0 hcorrectionNe)
+      (continuous_radialMap correction 0 hcorrectionNe hcorrectionContinuous)
+      (1 / 2)
+    intro x hx
+    rw [unitAddCircleEquivComplexUnitCircle_half] at hx
+    exact radialProjection_zero_ne_neg_one_of_norm_sub_one_lt_one
+      (hcorrectionBound x) hx
+  let u : ComplexUnitCircle := radialProjection 0 ⟨-y, neg_ne_zero.mpr hy⟩
+  have hbaseDegree :
+      HasComplexCircleDegree (radialMap base 0 hbase) 0 := by
+    simpa [base, u, radialMap] using hasComplexCircleDegree_const u
+  have hproduct := hbaseDegree.radialMap_mul
+    base correction hbase hcorrectionNe hcorrectionDegree
+  have hproduct' : HasComplexCircleDegree
+      (radialMap (fun x ↦ base x * correction x) 0
+        (fun x ↦ mul_ne_zero (hbase x) (hcorrectionNe x))) 0 := by
+    simpa using hproduct
+  convert hproduct' using 1
+  funext x
+  apply Subtype.ext
+  simp only [radialMap, radialProjection, sub_zero]
+  have hfactor : curve x - y = base x * correction x := by
+    dsimp only [base, correction]
+    field_simp [hy]
+    ring
+  rw [hfactor]
+
 /-- On a preconnected family of punctures which stays uniformly away
 from the curve at each parameter, radial degree is constant.  The
 `clearance` hypotheses are exactly what compactness of the boundary image
@@ -282,6 +347,45 @@ theorem radialMap_degree_constant_on_complement_component
       curve hcurve havoidComponent y₀Component hdegreeComponent
   intro y hy
   exact hconstant ⟨y, hy⟩
+
+/-- A continuous complex-valued map on the compact additive circle has a
+strict uniform norm bound. -/
+theorem exists_strict_norm_bound_on_circle
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve) :
+    ∃ R : ℝ, ∀ x, ‖curve x‖ < R := by
+  obtain ⟨x₀, _hx₀, hmax⟩ := isCompact_univ.exists_isMaxOn
+    Set.univ_nonempty hcurve.norm.continuousOn
+  refine ⟨‖curve x₀‖ + 1, ?_⟩
+  intro x
+  exact (hmax (Set.mem_univ x)).trans_lt (lt_add_one _)
+
+/-- A complement component carrying nonzero radial degree is bounded.
+Far-away punctures have degree zero, so they cannot lie in the same
+component. -/
+theorem complement_component_bounded_of_degree_ne_zero
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (y₀ : ℂ) (havoid₀ : ∀ x, curve x ≠ y₀) {d : ℤ}
+    (hdegree₀ : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) d) (hd : d ≠ 0) :
+    Bornology.IsBounded
+      (connectedComponentIn (Set.range curve)ᶜ y₀) := by
+  obtain ⟨R, hR⟩ := exists_strict_norm_bound_on_circle curve hcurve
+  apply (Metric.isBounded_iff_subset_closedBall 0).2
+  refine ⟨R, ?_⟩
+  intro y hy
+  have hyNorm : ‖y‖ ≤ R := by
+    by_contra hnot
+    have hRy : R < ‖y‖ := lt_of_not_ge hnot
+    have hfar : ∀ x, ‖curve x‖ < ‖y‖ := fun x ↦ (hR x).trans hRy
+    have hzero := radialMap_degree_zero_of_norm_lt curve hcurve y hfar
+    have hnonzero := radialMap_degree_constant_on_complement_component
+      curve hcurve y₀ havoid₀ hdegree₀ y hy
+    have hzero' : HasComplexCircleDegree
+        (radialMap curve y
+          (curve_ne_of_mem_complement_component curve y₀ y hy)) 0 := by
+      convert hzero using 1
+    exact hd (hnonzero.unique hzero')
+  simpa [Metric.mem_closedBall, dist_eq_norm] using hyNorm
 
 end
 
