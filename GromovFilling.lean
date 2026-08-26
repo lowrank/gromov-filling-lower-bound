@@ -10,6 +10,7 @@ import GromovFilling.ModTwoDegree
 import GromovFilling.RadialProjection
 import GromovFilling.Oriented
 import GromovFilling.Numerics
+import GromovFilling.Certificates
 
 /-!
 # Fourier certificates for Gromov's filling-area problem

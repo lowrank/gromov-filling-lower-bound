@@ -92,6 +92,87 @@ lemma comass_denominator_pos_of_admissible {lam : ℝ}
   rw [sub_pos, div_mul_eq_mul_div, div_lt_one (pi_sq_pos)]
   nlinarith
 
+/-- The sharp elementary ellipse estimate behind the `Cstar` coefficient.
+It follows from
+`(4/3)(r²+9Y²) - (r²+4rY) = (r-6Y)²/3`. -/
+lemma profile_cross_term_le (r Y : ℝ)
+    (hprofile : r ^ 2 + 9 * Y ^ 2 ≤ 2) :
+    r ^ 2 + 4 * r * Y ≤ 8 / 3 := by
+  nlinarith [sq_nonneg (r - 6 * Y)]
+
+lemma profile_Cstar_bound (r Y : ℝ)
+    (hprofile : r ^ 2 + 9 * Y ^ 2 ≤ 2) :
+    Real.sqrt 2 * (r ^ 2 + 4 * r * Y) ≤ Cstar := by
+  have hsqrt : 0 ≤ Real.sqrt 2 := Real.sqrt_nonneg _
+  have hcross := profile_cross_term_le r Y hprofile
+  unfold Cstar
+  nlinarith
+
+/-- The first-mode bound `r ≤ 4/π` gives the displayed `Dstar` coefficient. -/
+lemma profile_Dstar_bound (r : ℝ) (hr : 0 ≤ r)
+    (hrpi : r ≤ 4 / Real.pi) : 2 * r ^ 2 ≤ Dstar := by
+  have hsq : r ^ 2 ≤ (4 / Real.pi) ^ 2 := by nlinarith
+  calc
+    2 * r ^ 2 ≤ 2 * (4 / Real.pi) ^ 2 := by nlinarith
+    _ = Dstar := by
+      unfold Dstar
+      field_simp [Real.pi_ne_zero]
+      ring
+
+/-- The profile tail estimate yields the quadratic resonance coefficient
+before inserting the first-mode bound. -/
+lemma resonance_coefficient_profile_bound (r Y : ℝ)
+    (hprofile : r ^ 2 + 9 * Y ^ 2 ≤ 2) :
+    r ^ 4 + 4 * r ^ 2 * Y ^ 2 ≤
+      (5 / 9 : ℝ) * r ^ 4 + (8 / 9 : ℝ) * r ^ 2 := by
+  nlinarith [mul_nonneg (sq_nonneg r)
+    (sub_nonneg.mpr hprofile)]
+
+/-- Exact derivation of the constant `Qstar` from the profile and
+first-mode estimates. -/
+lemma resonance_coefficient_le_Qstar (r Y : ℝ) (hr : 0 ≤ r)
+    (hprofile : r ^ 2 + 9 * Y ^ 2 ≤ 2)
+    (hrpi : r ≤ 4 / Real.pi) :
+    r ^ 4 + 4 * r ^ 2 * Y ^ 2 ≤ Qstar := by
+  have hx : r ^ 2 ≤ (4 / Real.pi) ^ 2 := by nlinarith
+  have hmono :
+      (5 / 9 : ℝ) * r ^ 4 + (8 / 9 : ℝ) * r ^ 2 ≤
+        (5 / 9 : ℝ) * (4 / Real.pi) ^ 4 +
+          (8 / 9 : ℝ) * (4 / Real.pi) ^ 2 := by
+    have hfactor : 0 ≤
+        ((4 / Real.pi) ^ 2 - r ^ 2) *
+          ((5 / 9 : ℝ) * ((4 / Real.pi) ^ 2 + r ^ 2) + 8 / 9) := by
+      exact mul_nonneg (sub_nonneg.mpr hx) (by positivity)
+    nlinarith
+  calc
+    r ^ 4 + 4 * r ^ 2 * Y ^ 2 ≤
+        (5 / 9 : ℝ) * r ^ 4 + (8 / 9 : ℝ) * r ^ 2 :=
+      resonance_coefficient_profile_bound r Y hprofile
+    _ ≤ (5 / 9 : ℝ) * (4 / Real.pi) ^ 4 +
+        (8 / 9 : ℝ) * (4 / Real.pi) ^ 2 := hmono
+    _ = Qstar := by
+      unfold Qstar
+      field_simp [Real.pi_ne_zero]
+      ring
+
+/-- Assembly of the quantitative first-variation estimate once the exact
+correlation estimate has reduced it to the two profile terms. -/
+lemma firstVariation_le_Cstar_Dstar
+    (r Y delta L : ℝ) (hr : 0 ≤ r) (hdelta : 0 ≤ delta)
+    (hprofile : r ^ 2 + 9 * Y ^ 2 ≤ 2)
+    (hrpi : r ≤ 4 / Real.pi)
+    (hL : |L| ≤ 2 * r ^ 2 * delta +
+      Real.sqrt 2 * (r ^ 2 + 4 * r * Y) * Real.sqrt delta) :
+    |L| ≤ Cstar * Real.sqrt delta + Dstar * delta := by
+  have hC := profile_Cstar_bound r Y hprofile
+  have hD := profile_Dstar_bound r hr hrpi
+  calc
+    |L| ≤ 2 * r ^ 2 * delta +
+        Real.sqrt 2 * (r ^ 2 + 4 * r * Y) * Real.sqrt delta := hL
+    _ ≤ Dstar * delta + Cstar * Real.sqrt delta := by
+      gcongr
+    _ = Cstar * Real.sqrt delta + Dstar * delta := by ring
+
 end
 
 end GromovFilling
