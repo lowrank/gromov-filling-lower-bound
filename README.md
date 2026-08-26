@@ -27,6 +27,8 @@ runs both checks on every push and pull request.
   sum on every finite cyclic subdivision of the boundary;
 - degree `+1` of every mixed boundary curve, proved by explicitly
   factoring the dominant first harmonic and controlling the correction;
+- the fact that each mixed boundary image is a compact topological Jordan
+  curve, exhibited by a homeomorphism between its range and the circle;
 - local constancy of radial degree in the puncture, constancy on connected
   complement components, degree zero at infinity, and boundedness of the
   nonzero-degree origin component;
@@ -61,8 +63,9 @@ needs:
    with one boundary component—equivalently, furnishing the required fine
    finite triangulation/cell structure and its compatible cyclic boundary
    subdivision;
-2. a Jordan separation theorem identifying the proved bounded nonzero-degree
-   component with the bounded component of the Jordan complement; and
+2. a Jordan separation theorem identifying the already proved bounded
+   nonzero-degree component of this topological Jordan curve with the
+   bounded component of its complement; and
 3. globalization of the proved Lipschitz planar area inequality through
    Riemannian surface charts, including identification of the coordinate
    determinant density with the intrinsic `J₂ G`.
