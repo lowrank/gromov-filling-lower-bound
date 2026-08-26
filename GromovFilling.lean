@@ -11,6 +11,8 @@ import GromovFilling.RadialProjection
 import GromovFilling.CircleDegree
 import GromovFilling.DominantHarmonicDegree
 import GromovFilling.BoundaryDegree
+import GromovFilling.RadialDegreeStability
+import GromovFilling.BoundaryDegreeComponents
 import GromovFilling.Oriented
 import GromovFilling.BoundaryActionSeries
 import GromovFilling.Numerics

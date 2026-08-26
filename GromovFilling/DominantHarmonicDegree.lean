@@ -133,6 +133,20 @@ def dominantHarmonicCorrection {ι : Type*} [Fintype ι]
   1 + ∑ k, (a k / a₁) *
     (unitAddCircleEquivComplexUnitCircle x : ℂ) ^ (m k - 1)
 
+theorem continuous_dominantHarmonicCurve_addCircle
+    {ι : Type*} [Fintype ι]
+    (a₁ : ℂ) (m : ι → ℕ) (a : ι → ℂ) :
+    Continuous (fun x : UnitAddCircle ↦
+      dominantHarmonicCurve a₁ m a
+        (unitAddCircleEquivComplexUnitCircle x)) := by
+  have hz : Continuous (fun x : UnitAddCircle ↦
+      (unitAddCircleEquivComplexUnitCircle x : ℂ)) :=
+    continuous_subtype_val.comp unitAddCircleEquivComplexUnitCircle.continuous
+  unfold dominantHarmonicCurve
+  exact (continuous_const.mul hz).add
+    (continuous_finset_sum Finset.univ fun k _ ↦
+      continuous_const.mul (hz.pow (m k)))
+
 theorem continuous_dominantHarmonicCorrection
     {ι : Type*} [Fintype ι]
     (a₁ : ℂ) (m : ι → ℕ) (a : ι → ℂ) :
