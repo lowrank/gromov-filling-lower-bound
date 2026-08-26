@@ -14,6 +14,7 @@ import GromovFilling.PolygonalSurfaceObstruction
 import GromovFilling.FinePolygonalModel
 import GromovFilling.SurfaceCoverage
 import GromovFilling.EuclideanAreaFormula
+import GromovFilling.ComplexAreaFormula
 import GromovFilling.DominantHarmonicDegree
 import GromovFilling.BoundaryDegree
 import GromovFilling.RadialDegreeStability

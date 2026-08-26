@@ -49,8 +49,10 @@ runs both checks on every push and pull request.
   the puncture into the extension image, hence every point in the bounded
   nonzero-degree component of a mixed Givens curve is covered;
 - the genuine Lipschitz planar area inequality on measurable subsets of
-  `Fin 2 → ℝ`, derived from Rademacher's theorem, null-image control for
-  the exceptional set, and mathlib's Jacobian image bound;
+  both `Fin 2 → ℝ` and `ℂ`, derived from Rademacher's theorem, null-image
+  control for the exceptional set, and mathlib's Jacobian image bound;
+  for a complex-plane domain it is composed directly with the Jordan
+  coverage theorem to bound the covered region by the Jacobian integral;
 - the algebraic/numerical conclusions of the orientation-free and oriented
   certificates at their stated geometric interfaces.
 
