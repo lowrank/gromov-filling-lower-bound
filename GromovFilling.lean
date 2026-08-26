@@ -11,6 +11,7 @@ import GromovFilling.RadialProjection
 import GromovFilling.CircleDegree
 import GromovFilling.BoundarySubdivisionDegree
 import GromovFilling.PolygonalSurfaceObstruction
+import GromovFilling.FinePolygonalModel
 import GromovFilling.SurfaceCoverage
 import GromovFilling.EuclideanAreaFormula
 import GromovFilling.DominantHarmonicDegree

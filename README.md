@@ -38,6 +38,9 @@ runs both checks on every push and pull request.
   odd-degree boundary map, and a half-turn mesh estimate, Lean constructs
   the cuts, all real lifts and integer edge turns, proves the exact signed
   boundary-turn identity, and derives the mod-2 contradiction;
+- a bundled `HasFinePolygonalModels` surface interface which reduces the
+  remaining topological input to constructing one compatible fine finite
+  model for each continuous circle-valued map;
 - the resulting coverage implication: an odd radial boundary degree forces
   the puncture into the extension image, hence every point in the bounded
   nonzero-degree component of a mixed Givens curve is covered;
@@ -54,10 +57,10 @@ contradiction is assembled without auxiliary lift or turn assumptions, but
 the passage from an arbitrary compact surface to that finite data still
 needs:
 
-1. a theorem furnishing the required arbitrarily fine finite
-   triangulation/cell structure for every compact surface with one boundary
-   component and identifying its boundary subcomplex with the cyclic
-   subdivision already constructed in Lean;
+1. a theorem proving `HasFinePolygonalModels` for every compact surface
+   with one boundary component—equivalently, furnishing the required fine
+   finite triangulation/cell structure and its compatible cyclic boundary
+   subdivision;
 2. a Jordan separation theorem identifying the proved bounded nonzero-degree
    component with the bounded component of the Jordan complement; and
 3. globalization of the proved Lipschitz planar area inequality through
