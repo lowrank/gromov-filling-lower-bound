@@ -10,6 +10,7 @@ import GromovFilling.ModTwoDegree
 import GromovFilling.RadialProjection
 import GromovFilling.CircleDegree
 import GromovFilling.BoundarySubdivisionDegree
+import GromovFilling.PolygonalSurfaceObstruction
 import GromovFilling.DominantHarmonicDegree
 import GromovFilling.BoundaryDegree
 import GromovFilling.RadialDegreeStability
