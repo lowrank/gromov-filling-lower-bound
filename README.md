@@ -38,6 +38,9 @@ runs both checks on every push and pull request.
   odd-degree boundary map, and a half-turn mesh estimate, Lean constructs
   the cuts, all real lifts and integer edge turns, proves the exact signed
   boundary-turn identity, and derives the mod-2 contradiction;
+- the resulting coverage implication: an odd radial boundary degree forces
+  the puncture into the extension image, hence every point in the bounded
+  nonzero-degree component of a mixed Givens curve is covered;
 - the algebraic/numerical conclusions of the orientation-free and oriented
   certificates at their stated geometric interfaces.
 
