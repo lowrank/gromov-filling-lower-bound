@@ -118,12 +118,79 @@ def GeometricPolygonalModel.toFinePolygonalModel
     FinePolygonalModel boundary H :=
   { D.model with halfTurn_mesh := hhalf }
 
+/-- Push a geometric polygonal model forward along a continuous map whose
+restriction to the boundary agrees with a new parametrization.  The
+combinatorics and edge parameters are unchanged; only the vertex, edge, and
+face-center locations are transported. -/
+def GeometricPolygonalModel.map
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    {δ ε : ℝ} (D : GeometricPolygonalModel boundary δ)
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmesh : ∀ (face : Fin D.model.faceCount) (e : Fin D.model.edgeCount),
+      e ∈ D.model.faceEdges face → ∀ x : ClosedUnitInterval,
+        dist (f (D.model.faceCenter face)) (f (D.model.edgeToX e x)) < ε) :
+    GeometricPolygonalModel boundary' ε :=
+  { model :=
+      { D.model with
+        vertexPoint := fun v ↦ f (D.model.vertexPoint v)
+        edgeToX := fun e x ↦ f (D.model.edgeToX e x)
+        edgeToX_continuous := fun e ↦ hf.comp (D.model.edgeToX_continuous e)
+        edgeToX_start := by
+          intro e
+          rw [D.model.edgeToX_start]
+        edgeToX_finish := by
+          intro e
+          rw [D.model.edgeToX_finish]
+        faceCenter := fun face ↦ f (D.model.faceCenter face)
+        halfTurn_mesh := by
+          intro face e he x
+          simp only [D.model.halfTurn_mesh face e he x]
+        boundaryPath := by
+          intro k x
+          rw [hboundary]
+          simpa using congrArg f (D.model.boundaryPath k x) }
+    mesh := hmesh }
+
 /-- The map-independent surface input: compatible polygonal models exist
 at every positive geometric mesh scale. -/
 def HasArbitrarilyFinePolygonalModels
     {X : Type*} [PseudoMetricSpace X]
     (boundary : UnitAddCircle → X) : Prop :=
   ∀ ε : ℝ, 0 < ε → Nonempty (GeometricPolygonalModel boundary ε)
+
+/-- Arbitrarily fine polygonal models transport across continuous maps from a
+compact source: choose a sufficiently small source mesh using uniform
+continuity, then push the model forward. -/
+theorem hasArbitrarilyFinePolygonalModels_of_compact_continuous
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary) :
+    HasArbitrarilyFinePolygonalModels boundary' := by
+  intro ε hε
+  have hUniform : UniformContinuous f :=
+    CompactSpace.uniformContinuous_of_continuous hf
+  obtain ⟨δ, hδ, hδf⟩ :=
+    Metric.uniformContinuous_iff.mp hUniform ε hε
+  obtain ⟨D⟩ := hmodels δ hδ
+  refine ⟨D.map f hf hboundary ?_⟩
+  intro face e he x
+  exact hδf (D.mesh face e he x)
+
+/-- Homeomorphic compact images inherit arbitrarily fine polygonal models by
+transporting them along the homeomorphism. -/
+theorem hasArbitrarilyFinePolygonalModels_of_homeomorph
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundary : boundary' = e ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary) :
+    HasArbitrarilyFinePolygonalModels boundary' :=
+  hasArbitrarilyFinePolygonalModels_of_compact_continuous
+    e e.continuous_toFun hboundary hmodels
 
 /-- On a compact metric domain, arbitrarily fine geometric polygonal
 models provide the map-dependent half-turn models needed by the mod-two
@@ -143,6 +210,20 @@ theorem hasFinePolygonalModels_of_arbitrarilyFine
   refine ⟨D.toFinePolygonalModel H ?_⟩
   intro f e he x
   exact hδH (D.mesh f e he x)
+
+/-- Homeomorphic compact images inherit the map-dependent fine polygonal-model
+interface after transporting arbitrarily fine geometric models and then using
+uniform continuity. -/
+theorem hasFinePolygonalModels_of_homeomorph_arbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundary : boundary' = e ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary) :
+    HasFinePolygonalModels boundary' :=
+  hasFinePolygonalModels_of_arbitrarilyFine
+    (hasArbitrarilyFinePolygonalModels_of_homeomorph e hboundary hmodels)
 
 /-- A bundled fine polygonal model rules out an odd degree on its actual
 cyclic boundary.  All auxiliary cuts and lifts are constructed by the
@@ -185,6 +266,22 @@ theorem hasOddBoundaryDegreeObstruction_of_arbitrarilyFinePolygonalModels
     HasOddBoundaryDegreeObstruction boundary :=
   hasOddBoundaryDegreeObstruction_of_finePolygonalModels
     (hasFinePolygonalModels_of_arbitrarilyFine hmodels)
+
+/-- A boundary-respecting homeomorphism from a compact source carrying
+arbitrarily fine polygonal models transfers the odd boundary-degree
+obstruction to the target boundary.  This is the exact topological input
+needed by the coverage theorems once a source-space triangulation theorem is
+available. -/
+theorem hasOddBoundaryDegreeObstruction_of_homeomorph_arbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundary : boundary' = e ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary) :
+    HasOddBoundaryDegreeObstruction boundary' :=
+  hasOddBoundaryDegreeObstruction_of_finePolygonalModels
+    (hasFinePolygonalModels_of_homeomorph_arbitrarilyFine e hboundary hmodels)
 
 end
 
