@@ -191,6 +191,32 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_arbitrarily_fine_model
     j boundary (hasFinePolygonalModels_of_arbitrarilyFine hmodels)
     G hG hboundary hpartition hzero
 
+/-- Coverage also transfers from any compact source with arbitrarily fine
+polygonal models once a boundary-respecting homeomorphism identifies that
+source with the target domain.  This packages the exact downstream use of a
+future disk or surface triangulation theorem. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_homeomorph_arbitrarily_fine_models
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_fine_models
+    j boundary'
+    (hasFinePolygonalModels_of_homeomorph_arbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+    G hG hboundary hpartition hzero
+
 /-- The separation-free coverage conclusion from arbitrarily fine
 geometric polygonal models. -/
 theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_arbitrarily_fine_models
@@ -207,6 +233,30 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_arbitrarily_fi
       region ⊆ Set.range G :=
   exists_givensBoundaryCurve_bounded_region_subset_range_of_fine_models
     j boundary (hasFinePolygonalModels_of_arbitrarilyFine hmodels)
+    G hG hboundary
+
+/-- Separation-free coverage also transfers from a compact source with
+arbitrarily fine polygonal models through a boundary-respecting
+homeomorphism. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorph_arbitrarily_fine_models
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_fine_models
+    j boundary'
+    (hasFinePolygonalModels_of_homeomorph_arbitrarilyFine
+      e hboundaryHomeomorph hmodels)
     G hG hboundary
 
 end

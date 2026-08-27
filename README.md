@@ -20,7 +20,12 @@ runs both checks on every push and pull request.
 
 - exact Fourier coefficients, Green boundary action, and finite Fourier
   area calculations;
-- the explicit Givens mixing matrix, its orthogonality/energy identities,
+- the metric odd-distance profile itself: antipodal identities,
+  nonnegative slack, vanishing boundary slack, Lipschitz estimates, fixed
+  Fourier-coordinate maps, and the derived boundary formula
+  `z_n(γ(s)) = -4/(πn²) exp(ins)` for every positive odd mode;
+- the explicit Givens mixing matrix, its full orthogonality identity
+  (including the off-diagonal column products), its energy identities,
   and rowwise dominant-harmonic inequalities;
 - injectivity of every mixed boundary curve;
 - an integer circle degree defined by real lifts, including uniqueness,
@@ -54,6 +59,12 @@ runs both checks on every push and pull request.
 - the resulting coverage implication: an odd radial boundary degree forces
   the puncture into the extension image, hence every point in the bounded
   nonzero-degree component of a mixed Givens curve is covered;
+- compact-source transport for the fine-polygonal-model interface: a
+  geometric polygonal model can be pushed forward along a continuous map,
+  `HasArbitrarilyFinePolygonalModels` transfers across compact continuous
+  maps and in particular across homeomorphisms, and the resulting
+  homeomorphism-level wrappers now feed both the odd-degree obstruction and
+  the topological coverage theorems directly;
 - the genuine Lipschitz planar area inequality on measurable subsets of
   both `Fin 2 → ℝ` and `ℂ`, derived from Rademacher's theorem, null-image
   control for the exceptional set, and mathlib's Jacobian image bound;
@@ -73,7 +84,8 @@ needs:
    surface with one boundary component—equivalently, furnishing arbitrarily
    fine finite triangulations/cell structures and their compatible cyclic
    boundary subdivisions (the compact uniform-continuity passage from this
-   geometric statement to `HasFinePolygonalModels` is now formalized);
+   geometric statement to `HasFinePolygonalModels`, together with compact
+   continuous/homeomorphic transport from model domains, is now formalized);
 2. globalization of the proved Lipschitz planar area inequality through
    Riemannian surface charts, including identification of the coordinate
    determinant density with the intrinsic `J₂ G`.
