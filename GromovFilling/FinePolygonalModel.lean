@@ -775,6 +775,155 @@ theorem closedUnitSquareRadial_comp_cylinderBoundary :
   funext t
   exact (closedUnitSquareRadial_finish t).symm
 
+/-- The lower positive radial level in the disk-like square mesh. -/
+def lowerSquareRingLevel {n : ℕ} (i : Fin n) : Fin (n + 1) :=
+  ⟨i.1, Nat.lt_trans i.2 (Nat.lt_succ_self _)⟩
+
+/-- The upper positive radial level in the disk-like square mesh. -/
+def upperSquareRingLevel {n : ℕ} (i : Fin n) : Fin (n + 1) :=
+  ⟨i.1 + 1, Nat.succ_lt_succ i.2⟩
+
+@[simp] theorem radialSubdivisionLower_upperSquareRingLevel {n : ℕ} (i : Fin n) :
+    radialSubdivisionLower (upperSquareRingLevel i) =
+      radialSubdivisionUpper (lowerSquareRingLevel i) := by
+  apply Fin.ext
+  simp [radialSubdivisionLower, radialSubdivisionUpper,
+    lowerSquareRingLevel, upperSquareRingLevel]
+
+@[simp] theorem radialSubdivisionUpper_last {n : ℕ} :
+    radialSubdivisionUpper (Fin.last n) = Fin.last (n + 1) := by
+  apply Fin.ext
+  simp [radialSubdivisionUpper]
+
+/-- Vertices of the disk-like radial mesh in the closed unit square. -/
+inductive SquareDiskVertex (n m : ℕ)
+  | center
+  | ring (i : Fin (n + 1)) (j : Fin (m + 1))
+  deriving DecidableEq, Fintype
+
+/-- Edges of the disk-like radial mesh in the closed unit square. -/
+inductive SquareDiskEdge (n m : ℕ)
+  | spoke (j : Fin (m + 1))
+  | radial (i : Fin n) (j : Fin (m + 1))
+  | angular (i : Fin (n + 1)) (j : Fin (m + 1))
+  | diagonal (i : Fin n) (j : Fin (m + 1))
+  deriving DecidableEq, Fintype
+
+/-- Faces of the disk-like radial mesh in the closed unit square. -/
+inductive SquareDiskFace (n m : ℕ)
+  | center (j : Fin (m + 1))
+  | lower (i : Fin n) (j : Fin (m + 1))
+  | upper (i : Fin n) (j : Fin (m + 1))
+  deriving DecidableEq, Fintype
+
+/-- Vertex locations in the closed unit square. -/
+def squareDiskVertexPoint (n m : ℕ) : SquareDiskVertex n m → ClosedUnitSquare
+  | .center => closedUnitSquareCenter
+  | .ring i j =>
+      closedUnitSquareRadial
+        (radialSubdivisionPoint n (radialSubdivisionUpper i), angularSubdivisionPoint m j)
+
+@[simp] theorem squareDiskVertexPoint_center (n m : ℕ) :
+    squareDiskVertexPoint n m .center = closedUnitSquareCenter := rfl
+
+@[simp] theorem squareDiskVertexPoint_ring (n m : ℕ) (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    squareDiskVertexPoint n m (.ring i j) =
+      closedUnitSquareRadial
+        (radialSubdivisionPoint n (radialSubdivisionUpper i), angularSubdivisionPoint m j) := rfl
+
+/-- Edge endpoints in the disk-like radial mesh. -/
+def squareDiskEdgeEnds {n m : ℕ} : SquareDiskEdge n m → SquareDiskVertex n m × SquareDiskVertex n m
+  | .spoke j => (.center, .ring 0 j)
+  | .radial i j => (.ring (lowerSquareRingLevel i) j, .ring (upperSquareRingLevel i) j)
+  | .angular i j => (.ring i j, .ring i (cyclicSucc j))
+  | .diagonal i j => (.ring (lowerSquareRingLevel i) j, .ring (upperSquareRingLevel i) (cyclicSucc j))
+
+/-- Edge paths in the closed unit square. -/
+def squareDiskEdgePath (n m : ℕ) : SquareDiskEdge n m → ClosedUnitInterval → ClosedUnitSquare
+  | .spoke j =>
+      fun x ↦ closedUnitSquareRadial (radialSubdivisionArc n 0 x, angularSubdivisionPoint m j)
+  | .radial i j =>
+      fun x ↦ closedUnitSquareRadial (cylinderRadialEdgePath n m (upperSquareRingLevel i) j x)
+  | .angular i j =>
+      fun x ↦ closedUnitSquareRadial (cylinderAngularEdgePath n m (radialSubdivisionUpper i) j x)
+  | .diagonal i j =>
+      fun x ↦ closedUnitSquareRadial (cylinderDiagonalEdgePath n m (upperSquareRingLevel i) j x)
+
+theorem continuous_squareDiskEdgePath (n m : ℕ) (e : SquareDiskEdge n m) :
+    Continuous (squareDiskEdgePath n m e) := by
+  cases e with
+  | spoke j =>
+      exact continuous_closedUnitSquareRadial.comp <|
+        (continuous_radialSubdivisionArc n 0).prodMk continuous_const
+  | radial i j =>
+      exact continuous_closedUnitSquareRadial.comp <|
+        continuous_cylinderRadialEdgePath n m (upperSquareRingLevel i) j
+  | angular i j =>
+      exact continuous_closedUnitSquareRadial.comp <|
+        continuous_cylinderAngularEdgePath n m (radialSubdivisionUpper i) j
+  | diagonal i j =>
+      exact continuous_closedUnitSquareRadial.comp <|
+        continuous_cylinderDiagonalEdgePath n m (upperSquareRingLevel i) j
+
+theorem squareDiskEdgePath_start {n m : ℕ} (e : SquareDiskEdge n m) :
+    squareDiskEdgePath n m e closedUnitIntervalStart =
+      squareDiskVertexPoint n m (squareDiskEdgeEnds e).1 := by
+  cases e with
+  | spoke j =>
+      simpa [squareDiskEdgePath, squareDiskEdgeEnds, squareDiskVertexPoint,
+        radialSubdivisionArc_start, radialSubdivisionPoint_zero,
+        radialSubdivisionLower] using
+        closedUnitSquareRadial_start (angularSubdivisionPoint m j)
+  | radial i j =>
+      simp [squareDiskEdgePath, squareDiskEdgeEnds, squareDiskVertexPoint,
+        cylinderRadialEdgePath_start, cylinderSubdivisionPoint,
+        radialSubdivisionLower_upperSquareRingLevel]
+  | angular i j =>
+      simp [squareDiskEdgePath, squareDiskEdgeEnds, squareDiskVertexPoint,
+        cylinderAngularEdgePath_start, cylinderSubdivisionPoint]
+  | diagonal i j =>
+      simp [squareDiskEdgePath, squareDiskEdgeEnds, squareDiskVertexPoint,
+        cylinderDiagonalEdgePath_start, cylinderSubdivisionPoint,
+        radialSubdivisionLower_upperSquareRingLevel]
+
+theorem squareDiskEdgePath_finish {n m : ℕ} (e : SquareDiskEdge n m) :
+    squareDiskEdgePath n m e closedUnitIntervalFinish =
+      squareDiskVertexPoint n m (squareDiskEdgeEnds e).2 := by
+  cases e with
+  | spoke j =>
+      simp [squareDiskEdgePath, squareDiskEdgeEnds, squareDiskVertexPoint,
+        radialSubdivisionArc_finish]
+  | radial i j =>
+      simp [squareDiskEdgePath, squareDiskEdgeEnds, squareDiskVertexPoint,
+        cylinderRadialEdgePath_finish, cylinderSubdivisionPoint]
+  | angular i j =>
+      simp [squareDiskEdgePath, squareDiskEdgeEnds, squareDiskVertexPoint,
+        cylinderAngularEdgePath_finish, cylinderSubdivisionPoint]
+  | diagonal i j =>
+      simp [squareDiskEdgePath, squareDiskEdgeEnds, squareDiskVertexPoint,
+        cylinderDiagonalEdgePath_finish, cylinderSubdivisionPoint]
+
+/-- Boundary vertices of the disk-like radial mesh. -/
+def squareDiskBoundaryVertex {n m : ℕ} (j : Fin (m + 1)) : SquareDiskVertex n m :=
+  .ring (Fin.last n) j
+
+/-- Boundary edges of the disk-like radial mesh. -/
+def squareDiskBoundaryEdge {n m : ℕ} (j : Fin (m + 1)) : SquareDiskEdge n m :=
+  .angular (Fin.last n) j
+
+@[simp] theorem squareDiskBoundaryEdge_ends {n m : ℕ} (j : Fin (m + 1)) :
+    squareDiskEdgeEnds (squareDiskBoundaryEdge (n := n) (m := m) j) =
+      (squareDiskBoundaryVertex (n := n) (m := m) j,
+        squareDiskBoundaryVertex (n := n) (m := m) (cyclicSucc j)) := by
+  simp [squareDiskBoundaryEdge, squareDiskBoundaryVertex, squareDiskEdgeEnds]
+
+@[simp] theorem squareDiskBoundaryEdgePath_eq {n m : ℕ} (j : Fin (m + 1)) :
+    squareDiskEdgePath n m (squareDiskBoundaryEdge (n := n) (m := m) j) =
+      fun x ↦ closedUnitSquareRadial
+        (cylinderAngularEdgePath n m (Fin.last (n + 1)) j x) := by
+  funext x
+  simp [squareDiskBoundaryEdge, squareDiskEdgePath]
+
 
 /-- Radial map from the closed unit square to the closed unit disk.  It preserves
 rays from the origin and rescales each nonzero point so that its Euclidean norm
