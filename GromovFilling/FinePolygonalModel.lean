@@ -1171,6 +1171,149 @@ theorem squareDiskBoundaryEdges_eq {n m : ℕ} :
   funext x
   simp [squareDiskBoundaryEdge, squareDiskEdgePath]
 
+theorem cyclicSucc_even_iff_not_even_of_odd {m : ℕ} (hm : Odd m)
+    (j : Fin (m + 1)) :
+    Even (cyclicSucc j).1 ↔ ¬ Even j.1 := by
+  by_cases hj : j = Fin.last m
+  · subst hj
+    rw [cyclicSucc_last]
+    simpa [Nat.not_even_iff_odd] using hm
+  · rw [cyclicSucc_val_of_ne_last j hj]
+    simp [Nat.even_add_one]
+
+theorem cyclicSucc_not_even_iff_even_of_odd {m : ℕ} (hm : Odd m)
+    (j : Fin (m + 1)) :
+    ¬ Even (cyclicSucc j).1 ↔ Even j.1 := by
+  rw [cyclicSucc_even_iff_not_even_of_odd hm j]
+  exact not_not
+
+/-- Alternating central-triangle vertex order for an even boundary subdivision. -/
+def squareDiskCenterFaceVertexAlt {n m : ℕ} (j : Fin (m + 1)) :
+    Fin (2 + 1) → SquareDiskVertex n m :=
+  if Even j.1 then
+    fun k =>
+      match k.1 with
+      | 0 => .center
+      | 1 => .ring 0 j
+      | _ => .ring 0 (cyclicSucc j)
+  else
+    fun k =>
+      match k.1 with
+      | 0 => .ring 0 j
+      | 1 => .center
+      | _ => .ring 0 (cyclicSucc j)
+
+/-- Alternating central-triangle edge order for an even boundary subdivision. -/
+def squareDiskCenterFaceEdgeAlt {n m : ℕ} (j : Fin (m + 1)) :
+    Fin (2 + 1) → SquareDiskEdge n m :=
+  if Even j.1 then
+    fun k =>
+      match k.1 with
+      | 0 => .spokeOut j
+      | 1 => .angularForward 0 j
+      | _ => .spokeIn (cyclicSucc j)
+  else
+    fun k =>
+      match k.1 with
+      | 0 => .spokeIn j
+      | 1 => .spokeOut (cyclicSucc j)
+      | _ => .angularBackward 0 j
+
+@[simp] theorem squareDiskCenterFaceVertexAlt_zero_even {n m : ℕ} {j : Fin (m + 1)}
+    (hj : Even j.1) :
+    squareDiskCenterFaceVertexAlt (n := n) j 0 = SquareDiskVertex.center := by
+  simp [squareDiskCenterFaceVertexAlt, hj]
+
+@[simp] theorem squareDiskCenterFaceVertexAlt_one_even {n m : ℕ} {j : Fin (m + 1)}
+    (hj : Even j.1) :
+    squareDiskCenterFaceVertexAlt (n := n) j 1 = SquareDiskVertex.ring 0 j := by
+  simp [squareDiskCenterFaceVertexAlt, hj]
+
+@[simp] theorem squareDiskCenterFaceVertexAlt_two_even {n m : ℕ} {j : Fin (m + 1)}
+    (hj : Even j.1) :
+    squareDiskCenterFaceVertexAlt (n := n) j 2 = SquareDiskVertex.ring 0 (cyclicSucc j) := by
+  simp [squareDiskCenterFaceVertexAlt, hj]
+
+@[simp] theorem squareDiskCenterFaceVertexAlt_zero_odd {n m : ℕ} {j : Fin (m + 1)}
+    (hj : ¬ Even j.1) :
+    squareDiskCenterFaceVertexAlt (n := n) j 0 = SquareDiskVertex.ring 0 j := by
+  simp [squareDiskCenterFaceVertexAlt, hj]
+
+@[simp] theorem squareDiskCenterFaceVertexAlt_one_odd {n m : ℕ} {j : Fin (m + 1)}
+    (hj : ¬ Even j.1) :
+    squareDiskCenterFaceVertexAlt (n := n) j 1 = SquareDiskVertex.center := by
+  simp [squareDiskCenterFaceVertexAlt, hj]
+
+@[simp] theorem squareDiskCenterFaceVertexAlt_two_odd {n m : ℕ} {j : Fin (m + 1)}
+    (hj : ¬ Even j.1) :
+    squareDiskCenterFaceVertexAlt (n := n) j 2 = SquareDiskVertex.ring 0 (cyclicSucc j) := by
+  simp [squareDiskCenterFaceVertexAlt, hj]
+
+@[simp] theorem squareDiskCenterFaceEdgeAlt_zero_even {n m : ℕ} {j : Fin (m + 1)}
+    (hj : Even j.1) :
+    squareDiskCenterFaceEdgeAlt (n := n) j 0 = SquareDiskEdge.spokeOut j := by
+  simp [squareDiskCenterFaceEdgeAlt, hj]
+
+@[simp] theorem squareDiskCenterFaceEdgeAlt_one_even {n m : ℕ} {j : Fin (m + 1)}
+    (hj : Even j.1) :
+    squareDiskCenterFaceEdgeAlt (n := n) j 1 = SquareDiskEdge.angularForward 0 j := by
+  simp [squareDiskCenterFaceEdgeAlt, hj]
+
+@[simp] theorem squareDiskCenterFaceEdgeAlt_two_even {n m : ℕ} {j : Fin (m + 1)}
+    (hj : Even j.1) :
+    squareDiskCenterFaceEdgeAlt (n := n) j 2 = SquareDiskEdge.spokeIn (cyclicSucc j) := by
+  simp [squareDiskCenterFaceEdgeAlt, hj]
+
+@[simp] theorem squareDiskCenterFaceEdgeAlt_zero_odd {n m : ℕ} {j : Fin (m + 1)}
+    (hj : ¬ Even j.1) :
+    squareDiskCenterFaceEdgeAlt (n := n) j 0 = SquareDiskEdge.spokeIn j := by
+  simp [squareDiskCenterFaceEdgeAlt, hj]
+
+@[simp] theorem squareDiskCenterFaceEdgeAlt_one_odd {n m : ℕ} {j : Fin (m + 1)}
+    (hj : ¬ Even j.1) :
+    squareDiskCenterFaceEdgeAlt (n := n) j 1 = SquareDiskEdge.spokeOut (cyclicSucc j) := by
+  simp [squareDiskCenterFaceEdgeAlt, hj]
+
+@[simp] theorem squareDiskCenterFaceEdgeAlt_two_odd {n m : ℕ} {j : Fin (m + 1)}
+    (hj : ¬ Even j.1) :
+    squareDiskCenterFaceEdgeAlt (n := n) j 2 = SquareDiskEdge.angularBackward 0 j := by
+  simp [squareDiskCenterFaceEdgeAlt, hj]
+
+theorem squareDiskCenterFaceVertexAlt_injective_of_odd {n m : ℕ} (hm : Odd m)
+    (j : Fin (m + 1)) :
+    Function.Injective (squareDiskCenterFaceVertexAlt (n := n) j) := by
+  have hcyc₁ : j ≠ cyclicSucc j := by
+    have hm' : 0 < m := hm.pos
+    exact self_ne_cyclicSucc_of_pos hm' j
+  have hcyc₂ : cyclicSucc j ≠ j := by
+    have hm' : 0 < m := hm.pos
+    exact cyclicSucc_ne_self_of_pos hm' j
+  intro a b h
+  by_cases hj : Even j.1
+  · fin_cases a <;> fin_cases b <;> simp [squareDiskCenterFaceVertexAlt, hj, hcyc₁, hcyc₂] at h ⊢
+  · fin_cases a <;> fin_cases b <;> simp [squareDiskCenterFaceVertexAlt, hj, hcyc₁, hcyc₂] at h ⊢
+
+theorem squareDiskCenterFaceEdgeAlt_injective_of_odd {n m : ℕ} (_hm : Odd m)
+    (j : Fin (m + 1)) :
+    Function.Injective (squareDiskCenterFaceEdgeAlt (n := n) j) := by
+  intro a b h
+  by_cases hj : Even j.1
+  · fin_cases a <;> fin_cases b <;> simp [squareDiskCenterFaceEdgeAlt, hj] at h ⊢
+  · fin_cases a <;> fin_cases b <;> simp [squareDiskCenterFaceEdgeAlt, hj] at h ⊢
+
+theorem squareDiskCenterFaceEdgeAlt_ends_of_odd {n m : ℕ} (_hm : Odd m)
+    (j : Fin (m + 1)) (k : Fin (2 + 1)) :
+    squareDiskEdgeEnds (squareDiskCenterFaceEdgeAlt (n := n) j k) =
+      (squareDiskCenterFaceVertexAlt (n := n) j k,
+        squareDiskCenterFaceVertexAlt (n := n) j (cyclicSucc k)) := by
+  by_cases hj : Even j.1
+  · fin_cases k <;>
+      simp [squareDiskCenterFaceEdgeAlt, squareDiskCenterFaceVertexAlt,
+        squareDiskEdgeEnds, hj, cyclicSucc]
+  · fin_cases k <;>
+      simp [squareDiskCenterFaceEdgeAlt, squareDiskCenterFaceVertexAlt,
+        squareDiskEdgeEnds, hj, cyclicSucc]
+
 
 /-- Radial map from the closed unit square to the closed unit disk.  It preserves
 rays from the origin and rescales each nonzero point so that its Euclidean norm
