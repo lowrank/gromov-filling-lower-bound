@@ -54,6 +54,29 @@ theorem cyclicSucc_injective {n : ℕ} :
         cyclicSucc_val_of_ne_last l hl] at hval
       omega
 
+/-- Cyclic predecessor on a nonempty finite set. -/
+noncomputable def cyclicPred {n : ℕ} : Fin (n + 1) → Fin (n + 1) :=
+  (Equiv.ofBijective (cyclicSucc : Fin (n + 1) → Fin (n + 1)) (Finite.injective_iff_bijective.mp cyclicSucc_injective)).symm
+
+@[simp] theorem cyclicSucc_cyclicPred {n : ℕ} (k : Fin (n + 1)) :
+    cyclicSucc (cyclicPred k) = k := by
+  exact (Equiv.ofBijective (cyclicSucc : Fin (n + 1) → Fin (n + 1)) (Finite.injective_iff_bijective.mp cyclicSucc_injective)).apply_symm_apply k
+
+@[simp] theorem cyclicPred_cyclicSucc {n : ℕ} (k : Fin (n + 1)) :
+    cyclicPred (cyclicSucc k) = k := by
+  exact (Equiv.ofBijective (cyclicSucc : Fin (n + 1) → Fin (n + 1)) (Finite.injective_iff_bijective.mp cyclicSucc_injective)).symm_apply_apply k
+
+@[simp] theorem cyclicPred_zero {n : ℕ} :
+    cyclicPred (0 : Fin (n + 1)) = Fin.last n := by
+  apply cyclicSucc_injective
+  simp [cyclicSucc_last]
+
+theorem cyclicPred_injective {n : ℕ} :
+    Function.Injective (cyclicPred : Fin (n + 1) → Fin (n + 1)) := by
+  intro k l hkl
+  have h := congrArg cyclicSucc hkl
+  simpa using h
+
 theorem cyclicSucc_bijective {n : ℕ} :
     Function.Bijective (cyclicSucc : Fin (n + 1) → Fin (n + 1)) :=
   Finite.injective_iff_bijective.mp cyclicSucc_injective
