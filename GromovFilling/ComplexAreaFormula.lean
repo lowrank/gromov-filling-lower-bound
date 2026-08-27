@@ -148,6 +148,33 @@ theorem complex_volume_le_lintegral_abs_det_fderiv_of_subset_range
   (measure_mono hcoverage).trans
     (complex_volume_image_le_lintegral_abs_det_fderiv f s hs hf)
 
+/-- For a complex-plane domain, the topological odd boundary-degree
+obstruction and the analytic area inequality already suffice to bound the
+Jordan region forced by Lemma 5.4.  This is the exact obstruction-level
+planar interface, independent of how that obstruction is proved. -/
+theorem givens_jordan_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    volume region₁ ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  have hcoverage : region₁ ⊆ Set.range G :=
+    givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+      j boundary hobstruction G hG hboundary hpartition hzero
+  have hcoverage' : region₁ ⊆ G '' (Set.univ : Set ℂ) := by
+    simpa only [Set.image_univ] using hcoverage
+  simpa only [Measure.restrict_univ] using
+    (complex_volume_le_lintegral_abs_det_fderiv_of_subset_range
+      G Set.univ region₁ MeasurableSet.univ hGLipschitz hcoverage')
+
 /-- For a complex-plane domain, the topological coverage half and the
 analytic area half of Lemma 5.4 compose directly: the Jordan region forced
 into the image is bounded by the global Jacobian integral.  The general
@@ -261,6 +288,26 @@ theorem givens_jordan_region_volume_le_complex_jacobian_of_nullhomotopy
     (complex_volume_le_lintegral_abs_det_fderiv_of_subset_range
       G Set.univ region₁ MeasurableSet.univ hGLipschitz hcoverage')
 
+/-- Planar, obstruction-level form of the quantitative conclusion in Lemma
+5.4: the explicit Fourier coefficient area is the Jordan-region volume, the
+odd boundary-degree obstruction forces that region into the image, and the
+area formula bounds it by the Jacobian integral. -/
+theorem givens_mixedBoundaryArea_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
+    exists_givensBoundaryCurve_jordanPartition_at_origin j
+  rw [← volume_givensBoundaryCurve_jordan_region j hpartition hzero]
+  exact givens_jordan_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary hobstruction G hG hboundary hpartition hzero hGLipschitz
+
 /-- Planar, end-to-end form of the quantitative conclusion in Lemma 5.4:
 the explicit Fourier coefficient area is the actual Jordan-region volume,
 that region is forced into the extension image by the mod-two obstruction,
@@ -371,6 +418,32 @@ theorem exists_givens_bounded_region_volume_le_complex_jacobian_of_closedUnitDis
     hzero,
     givens_jordan_region_volume_le_complex_jacobian_of_closedUnitDisk_homeomorph_direct
       j boundary e hboundaryHomeomorph G hG hboundary hpartition hzero hGLipschitz⟩
+
+/-- Obstruction-level planar Lemma 5.4: there is a bounded open connected
+region containing the origin whose volume is controlled by the Jacobian
+integral, assuming only the odd boundary-degree obstruction. -/
+theorem exists_givens_bounded_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
+    exists_givensBoundaryCurve_jordanPartition_at_origin j
+  exact ⟨region₁, hpartition.region₁_open,
+    hpartition.region₁_connected,
+    givensBoundaryCurve_jordan_region_at_origin_bounded
+      j hpartition hzero,
+    hzero,
+    givens_jordan_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+      j boundary hobstruction G hG hboundary hpartition hzero hGLipschitz⟩
 
 /-- Jordan separation and coverage can be discharged internally: there is
 a bounded open connected region containing the origin whose volume is

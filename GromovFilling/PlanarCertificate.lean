@@ -45,6 +45,31 @@ theorem finite_universal_ennreal_of_complex_planar_maps
   · exact hbudget
 
 /-- The finite orientation-free Fourier certificate for complex-plane
+domains under the exact topological interface: an odd boundary-degree
+obstruction and the global Jacobian budget. -/
+theorem finite_universal_ennreal_of_complex_planar_maps_of_odd_boundary_degree_obstruction
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (G : Fin N → ℂ → ℂ)
+    (hG : ∀ j, Continuous (G j))
+    (hboundary : ∀ j t,
+      G j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (K : Fin N → ℝ≥0)
+    (hGLipschitz : ∀ j, LipschitzWith (K j) (G j))
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  apply finite_universal_ennreal_of_givens_coverage_budget N area
+    (fun j ↦ ∫⁻ x,
+      ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume)
+  · intro j
+    exact givens_mixedBoundaryArea_le_complex_jacobian_of_odd_boundary_degree_obstruction
+      j boundary hobstruction (G j) (hG j) (hboundary j) (hGLipschitz j)
+  · exact hbudget
+
+/-- The finite orientation-free Fourier certificate for complex-plane
 domains whose boundary extends continuously across the standard closed disk. -/
 theorem finite_universal_ennreal_of_complex_planar_maps_of_closedUnitDisk_extension
     (N : ℕ) (area : ℝ≥0∞)
@@ -134,6 +159,43 @@ theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian
         |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
   exact givens_mixedBoundaryArea_le_complex_jacobian
     j boundary hfine (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    (givensMetricFourierMap_lipschitzWith hboundary N j)
+
+/-- Planar Lemma 5.4 for the genuine metric distance-profile map under the
+exact topological interface: an odd boundary-degree obstruction on the planar
+boundary. -/
+theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (hboundary : IsometricCircleBoundary boundary) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
+  exact givens_mixedBoundaryArea_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary hobstruction (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    (givensMetricFourierMap_lipschitzWith hboundary N j)
+
+/-- Bounded-region form of planar Lemma 5.4 for the genuine metric Fourier
+map under the exact topological interface: an odd boundary-degree obstruction
+on the planar boundary. -/
+theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (hboundary : IsometricCircleBoundary boundary) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
+  exact exists_givens_bounded_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary hobstruction (givensMetricFourierMap boundary N j)
     (continuous_givensMetricFourierMap hboundary N j)
     (givensMetricFourierMap_on_boundary hboundary j)
     (givensMetricFourierMap_lipschitzWith hboundary N j)
@@ -406,6 +468,49 @@ theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_m
     finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_coordinateEnergy
       N area boundary hboundary hfine harea
 
+/-- Finite slack-refined planar certificate under the exact topological
+interface: an odd boundary-degree obstruction on the planar boundary. -/
+theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_odd_boundary_degree_obstruction
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area := by
+  let defectMass : ℝ≥0∞ :=
+    ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume
+  have hbudget :
+      (∑ j : Fin N, ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) +
+          defectMass ≤ volume (Set.univ : Set ℂ) := by
+    simpa [defectMass, Measure.restrict_univ] using
+      sum_lintegral_givensMetricFourierMap_add_lintegral_distanceSlackDerivativeEnergyDefect_le_volume
+        boundary hboundary N Set.univ MeasurableSet.univ
+  refine (finite_universal_ennreal_of_givens_coverage_budget_add N
+    (volume (Set.univ : Set ℂ)) defectMass
+    (fun j ↦ ∫⁻ x, ENNReal.ofReal
+      |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ?_ hbudget).trans harea
+  intro j
+  exact givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary hobstruction hboundary
+
+/-- Infinite slack-refined planar certificate under the exact topological
+interface: an odd boundary-degree obstruction on the planar boundary. -/
+theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_maps_of_odd_boundary_degree_obstruction
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  exact
+    finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_odd_boundary_degree_obstruction
+      N area boundary hobstruction hboundary harea
+
 /-- Finite slack-refined planar certificate when the boundary extends across
 the standard closed disk. -/
 theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_closedUnitDisk_extension
@@ -544,6 +649,47 @@ theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_m
   exact
     finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_nullhomotopy
       N area boundary center F hF0 hF1 hboundary harea
+
+/-- The complete finite planar certificate for the actual metric Fourier
+family under the exact topological interface: an odd boundary-degree
+obstruction on the planar boundary. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_odd_boundary_degree_obstruction
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  apply finite_universal_ennreal_of_givens_coverage_budget N area
+    (fun j ↦ ∫⁻ x, ENNReal.ofReal
+      |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume)
+  · exact fun j ↦
+      givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_odd_boundary_degree_obstruction
+        j boundary hobstruction hboundary
+  · exact hbudget
+
+/-- Infinite-mode planar conclusion for the actual metric Fourier family
+under the exact topological interface: an odd boundary-degree obstruction on
+ the planar boundary. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_odd_boundary_degree_obstruction
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact finite_universal_ennreal_of_metric_complex_planar_map_of_odd_boundary_degree_obstruction
+    N area boundary hobstruction hboundary (hbudget N)
 
 /-- The complete finite planar certificate for the actual metric Fourier
 family when the boundary extends continuously across the standard closed
@@ -717,6 +863,51 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy
   intro N
   exact finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy
     N area boundary hboundary hfine (hbudget N) harea
+
+/-- The finite planar certificate with coordinate-energy budget under the
+exact topological interface: an odd boundary-degree obstruction on the planar
+boundary. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_odd_boundary_degree_obstruction
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget :
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  have hbudget' :
+      ∀ᵐ x ∂volume.restrict (Set.univ : Set ℂ),
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2 :=
+    ae_restrict_of_ae hbudget
+  refine (finite_universal_ennreal_of_metric_complex_planar_map_of_odd_boundary_degree_obstruction
+    N (volume (Set.univ : Set ℂ)) boundary hobstruction hboundary ?_).trans harea
+  simpa only [Measure.restrict_univ] using
+    sum_lintegral_givensMetricFourierMap_le_volume_of_coordinateEnergy
+      boundary hboundary N Set.univ MeasurableSet.univ hbudget'
+
+/-- Infinite-mode planar certificate with coordinate-energy budget under the
+exact topological interface: an odd boundary-degree obstruction on the planar
+boundary. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_odd_boundary_degree_obstruction
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget : ∀ N : ℕ,
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact
+    finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_odd_boundary_degree_obstruction
+      N area boundary hobstruction hboundary (hbudget N) harea
 
 /-- The finite planar certificate with coordinate-energy budget when the
 boundary extends continuously across the standard closed disk. -/
