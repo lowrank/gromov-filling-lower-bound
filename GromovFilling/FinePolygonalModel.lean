@@ -588,6 +588,62 @@ theorem cylinderCoreFaceEdge_ends {n m : ℕ} (f : CylinderCoreFace n m)
       simp [cylinderCoreEdgeEnds, cylinderCoreFaceEdge, cylinderCoreFaceVertex,
         cylinderCoreLL, cylinderCoreUL, cylinderCoreUR, cylinderCoreLR, hp, cyclicSucc]
 
+theorem radialSubdivisionLower_ne_upper {n : ℕ} (i : Fin (n + 1)) :
+    radialSubdivisionLower i ≠ radialSubdivisionUpper i := by
+  intro h
+  have hval := congrArg Fin.val h
+  simp [radialSubdivisionLower, radialSubdivisionUpper] at hval
+
+theorem radialSubdivisionUpper_ne_lower {n : ℕ} (i : Fin (n + 1)) :
+    radialSubdivisionUpper i ≠ radialSubdivisionLower i := by
+  intro h
+  exact radialSubdivisionLower_ne_upper i h.symm
+
+theorem cyclicSucc_ne_self_of_pos {m : ℕ} (hm : 0 < m) (j : Fin (m + 1)) :
+    cyclicSucc j ≠ j := by
+  intro h
+  by_cases hj : j = Fin.last m
+  · subst hj
+    have hval := congrArg Fin.val h
+    rw [cyclicSucc_last] at hval
+    simp at hval
+    omega
+  · have hval := congrArg Fin.val h
+    rw [cyclicSucc_val_of_ne_last j hj] at hval
+    omega
+
+theorem self_ne_cyclicSucc_of_pos {m : ℕ} (hm : 0 < m) (j : Fin (m + 1)) :
+    j ≠ cyclicSucc j := by
+  intro h
+  exact cyclicSucc_ne_self_of_pos hm j h.symm
+
+theorem cylinderCoreFaceVertex_injective_of_pos {n m : ℕ} (hm : 0 < m)
+    (f : CylinderCoreFace n m) :
+    Function.Injective (cylinderCoreFaceVertex f) := by
+  have hlu : radialSubdivisionLower f.1 ≠ radialSubdivisionUpper f.1 :=
+    radialSubdivisionLower_ne_upper f.1
+  have hul : radialSubdivisionUpper f.1 ≠ radialSubdivisionLower f.1 :=
+    radialSubdivisionUpper_ne_lower f.1
+  have hsu : cyclicSucc f.2 ≠ f.2 := cyclicSucc_ne_self_of_pos hm f.2
+  have hus : f.2 ≠ cyclicSucc f.2 := self_ne_cyclicSucc_of_pos hm f.2
+  intro a b h
+  by_cases hpar : cylinderCoreFaceEven f
+  · fin_cases a <;> fin_cases b <;>
+      simp [cylinderCoreLL, cylinderCoreUL, cylinderCoreUR, cylinderCoreLR,
+        hpar, hlu, hul, hsu, hus] at h ⊢
+  · fin_cases a <;> fin_cases b <;>
+      simp [cylinderCoreLL, cylinderCoreUL, cylinderCoreUR, cylinderCoreLR,
+        hpar, hlu, hul, hsu, hus] at h ⊢
+
+theorem cylinderCoreFaceEdge_injective {n m : ℕ} (f : CylinderCoreFace n m) :
+    Function.Injective (cylinderCoreFaceEdge f) := by
+  intro a b h
+  by_cases hpar : cylinderCoreFaceEven f
+  · fin_cases a <;> fin_cases b <;>
+      simp [hpar] at h ⊢
+  · fin_cases a <;> fin_cases b <;>
+      simp [hpar] at h ⊢
+
 def cylinderCoreBoundaryVertex {n m : ℕ} (j : Fin (m + 1)) : CylinderCoreVertex n m :=
   (Fin.last (n + 1), j)
 
