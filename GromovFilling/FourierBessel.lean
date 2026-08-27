@@ -268,12 +268,10 @@ theorem two_mul_fourierCoeffOn_neg_eq_cos_add_sin
         ring
       simpa [A, B] using hdist
 
-/-- The normalization step in the derivative-energy proof of Lemma 5.4.
-If the two columns of a family of complex derivatives are twice the
-negative odd Fourier coefficients of two real `L²` fields, then their
-total Hilbert--Schmidt energy is at most `2` as soon as the normalized
-energies of those fields satisfy the displayed unit bound. -/
-theorem sum_complexDerivativeEnergy_le_two_of_fourierCoeffOn
+/-- The normalization step in the derivative-energy proof of Lemma 5.4,
+keeping the exact normalized `L²` energy of the two real fields on the
+right-hand side. -/
+theorem sum_complexDerivativeEnergy_le_of_fourierCoeffOn
     {a b : ℝ} (hab : a < b) (N : ℕ)
     (f₁ fI : ℝ → ℝ)
     (hL2₁ : MemLp (fun x ↦ (f₁ x : ℂ)) 2
@@ -286,11 +284,10 @@ theorem sum_complexDerivativeEnergy_le_two_of_fourierCoeffOn
         (-(oddMode k : ℤ)))
     (hLI : ∀ k,
       L k Complex.I = 2 * fourierCoeffOn hab (fun x ↦ (fI x : ℂ))
-        (-(oddMode k : ℤ)))
-    (hfieldEnergy :
+        (-(oddMode k : ℤ))) :
+    (∑ k : Fin N, complexDerivativeEnergy (L k)) ≤
       2 * ((b - a)⁻¹ * ∫ x in a..b, ‖(f₁ x : ℂ)‖ ^ 2) +
-      2 * ((b - a)⁻¹ * ∫ x in a..b, ‖(fI x : ℂ)‖ ^ 2) ≤ 2) :
-    (∑ k : Fin N, complexDerivativeEnergy (L k)) ≤ 2 := by
+      2 * ((b - a)⁻¹ * ∫ x in a..b, ‖(fI x : ℂ)‖ ^ 2) := by
   have hoddinj : Function.Injective (fun k : Fin N ↦ oddMode k) := by
     intro k l hkl
     apply Fin.val_injective
@@ -322,6 +319,32 @@ theorem sum_complexDerivativeEnergy_le_two_of_fourierCoeffOn
     rw [Finset.mul_sum, Finset.mul_sum]
   rw [hrewrite]
   linarith
+
+/-- The normalization step in the derivative-energy proof of Lemma 5.4.
+If the two columns of a family of complex derivatives are twice the
+negative odd Fourier coefficients of two real `L²` fields, then their
+total Hilbert--Schmidt energy is at most `2` as soon as the normalized
+energies of those fields satisfy the displayed unit bound. -/
+theorem sum_complexDerivativeEnergy_le_two_of_fourierCoeffOn
+    {a b : ℝ} (hab : a < b) (N : ℕ)
+    (f₁ fI : ℝ → ℝ)
+    (hL2₁ : MemLp (fun x ↦ (f₁ x : ℂ)) 2
+      (volume.restrict (Ioc a b)))
+    (hL2I : MemLp (fun x ↦ (fI x : ℂ)) 2
+      (volume.restrict (Ioc a b)))
+    (L : Fin N → ℂ →L[ℝ] ℂ)
+    (hLone : ∀ k,
+      L k 1 = 2 * fourierCoeffOn hab (fun x ↦ (f₁ x : ℂ))
+        (-(oddMode k : ℤ)))
+    (hLI : ∀ k,
+      L k Complex.I = 2 * fourierCoeffOn hab (fun x ↦ (fI x : ℂ))
+        (-(oddMode k : ℤ)))
+    (hfieldEnergy :
+      2 * ((b - a)⁻¹ * ∫ x in a..b, ‖(f₁ x : ℂ)‖ ^ 2) +
+      2 * ((b - a)⁻¹ * ∫ x in a..b, ‖(fI x : ℂ)‖ ^ 2) ≤ 2) :
+    (∑ k : Fin N, complexDerivativeEnergy (L k)) ≤ 2 := by
+  exact (sum_complexDerivativeEnergy_le_of_fourierCoeffOn
+    hab N f₁ fI hL2₁ hL2I L hLone hLI).trans hfieldEnergy
 
 /-- The squared norm of a real covector on `ℂ` is the sum of its squares
 on the standard orthonormal basis `(1,I)`. -/

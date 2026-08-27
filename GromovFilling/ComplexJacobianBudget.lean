@@ -164,6 +164,15 @@ theorem sum_abs_det_le_one_of_complexDerivativeEnergy
   have hdet := sum_abs_det_le_half_complexDerivativeEnergy L
   linarith
 
+/-- Keeping an explicit nonnegative defect in the Hilbert--Schmidt energy
+budget yields the sharp pointwise determinant defect inequality. -/
+theorem sum_abs_det_add_le_one_of_complexDerivativeEnergy_defect
+    {ι : Type*} [Fintype ι] (L : ι → ℂ →L[ℝ] ℂ) (defect : ℝ)
+    (henergy : (∑ j, complexDerivativeEnergy (L j)) + 2 * defect ≤ 2) :
+    (∑ j, |(L j).det|) + defect ≤ 1 := by
+  have hdet := sum_abs_det_le_half_complexDerivativeEnergy L
+  linarith
+
 /-- The integrated complex Jacobian budget follows from the pointwise
 Hilbert--Schmidt energy bound, for any measure on the domain. -/
 theorem sum_lintegral_abs_det_fderiv_le_measure

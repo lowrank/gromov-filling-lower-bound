@@ -1374,6 +1374,32 @@ private theorem ae_oddProfileDerivativeField_add_distanceSlackDerivativeField_ba
   · exact ae_restrict_of_ae (Filter.Eventually.of_forall fun t ↦
       oddProfileDerivativeField_add_distanceSlackDerivativeField_basis_energy_eq_one_of_not_mem_range hx t)
 
+/-- The normalized average derivative energy carried by the antipodal
+slack profile at a fixed filling point.  This is the defect term in the
+sharp Jacobian budget. -/
+def distanceSlackDerivativeEnergyDefect
+    (boundary : UnitAddCircle → ℂ) (x : ℂ) : ℝ :=
+  ((Real.pi - -Real.pi)⁻¹ *
+      ∫ t in (-Real.pi)..Real.pi,
+        ‖((distanceSlackDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2) +
+    ((Real.pi - -Real.pi)⁻¹ *
+      ∫ t in (-Real.pi)..Real.pi,
+        ‖((distanceSlackDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2)
+
+theorem distanceSlackDerivativeEnergyDefect_nonneg
+    (boundary : UnitAddCircle → ℂ) (x : ℂ) :
+    0 ≤ distanceSlackDerivativeEnergyDefect boundary x := by
+  unfold distanceSlackDerivativeEnergyDefect
+  have hlenpos : 0 < Real.pi - -Real.pi := sub_pos.mpr neg_pi_lt_pi
+  have hfac : 0 ≤ (Real.pi - -Real.pi)⁻¹ := inv_nonneg.mpr hlenpos.le
+  have h1 : 0 ≤ ∫ t in (-Real.pi)..Real.pi,
+      ‖((distanceSlackDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2 :=
+    intervalIntegral.integral_nonneg_of_forall neg_pi_lt_pi.le (fun _ ↦ by positivity)
+  have hI : 0 ≤ ∫ t in (-Real.pi)..Real.pi,
+      ‖((distanceSlackDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2 :=
+    intervalIntegral.integral_nonneg_of_forall neg_pi_lt_pi.le (fun _ ↦ by positivity)
+  exact add_nonneg (mul_nonneg hfac h1) (mul_nonneg hfac hI)
+
 private theorem oddProfileDerivativeField_energy_budget_with_slack
     {boundary : UnitAddCircle → ℂ}
     (hboundary : IsometricCircleBoundary boundary) (x : ℂ) :
@@ -1498,26 +1524,103 @@ private theorem oddProfileDerivativeField_energy_budget
   have hfac : 0 ≤ (Real.pi - -Real.pi)⁻¹ := inv_nonneg.mpr hlenpos.le
   nlinarith
 
-theorem sum_complexDerivativeEnergy_oddProfileFourierDerivative_le_two
+theorem sum_complexDerivativeEnergy_oddProfileFourierDerivative_add_two_mul_distanceSlackDerivativeEnergyDefect_le_two
     {boundary : UnitAddCircle → ℂ}
     (hboundary : IsometricCircleBoundary boundary) (N : ℕ) (x : ℂ) :
     (∑ k : Fin N,
       complexDerivativeEnergy
-        (oddProfileFourierDerivative boundary (oddMode k) x)) ≤ 2 := by
-  refine sum_complexDerivativeEnergy_le_two_of_fourierCoeffOn
+        (oddProfileFourierDerivative boundary (oddMode k) x)) +
+      2 * distanceSlackDerivativeEnergyDefect boundary x ≤ 2 := by
+  set O : ℝ :=
+    2 * ((Real.pi - -Real.pi)⁻¹ *
+        ∫ t in (-Real.pi)..Real.pi,
+          ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2) +
+      2 * ((Real.pi - -Real.pi)⁻¹ *
+        ∫ t in (-Real.pi)..Real.pi,
+          ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2)
+  have hfourier := sum_complexDerivativeEnergy_le_of_fourierCoeffOn
     neg_pi_lt_pi N
     (fun t ↦ oddProfileDerivativeField boundary x t 1)
     (fun t ↦ oddProfileDerivativeField boundary x t Complex.I)
     (memLp_oddProfileDerivativeField_apply hboundary x 1 (by simp))
     (memLp_oddProfileDerivativeField_apply hboundary x Complex.I (by simp))
     (fun k ↦ oddProfileFourierDerivative boundary (oddMode k) x)
-    ?_ ?_ (oddProfileDerivativeField_energy_budget hboundary x)
-  · intro k
-    simpa using oddProfileFourierDerivative_apply_eq_two_mul_fourierCoeffOn
-      hboundary (oddMode k) x 1 (by simp)
-  · intro k
-    simpa using oddProfileFourierDerivative_apply_eq_two_mul_fourierCoeffOn
-      hboundary (oddMode k) x Complex.I (by simp)
+    (fun k ↦ by
+      simpa using oddProfileFourierDerivative_apply_eq_two_mul_fourierCoeffOn
+        hboundary (oddMode k) x 1 (by simp))
+    (fun k ↦ by
+      simpa using oddProfileFourierDerivative_apply_eq_two_mul_fourierCoeffOn
+        hboundary (oddMode k) x Complex.I (by simp))
+  have hfourier' :
+      (∑ k : Fin N,
+        complexDerivativeEnergy (oddProfileFourierDerivative boundary (oddMode k) x)) ≤ O := by
+    simpa [O] using hfourier
+  have hsharp : O + 2 * distanceSlackDerivativeEnergyDefect boundary x = 2 := by
+    unfold O distanceSlackDerivativeEnergyDefect
+    simpa [two_mul, add_assoc, add_left_comm, add_comm] using
+      oddProfileDerivativeField_energy_budget_with_slack hboundary x
+  calc
+    (∑ k : Fin N,
+      complexDerivativeEnergy (oddProfileFourierDerivative boundary (oddMode k) x)) +
+        2 * distanceSlackDerivativeEnergyDefect boundary x ≤
+      O + 2 * distanceSlackDerivativeEnergyDefect boundary x := by
+        gcongr
+    _ = 2 := hsharp
+
+theorem sum_complexDerivativeEnergy_oddProfileFourierDerivative_le_two
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary) (N : ℕ) (x : ℂ) :
+    (∑ k : Fin N,
+      complexDerivativeEnergy
+        (oddProfileFourierDerivative boundary (oddMode k) x)) ≤ 2 := by
+  have hsharp :=
+    sum_complexDerivativeEnergy_oddProfileFourierDerivative_add_two_mul_distanceSlackDerivativeEnergyDefect_le_two
+      hboundary N x
+  have hnonneg : 0 ≤ distanceSlackDerivativeEnergyDefect boundary x :=
+    distanceSlackDerivativeEnergyDefect_nonneg boundary x
+  have hadd :
+      (∑ k : Fin N,
+        complexDerivativeEnergy (oddProfileFourierDerivative boundary (oddMode k) x)) ≤
+      (∑ k : Fin N,
+        complexDerivativeEnergy (oddProfileFourierDerivative boundary (oddMode k) x)) +
+        2 * distanceSlackDerivativeEnergyDefect boundary x := by
+    nlinarith
+  exact hadd.trans hsharp
+
+theorem ae_sum_complexDerivativeEnergy_fderiv_oddProfileFourierMap_add_two_mul_distanceSlackDerivativeEnergyDefect_le_two
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary) (N : ℕ) :
+    ∀ᵐ x ∂volume,
+      (∑ k : Fin N, complexDerivativeEnergy
+        (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) +
+        2 * distanceSlackDerivativeEnergyDefect boundary x ≤ 2 := by
+  filter_upwards [ae_ae_differentiableAt_oddDistanceProfile hboundary] with x hdiff
+  have hderiv : ∀ k : Fin N,
+      fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x =
+        oddProfileFourierDerivative boundary (oddMode k) x := by
+    intro k
+    exact (hasFDerivAt_oddProfileFourierMap hboundary (oddMode k) x hdiff).fderiv
+  have hsum :
+      (∑ k : Fin N, complexDerivativeEnergy
+        (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) =
+      ∑ k : Fin N,
+        complexDerivativeEnergy
+          (oddProfileFourierDerivative boundary (oddMode k) x) := by
+    refine Finset.sum_congr rfl ?_
+    intro k _
+    rw [hderiv k]
+  calc
+    (∑ k : Fin N, complexDerivativeEnergy
+        (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) +
+        2 * distanceSlackDerivativeEnergyDefect boundary x =
+      (∑ k : Fin N,
+        complexDerivativeEnergy
+          (oddProfileFourierDerivative boundary (oddMode k) x)) +
+        2 * distanceSlackDerivativeEnergyDefect boundary x := by
+        rw [hsum]
+    _ ≤ 2 :=
+      sum_complexDerivativeEnergy_oddProfileFourierDerivative_add_two_mul_distanceSlackDerivativeEnergyDefect_le_two
+        hboundary N x
 
 theorem ae_sum_complexDerivativeEnergy_fderiv_oddProfileFourierMap_le_two
     {boundary : UnitAddCircle → ℂ}
@@ -1525,21 +1628,19 @@ theorem ae_sum_complexDerivativeEnergy_fderiv_oddProfileFourierMap_le_two
     ∀ᵐ x ∂volume,
       (∑ k : Fin N, complexDerivativeEnergy
         (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2 := by
-  filter_upwards [ae_ae_differentiableAt_oddDistanceProfile hboundary] with x hdiff
-  have hderiv : ∀ k : Fin N,
-      fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x =
-        oddProfileFourierDerivative boundary (oddMode k) x := by
-    intro k
-    exact (hasFDerivAt_oddProfileFourierMap hboundary (oddMode k) x hdiff).fderiv
-  calc
-    (∑ k : Fin N, complexDerivativeEnergy
-        (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) =
-      ∑ k : Fin N,
-        complexDerivativeEnergy
-          (oddProfileFourierDerivative boundary (oddMode k) x) := by
-        simp [hderiv]
-    _ ≤ 2 := sum_complexDerivativeEnergy_oddProfileFourierDerivative_le_two
-      hboundary N x
+  filter_upwards
+    [ae_sum_complexDerivativeEnergy_fderiv_oddProfileFourierMap_add_two_mul_distanceSlackDerivativeEnergyDefect_le_two
+      hboundary N] with x hx
+  have hnonneg : 0 ≤ distanceSlackDerivativeEnergyDefect boundary x :=
+    distanceSlackDerivativeEnergyDefect_nonneg boundary x
+  have hadd :
+      (∑ k : Fin N, complexDerivativeEnergy
+        (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤
+      (∑ k : Fin N, complexDerivativeEnergy
+        (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) +
+        2 * distanceSlackDerivativeEnergyDefect boundary x := by
+    nlinarith
+  exact hadd.trans hx
 
 private lemma odd_profile_cos_intervalIntegrable
     {X : Type*} [PseudoMetricSpace X]
@@ -2023,6 +2124,35 @@ theorem ae_sum_complexDerivativeEnergy_fderiv_givensMetricFourierMap
   filter_upwards [ae_differentiableAt_oddProfileFourierMap_fin hboundary N]
     with x hdiff
   exact sum_complexDerivativeEnergy_fderiv_givensMetricFourierMap N x hdiff
+
+theorem ae_sum_complexDerivativeEnergy_fderiv_givensMetricFourierMap_add_two_mul_distanceSlackDerivativeEnergyDefect_le_two
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary) (N : ℕ) :
+    ∀ᵐ x ∂volume,
+      (∑ j : Fin N, complexDerivativeEnergy
+        (fderiv ℝ (givensMetricFourierMap boundary N j) x)) +
+        2 * distanceSlackDerivativeEnergyDefect boundary x ≤ 2 := by
+  filter_upwards
+    [ae_sum_complexDerivativeEnergy_fderiv_givensMetricFourierMap hboundary N,
+      ae_sum_complexDerivativeEnergy_fderiv_oddProfileFourierMap_add_two_mul_distanceSlackDerivativeEnergyDefect_le_two
+        hboundary N] with x hmix hodd
+  rw [hmix]
+  exact hodd
+
+/-- Almost everywhere, the mixed Givens family satisfies the sharp Jacobian
+defect budget coming from the antipodal slack. -/
+theorem ae_sum_abs_det_fderiv_givensMetricFourierMap_add_distanceSlackDerivativeEnergyDefect_le_one
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary) (N : ℕ) :
+    ∀ᵐ x ∂volume,
+      (∑ j : Fin N, |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det|) +
+        distanceSlackDerivativeEnergyDefect boundary x ≤ 1 := by
+  filter_upwards
+    [ae_sum_complexDerivativeEnergy_fderiv_givensMetricFourierMap_add_two_mul_distanceSlackDerivativeEnergyDefect_le_two
+      hboundary N] with x hx
+  exact sum_abs_det_add_le_one_of_complexDerivativeEnergy_defect
+    (fun j : Fin N ↦ fderiv ℝ (givensMetricFourierMap boundary N j) x)
+    (distanceSlackDerivativeEnergyDefect boundary x) hx
 
 theorem continuous_givensMetricFourierMap
     {X : Type*} [PseudoMetricSpace X]
