@@ -674,6 +674,203 @@ def FinePolygonalModel.toAbstractFinePolygonalModel
   boundaryParameter_finish := D.boundaryParameter_finish
   boundaryPath := D.boundaryPath
 
+private theorem mem_image_equiv_iff
+    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    (e : α ≃ β) (s : Finset α) (b : β) :
+    b ∈ s.image e ↔ e.symm b ∈ s := by
+  constructor
+  · intro hb
+    rcases Finset.mem_image.mp hb with ⟨a, ha, hab⟩
+    have hsymm : a = e.symm b := by
+      simpa using congrArg e.symm hab
+    simpa [hsymm] using ha
+  · intro hb
+    exact Finset.mem_image.mpr ⟨e.symm b, hb, by simp⟩
+
+noncomputable def AbstractFinePolygonalModel.vertexEquiv
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {H : X → UnitAddCircle}
+    (D : AbstractFinePolygonalModel boundary H) :
+    D.Vertex ≃ Fin (Nat.card D.Vertex) := by
+  classical
+  let _ := D.instVertexFintype
+  exact Finite.equivFin D.Vertex
+
+noncomputable def AbstractFinePolygonalModel.edgeEquiv
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {H : X → UnitAddCircle}
+    (D : AbstractFinePolygonalModel boundary H) :
+    D.Edge ≃ Fin (Nat.card D.Edge) := by
+  classical
+  let _ := D.instEdgeFintype
+  exact Finite.equivFin D.Edge
+
+noncomputable def AbstractFinePolygonalModel.faceEquiv
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {H : X → UnitAddCircle}
+    (D : AbstractFinePolygonalModel boundary H) :
+    D.Face ≃ Fin (Nat.card D.Face) := by
+  classical
+  let _ := D.instFaceFintype
+  exact Finite.equivFin D.Face
+
+/-- Every abstract finite-index polygonal model can be reindexed to the
+concrete `Fin`-indexed interface. -/
+noncomputable def AbstractFinePolygonalModel.toFinePolygonalModel
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {H : X → UnitAddCircle}
+    (D : AbstractFinePolygonalModel boundary H) :
+    FinePolygonalModel boundary H := by
+  classical
+  let _ := D.instVertexFintype
+  let _ := D.instEdgeFintype
+  let _ := D.instFaceFintype
+  let _ := D.instVertexDecidableEq
+  let _ := D.instEdgeDecidableEq
+  let _ := D.instFaceDecidableEq
+  let vertexEquiv := D.vertexEquiv
+  let edgeEquiv := D.edgeEquiv
+  let faceEquiv := D.faceEquiv
+  let edgeEnds' : Fin (Nat.card D.Edge) → Fin (Nat.card D.Vertex) × Fin (Nat.card D.Vertex) :=
+    fun e ↦
+      (vertexEquiv (D.edgeEnds (edgeEquiv.symm e)).1,
+        vertexEquiv (D.edgeEnds (edgeEquiv.symm e)).2)
+  let faceEdges' : Fin (Nat.card D.Face) → Finset (Fin (Nat.card D.Edge)) :=
+    fun f ↦ (D.faceEdges (faceEquiv.symm f)).image edgeEquiv
+  let boundaryEdges' : Finset (Fin (Nat.card D.Edge)) :=
+    D.boundaryEdges.image edgeEquiv
+  let faceVertex' : Fin (Nat.card D.Face) → Fin (D.faceSize + 1) → Fin (Nat.card D.Vertex) :=
+    fun f k ↦ vertexEquiv (D.faceVertex (faceEquiv.symm f) k)
+  let faceEdge' : Fin (Nat.card D.Face) → Fin (D.faceSize + 1) → Fin (Nat.card D.Edge) :=
+    fun f k ↦ edgeEquiv (D.faceEdge (faceEquiv.symm f) k)
+  let boundaryEdge' : Fin (D.boundarySize + 1) → Fin (Nat.card D.Edge) :=
+    fun k ↦ edgeEquiv (D.boundaryEdge k)
+  let boundaryVertex' : Fin (D.boundarySize + 1) → Fin (Nat.card D.Vertex) :=
+    fun k ↦ vertexEquiv (D.boundaryVertex k)
+  let vertexPoint' : Fin (Nat.card D.Vertex) → X :=
+    fun v ↦ D.vertexPoint (vertexEquiv.symm v)
+  let edgeToX' : Fin (Nat.card D.Edge) → ClosedUnitInterval → X :=
+    fun e ↦ D.edgeToX (edgeEquiv.symm e)
+  let faceCenter' : Fin (Nat.card D.Face) → X :=
+    fun f ↦ D.faceCenter (faceEquiv.symm f)
+  refine
+    { vertexCount := Nat.card D.Vertex
+      edgeCount := Nat.card D.Edge
+      faceCount := Nat.card D.Face
+      faceSize := D.faceSize
+      boundarySize := D.boundarySize
+      edgeEnds := edgeEnds'
+      faceEdges := faceEdges'
+      boundaryEdges := boundaryEdges'
+      edgeFaceCount := ?_
+      faceVertex := faceVertex'
+      faceEdge := faceEdge'
+      faceVertex_injective := ?_
+      faceEdge_injective := ?_
+      faceEdges_eq := ?_
+      faceEdge_ends := ?_
+      boundaryEdge := boundaryEdge'
+      boundaryEdge_injective := ?_
+      boundaryVertex := boundaryVertex'
+      boundaryEdge_ends := ?_
+      boundaryEdges_eq := ?_
+      vertexPoint := vertexPoint'
+      edgeToX := edgeToX'
+      edgeToX_continuous := ?_
+      edgeToX_start := ?_
+      edgeToX_finish := ?_
+      faceCenter := faceCenter'
+      halfTurn_mesh := ?_
+      boundaryParameter := D.boundaryParameter
+      boundaryParameter_continuous := D.boundaryParameter_continuous
+      boundaryParameter_start := D.boundaryParameter_start
+      boundaryParameter_finish := D.boundaryParameter_finish
+      boundaryPath := ?_ }
+  · intro e
+    have hfilter :
+        (Finset.univ.filter fun f : Fin (Nat.card D.Face) ↦ e ∈ faceEdges' f) =
+          (Finset.univ.filter fun f : D.Face ↦ edgeEquiv.symm e ∈ D.faceEdges f).image faceEquiv := by
+      ext f
+      constructor
+      · intro hf
+        have hmem : e ∈ faceEdges' f := (Finset.mem_filter.mp hf).2
+        have hmem' : edgeEquiv.symm e ∈ D.faceEdges (faceEquiv.symm f) := by
+          unfold faceEdges' at hmem
+          exact (mem_image_equiv_iff edgeEquiv (D.faceEdges (faceEquiv.symm f)) e).1 hmem
+        exact Finset.mem_image.mpr ⟨faceEquiv.symm f,
+          Finset.mem_filter.mpr ⟨Finset.mem_univ _, hmem'⟩, by simp⟩
+      · intro hf
+        rcases Finset.mem_image.mp hf with ⟨a, ha, haf⟩
+        have ha' : a = faceEquiv.symm f := by
+          simpa using congrArg faceEquiv.symm haf
+        have hmem' : edgeEquiv.symm e ∈ D.faceEdges (faceEquiv.symm f) := by
+          simpa [ha'] using (Finset.mem_filter.mp ha).2
+        have hmem : e ∈ faceEdges' f := by
+          unfold faceEdges'
+          exact (mem_image_equiv_iff edgeEquiv (D.faceEdges (faceEquiv.symm f)) e).2 hmem'
+        exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hmem⟩
+    have hboundaryMem : e ∈ boundaryEdges' ↔ edgeEquiv.symm e ∈ D.boundaryEdges := by
+      unfold boundaryEdges'
+      simpa using (mem_image_equiv_iff edgeEquiv D.boundaryEdges e)
+    calc
+      (Finset.univ.filter fun f : Fin (Nat.card D.Face) ↦ e ∈ faceEdges' f).card
+          = ((Finset.univ.filter fun f : D.Face ↦ edgeEquiv.symm e ∈ D.faceEdges f).image faceEquiv).card := by
+            rw [hfilter]
+      _ = (Finset.univ.filter fun f : D.Face ↦ edgeEquiv.symm e ∈ D.faceEdges f).card := by
+            rw [Finset.card_image_of_injective _ faceEquiv.injective]
+      _ = if edgeEquiv.symm e ∈ D.boundaryEdges then 1 else 2 :=
+            D.edgeFaceCount (edgeEquiv.symm e)
+      _ = if e ∈ boundaryEdges' then 1 else 2 := by
+            by_cases h : edgeEquiv.symm e ∈ D.boundaryEdges
+            · have he : e ∈ boundaryEdges' := hboundaryMem.mpr h
+              simp [h, he]
+            · have he : e ∉ boundaryEdges' := by
+                intro he
+                exact h (hboundaryMem.mp he)
+              simp [h, he]
+  · intro f
+    exact vertexEquiv.injective.comp (D.faceVertex_injective (faceEquiv.symm f))
+  · intro f
+    exact edgeEquiv.injective.comp (D.faceEdge_injective (faceEquiv.symm f))
+  · intro f
+    unfold faceEdges' faceEdge'
+    simpa [Finset.image_image] using congrArg (Finset.image edgeEquiv) (D.faceEdges_eq (faceEquiv.symm f))
+  · intro f k
+    apply Prod.ext
+    · change (edgeEnds' (faceEdge' f k)).1 = faceVertex' f k
+      unfold edgeEnds' faceEdge' faceVertex'
+      simpa using congrArg Prod.fst (D.faceEdge_ends (faceEquiv.symm f) k)
+    · change (edgeEnds' (faceEdge' f k)).2 = faceVertex' f (cyclicSucc k)
+      unfold edgeEnds' faceEdge' faceVertex'
+      simpa using congrArg Prod.snd (D.faceEdge_ends (faceEquiv.symm f) k)
+  · exact edgeEquiv.injective.comp D.boundaryEdge_injective
+  · intro k
+    apply Prod.ext
+    · change (edgeEnds' (boundaryEdge' k)).1 = boundaryVertex' k
+      unfold edgeEnds' boundaryEdge' boundaryVertex'
+      simpa using congrArg Prod.fst (D.boundaryEdge_ends k)
+    · change (edgeEnds' (boundaryEdge' k)).2 = boundaryVertex' (cyclicSucc k)
+      unfold edgeEnds' boundaryEdge' boundaryVertex'
+      simpa using congrArg Prod.snd (D.boundaryEdge_ends k)
+  · unfold boundaryEdges' boundaryEdge'
+    simpa [Finset.image_image] using congrArg (Finset.image edgeEquiv) D.boundaryEdges_eq
+  · intro e
+    simpa [edgeToX'] using D.edgeToX_continuous (edgeEquiv.symm e)
+  · intro e
+    unfold edgeToX' vertexPoint' edgeEnds'
+    simpa using D.edgeToX_start (edgeEquiv.symm e)
+  · intro e
+    unfold edgeToX' vertexPoint' edgeEnds'
+    simpa using D.edgeToX_finish (edgeEquiv.symm e)
+  · intro f e he x
+    have he' : edgeEquiv.symm e ∈ D.faceEdges (faceEquiv.symm f) := by
+      unfold faceEdges' at he
+      exact (mem_image_equiv_iff edgeEquiv (D.faceEdges (faceEquiv.symm f)) e).1 he
+    exact D.halfTurn_mesh (faceEquiv.symm f) (edgeEquiv.symm e) he' x
+  · intro k x
+    unfold edgeToX' boundaryEdge'
+    simpa using D.boundaryPath k x
+
 /-- The exact fine-triangulation property needed of a surface boundary:
 every continuous circle map on the domain has a compatible finite
 polygonal model below its half-turn scale. -/
@@ -693,6 +890,17 @@ theorem hasAbstractFinePolygonalModels_of_finePolygonalModels
   intro H hH
   obtain ⟨D⟩ := hfine H hH
   exact ⟨D.toAbstractFinePolygonalModel⟩
+
+/-- The abstract finite-index interface also yields the concrete `Fin`-indexed
+one by reindexing all finite types by `Fin`. -/
+theorem hasFinePolygonalModels_of_abstractFinePolygonalModels
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (hfine : HasAbstractFinePolygonalModels boundary) :
+    HasFinePolygonalModels boundary := by
+  intro H hH
+  obtain ⟨D⟩ := hfine H hH
+  exact ⟨D.toFinePolygonalModel⟩
 
 /-- A purely geometric polygonal model at mesh scale `ε`.  We reuse a
 `FinePolygonalModel` for the constant circle map to carry exactly the same
@@ -778,6 +986,31 @@ def AbstractGeometricPolygonalModel.toAbstractFinePolygonalModel
         dist (H (D.model.faceCenter f)) (H (D.model.edgeToX e x)) < 1 / 2) :
     AbstractFinePolygonalModel boundary H :=
   { D.model with halfTurn_mesh := hhalf }
+
+/-- Every abstract geometric polygonal model can be reindexed to the concrete
+`Fin`-indexed geometric interface. -/
+noncomputable def AbstractGeometricPolygonalModel.toGeometricPolygonalModel
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {ε : ℝ}
+    (D : AbstractGeometricPolygonalModel boundary ε) :
+    GeometricPolygonalModel boundary ε := by
+  classical
+  let _ := D.model.instVertexFintype
+  let _ := D.model.instEdgeFintype
+  let _ := D.model.instFaceFintype
+  let _ := D.model.instVertexDecidableEq
+  let _ := D.model.instEdgeDecidableEq
+  let _ := D.model.instFaceDecidableEq
+  let faceEquiv := D.model.faceEquiv
+  let edgeEquiv := D.model.edgeEquiv
+  refine
+    { model := D.model.toFinePolygonalModel
+      mesh := ?_ }
+  intro f e he x
+  have he' : edgeEquiv.symm e ∈ D.model.faceEdges (faceEquiv.symm f) := by
+    change e ∈ (D.model.faceEdges (faceEquiv.symm f)).image edgeEquiv at he
+    exact (mem_image_equiv_iff edgeEquiv (D.model.faceEdges (faceEquiv.symm f)) e).1 he
+  exact D.mesh (faceEquiv.symm f) (edgeEquiv.symm e) he' x
 
 /-- Push an abstract geometric polygonal model forward along a continuous map whose
 restriction to the boundary agrees with a new parametrization. -/
@@ -891,6 +1124,26 @@ def HasArbitrarilyFinePolygonalModels
     {X : Type*} [PseudoMetricSpace X]
     (boundary : UnitAddCircle → X) : Prop :=
   ∀ ε : ℝ, 0 < ε → Nonempty (GeometricPolygonalModel boundary ε)
+
+/-- Abstract arbitrarily fine geometric polygonal models also yield the
+concrete `Fin`-indexed geometric interface by reindexing each finite model. -/
+theorem hasArbitrarilyFinePolygonalModels_of_abstractArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X}
+    (hmodels : HasAbstractArbitrarilyFinePolygonalModels boundary) :
+    HasArbitrarilyFinePolygonalModels boundary := by
+  intro ε hε
+  obtain ⟨D⟩ := hmodels ε hε
+  exact ⟨D.toGeometricPolygonalModel⟩
+
+/-- Abstract closed-square models already imply the concrete closed-disk
+geometric interface used downstream: first transfer abstractly across the
+square-to-disk map, then reindex the finite types by `Fin`. -/
+theorem hasArbitrarilyFinePolygonalModels_of_abstract_closedUnitSquare
+    (hsquare : HasAbstractArbitrarilyFinePolygonalModels closedUnitSquareBoundary) :
+    HasArbitrarilyFinePolygonalModels closedUnitDiskBoundary :=
+  hasArbitrarilyFinePolygonalModels_of_abstractArbitrarilyFine
+    (hasAbstractArbitrarilyFinePolygonalModels_of_closedUnitSquare hsquare)
 
 /-- Arbitrarily fine polygonal models transport across continuous maps from a
 compact source: choose a sufficiently small source mesh using uniform
