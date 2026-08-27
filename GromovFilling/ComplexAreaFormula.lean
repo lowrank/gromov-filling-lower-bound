@@ -1,5 +1,6 @@
 import GromovFilling.EuclideanAreaFormula
 import GromovFilling.SurfaceCoverage
+import GromovFilling.GivensDiskArea
 import Mathlib.MeasureTheory.Measure.Haar.Unique
 import Mathlib.MeasureTheory.Measure.Lebesgue.Complex
 import Mathlib.LinearAlgebra.Complex.FiniteDimensional
@@ -172,6 +173,27 @@ theorem givens_jordan_region_volume_le_complex_jacobian
   simpa only [Measure.restrict_univ] using
     (complex_volume_le_lintegral_abs_det_fderiv_of_subset_range
       G Set.univ region₁ MeasurableSet.univ hGLipschitz hcoverage')
+
+/-- Planar, end-to-end form of the quantitative conclusion in Lemma 5.4:
+the explicit Fourier coefficient area is the actual Jordan-region volume,
+that region is forced into the extension image by the mod-two obstruction,
+and the area formula bounds it by the Jacobian integral. -/
+theorem givens_mixedBoundaryArea_le_complex_jacobian
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (hfine : HasFinePolygonalModels boundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
+    exists_givensBoundaryCurve_jordanPartition_at_origin j
+  rw [← volume_givensBoundaryCurve_jordan_region
+    j hpartition hzero]
+  exact givens_jordan_region_volume_le_complex_jacobian
+    j boundary hfine G hG hboundary hpartition hzero hGLipschitz
 
 /-- Jordan separation and coverage can be discharged internally: there is
 a bounded open connected region containing the origin whose volume is
