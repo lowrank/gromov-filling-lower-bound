@@ -320,6 +320,12 @@ def givensRotate (k : ℕ) (x : ℕ → ℝ) : ℕ → ℝ := fun i ↦
   else if i = k then givensS k * x 0 + givensC k * x k
   else x i
 
+theorem givensRotate_add (k : ℕ) (x y : ℕ → ℝ) :
+    givensRotate k (x + y) = givensRotate k x + givensRotate k y := by
+  funext i
+  simp only [givensRotate, Pi.add_apply]
+  split_ifs <;> ring
+
 /-- One Givens rotation preserves the finite coordinate energy whenever both
 rotated coordinates lie in the summation range. -/
 theorem givensRotate_energy (N k : ℕ) (hk0 : k ≠ 0) (hkN : k < N)
@@ -354,6 +360,15 @@ def givensMixRange : ℕ → ℕ → (ℕ → ℝ) → (ℕ → ℝ)
   | _, 0, x => x
   | start, count + 1, x =>
       givensRotate start (givensMixRange (start + 1) count x)
+
+theorem givensMixRange_add (start count : ℕ) (x y : ℕ → ℝ) :
+    givensMixRange start count (x + y) =
+      givensMixRange start count x + givensMixRange start count y := by
+  induction count generalizing start with
+  | zero => rfl
+  | succ count ih =>
+      rw [givensMixRange, givensMixRange, givensMixRange,
+        ih, givensRotate_add]
 
 /-- Rotations starting above a nonzero coordinate leave that coordinate
 fixed. -/
@@ -463,6 +478,10 @@ theorem givensMixRange_energy (N start count : ℕ)
 /-- The finite `N`-mode mixing used in the orientation-free certificate. -/
 def givensMix (N : ℕ) (x : ℕ → ℝ) : ℕ → ℝ :=
   givensMixRange 1 (N - 1) x
+
+theorem givensMix_add (N : ℕ) (x y : ℕ → ℝ) :
+    givensMix N (x + y) = givensMix N x + givensMix N y := by
+  exact givensMixRange_add 1 (N - 1) x y
 
 theorem givensMix_energy (N : ℕ) (hN : 0 < N) (x : ℕ → ℝ) :
     (∑ i ∈ Finset.range N, givensMix N x i ^ 2) =
@@ -636,6 +655,66 @@ theorem givensMatrix_column_energy (N : ℕ) (k : Fin N) :
     _ = ∑ j ∈ Finset.range N, natBasis (k : ℕ) j ^ 2 :=
       givensMix_energy N hN _
     _ = 1 := by simp [natBasis, k.isLt]
+
+/-- Distinct columns of the explicit Givens matrix are orthogonal.  This
+uses polarization of the already proved energy preservation. -/
+theorem givensMatrix_column_inner_zero (N : ℕ) (k l : Fin N)
+    (hkl : k ≠ l) :
+    (∑ j : Fin N, givensMatrix N j k * givensMatrix N j l) = 0 := by
+  have hN : 0 < N := Nat.pos_of_ne_zero (by
+    intro h
+    subst N
+    exact Fin.elim0 k)
+  have henergy := givensMix_energy N hN (natBasis k + natBasis l)
+  have hklval : (k : ℕ) ≠ (l : ℕ) := Fin.val_ne_of_ne hkl
+  have hsum :
+      (∑ j : Fin N,
+        (givensMatrix N j k + givensMatrix N j l) ^ 2) = 2 := by
+    calc
+      (∑ j : Fin N,
+          (givensMatrix N j k + givensMatrix N j l) ^ 2) =
+          ∑ j ∈ Finset.range N,
+            (givensMix N (natBasis k + natBasis l) j) ^ 2 := by
+        rw [← Fin.sum_univ_eq_sum_range]
+        apply Finset.sum_congr rfl
+        intro j _
+        rw [givensMix_add]
+        rfl
+      _ = ∑ j ∈ Finset.range N, (natBasis k j + natBasis l j) ^ 2 := by
+        simpa only [Pi.add_apply] using henergy
+      _ = 2 := by
+        simp_rw [add_sq]
+        rw [Finset.sum_add_distrib, Finset.sum_add_distrib]
+        simp [natBasis, hklval, Ne.symm hklval, k.isLt, l.isLt]
+        norm_num
+  have hk := givensMatrix_column_energy N k
+  have hl := givensMatrix_column_energy N l
+  simp_rw [add_sq] at hsum
+  rw [Finset.sum_add_distrib, Finset.sum_add_distrib,
+    hk, hl] at hsum
+  have hfactor :
+      (∑ j : Fin N,
+        2 * givensMatrix N j k * givensMatrix N j l) =
+        2 * ∑ j : Fin N, givensMatrix N j k * givensMatrix N j l := by
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro j _
+    ring
+  rw [hfactor] at hsum
+  nlinarith
+
+/-- The concrete matrix is genuinely orthogonal, including all
+off-diagonal column inner products. -/
+theorem givensMatrix_orthogonal (N : ℕ) :
+    (givensMatrix N).transpose * givensMatrix N = 1 := by
+  ext k l
+  rw [Matrix.mul_apply]
+  simp only [Matrix.transpose_apply]
+  by_cases hkl : k = l
+  · subst l
+    simpa [pow_two] using givensMatrix_column_energy N k
+  · rw [givensMatrix_column_inner_zero N k l hkl]
+    simp [hkl]
 
 end
 
