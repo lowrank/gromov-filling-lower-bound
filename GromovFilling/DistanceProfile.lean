@@ -157,6 +157,52 @@ theorem oddDistanceProfile_lipschitzWith
           exact abs_sub _ _
     _ ≤ dist x y := by linarith
 
+/-- The antipodal slack is also one-Lipschitz in the filling variable. -/
+theorem distanceSlack_lipschitzWith
+    {X : Type*} [PseudoMetricSpace X]
+    (boundary : UnitAddCircle → X) (θ : UnitAddCircle) :
+    LipschitzWith 1 (distanceSlack boundary θ) := by
+  apply LipschitzWith.mk_one
+  intro x y
+  rw [Real.dist_eq]
+  unfold distanceSlack boundaryDistance
+  have hθ : |dist x (boundary θ) - dist y (boundary θ)| ≤
+      dist x y := by
+    simpa only [Real.dist_eq] using
+      dist_dist_dist_le_left x y (boundary θ)
+  have hhalf :
+      |dist x (boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle))) -
+        dist y (boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle)))| ≤
+          dist x y := by
+    simpa only [Real.dist_eq] using dist_dist_dist_le_left x y
+      (boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle)))
+  calc
+    |(dist x (boundary θ) +
+          dist x (boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle))) - Real.pi) / 2 -
+        (dist y (boundary θ) +
+          dist y (boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle))) - Real.pi) / 2| =
+        |(dist x (boundary θ) - dist y (boundary θ)) +
+          (dist x (boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle))) -
+            dist y (boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle))))| / 2 := by
+          rw [show
+            (dist x (boundary θ) +
+                dist x (boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle))) - Real.pi) / 2 -
+              (dist y (boundary θ) +
+                dist y (boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle))) - Real.pi) / 2 =
+              ((dist x (boundary θ) - dist y (boundary θ)) +
+                (dist x (boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle))) -
+                  dist y (boundary
+                    (θ + ((1 / 2 : ℝ) : UnitAddCircle))))) / 2 by ring]
+          rw [abs_div]
+          congr 1
+          ring
+    _ ≤ (|dist x (boundary θ) - dist y (boundary θ)| +
+          |dist x (boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle))) -
+            dist y (boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle)))|) / 2 := by
+          gcongr
+          exact abs_add_le _ _
+    _ ≤ dist x y := by linarith
+
 /-- Shifting the boundary parameter by half a turn negates the odd
 profile. -/
 theorem oddDistanceProfile_add_half

@@ -9,6 +9,7 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
 import Mathlib.MeasureTheory.Measure.Prod
 import Mathlib.Analysis.Calculus.ParametricIntegral
 import Mathlib.Analysis.Calculus.Rademacher
+import Mathlib.Analysis.Calculus.FDeriv.Norm
 
 /-!
 # Fourier coefficients of the metric boundary profile
@@ -620,6 +621,47 @@ theorem IsometricCircleBoundary.continuous_oddDistanceProfile_uncurry
       (hb.comp (hangle.add continuous_const))
   exact (hfirst.sub hsecond).div_const 2
 
+theorem IsometricCircleBoundary.continuous_distanceSlack_parameter
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X}
+    (hboundary : IsometricCircleBoundary boundary) (x : X) :
+    Continuous (fun t : ℝ ↦
+      distanceSlack boundary (angleToUnitAddCircle t) x) := by
+  have hb : Continuous boundary := hboundary.lipschitzWith.continuous
+  unfold distanceSlack boundaryDistance
+  have hangle : Continuous (fun t : ℝ ↦ angleToUnitAddCircle t) :=
+    continuous_angleToUnitAddCircle
+  have hfirst : Continuous (fun t : ℝ ↦
+      dist x (boundary (angleToUnitAddCircle t))) :=
+    continuous_const.dist (hb.comp hangle)
+  have hsecond : Continuous (fun t : ℝ ↦
+      dist x (boundary
+        (angleToUnitAddCircle t + ((1 / 2 : ℝ) : UnitAddCircle)))) :=
+    continuous_const.dist (hb.comp (hangle.add continuous_const))
+  exact ((hfirst.add hsecond).sub continuous_const).div_const 2
+
+/-- Joint continuity of the antipodal slack in its angular parameter and
+its filling variable. -/
+theorem IsometricCircleBoundary.continuous_distanceSlack_uncurry
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary) :
+    Continuous (Function.uncurry (fun t : ℝ ↦ fun x : ℂ ↦
+      distanceSlack boundary (angleToUnitAddCircle t) x)) := by
+  have hb : Continuous boundary := hboundary.lipschitzWith.continuous
+  unfold Function.uncurry distanceSlack boundaryDistance
+  have hangle : Continuous (fun p : ℝ × ℂ ↦ angleToUnitAddCircle p.1) :=
+    continuous_angleToUnitAddCircle.comp continuous_fst
+  have hfirst : Continuous (fun p : ℝ × ℂ ↦
+      dist p.2 (boundary (angleToUnitAddCircle p.1))) :=
+    continuous_snd.dist (hb.comp hangle)
+  have hsecond : Continuous (fun p : ℝ × ℂ ↦
+      dist p.2 (boundary
+        (angleToUnitAddCircle p.1 +
+          ((1 / 2 : ℝ) : UnitAddCircle)))) :=
+    continuous_snd.dist
+      (hb.comp (hangle.add continuous_const))
+  exact ((hfirst.add hsecond).sub continuous_const).div_const 2
+
 /-- For almost every filling point, almost every angular distance profile
 is differentiable there.  This is the Fubini/Rademacher step in the weak
 differentiation part of Lemma 5.4. -/
@@ -689,6 +731,180 @@ theorem oddProfileDerivativeField_basis_energy_le_one
       (oddProfileDerivativeField boundary x t Complex.I) ^ 2 ≤ 1 :=
   realCovector_basis_energy_le_one _
     (norm_oddProfileDerivativeField_le_one boundary x t)
+
+/-- The measurable weak derivative field of the angular slack profiles at a
+fixed filling point. -/
+def distanceSlackDerivativeField
+    (boundary : UnitAddCircle → ℂ) (x : ℂ) (t : ℝ) : ℂ →L[ℝ] ℝ :=
+  fderiv ℝ (distanceSlack boundary (angleToUnitAddCircle t)) x
+
+theorem measurable_distanceSlackDerivativeField
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary) (x : ℂ) :
+    Measurable (distanceSlackDerivativeField boundary x) := by
+  let F : ℝ → ℂ → ℝ := fun t y ↦
+    distanceSlack boundary (angleToUnitAddCircle t) y
+  have hF : Continuous F.uncurry :=
+    hboundary.continuous_distanceSlack_uncurry
+  have hjoint : Measurable (fun p : ℝ × ℂ ↦
+      fderiv ℝ (F p.1) p.2) :=
+    measurable_fderiv_with_param ℝ hF
+  have hcomp := hjoint.comp
+    (measurable_id.prodMk (measurable_const : Measurable (fun _ : ℝ ↦ x)))
+  simpa only [F, distanceSlackDerivativeField] using hcomp
+
+/-- The weak derivative of every angular slack profile has operator norm at
+most one, including at the exceptional points where `fderiv` is zero. -/
+theorem norm_distanceSlackDerivativeField_le_one
+    (boundary : UnitAddCircle → ℂ) (x : ℂ) (t : ℝ) :
+    ‖distanceSlackDerivativeField boundary x t‖ ≤ 1 := by
+  unfold distanceSlackDerivativeField
+  simpa only [NNReal.coe_one] using
+    norm_fderiv_le_of_lipschitz ℝ
+      (distanceSlack_lipschitzWith boundary
+        (angleToUnitAddCircle t))
+
+/-- Exact two-dimensional consequence of the preceding operator bound for
+antipodal slack. -/
+theorem distanceSlackDerivativeField_basis_energy_le_one
+    (boundary : UnitAddCircle → ℂ) (x : ℂ) (t : ℝ) :
+    (distanceSlackDerivativeField boundary x t 1) ^ 2 +
+      (distanceSlackDerivativeField boundary x t Complex.I) ^ 2 ≤ 1 :=
+  realCovector_basis_energy_le_one _
+    (norm_distanceSlackDerivativeField_le_one boundary x t)
+
+private theorem differentiableAt_boundaryDistance_of_ne
+    (boundary : UnitAddCircle → ℂ) (θ : UnitAddCircle) {x : ℂ}
+    (hx : x ≠ boundary θ) :
+    DifferentiableAt ℝ (boundaryDistance boundary θ) x := by
+  have hsub : DifferentiableAt ℝ (fun y : ℂ ↦ y - boundary θ) x :=
+    differentiableAt_id.sub_const (boundary θ)
+  unfold boundaryDistance
+  simpa [dist_eq_norm] using hsub.norm ℝ (sub_ne_zero.mpr hx)
+
+private theorem norm_fderiv_boundaryDistance_eq_one_of_ne
+    (boundary : UnitAddCircle → ℂ) (θ : UnitAddCircle) {x : ℂ}
+    (hx : x ≠ boundary θ) :
+    ‖fderiv ℝ (boundaryDistance boundary θ) x‖ = 1 := by
+  have hsub : HasFDerivAt (fun y : ℂ ↦ y - boundary θ) (1 : ℂ →L[ℝ] ℂ) x := by
+    simpa using (hasFDerivAt_id x).sub_const (boundary θ)
+  have hnormDiff : DifferentiableAt ℝ (fun z : ℂ ↦ ‖z‖) (x - boundary θ) := by
+    exact differentiableAt_id.norm ℝ (sub_ne_zero.mpr hx)
+  have hnorm : HasFDerivAt (fun z : ℂ ↦ ‖z‖)
+      (fderiv ℝ (fun z : ℂ ↦ ‖z‖) (x - boundary θ)) (x - boundary θ) :=
+    hnormDiff.hasFDerivAt
+  have hcomp : HasFDerivAt (boundaryDistance boundary θ)
+      (fderiv ℝ (fun z : ℂ ↦ ‖z‖) (x - boundary θ)) x := by
+    unfold boundaryDistance
+    simpa [dist_eq_norm] using hnorm.comp x hsub
+  rw [hcomp.fderiv]
+  exact norm_fderiv_norm (E := ℂ) hnormDiff
+
+private theorem oddProfileDerivativeField_eq_half_sub_boundaryDistance_of_ne
+    (boundary : UnitAddCircle → ℂ) (x : ℂ) (t : ℝ)
+    (hxt : x ≠ boundary (angleToUnitAddCircle t))
+    (hxhalf : x ≠ boundary
+      (angleToUnitAddCircle t + ((1 / 2 : ℝ) : UnitAddCircle))) :
+    oddProfileDerivativeField boundary x t =
+      (1 / 2 : ℝ) •
+        (fderiv ℝ (boundaryDistance boundary (angleToUnitAddCircle t)) x -
+          fderiv ℝ (boundaryDistance boundary
+            (angleToUnitAddCircle t + ((1 / 2 : ℝ) : UnitAddCircle))) x) := by
+  have h1 :=
+    (differentiableAt_boundaryDistance_of_ne boundary
+      (angleToUnitAddCircle t) hxt).hasFDerivAt
+  have h2 :=
+    (differentiableAt_boundaryDistance_of_ne boundary
+      (angleToUnitAddCircle t + ((1 / 2 : ℝ) : UnitAddCircle))
+      hxhalf).hasFDerivAt
+  have hderiv :
+      HasFDerivAt
+        (fun y : ℂ ↦ oddDistanceProfile boundary (angleToUnitAddCircle t) y)
+        ((1 / 2 : ℝ) •
+          (fderiv ℝ (boundaryDistance boundary (angleToUnitAddCircle t)) x -
+            fderiv ℝ (boundaryDistance boundary
+              (angleToUnitAddCircle t + ((1 / 2 : ℝ) : UnitAddCircle))) x)) x := by
+    simpa [oddDistanceProfile, sub_eq_add_neg, div_eq_mul_inv,
+      mul_comm, mul_left_comm, mul_assoc] using
+      ((h1.sub h2).const_mul (1 / 2 : ℝ))
+  unfold oddProfileDerivativeField
+  exact hderiv.fderiv
+
+private theorem distanceSlackDerivativeField_eq_half_add_boundaryDistance_of_ne
+    (boundary : UnitAddCircle → ℂ) (x : ℂ) (t : ℝ)
+    (hxt : x ≠ boundary (angleToUnitAddCircle t))
+    (hxhalf : x ≠ boundary
+      (angleToUnitAddCircle t + ((1 / 2 : ℝ) : UnitAddCircle))) :
+    distanceSlackDerivativeField boundary x t =
+      (1 / 2 : ℝ) •
+        (fderiv ℝ (boundaryDistance boundary (angleToUnitAddCircle t)) x +
+          fderiv ℝ (boundaryDistance boundary
+            (angleToUnitAddCircle t + ((1 / 2 : ℝ) : UnitAddCircle))) x) := by
+  have h1 :=
+    (differentiableAt_boundaryDistance_of_ne boundary
+      (angleToUnitAddCircle t) hxt).hasFDerivAt
+  have h2 :=
+    (differentiableAt_boundaryDistance_of_ne boundary
+      (angleToUnitAddCircle t + ((1 / 2 : ℝ) : UnitAddCircle))
+      hxhalf).hasFDerivAt
+  have hderiv :
+      HasFDerivAt
+        (fun y : ℂ ↦ distanceSlack boundary (angleToUnitAddCircle t) y)
+        ((1 / 2 : ℝ) •
+          (fderiv ℝ (boundaryDistance boundary (angleToUnitAddCircle t)) x +
+            fderiv ℝ (boundaryDistance boundary
+              (angleToUnitAddCircle t + ((1 / 2 : ℝ) : UnitAddCircle))) x)) x := by
+    simpa [distanceSlack, sub_eq_add_neg, div_eq_mul_inv,
+      mul_comm, mul_left_comm, mul_assoc, add_assoc, add_left_comm, add_comm] using
+      (((h1.add h2).const_add (-Real.pi)).const_mul (1 / 2 : ℝ))
+  unfold distanceSlackDerivativeField
+  exact hderiv.fderiv
+
+/-- Away from the boundary curve, the odd profile and the antipodal slack
+satisfy the exact planar parallelogram identity at the derivative level. -/
+theorem oddProfileDerivativeField_add_distanceSlackDerivativeField_basis_energy_eq_one_of_not_mem_range
+    {boundary : UnitAddCircle → ℂ} {x : ℂ}
+    (hx : x ∉ Set.range boundary) (t : ℝ) :
+    ((oddProfileDerivativeField boundary x t 1) ^ 2 +
+        (oddProfileDerivativeField boundary x t Complex.I) ^ 2) +
+      ((distanceSlackDerivativeField boundary x t 1) ^ 2 +
+        (distanceSlackDerivativeField boundary x t Complex.I) ^ 2) = 1 := by
+  let θ : UnitAddCircle := angleToUnitAddCircle t
+  have hxθ : x ≠ boundary θ := by
+    intro h
+    exact hx ⟨θ, h.symm⟩
+  have hxθhalf : x ≠ boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle)) := by
+    intro h
+    exact hx ⟨θ + ((1 / 2 : ℝ) : UnitAddCircle), h.symm⟩
+  let D₁ : ℂ →L[ℝ] ℝ := fderiv ℝ (boundaryDistance boundary θ) x
+  let D₂ : ℂ →L[ℝ] ℝ :=
+    fderiv ℝ (boundaryDistance boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle))) x
+  have hodd :=
+    oddProfileDerivativeField_eq_half_sub_boundaryDistance_of_ne
+      boundary x t hxθ hxθhalf
+  have hslack :=
+    distanceSlackDerivativeField_eq_half_add_boundaryDistance_of_ne
+      boundary x t hxθ hxθhalf
+  have hnorm1 : ‖D₁‖ = 1 := by
+    simpa [D₁, θ] using
+      norm_fderiv_boundaryDistance_eq_one_of_ne boundary θ hxθ
+  have hnorm2 : ‖D₂‖ = 1 := by
+    simpa [D₂, θ] using
+      norm_fderiv_boundaryDistance_eq_one_of_ne boundary
+        (θ + ((1 / 2 : ℝ) : UnitAddCircle)) hxθhalf
+  rw [hodd, hslack]
+  have hpar :
+      ((((1 / 2 : ℝ) • (D₁ - D₂)) 1) ^ 2 +
+          (((1 / 2 : ℝ) • (D₁ - D₂)) Complex.I) ^ 2) +
+        ((((1 / 2 : ℝ) • (D₁ + D₂)) 1) ^ 2 +
+          (((1 / 2 : ℝ) • (D₁ + D₂)) Complex.I) ^ 2) =
+      (((D₁ 1) ^ 2 + (D₁ Complex.I) ^ 2) +
+          ((D₂ 1) ^ 2 + (D₂ Complex.I) ^ 2)) / 2 := by
+    simp [ContinuousLinearMap.smul_apply, D₁, D₂]
+    ring
+  rw [hpar, realCovector_apply_one_sq_add_apply_I_sq,
+    realCovector_apply_one_sq_add_apply_I_sq, hnorm1, hnorm2]
+  ring
 
 /-- Every unit directional component of the profile derivative is `L²`
 on the angular period. -/
