@@ -371,19 +371,31 @@ def HasOddBoundaryDegreeObstruction
   ∀ (H : X → UnitAddCircle), Continuous H →
     ∀ d : ℤ, HasCircleDegree (H ∘ boundary) d → Odd d → False
 
+/-- The odd boundary-degree obstruction transports across any
+boundary-respecting continuous map by precomposing the test map. -/
+theorem hasOddBoundaryDegreeObstruction_of_comp_continuous
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary) :
+    HasOddBoundaryDegreeObstruction boundary' := by
+  intro H hH degree hdegree hodd
+  apply hobstruction (H ∘ f) (hH.comp hf) degree
+  · simpa [Function.comp_assoc, hboundary] using hdegree
+  · exact hodd
+
 /-- The odd boundary-degree obstruction transports across boundary-respecting
-homeomorphisms by precomposing the test map with the homeomorphism. -/
+homeomorphisms by specializing the continuous-map transport theorem. -/
 theorem hasOddBoundaryDegreeObstruction_of_homeomorph
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
     (e : X ≃ₜ Y)
     (hboundary : boundary' = e ∘ boundary)
     (hobstruction : HasOddBoundaryDegreeObstruction boundary) :
-    HasOddBoundaryDegreeObstruction boundary' := by
-  intro H hH degree hdegree hodd
-  apply hobstruction (H ∘ e) (hH.comp e.continuous_toFun) degree
-  · simpa [Function.comp_assoc, hboundary] using hdegree
-  · exact hodd
+    HasOddBoundaryDegreeObstruction boundary' :=
+  hasOddBoundaryDegreeObstruction_of_comp_continuous
+    e e.continuous_toFun hboundary hobstruction
 
 /-- A boundary map has the odd-degree obstruction as soon as it is nullhomotopic:
 if it contracts through a continuous homotopy to a constant loop, then every
@@ -437,6 +449,18 @@ theorem hasOddBoundaryDegreeObstruction_closedUnitDiskBoundary :
     (hH.comp continuous_closedUnitSquareToDisk)
     degree hdegreeSquare hodd
 
+/-- Any boundary obtained from the closed-disk boundary by a continuous
+extension map inherits the odd boundary-degree obstruction directly from the
+disk model domain. -/
+theorem hasOddBoundaryDegreeObstruction_of_closedUnitDisk_extension
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (F : ClosedUnitDisk → Y) (hF : Continuous F)
+    (hboundary : boundary = F ∘ closedUnitDiskBoundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_comp_continuous
+    F hF hboundary hasOddBoundaryDegreeObstruction_closedUnitDiskBoundary
+
 /-- Any boundary obtained from the closed disk boundary by a homeomorphism inherits the
 odd boundary-degree obstruction directly from the disk model domain. -/
 theorem hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_direct
@@ -445,8 +469,8 @@ theorem hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_direct
     (e : ClosedUnitDisk ≃ₜ Y)
     (hboundary : boundary = e ∘ closedUnitDiskBoundary) :
     HasOddBoundaryDegreeObstruction boundary :=
-  hasOddBoundaryDegreeObstruction_of_homeomorph e hboundary
-    hasOddBoundaryDegreeObstruction_closedUnitDiskBoundary
+  hasOddBoundaryDegreeObstruction_of_closedUnitDisk_extension
+    e e.continuous_toFun hboundary
 
 /-- A finite polygonal model fine enough for the particular circle map
 `H`.  All indexing types are explicit finite types, every face is a

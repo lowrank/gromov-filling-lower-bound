@@ -61,8 +61,9 @@ runs both checks on every push and pull request.
   nonzero-degree component of a mixed Givens curve is covered;
 - direct nullhomotopy invariance of circle degree through covering-space
   lifting, yielding the odd-degree obstruction for the standard square and
-  disk boundaries and therefore direct coverage wrappers for every compact
-  source whose boundary is identified with the closed disk by a
+  disk boundaries and therefore direct coverage, Jacobian, and certificate
+  wrappers for every compact source whose boundary either extends
+  continuously across the closed disk or is identified with it by a
   homeomorphism;
 - compact-source transport for the fine-polygonal-model interface: a
   geometric polygonal model can be pushed forward along a continuous map,

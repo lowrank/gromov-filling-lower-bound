@@ -236,11 +236,56 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_arbitrarily_fine_model
     j boundary (hasFinePolygonalModels_of_arbitrarilyFine hmodels)
     G hG hboundary hpartition hzero
 
+/-- If the boundary extends continuously across the standard closed disk, the
+Jordan region containing the origin is covered directly from the closed-disk
+odd-degree obstruction, with no polygonal-model hypothesis. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_closedUnitDisk_extension
+    {Y : Type*} [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (F : ClosedUnitDisk → Y) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_extension
+      F hF hboundaryExtension)
+    G hG hboundary hpartition hzero
+
+/-- If the boundary extends continuously across the standard closed disk, the
+separation-free coverage conclusion follows directly from the closed-disk
+odd-degree obstruction. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitDisk_extension
+    {Y : Type*} [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (F : ClosedUnitDisk → Y) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_extension
+      F hF hboundaryExtension)
+    G hG hboundary
+
 /-- If the boundary is identified with the standard closed-disk boundary by a
 homeomorphism, the Jordan region containing the origin is covered directly from
 the closed-disk odd-degree obstruction, with no polygonal-model hypothesis. -/
 theorem givensBoundaryCurve_jordan_region_subset_range_of_closedUnitDisk_homeomorph_direct
-    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {Y : Type*} [TopologicalSpace Y]
     {N : ℕ} (j : Fin N)
     {boundary : UnitAddCircle → Y}
     (e : ClosedUnitDisk ≃ₜ Y)
@@ -263,7 +308,7 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_closedUnitDisk_homeomo
 directly from the closed-disk odd-degree obstruction, without a polygonal-model
 hypothesis. -/
 theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitDisk_homeomorph_direct
-    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {Y : Type*} [TopologicalSpace Y]
     {N : ℕ} (j : Fin N)
     {boundary : UnitAddCircle → Y}
     (e : ClosedUnitDisk ≃ₜ Y)

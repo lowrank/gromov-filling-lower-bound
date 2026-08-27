@@ -109,12 +109,52 @@ theorem givensMetricFourierMap_jordan_region_subset_range_of_homeomorph_arbitrar
     (givensMetricFourierMap_on_boundary hboundary' j)
     hpartition hzero
 
+/-- If the boundary extends continuously across the standard closed disk, the
+genuine metric Fourier map covers the Jordan region at the origin directly from
+the closed-disk obstruction, with no polygonal-model hypothesis. -/
+theorem givensMetricFourierMap_jordan_region_subset_range_of_closedUnitDisk_extension
+    {Y : Type*} [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (F : ClosedUnitDisk → Y) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact givensBoundaryCurve_jordan_region_subset_range_of_closedUnitDisk_extension
+    j F hF hboundaryExtension (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    hpartition hzero
+
+/-- If the boundary extends continuously across the standard closed disk, the
+separation-free coverage conclusion for the genuine metric Fourier map follows
+directly from the closed-disk obstruction. -/
+theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_closedUnitDisk_extension
+    {Y : Type*} [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (F : ClosedUnitDisk → Y) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitDisk_extension
+    j F hF hboundaryExtension (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+
 /-- If the boundary is identified with the standard closed-disk boundary by a
 homeomorphism, the genuine metric Fourier map covers the Jordan region at the
 origin directly from the closed-disk obstruction, with no polygonal-model
 hypothesis. -/
 theorem givensMetricFourierMap_jordan_region_subset_range_of_closedUnitDisk_homeomorph_direct
-    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {Y : Type*} [PseudoMetricSpace Y]
     {boundary : UnitAddCircle → Y}
     (e : ClosedUnitDisk ≃ₜ Y)
     (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
@@ -135,7 +175,7 @@ theorem givensMetricFourierMap_jordan_region_subset_range_of_closedUnitDisk_home
 Fourier map, using the direct odd-degree obstruction on the disk model
 rather than a polygonal-model hypothesis. -/
 theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_closedUnitDisk_homeomorph_direct
-    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {Y : Type*} [PseudoMetricSpace Y]
     {boundary : UnitAddCircle → Y}
     (e : ClosedUnitDisk ≃ₜ Y)
     (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)

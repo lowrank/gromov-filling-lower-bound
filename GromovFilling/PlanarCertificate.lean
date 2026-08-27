@@ -42,6 +42,31 @@ theorem finite_universal_ennreal_of_complex_planar_maps
       j boundary hfine (G j) (hG j) (hboundary j) (hGLipschitz j)
   · exact hbudget
 
+/-- The finite orientation-free Fourier certificate for complex-plane
+domains whose boundary extends continuously across the standard closed disk. -/
+theorem finite_universal_ennreal_of_complex_planar_maps_of_closedUnitDisk_extension
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitDisk → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (G : Fin N → ℂ → ℂ)
+    (hG : ∀ j, Continuous (G j))
+    (hboundary : ∀ j t,
+      G j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (K : Fin N → ℝ≥0)
+    (hGLipschitz : ∀ j, LipschitzWith (K j) (G j))
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  apply finite_universal_ennreal_of_givens_coverage_budget N area
+    (fun j ↦ ∫⁻ x,
+      ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume)
+  · intro j
+    exact givens_mixedBoundaryArea_le_complex_jacobian_of_closedUnitDisk_extension
+      j boundary F hF hboundaryExtension (G j) (hG j) (hboundary j) (hGLipschitz j)
+  · exact hbudget
+
 /-- Planar Lemma 5.4 for the genuine metric distance-profile map.  All
 boundary, continuity, and Lipschitz inputs are discharged internally. -/
 theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian
@@ -54,6 +79,23 @@ theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian
         |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
   exact givens_mixedBoundaryArea_le_complex_jacobian
     j boundary hfine (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    (givensMetricFourierMap_lipschitzWith hboundary N j)
+
+/-- Planar Lemma 5.4 for the genuine metric distance-profile map when the
+boundary extends continuously across the standard closed disk. -/
+theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_closedUnitDisk_extension
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitDisk → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (hboundary : IsometricCircleBoundary boundary) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
+  exact givens_mixedBoundaryArea_le_complex_jacobian_of_closedUnitDisk_extension
+    j boundary F hF hboundaryExtension (givensMetricFourierMap boundary N j)
     (continuous_givensMetricFourierMap hboundary N j)
     (givensMetricFourierMap_on_boundary hboundary j)
     (givensMetricFourierMap_lipschitzWith hboundary N j)
@@ -128,6 +170,48 @@ theorem sum_lintegral_givensMetricFourierMap_le_volume_of_coordinateEnergy
   exact sum_lintegral_abs_det_fderiv_restrict_le_volume
     (fun j ↦ givensMetricFourierMap boundary N j) s hs hmixed
 
+/-- The complete finite planar certificate for the actual metric Fourier
+family when the boundary extends continuously across the standard closed
+ disk. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitDisk_extension
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitDisk → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  apply finite_universal_ennreal_of_givens_coverage_budget N area
+    (fun j ↦ ∫⁻ x, ENNReal.ofReal
+      |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume)
+  · exact fun j ↦
+      givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_closedUnitDisk_extension
+        j boundary F hF hboundaryExtension hboundary
+  · exact hbudget
+
+/-- Infinite-mode planar conclusion for the actual metric Fourier family when
+ the boundary extends continuously across the standard closed disk. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_closedUnitDisk_extension
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitDisk → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitDisk_extension
+    N area boundary F hF hboundaryExtension hboundary (hbudget N)
+
 /-- The finite planar certificate for the actual metric Fourier family with
 the Jacobian budget derived internally from the coordinate-energy bound. -/
 theorem finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy
@@ -170,6 +254,51 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy
   intro N
   exact finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy
     N area boundary hboundary hfine (hbudget N) harea
+
+/-- The finite planar certificate with coordinate-energy budget when the
+boundary extends continuously across the standard closed disk. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_closedUnitDisk_extension
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitDisk → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget :
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  have hbudget' :
+      ∀ᵐ x ∂volume.restrict (Set.univ : Set ℂ),
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2 :=
+    ae_restrict_of_ae hbudget
+  refine (finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitDisk_extension
+    N (volume (Set.univ : Set ℂ)) boundary F hF hboundaryExtension hboundary ?_).trans harea
+  simpa only [Measure.restrict_univ] using
+    sum_lintegral_givensMetricFourierMap_le_volume_of_coordinateEnergy
+      boundary hboundary N Set.univ MeasurableSet.univ hbudget'
+
+/-- Infinite-mode planar certificate with coordinate-energy budget when the
+boundary extends continuously across the standard closed disk. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_closedUnitDisk_extension
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitDisk → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget : ∀ N : ℕ,
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact
+    finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_closedUnitDisk_extension
+      N area boundary F hF hboundaryExtension hboundary (hbudget N) harea
 
 end
 
