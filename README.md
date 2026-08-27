@@ -59,6 +59,11 @@ runs both checks on every push and pull request.
 - the resulting coverage implication: an odd radial boundary degree forces
   the puncture into the extension image, hence every point in the bounded
   nonzero-degree component of a mixed Givens curve is covered;
+- direct nullhomotopy invariance of circle degree through covering-space
+  lifting, yielding the odd-degree obstruction for the standard square and
+  disk boundaries and therefore direct coverage wrappers for every compact
+  source whose boundary is identified with the closed disk by a
+  homeomorphism;
 - compact-source transport for the fine-polygonal-model interface: a
   geometric polygonal model can be pushed forward along a continuous map,
   `HasArbitrarilyFinePolygonalModels` transfers across compact continuous
@@ -98,12 +103,15 @@ contradiction is assembled without auxiliary lift or turn assumptions, but
 the passage from an arbitrary compact surface to that finite data still
 needs:
 
-1. a theorem proving `HasArbitrarilyFinePolygonalModels` for every compact
-   surface with one boundary component—equivalently, furnishing arbitrarily
-   fine finite triangulations/cell structures and their compatible cyclic
+1. a theorem proving the needed topological obstruction or, equivalently,
+   `HasArbitrarilyFinePolygonalModels` for every compact surface with one
+   boundary component beyond the already formalized disk-like case—i.e.
+   furnishing either a direct surface-level degree argument or arbitrarily
+   fine finite triangulations/cell structures with compatible cyclic
    boundary subdivisions (the compact uniform-continuity passage from this
    geometric statement to `HasFinePolygonalModels`, together with compact
-   continuous/homeomorphic transport from model domains, is now formalized);
+   continuous/homeomorphic transport from model domains, is now formalized,
+   and the disk-homeomorphic case is already discharged directly);
 2. the weak differentiation-under-the-boundary-parameter-integral theorem
    for the metric Fourier coordinates and its Bessel estimate in the full
    surface setting.  The downstream planar Fourier/Jacobian/certificate

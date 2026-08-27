@@ -385,30 +385,44 @@ theorem hasOddBoundaryDegreeObstruction_of_homeomorph
   · simpa [Function.comp_assoc, hboundary] using hdegree
   · exact hodd
 
-/-- The standard boundary of the closed unit square has degree zero against every
-continuous extension to the whole square, by contracting the boundary to the
-center along the radial homotopy. -/
-theorem hasOddBoundaryDegreeObstruction_closedUnitSquareBoundary :
-    HasOddBoundaryDegreeObstruction closedUnitSquareBoundary := by
+/-- A boundary map has the odd-degree obstruction as soon as it is nullhomotopic:
+if it contracts through a continuous homotopy to a constant loop, then every
+continuous circle-valued map on the ambient space restricts to degree zero on
+that boundary. -/
+theorem hasOddBoundaryDegreeObstruction_of_nullhomotopy
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (center : X)
+    (F : C(I × UnitAddCircle, X))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t) :
+    HasOddBoundaryDegreeObstruction boundary := by
   intro H hH degree hdegree hodd
-  let F : C(I × UnitAddCircle, UnitAddCircle) :=
-    ⟨fun p ↦ H (closedUnitSquareRadial p),
-      hH.comp continuous_closedUnitSquareRadial⟩
-  have hF0 : ∀ t : UnitAddCircle, F (0, t) = H closedUnitSquareCenter := by
+  let FH : C(I × UnitAddCircle, UnitAddCircle) :=
+    ⟨fun p ↦ H (F p), hH.comp F.continuous⟩
+  have hFH0 : ∀ t : UnitAddCircle, FH (0, t) = H center := by
     intro t
-    change H (closedUnitSquareRadial (closedUnitIntervalStart, t)) = H closedUnitSquareCenter
-    rw [closedUnitSquareRadial_start]
-  have hF1 : ∀ t : UnitAddCircle, F (1, t) = H (closedUnitSquareBoundary t) := by
+    simp [FH, hF0]
+  have hFH1 : ∀ t : UnitAddCircle, FH (1, t) = H (boundary t) := by
     intro t
-    change H (closedUnitSquareRadial (closedUnitIntervalFinish, t)) = H (closedUnitSquareBoundary t)
-    rw [closedUnitSquareRadial_finish]
-  have hzero : HasCircleDegree (H ∘ closedUnitSquareBoundary) 0 :=
-    HasCircleDegree.of_homotopy (hasCircleDegree_const (H closedUnitSquareCenter)) F hF0 hF1
+    simp [FH, hF1]
+  have hzero : HasCircleDegree (H ∘ boundary) 0 :=
+    HasCircleDegree.of_homotopy (hasCircleDegree_const (H center)) FH hFH0 hFH1
   have hdeg0 : degree = 0 := HasCircleDegree.unique hdegree hzero
   have hnot : ¬ Odd degree := by
     rw [hdeg0]
     decide
   exact hnot hodd
+
+/-- The standard boundary of the closed unit square has degree zero against every
+continuous extension to the whole square, by contracting the boundary to the
+center along the radial homotopy. -/
+theorem hasOddBoundaryDegreeObstruction_closedUnitSquareBoundary :
+    HasOddBoundaryDegreeObstruction closedUnitSquareBoundary := by
+  apply hasOddBoundaryDegreeObstruction_of_nullhomotopy closedUnitSquareCenter
+    ⟨closedUnitSquareRadial, continuous_closedUnitSquareRadial⟩
+  · exact closedUnitSquareRadial_start
+  · exact closedUnitSquareRadial_finish
 
 /-- The standard boundary of the closed unit disk inherits the odd boundary-degree
 obstruction from the square boundary through the radial square-to-disk map. -/
@@ -1020,10 +1034,9 @@ theorem hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph
     {boundary : UnitAddCircle → Y}
     (e : ClosedUnitDisk ≃ₜ Y)
     (hboundary : boundary = e ∘ closedUnitDiskBoundary)
-    (hdisk : HasArbitrarilyFinePolygonalModels closedUnitDiskBoundary) :
+    (_hdisk : HasArbitrarilyFinePolygonalModels closedUnitDiskBoundary) :
     HasOddBoundaryDegreeObstruction boundary :=
-  hasOddBoundaryDegreeObstruction_of_homeomorph_arbitrarilyFine
-    e hboundary hdisk
+  hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_direct e hboundary
 
 end
 
