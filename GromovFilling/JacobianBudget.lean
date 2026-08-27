@@ -135,6 +135,32 @@ theorem sum_lintegral_planarJacobian_le_measure_univ_ae
         ∫⁻ _x, ENNReal.ofReal 1 ∂μ := lintegral_mono_ae hpointwise
     _ = μ Set.univ := by simp
 
+/-- Almost-everywhere additive form of the integrated planar Jacobian budget. -/
+theorem sum_lintegral_planarJacobian_add_lintegral_defect_le_measure_univ_ae
+    {ι X : Type*} [Fintype ι] [MeasurableSpace X]
+    (μ : Measure X) (p q : ι → X → ℝ × ℝ)
+    (defect : X → ℝ≥0∞)
+    (hmeasurable : ∀ j,
+      Measurable (fun x ↦
+        ENNReal.ofReal (planarJacobian (p j x) (q j x))))
+    (hdefect : Measurable defect)
+    (hbudget : ∀ᵐ x ∂μ,
+      (∑ j, ENNReal.ofReal (planarJacobian (p j x) (q j x))) + defect x ≤ 1) :
+    (∑ j, ∫⁻ x, ENNReal.ofReal
+      (planarJacobian (p j x) (q j x)) ∂μ) +
+        ∫⁻ x, defect x ∂μ ≤ μ Set.univ := by
+  rw [← lintegral_finset_sum Finset.univ (fun j _ ↦ hmeasurable j),
+    ← lintegral_add_right (fun x ↦
+      ∑ j, ENNReal.ofReal (planarJacobian (p j x) (q j x))) hdefect]
+  have hpointwise : ∀ᵐ x ∂μ,
+      (∑ j, ENNReal.ofReal (planarJacobian (p j x) (q j x))) + defect x ≤ ENNReal.ofReal 1 := by
+    filter_upwards [hbudget] with x hx
+    simpa using hx
+  calc
+    ∫⁻ x, (∑ j, ENNReal.ofReal (planarJacobian (p j x) (q j x))) + defect x ∂μ ≤
+        ∫⁻ _x, ENNReal.ofReal 1 ∂μ := lintegral_mono_ae hpointwise
+    _ = μ Set.univ := by simp
+
 /-- A matrix with `UᵀU = I` preserves the sum of coordinate squares. -/
 theorem orthogonal_mulVec_energy {ι : Type*} [Fintype ι] [DecidableEq ι]
     (U : Matrix ι ι ℝ) (horth : U.transpose * U = 1) (x : ι → ℝ) :

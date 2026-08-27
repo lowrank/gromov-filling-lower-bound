@@ -45,6 +45,25 @@ theorem finite_universal_ennreal_of_givens_coverage_budget
     (fun j _ ↦ mixedBoundaryArea_nonneg (givensMatrix N) j)]
   exact (Finset.sum_le_sum fun j _ ↦ hcoverage j).trans hbudget
 
+/-- Finite `ENNReal` certificate with an explicit additive defect term carried through unchanged. -/
+theorem finite_universal_ennreal_of_givens_coverage_budget_add
+    (N : ℕ) (area defect : ℝ≥0∞) (jacobianMass : Fin N → ℝ≥0∞)
+    (hcoverage : ∀ j : Fin N,
+      ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+        jacobianMass j)
+    (hbudget : (∑ j : Fin N, jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) + defect ≤ area := by
+  have hfinite : ENNReal.ofReal (finiteUniversalConstant N) ≤ ∑ j : Fin N, jacobianMass j := by
+    rw [← sum_mixedBoundaryArea (givensMatrix N)
+      (givensMatrix_column_energy N)]
+    rw [ENNReal.ofReal_sum_of_nonneg
+      (fun j _ ↦ mixedBoundaryArea_nonneg (givensMatrix N) j)]
+    exact Finset.sum_le_sum fun j _ ↦ hcoverage j
+  have hstep : ENNReal.ofReal (finiteUniversalConstant N) + defect ≤
+      (∑ j : Fin N, jacobianMass j) + defect := by
+    simpa [add_comm] using add_le_add_right hfinite defect
+  exact hstep.trans hbudget
+
 /-- The same finite theorem with the boundary quantity presented as the
 Green integral that occurs geometrically. -/
 theorem finite_universal_of_green_coverage_budget

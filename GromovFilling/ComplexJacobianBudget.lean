@@ -219,6 +219,66 @@ theorem sum_lintegral_abs_det_fderiv_restrict_le_volume
     (sum_lintegral_abs_det_fderiv_le_measure
       (volume.restrict s) G henergy)
 
+/-- Integrated additive complex Jacobian budget with an explicit real-valued defect. -/
+theorem sum_lintegral_abs_det_fderiv_add_lintegral_ofReal_defect_le_measure
+    {ι : Type*} [Fintype ι] (μ : Measure ℂ) (G : ι → ℂ → ℂ)
+    (defect : ℂ → ℝ)
+    (hdefect : Measurable (fun x ↦ ENNReal.ofReal (defect x)))
+    (hdefect_nonneg : ∀ x, 0 ≤ defect x)
+    (hbudget : ∀ᵐ x ∂μ,
+      (∑ j, |(fderiv ℝ (G j) x).det|) + defect x ≤ 1) :
+    (∑ j, ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂μ) +
+        ∫⁻ x, ENNReal.ofReal (defect x) ∂μ ≤ μ Set.univ := by
+  let p : ι → ℂ → ℝ × ℝ := fun j x ↦
+    (((fderiv ℝ (G j) x) 1).re, ((fderiv ℝ (G j) x) 1).im)
+  let q : ι → ℂ → ℝ × ℝ := fun j x ↦
+    (((fderiv ℝ (G j) x) Complex.I).re,
+      ((fderiv ℝ (G j) x) Complex.I).im)
+  have hmeasurable : ∀ j,
+      Measurable (fun x ↦
+        ENNReal.ofReal (planarJacobian (p j x) (q j x))) := by
+    intro j
+    unfold p q planarJacobian
+    fun_prop
+  have hpointwise : ∀ᵐ x ∂μ,
+      (∑ j, ENNReal.ofReal (planarJacobian (p j x) (q j x))) +
+        ENNReal.ofReal (defect x) ≤ 1 := by
+    filter_upwards [hbudget] with x hx
+    have hsum_nonneg : 0 ≤ ∑ j, planarJacobian (p j x) (q j x) :=
+      Finset.sum_nonneg fun j _ ↦ abs_nonneg _
+    have hsum : (∑ j, ENNReal.ofReal (planarJacobian (p j x) (q j x))) =
+        ENNReal.ofReal (∑ j, planarJacobian (p j x) (q j x)) := by
+      rw [ENNReal.ofReal_sum_of_nonneg]
+      intro j _
+      exact abs_nonneg _
+    have hsumabs_eq : (∑ j, |(fderiv ℝ (G j) x).det|) =
+        ∑ j, planarJacobian (p j x) (q j x) := by
+      apply Finset.sum_congr rfl
+      intro j _
+      simp [p, q, abs_det_eq_planarJacobian]
+    have hx' : ENNReal.ofReal ((∑ j, |(fderiv ℝ (G j) x).det|) + defect x) ≤ 1 := by
+      simpa using ENNReal.ofReal_le_ofReal hx
+    rw [hsumabs_eq, ENNReal.ofReal_add hsum_nonneg (hdefect_nonneg x)] at hx'
+    simpa [hsum] using hx'
+  simpa only [p, q, ← abs_det_eq_planarJacobian] using
+    (sum_lintegral_planarJacobian_add_lintegral_defect_le_measure_univ_ae
+      μ p q (fun x ↦ ENNReal.ofReal (defect x)) hmeasurable hdefect hpointwise)
+
+/-- Restricting the additive complex Jacobian budget to a measurable planar domain. -/
+theorem sum_lintegral_abs_det_fderiv_add_lintegral_ofReal_defect_restrict_le_volume
+    {ι : Type*} [Fintype ι] (G : ι → ℂ → ℂ)
+    (s : Set ℂ) (_hs : MeasurableSet s)
+    (defect : ℂ → ℝ)
+    (hdefect : Measurable (fun x ↦ ENNReal.ofReal (defect x)))
+    (hdefect_nonneg : ∀ x, 0 ≤ defect x)
+    (hbudget : ∀ᵐ x ∂volume.restrict s,
+      (∑ j, |(fderiv ℝ (G j) x).det|) + defect x ≤ 1) :
+    (∑ j, ∫⁻ x in s, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) +
+        ∫⁻ x in s, ENNReal.ofReal (defect x) ∂volume ≤ volume s := by
+  simpa only [Measure.restrict_apply_univ] using
+    (sum_lintegral_abs_det_fderiv_add_lintegral_ofReal_defect_le_measure
+      (volume.restrict s) G defect hdefect hdefect_nonneg hbudget)
+
 end
 
 end GromovFilling

@@ -218,6 +218,51 @@ theorem sum_lintegral_givensMetricFourierMap_le_volume_of_coordinateEnergy
   exact sum_lintegral_abs_det_fderiv_restrict_le_volume
     (fun j ↦ givensMetricFourierMap boundary N j) s hs hmixed
 
+/-- The sharp pointwise Jacobian defect bound integrates to an additive area budget on any measurable planar domain. -/
+theorem sum_lintegral_givensMetricFourierMap_add_lintegral_distanceSlackDerivativeEnergyDefect_le_volume
+    (boundary : UnitAddCircle → ℂ)
+    (hboundary : IsometricCircleBoundary boundary)
+    (N : ℕ) (s : Set ℂ) (hs : MeasurableSet s) :
+    (∑ j : Fin N, ∫⁻ x in s, ENNReal.ofReal
+      |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) +
+        ∫⁻ x in s, ENNReal.ofReal
+          (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤
+        volume s := by
+  refine sum_lintegral_abs_det_fderiv_add_lintegral_ofReal_defect_restrict_le_volume
+    (fun j ↦ givensMetricFourierMap boundary N j) s hs
+    (distanceSlackDerivativeEnergyDefect boundary)
+    (measurable_distanceSlackDerivativeEnergyDefect hboundary)
+    (distanceSlackDerivativeEnergyDefect_nonneg boundary) ?_
+  exact ae_restrict_of_ae
+    (ae_sum_abs_det_fderiv_givensMetricFourierMap_add_distanceSlackDerivativeEnergyDefect_le_one
+      hboundary N)
+
+/-- Finite slack-refined planar certificate derived internally from the sharp Jacobian defect budget. -/
+theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_coordinateEnergy
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hfine : HasFinePolygonalModels boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area := by
+  let defectMass : ℝ≥0∞ :=
+    ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume
+  have hbudget :
+      (∑ j : Fin N, ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) +
+          defectMass ≤ volume (Set.univ : Set ℂ) := by
+    simpa [defectMass, Measure.restrict_univ] using
+      sum_lintegral_givensMetricFourierMap_add_lintegral_distanceSlackDerivativeEnergyDefect_le_volume
+        boundary hboundary N Set.univ MeasurableSet.univ
+  refine (finite_universal_ennreal_of_givens_coverage_budget_add N
+    (volume (Set.univ : Set ℂ)) defectMass
+    (fun j ↦ ∫⁻ x, ENNReal.ofReal
+      |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ?_ hbudget).trans harea
+  intro j
+  exact givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian
+    j boundary hboundary hfine
+
 /-- The complete finite planar certificate for the actual metric Fourier
 family when the boundary extends continuously across the standard closed
  disk. -/

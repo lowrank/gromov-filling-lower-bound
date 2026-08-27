@@ -1400,6 +1400,102 @@ theorem distanceSlackDerivativeEnergyDefect_nonneg
     intervalIntegral.integral_nonneg_of_forall neg_pi_lt_pi.le (fun _ ↦ by positivity)
   exact add_nonneg (mul_nonneg hfac h1) (mul_nonneg hfac hI)
 
+private theorem measurable_distanceSlackDerivativeEnergyIntegrand
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary) (v : ℂ) :
+    Measurable (fun p : ℂ × ℝ ↦
+      ENNReal.ofReal ((distanceSlackDerivativeField boundary p.1 p.2 v) ^ 2)) := by
+  let F : ℝ → ℂ → ℝ := fun t y ↦
+    distanceSlack boundary (angleToUnitAddCircle t) y
+  have hF : Continuous F.uncurry :=
+    hboundary.continuous_distanceSlack_uncurry
+  have hjoint : Measurable (fun p : ℝ × ℂ ↦
+      fderiv ℝ (F p.1) p.2) :=
+    measurable_fderiv_with_param ℝ hF
+  have hswap : Measurable (fun p : ℂ × ℝ ↦ ((p.2, p.1) : ℝ × ℂ)) :=
+    measurable_swap
+  have hderiv : Measurable (fun p : ℂ × ℝ ↦
+      distanceSlackDerivativeField boundary p.1 p.2) := by
+    simpa only [F, distanceSlackDerivativeField] using hjoint.comp hswap
+  have happly : Measurable (fun p : ℂ × ℝ ↦
+      distanceSlackDerivativeField boundary p.1 p.2 v) :=
+    (ContinuousLinearMap.measurable_apply v).comp hderiv
+  exact ENNReal.measurable_ofReal.comp (happly.pow_const 2)
+
+private theorem lintegral_distanceSlackDerivativeField_sq_eq
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary) (x v : ℂ) (hv : ‖v‖ ≤ 1) :
+    (∫⁻ t, ENNReal.ofReal
+      (‖distanceSlackDerivativeField boundary x t v‖ ^ 2)
+        ∂volume.restrict (Set.Ioc (-Real.pi) Real.pi)) =
+      ENNReal.ofReal (∫ t in (-Real.pi)..Real.pi,
+        ‖((distanceSlackDerivativeField boundary x t v : ℝ) : ℂ)‖ ^ 2) := by
+  have hmem := memLp_distanceSlackDerivativeField_apply hboundary x v hv
+  have hint : Integrable
+      (fun t ↦ ‖((distanceSlackDerivativeField boundary x t v : ℝ) : ℂ)‖ ^ 2)
+      (volume.restrict (Set.Ioc (-Real.pi) Real.pi)) := by
+    simpa using MemLp.integrable_norm_pow'
+      (μ := volume.restrict (Set.Ioc (-Real.pi) Real.pi)) hmem
+  have hconvert := ofReal_integral_eq_lintegral_ofReal hint
+    (Filter.Eventually.of_forall fun t ↦ by positivity)
+  rw [intervalIntegral.integral_of_le neg_pi_lt_pi.le]
+  simpa [Complex.norm_real, Real.norm_eq_abs] using hconvert.symm
+
+/-- The antipodal slack energy defect is measurable as an `ENNReal` density. -/
+theorem measurable_distanceSlackDerivativeEnergyDefect
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary) :
+    Measurable (fun x ↦ ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x)) := by
+  let μI : Measure ℝ := volume.restrict (Set.Ioc (-Real.pi) Real.pi)
+  have hlin1 : Measurable (fun x ↦
+      ∫⁻ t, ENNReal.ofReal
+        (‖((distanceSlackDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2) ∂μI) := by
+    exact Measurable.lintegral_prod_right <| by
+      simpa [Function.uncurry, Complex.norm_real, Real.norm_eq_abs, sq_abs] using
+        measurable_distanceSlackDerivativeEnergyIntegrand hboundary (1 : ℂ)
+  have hlinI : Measurable (fun x ↦
+      ∫⁻ t, ENNReal.ofReal
+        (‖((distanceSlackDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2) ∂μI) := by
+    exact Measurable.lintegral_prod_right <| by
+      simpa [Function.uncurry, Complex.norm_real, Real.norm_eq_abs, sq_abs] using
+        measurable_distanceSlackDerivativeEnergyIntegrand hboundary Complex.I
+  have hfac_nonneg : 0 ≤ (Real.pi - -Real.pi)⁻¹ := by
+    exact inv_nonneg.mpr (sub_pos.mpr neg_pi_lt_pi).le
+  have hmeas_rhs : Measurable (fun x ↦
+      ENNReal.ofReal ((Real.pi - -Real.pi)⁻¹) *
+        ∫⁻ t, ENNReal.ofReal
+          (‖((distanceSlackDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2) ∂μI +
+      ENNReal.ofReal ((Real.pi - -Real.pi)⁻¹) *
+        ∫⁻ t, ENNReal.ofReal
+          (‖((distanceSlackDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2) ∂μI) := by
+    exact (measurable_const.mul hlin1).add (measurable_const.mul hlinI)
+  convert hmeas_rhs using 1
+  ext x
+  have h1_nonneg : 0 ≤ ∫ t in (-Real.pi)..Real.pi,
+      ‖((distanceSlackDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2 :=
+    intervalIntegral.integral_nonneg_of_forall neg_pi_lt_pi.le (fun _ ↦ by positivity)
+  have hI_nonneg : 0 ≤ ∫ t in (-Real.pi)..Real.pi,
+      ‖((distanceSlackDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2 :=
+    intervalIntegral.integral_nonneg_of_forall neg_pi_lt_pi.le (fun _ ↦ by positivity)
+  have hlin1eq :
+      (∫⁻ t, ENNReal.ofReal
+        (‖((distanceSlackDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2) ∂μI) =
+        ENNReal.ofReal (∫ t in (-Real.pi)..Real.pi,
+          ‖((distanceSlackDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2) := by
+    simpa [μI] using
+      lintegral_distanceSlackDerivativeField_sq_eq hboundary x 1 (by simp)
+  have hlinIeq :
+      (∫⁻ t, ENNReal.ofReal
+        (‖((distanceSlackDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2) ∂μI) =
+        ENNReal.ofReal (∫ t in (-Real.pi)..Real.pi,
+          ‖((distanceSlackDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2) := by
+    simpa [μI] using
+      lintegral_distanceSlackDerivativeField_sq_eq hboundary x Complex.I (by simp)
+  unfold distanceSlackDerivativeEnergyDefect
+  rw [ENNReal.ofReal_add (mul_nonneg hfac_nonneg h1_nonneg)
+      (mul_nonneg hfac_nonneg hI_nonneg),
+    ENNReal.ofReal_mul hfac_nonneg, ENNReal.ofReal_mul hfac_nonneg, hlin1eq, hlinIeq]
+
 private theorem oddProfileDerivativeField_energy_budget_with_slack
     {boundary : UnitAddCircle → ℂ}
     (hboundary : IsometricCircleBoundary boundary) (x : ℂ) :
