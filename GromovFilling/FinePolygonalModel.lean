@@ -14,6 +14,8 @@ namespace GromovFilling
 
 noncomputable section
 
+open unitInterval
+
 /-- The closed unit disk in `ℂ`, used as the canonical model source for the
 remaining surface-triangulation input. -/
 abbrev ClosedUnitDisk := Metric.closedBall (0 : ℂ) 1
@@ -368,6 +370,69 @@ def HasOddBoundaryDegreeObstruction
     (boundary : UnitAddCircle → X) : Prop :=
   ∀ (H : X → UnitAddCircle), Continuous H →
     ∀ d : ℤ, HasCircleDegree (H ∘ boundary) d → Odd d → False
+
+/-- The odd boundary-degree obstruction transports across boundary-respecting
+homeomorphisms by precomposing the test map with the homeomorphism. -/
+theorem hasOddBoundaryDegreeObstruction_of_homeomorph
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundary : boundary' = e ∘ boundary)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary) :
+    HasOddBoundaryDegreeObstruction boundary' := by
+  intro H hH degree hdegree hodd
+  apply hobstruction (H ∘ e) (hH.comp e.continuous_toFun) degree
+  · simpa [Function.comp_assoc, hboundary] using hdegree
+  · exact hodd
+
+/-- The standard boundary of the closed unit square has degree zero against every
+continuous extension to the whole square, by contracting the boundary to the
+center along the radial homotopy. -/
+theorem hasOddBoundaryDegreeObstruction_closedUnitSquareBoundary :
+    HasOddBoundaryDegreeObstruction closedUnitSquareBoundary := by
+  intro H hH degree hdegree hodd
+  let F : C(I × UnitAddCircle, UnitAddCircle) :=
+    ⟨fun p ↦ H (closedUnitSquareRadial p),
+      hH.comp continuous_closedUnitSquareRadial⟩
+  have hF0 : ∀ t : UnitAddCircle, F (0, t) = H closedUnitSquareCenter := by
+    intro t
+    change H (closedUnitSquareRadial (closedUnitIntervalStart, t)) = H closedUnitSquareCenter
+    rw [closedUnitSquareRadial_start]
+  have hF1 : ∀ t : UnitAddCircle, F (1, t) = H (closedUnitSquareBoundary t) := by
+    intro t
+    change H (closedUnitSquareRadial (closedUnitIntervalFinish, t)) = H (closedUnitSquareBoundary t)
+    rw [closedUnitSquareRadial_finish]
+  have hzero : HasCircleDegree (H ∘ closedUnitSquareBoundary) 0 :=
+    HasCircleDegree.of_homotopy (hasCircleDegree_const (H closedUnitSquareCenter)) F hF0 hF1
+  have hdeg0 : degree = 0 := HasCircleDegree.unique hdegree hzero
+  have hnot : ¬ Odd degree := by
+    rw [hdeg0]
+    decide
+  exact hnot hodd
+
+/-- The standard boundary of the closed unit disk inherits the odd boundary-degree
+obstruction from the square boundary through the radial square-to-disk map. -/
+theorem hasOddBoundaryDegreeObstruction_closedUnitDiskBoundary :
+    HasOddBoundaryDegreeObstruction closedUnitDiskBoundary := by
+  intro H hH degree hdegree hodd
+  have hdegreeSquare :
+      HasCircleDegree ((H ∘ closedUnitSquareToDisk) ∘ closedUnitSquareBoundary) degree := by
+    simpa [Function.comp_assoc, closedUnitSquareToDisk_comp_boundary] using hdegree
+  exact hasOddBoundaryDegreeObstruction_closedUnitSquareBoundary
+    (H := H ∘ closedUnitSquareToDisk)
+    (hH.comp continuous_closedUnitSquareToDisk)
+    degree hdegreeSquare hodd
+
+/-- Any boundary obtained from the closed disk boundary by a homeomorphism inherits the
+odd boundary-degree obstruction directly from the disk model domain. -/
+theorem hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_direct
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitDiskBoundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_homeomorph e hboundary
+    hasOddBoundaryDegreeObstruction_closedUnitDiskBoundary
 
 /-- A finite polygonal model fine enough for the particular circle map
 `H`.  All indexing types are explicit finite types, every face is a

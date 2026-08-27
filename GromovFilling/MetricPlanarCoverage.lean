@@ -109,6 +109,55 @@ theorem givensMetricFourierMap_jordan_region_subset_range_of_homeomorph_arbitrar
     (givensMetricFourierMap_on_boundary hboundary' j)
     hpartition hzero
 
+/-- If the boundary is identified with the standard closed-disk boundary by a
+homeomorphism, the genuine metric Fourier map covers the Jordan region at the
+origin directly from the closed-disk obstruction, with no polygonal-model
+hypothesis. -/
+theorem givensMetricFourierMap_jordan_region_subset_range_of_closedUnitDisk_homeomorph_direct
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact
+    givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+      j boundary
+      (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_direct
+        e hboundaryHomeomorph)
+      (givensMetricFourierMap boundary N j)
+      (continuous_givensMetricFourierMap hboundary N j)
+      (givensMetricFourierMap_on_boundary hboundary j)
+      hpartition hzero
+
+/-- Separation-free closed-disk-homeomorphic coverage for the genuine metric
+Fourier map, using the direct odd-degree obstruction on the disk model
+rather than a polygonal-model hypothesis. -/
+theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_closedUnitDisk_homeomorph_direct
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact
+    exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+      j boundary
+      (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_direct
+        e hboundaryHomeomorph)
+      (givensMetricFourierMap boundary N j)
+      (continuous_givensMetricFourierMap hboundary N j)
+      (givensMetricFourierMap_on_boundary hboundary j)
+
 /-- Separation-free compact-domain coverage for the genuine metric Fourier map
 also transfers from a boundary-respecting homeomorphism to any compact source
 with arbitrarily fine polygonal models. -/

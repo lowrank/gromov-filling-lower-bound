@@ -110,6 +110,51 @@ theorem givensBoundaryCurve_origin_component_subset_range
       givensBoundaryCurve_degree_one j
   · exact odd_one
 
+/-- Once Jordan separation supplies its two regions, the region containing
+the origin is covered by every extension over a domain with the odd
+boundary-degree obstruction. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    {X : Type*} [TopologicalSpace X]
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → X)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G := by
+  rw [givensBoundaryCurve_jordan_region_at_origin j hpartition hzero]
+  exact givensBoundaryCurve_origin_component_subset_range
+    j boundary hobstruction G hG hboundary
+
+/-- The Jordan region needed in the coverage conclusion exists already from
+the odd boundary-degree obstruction itself: no fine-model hypothesis is
+required once the obstruction is available. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    {X : Type*} [TopologicalSpace X]
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → X)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G := by
+  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
+    exists_givensBoundaryCurve_jordanPartition_at_origin j
+  exact ⟨region₁, hpartition.region₁_open,
+    hpartition.region₁_connected,
+    givensBoundaryCurve_jordan_region_at_origin_bounded
+      j hpartition hzero,
+    hzero,
+    givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+      j boundary hobstruction G hG hboundary hpartition hzero⟩
+
 /-- Mixed-boundary coverage with the odd-degree obstruction itself
 discharged by compatible fine polygonal models. -/
 theorem givensBoundaryCurve_origin_component_subset_range_of_fine_models

@@ -1,4 +1,6 @@
 import GromovFilling.RadialProjection
+import Mathlib.Topology.Covering.AddCircle
+import Mathlib.Topology.Homotopy.Lifting
 
 /-!
 # Circle degree through real lifts
@@ -11,6 +13,8 @@ The integer by which the lift changes after one turn is the degree.
 namespace GromovFilling
 
 noncomputable section
+
+open Topology unitInterval
 
 /-- Multiplication on the unit-norm complex subtype used by the Fourier
 modules. -/
@@ -118,6 +122,84 @@ theorem HasCircleDegree.unique
   have hcast : (d : ℝ) = (e : ℝ) := by linarith
   exact_mod_cast hcast
 
+/-- Every constant additive-circle map has degree zero. -/
+theorem hasCircleDegree_const (u : UnitAddCircle) :
+    HasCircleDegree (fun _ : UnitAddCircle ↦ u) 0 := by
+  obtain ⟨r, _hrIco, hr⟩ := AddCircle.eq_coe_Ico u
+  refine ⟨fun _ : ℝ ↦ r, continuous_const, ?_, ?_⟩
+  · intro _t
+    exact hr
+  · intro _t
+    norm_num
+
+/-- Circle degree is invariant under homotopies of additive-circle maps. -/
+theorem HasCircleDegree.of_homotopy
+    {H K : UnitAddCircle → UnitAddCircle} {d : ℤ}
+    (hd : HasCircleDegree H d)
+    (F : C(I × UnitAddCircle, UnitAddCircle))
+    (hF0 : ∀ x, F (0, x) = H x)
+    (hF1 : ∀ x, F (1, x) = K x) :
+    HasCircleDegree K d := by
+  obtain ⟨lift, hlift, hproj, hperiod⟩ := hd
+  let cov : IsCoveringMap ((↑) : ℝ → UnitAddCircle) :=
+    AddCircle.isCoveringMap_coe (p := (1 : ℝ))
+  let Freal : C(I × ℝ, UnitAddCircle) :=
+    ⟨fun p ↦ F (p.1, (p.2 : UnitAddCircle)),
+      F.continuous.comp <| continuous_fst.prodMk
+        ((AddCircle.continuous_mk' (1 : ℝ)).comp continuous_snd)⟩
+  let lift0 : C(ℝ, ℝ) := ⟨lift, hlift⟩
+  have hFreal0 : ∀ t : ℝ, Freal (0, t) = ((lift0 t : ℝ) : UnitAddCircle) := by
+    intro t
+    simp [Freal, lift0, hF0, hproj]
+  let L : C(I × ℝ, ℝ) := cov.liftHomotopy Freal lift0 hFreal0
+  let lift1 : ℝ → ℝ := fun t ↦ L (1, t)
+  have hlift1 : Continuous lift1 := by
+    simpa [lift1] using L.continuous.comp (continuous_const.prodMk continuous_id')
+  have hproj1 : ∀ t : ℝ, (lift1 t : UnitAddCircle) = K (t : UnitAddCircle) := by
+    intro t
+    have hL := congr_fun (cov.liftHomotopy_lifts Freal lift0 hFreal0) (1, t)
+    simpa [Freal, lift1, hF1] using hL
+  have hperiod_all : ∀ s : I, ∀ t : ℝ, L (s, t + 1) = L (s, t) + d := by
+    intro s t
+    let Lshift : C(I × ℝ, ℝ) :=
+      ⟨fun p ↦ L (p.1, p.2 + 1),
+        L.continuous.comp <| continuous_fst.prodMk
+          (continuous_snd.add continuous_const)⟩
+    let Ladd : C(I × ℝ, ℝ) :=
+      ⟨fun p ↦ L p + d, L.continuous.add continuous_const⟩
+    let liftShift0 : C(ℝ, ℝ) := ⟨fun t ↦ lift t + d, hlift.add continuous_const⟩
+    have hShift0 : ∀ t : ℝ, Freal (0, t) = ((liftShift0 t : ℝ) : UnitAddCircle) := by
+      intro t
+      simp [Freal, liftShift0, hF0, hproj]
+    have hshift_lifts : ((↑) : ℝ → UnitAddCircle) ∘ Lshift = Freal := by
+      funext p
+      have hL := congr_fun (cov.liftHomotopy_lifts Freal lift0 hFreal0) (p.1, p.2 + 1)
+      simpa [Freal, Lshift] using hL
+    have hadd_lifts : ((↑) : ℝ → UnitAddCircle) ∘ Ladd = Freal := by
+      funext p
+      have hL := congr_fun (cov.liftHomotopy_lifts Freal lift0 hFreal0) p
+      simpa [Freal, Ladd] using hL
+    have hshift_zero : ∀ t : ℝ, Lshift (0, t) = liftShift0 t := by
+      intro t
+      have h0 := cov.liftHomotopy_zero Freal lift0 hFreal0 (t + 1)
+      simpa [L, Lshift, liftShift0, lift0, hperiod] using h0
+    have hadd_zero : ∀ t : ℝ, Ladd (0, t) = liftShift0 t := by
+      intro t
+      have h0 := cov.liftHomotopy_zero Freal lift0 hFreal0 t
+      simpa [L, Ladd, liftShift0, lift0] using congrArg (fun x : ℝ ↦ x + d) h0
+    have hEqShift : Lshift = cov.liftHomotopy Freal liftShift0 hShift0 :=
+      (cov.eq_liftHomotopy_iff' (H := Freal) (f := liftShift0)
+        (H_0 := hShift0) Lshift).2 ⟨hshift_lifts, hshift_zero⟩
+    have hEqAdd : Ladd = cov.liftHomotopy Freal liftShift0 hShift0 :=
+      (cov.eq_liftHomotopy_iff' (H := Freal) (f := liftShift0)
+        (H_0 := hShift0) Ladd).2 ⟨hadd_lifts, hadd_zero⟩
+    have hEq : Lshift = Ladd := hEqShift.trans hEqAdd.symm
+    have hst := congrArg (fun m : C(I × ℝ, ℝ) ↦ m (s, t)) hEq
+    simpa [Lshift, Ladd] using hst
+  refine ⟨lift1, hlift1, hproj1, ?_⟩
+  intro t
+  simpa [lift1] using hperiod_all 1 t
+
 /-- Degree for a unit-complex-valued circle map, transported through the
 fixed homeomorphism from the additive circle. -/
 def HasComplexCircleDegree
@@ -139,13 +221,8 @@ theorem hasComplexCircleDegree_standard :
 /-- Every constant unit-complex-valued circle map has degree zero. -/
 theorem hasComplexCircleDegree_const (u : ComplexUnitCircle) :
     HasComplexCircleDegree (fun _ : UnitAddCircle ↦ u) 0 := by
-  obtain ⟨r, _hrIco, hr⟩ := AddCircle.eq_coe_Ico
-    (unitAddCircleEquivComplexUnitCircle.symm u)
-  refine ⟨fun _ : ℝ ↦ r, continuous_const, ?_, ?_⟩
-  · intro _t
-    exact hr
-  · intro _t
-    norm_num
+  simpa [HasComplexCircleDegree] using
+    hasCircleDegree_const (unitAddCircleEquivComplexUnitCircle.symm u)
 
 /-- Complex multiplication adds degrees. -/
 theorem HasComplexCircleDegree.mul
