@@ -192,6 +192,89 @@ theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_nullhomo
     (givensMetricFourierMap_on_boundary hboundary j)
     (givensMetricFourierMap_lipschitzWith hboundary N j)
 
+/-- Bounded-region form of planar Lemma 5.4 for the genuine metric
+Fourier map.  It produces an open connected neighborhood of the origin whose
+volume is controlled by the global complex Jacobian integral. -/
+theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hfine : HasFinePolygonalModels boundary) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
+  exact exists_givens_bounded_region_volume_le_complex_jacobian
+    j boundary hfine (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    (givensMetricFourierMap_lipschitzWith hboundary N j)
+
+/-- Bounded-region form of planar Lemma 5.4 for the genuine metric Fourier
+map when the boundary extends continuously across the standard closed disk. -/
+theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_of_closedUnitDisk_extension
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitDisk → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (hboundary : IsometricCircleBoundary boundary) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
+  exact exists_givens_bounded_region_volume_le_complex_jacobian_of_closedUnitDisk_extension
+    j boundary F hF hboundaryExtension (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    (givensMetricFourierMap_lipschitzWith hboundary N j)
+
+/-- Bounded-region form of planar Lemma 5.4 for the genuine metric Fourier
+map when the boundary is identified with the standard closed-disk boundary by a
+homeomorphism. -/
+theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_of_closedUnitDisk_homeomorph_direct
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitDisk ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (hboundary : IsometricCircleBoundary boundary) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
+  exact exists_givens_bounded_region_volume_le_complex_jacobian_of_closedUnitDisk_homeomorph_direct
+    j boundary e hboundaryHomeomorph (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    (givensMetricFourierMap_lipschitzWith hboundary N j)
+
+/-- Bounded-region form of planar Lemma 5.4 for the genuine metric Fourier
+map when the boundary loop is nullhomotopic in the source plane. -/
+theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_of_nullhomotopy
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (center : ℂ)
+    (F : C(I × UnitAddCircle, ℂ))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (hboundary : IsometricCircleBoundary boundary) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
+  exact exists_givens_bounded_region_volume_le_complex_jacobian_of_nullhomotopy
+    j boundary center F hF0 hF1 (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    (givensMetricFourierMap_lipschitzWith hboundary N j)
+
 /-- The complete finite planar certificate for the actual metric Fourier
 family.  Its sole analytic input is their common Jacobian budget. -/
 theorem finite_universal_ennreal_of_metric_complex_planar_map
