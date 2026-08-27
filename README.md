@@ -70,6 +70,24 @@ runs both checks on every push and pull request.
   control for the exceptional set, and mathlib's Jacobian image bound;
   for a complex-plane domain it is composed directly with the Jordan
   coverage theorem to bound the covered region by the Jacobian integral;
+- the exact identification of mathlib's real determinant on `ℂ` with the
+  elementary planar Jacobian, its finite-sum integrated `ENNReal` form,
+  and the passage from a Hilbert--Schmidt derivative-energy bound to a
+  unit Jacobian budget on measurable planar sets;
+- exact boundary values, continuity, global Lipschitz bounds, almost-
+  everywhere differentiability, and orthogonal derivative-energy
+  preservation for the genuine metric-defined odd Fourier coordinates and
+  their Givens mixtures;
+- the finite Fourier--Bessel estimate needed to convert the coordinate
+  derivative fields into the common energy bound for those genuine metric
+  Fourier maps;
+- injective polynomial fillings of the mixed Givens boundary curves,
+  identification of their open-disk image with the Jordan region at the
+  origin, and equality of that region's area with the explicit Fourier/
+  Green expression;
+- planar `ENNReal` certificates which internally compose Jordan coverage,
+  exact region area, and the Jacobian budget for both abstract planar maps
+  and the genuine metric Fourier maps;
 - the algebraic/numerical conclusions of the orientation-free and oriented
   certificates at their stated geometric interfaces.
 
@@ -86,9 +104,16 @@ needs:
    boundary subdivisions (the compact uniform-continuity passage from this
    geometric statement to `HasFinePolygonalModels`, together with compact
    continuous/homeomorphic transport from model domains, is now formalized);
-2. globalization of the proved Lipschitz planar area inequality through
-   Riemannian surface charts, including identification of the coordinate
-   determinant density with the intrinsic `J₂ G`.
+2. the weak differentiation-under-the-boundary-parameter-integral theorem
+   for the metric Fourier coordinates and its Bessel estimate in the full
+   surface setting.  The downstream planar Fourier/Jacobian/certificate
+   assembly after that estimate is now formalized;
+3. globalization of the proved Lipschitz planar area inequality through
+   Riemannian surface charts, including intrinsic surface area and
+   identification of the coordinate determinant density with `J₂ G`;
+4. in the oriented argument, construction of the global differential-form
+   interface supplying the Stokes/comass inequality on a Riemannian
+   surface.
 
 Consequently, the headline theorems in `GromovFilling/Certificates.lean`
 remain conditional on their geometric coverage/Jacobian or
