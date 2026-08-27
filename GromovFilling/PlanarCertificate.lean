@@ -18,6 +18,8 @@ namespace GromovFilling
 
 noncomputable section
 
+open unitInterval
+
 /-- The finite orientation-free Fourier certificate for complex-plane
 domains, with every rowwise area inequality discharged internally. -/
 theorem finite_universal_ennreal_of_complex_planar_maps
@@ -67,6 +69,33 @@ theorem finite_universal_ennreal_of_complex_planar_maps_of_closedUnitDisk_extens
       j boundary F hF hboundaryExtension (G j) (hG j) (hboundary j) (hGLipschitz j)
   · exact hbudget
 
+/-- The same finite planar certificate follows directly from a nullhomotopy
+of the boundary loop. -/
+theorem finite_universal_ennreal_of_complex_planar_maps_of_nullhomotopy
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (center : ℂ)
+    (F : C(I × UnitAddCircle, ℂ))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (G : Fin N → ℂ → ℂ)
+    (hG : ∀ j, Continuous (G j))
+    (hboundary : ∀ j t,
+      G j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (K : Fin N → ℝ≥0)
+    (hGLipschitz : ∀ j, LipschitzWith (K j) (G j))
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  apply finite_universal_ennreal_of_givens_coverage_budget N area
+    (fun j ↦ ∫⁻ x,
+      ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume)
+  · intro j
+    exact givens_mixedBoundaryArea_le_complex_jacobian_of_nullhomotopy
+      j boundary center F hF0 hF1 (G j) (hG j) (hboundary j) (hGLipschitz j)
+  · exact hbudget
+
 /-- Planar Lemma 5.4 for the genuine metric distance-profile map.  All
 boundary, continuity, and Lipschitz inputs are discharged internally. -/
 theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian
@@ -96,6 +125,25 @@ theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_closedUn
         |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
   exact givens_mixedBoundaryArea_le_complex_jacobian_of_closedUnitDisk_extension
     j boundary F hF hboundaryExtension (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    (givensMetricFourierMap_lipschitzWith hboundary N j)
+
+/-- Planar Lemma 5.4 for the genuine metric distance-profile map when the
+boundary loop is nullhomotopic in the source plane. -/
+theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_nullhomotopy
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (center : ℂ)
+    (F : C(I × UnitAddCircle, ℂ))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (hboundary : IsometricCircleBoundary boundary) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
+  exact givens_mixedBoundaryArea_le_complex_jacobian_of_nullhomotopy
+    j boundary center F hF0 hF1 (givensMetricFourierMap boundary N j)
     (continuous_givensMetricFourierMap hboundary N j)
     (givensMetricFourierMap_on_boundary hboundary j)
     (givensMetricFourierMap_lipschitzWith hboundary N j)
@@ -212,6 +260,51 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_closedUnitDisk_extens
   exact finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitDisk_extension
     N area boundary F hF hboundaryExtension hboundary (hbudget N)
 
+/-- The complete finite planar certificate for the actual metric Fourier
+family when the boundary loop is nullhomotopic in the source plane. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_nullhomotopy
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (center : ℂ)
+    (F : C(I × UnitAddCircle, ℂ))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  apply finite_universal_ennreal_of_givens_coverage_budget N area
+    (fun j ↦ ∫⁻ x, ENNReal.ofReal
+      |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume)
+  · exact fun j ↦
+      givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_nullhomotopy
+        j boundary center F hF0 hF1 hboundary
+  · exact hbudget
+
+/-- Infinite-mode planar conclusion for the actual metric Fourier family when
+ the boundary loop is nullhomotopic in the source plane. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_nullhomotopy
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (center : ℂ)
+    (F : C(I × UnitAddCircle, ℂ))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact finite_universal_ennreal_of_metric_complex_planar_map_of_nullhomotopy
+    N area boundary center F hF0 hF1 hboundary (hbudget N)
+
 /-- The finite planar certificate for the actual metric Fourier family with
 the Jacobian budget derived internally from the coordinate-energy bound. -/
 theorem finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy
@@ -299,6 +392,55 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_c
   exact
     finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_closedUnitDisk_extension
       N area boundary F hF hboundaryExtension hboundary (hbudget N) harea
+
+/-- The finite planar certificate with coordinate-energy budget when the
+boundary loop is nullhomotopic in the source plane. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_nullhomotopy
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (center : ℂ)
+    (F : C(I × UnitAddCircle, ℂ))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget :
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  have hbudget' :
+      ∀ᵐ x ∂volume.restrict (Set.univ : Set ℂ),
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2 :=
+    ae_restrict_of_ae hbudget
+  refine (finite_universal_ennreal_of_metric_complex_planar_map_of_nullhomotopy
+    N (volume (Set.univ : Set ℂ)) boundary center F hF0 hF1 hboundary ?_).trans harea
+  simpa only [Measure.restrict_univ] using
+    sum_lintegral_givensMetricFourierMap_le_volume_of_coordinateEnergy
+      boundary hboundary N Set.univ MeasurableSet.univ hbudget'
+
+/-- Infinite-mode planar certificate with coordinate-energy budget when the
+boundary loop is nullhomotopic in the source plane. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_nullhomotopy
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (center : ℂ)
+    (F : C(I × UnitAddCircle, ℂ))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget : ∀ N : ℕ,
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact
+    finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_nullhomotopy
+      N area boundary center F hF0 hF1 hboundary (hbudget N) harea
 
 end
 

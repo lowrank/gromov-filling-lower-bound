@@ -14,6 +14,8 @@ namespace GromovFilling
 
 noncomputable section
 
+open unitInterval
+
 /-- The origin component of every mixed Jordan curve is covered by the
 actual metric Fourier map. -/
 theorem givensMetricFourierMap_origin_component_subset_range
@@ -27,6 +29,49 @@ theorem givensMetricFourierMap_origin_component_subset_range
       Set.range (givensMetricFourierMap boundary N j) := by
   exact givensBoundaryCurve_origin_component_subset_range_of_fine_models
     j boundary hfine (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+
+/-- If the boundary loop is nullhomotopic in the source space, the genuine
+metric Fourier map covers the Jordan region at the origin directly from that
+nullhomotopy, with no polygonal-model hypothesis. -/
+theorem givensMetricFourierMap_jordan_region_subset_range_of_nullhomotopy
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X}
+    (center : X)
+    (F : C(I × UnitAddCircle, X))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact givensBoundaryCurve_jordan_region_subset_range_of_nullhomotopy
+    j center F hF0 hF1 (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    hpartition hzero
+
+/-- The separation-free metric coverage conclusion also follows directly from
+nullhomotopy of the boundary loop. -/
+theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_nullhomotopy
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X}
+    (center : X)
+    (F : C(I × UnitAddCircle, X))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact exists_givensBoundaryCurve_bounded_region_subset_range_of_nullhomotopy
+    j center F hF0 hF1 (givensMetricFourierMap boundary N j)
     (continuous_givensMetricFourierMap hboundary N j)
     (givensMetricFourierMap_on_boundary hboundary j)
 

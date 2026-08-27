@@ -13,6 +13,8 @@ namespace GromovFilling
 
 noncomputable section
 
+open unitInterval
+
 /-- If the radial projection of the boundary around `y` has odd degree,
 the mod-two boundary obstruction forces `y` into the image of the planar
 map.  This is the coverage implication in Lemma 5.4, separated from the
@@ -154,6 +156,53 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_d
     hzero,
     givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
       j boundary hobstruction G hG hboundary hpartition hzero⟩
+
+/-- If the boundary loop is nullhomotopic in the source space, the Jordan
+region containing the origin is covered directly from the resulting odd
+boundary-degree obstruction. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_nullhomotopy
+    {X : Type*} [TopologicalSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X}
+    (center : X)
+    (F : C(I × UnitAddCircle, X))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (G : X → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_nullhomotopy center F hF0 hF1)
+    G hG hboundary hpartition hzero
+
+/-- The separation-free coverage conclusion also follows directly from a
+nullhomotopy of the boundary loop. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_nullhomotopy
+    {X : Type*} [TopologicalSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X}
+    (center : X)
+    (F : C(I × UnitAddCircle, X))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (G : X → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_nullhomotopy center F hF0 hF1)
+    G hG hboundary
+
 
 /-- Mixed-boundary coverage with the odd-degree obstruction itself
 discharged by compatible fine polygonal models. -/
