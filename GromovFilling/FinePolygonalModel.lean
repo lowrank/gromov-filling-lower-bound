@@ -173,6 +173,215 @@ def closedUnitIntervalStart : ClosedUnitInterval := ⟨0, by norm_num⟩
 
 def closedUnitIntervalFinish : ClosedUnitInterval := ⟨1, by norm_num⟩
 
+/-- The `j`-th equally spaced angular subdivision point of the circle. -/
+def angularSubdivisionPoint (m : ℕ) (j : Fin (m + 1)) : UnitAddCircle :=
+  (((j : ℕ) : ℝ) / (m + 1) : ℝ)
+
+/-- The affine parameter running along the `j`-th angular edge of an
+`(m + 1)`-gon. -/
+def angularSubdivisionParameter (m : ℕ) (j : Fin (m + 1))
+    (x : ClosedUnitInterval) : ℝ :=
+  (((x : ℝ) + (j : ℝ)) / (m + 1))
+
+/-- The corresponding angular edge path on `UnitAddCircle`. -/
+def angularSubdivisionArc (m : ℕ) (j : Fin (m + 1)) :
+    ClosedUnitInterval → UnitAddCircle :=
+  fun x ↦ (angularSubdivisionParameter m j x : ℝ)
+
+theorem continuous_angularSubdivisionArc (m : ℕ) (j : Fin (m + 1)) :
+    Continuous (angularSubdivisionArc m j) := by
+  have hbase : Continuous fun x : ClosedUnitInterval =>
+      (((x : ℝ) + (j : ℝ)) / (m + 1) : ℝ) := by
+    simpa [div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using
+      ((continuous_subtype_val.add continuous_const).const_mul (((m + 1 : ℕ) : ℝ)⁻¹))
+  exact (AddCircle.continuous_mk' 1).comp hbase
+
+theorem angularSubdivisionArc_start (m : ℕ) (j : Fin (m + 1)) :
+    angularSubdivisionArc m j closedUnitIntervalStart = angularSubdivisionPoint m j := by
+  simp [angularSubdivisionArc, angularSubdivisionParameter, angularSubdivisionPoint,
+    closedUnitIntervalStart]
+
+theorem angularSubdivisionArc_finish (m : ℕ) (j : Fin (m + 1)) :
+    angularSubdivisionArc m j closedUnitIntervalFinish =
+      angularSubdivisionPoint m (cyclicSucc j) := by
+  by_cases hj : j = Fin.last m
+  · subst hj
+    rw [cyclicSucc_last]
+    have hx : ((((1 : ℝ) + (m : ℝ)) / (m + 1) : ℝ) : UnitAddCircle) = 0 := by
+      apply (AddCircle.coe_eq_zero_iff (1 : ℝ)).2
+      refine ⟨1, ?_⟩
+      have hpos : (((m + 1 : ℕ) : ℝ)) ≠ 0 := by positivity
+      field_simp [hpos]
+      ring
+    simpa [angularSubdivisionArc, angularSubdivisionParameter, angularSubdivisionPoint,
+      closedUnitIntervalFinish] using hx
+  · have hsucc : (cyclicSucc j).val = j.val + 1 :=
+      cyclicSucc_val_of_ne_last j hj
+    simp [angularSubdivisionArc, angularSubdivisionParameter, angularSubdivisionPoint,
+      closedUnitIntervalFinish, hsucc, add_comm]
+
+/-- The `i`-th equally spaced radial subdivision point of `[0,1]`.  There are
+`n + 2` vertices and `n + 1` radial subintervals. -/
+def radialSubdivisionPoint (n : ℕ) (i : Fin (n + 2)) : ClosedUnitInterval := by
+  refine ⟨(i : ℝ) / (n + 1), ?_⟩
+  constructor
+  · have hi0 : 0 ≤ (i : ℝ) := by positivity
+    have hden : 0 < (n + 1 : ℝ) := by positivity
+    exact div_nonneg hi0 hden.le
+  · have hi : (i : ℝ) ≤ (n + 1 : ℝ) := by
+      exact_mod_cast Nat.le_of_lt_succ i.isLt
+    have hpos : (0 : ℝ) < (n + 1 : ℝ) := by positivity
+    rw [div_le_iff₀ hpos]
+    simpa using hi
+
+/-- The lower endpoint index of the `i`-th radial subinterval. -/
+def radialSubdivisionLower {n : ℕ} (i : Fin (n + 1)) : Fin (n + 2) :=
+  ⟨i.1, Nat.lt_trans i.2 (Nat.lt_succ_self _)⟩
+
+/-- The upper endpoint index of the `i`-th radial subinterval. -/
+def radialSubdivisionUpper {n : ℕ} (i : Fin (n + 1)) : Fin (n + 2) :=
+  ⟨i.1 + 1, Nat.succ_lt_succ i.2⟩
+
+/-- The affine path along the `i`-th radial subinterval. -/
+def radialSubdivisionArc (n : ℕ) (i : Fin (n + 1)) :
+    ClosedUnitInterval → ClosedUnitInterval := by
+  intro x
+  refine ⟨(((x : ℝ) + (i : ℝ)) / (n + 1)), ?_⟩
+  constructor
+  · have hx0 : 0 ≤ (x : ℝ) := x.2.1
+    have hi0 : 0 ≤ (i : ℝ) := by positivity
+    have hden : 0 < (n + 1 : ℝ) := by positivity
+    exact div_nonneg (by nlinarith) hden.le
+  · have hi : (i : ℝ) ≤ n := by
+      exact_mod_cast Nat.le_of_lt_succ i.isLt
+    have hx : (x : ℝ) ≤ 1 := x.2.2
+    have hpos : (0 : ℝ) < (n + 1 : ℝ) := by positivity
+    rw [div_le_iff₀ hpos]
+    nlinarith
+
+theorem continuous_radialSubdivisionArc (n : ℕ) (i : Fin (n + 1)) :
+    Continuous (radialSubdivisionArc n i) := by
+  have hbase : Continuous fun x : ClosedUnitInterval =>
+      (((x : ℝ) + (i : ℝ)) / (n + 1) : ℝ) := by
+    simpa [div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using
+      ((continuous_subtype_val.add continuous_const).const_mul (((n + 1 : ℕ) : ℝ)⁻¹))
+  exact hbase.subtype_mk fun x ↦ by
+    constructor
+    · have hx0 : 0 ≤ (x : ℝ) := x.2.1
+      have hi0 : 0 ≤ (i : ℝ) := by positivity
+      have hden : 0 < (n + 1 : ℝ) := by positivity
+      exact div_nonneg (by nlinarith) hden.le
+    · have hi : (i : ℝ) ≤ n := by
+        exact_mod_cast Nat.le_of_lt_succ i.isLt
+      have hx : (x : ℝ) ≤ 1 := x.2.2
+      have hpos : (0 : ℝ) < (n + 1 : ℝ) := by positivity
+      rw [div_le_iff₀ hpos]
+      nlinarith
+
+theorem radialSubdivisionPoint_zero (n : ℕ) :
+    radialSubdivisionPoint n 0 = closedUnitIntervalStart := by
+  ext
+  simp [radialSubdivisionPoint, closedUnitIntervalStart]
+
+theorem radialSubdivisionPoint_last (n : ℕ) :
+    radialSubdivisionPoint n (Fin.last (n + 1)) = closedUnitIntervalFinish := by
+  apply Subtype.ext
+  change (((Fin.last (n + 1) : Fin (n + 2)) : ℝ) / (n + 1) : ℝ) = 1
+  have hpos : (((n + 1 : ℕ) : ℝ)) ≠ 0 := by positivity
+  field_simp [hpos]
+  simp
+
+theorem radialSubdivisionArc_start (n : ℕ) (i : Fin (n + 1)) :
+    radialSubdivisionArc n i closedUnitIntervalStart =
+      radialSubdivisionPoint n (radialSubdivisionLower i) := by
+  apply Subtype.ext
+  simp [radialSubdivisionArc, radialSubdivisionPoint, radialSubdivisionLower,
+    closedUnitIntervalStart]
+
+theorem radialSubdivisionArc_finish (n : ℕ) (i : Fin (n + 1)) :
+    radialSubdivisionArc n i closedUnitIntervalFinish =
+      radialSubdivisionPoint n (radialSubdivisionUpper i) := by
+  apply Subtype.ext
+  simp [radialSubdivisionArc, radialSubdivisionPoint, radialSubdivisionUpper,
+    closedUnitIntervalFinish]
+  ring
+
+/-- A grid vertex in the radial parameter cylinder. -/
+def cylinderSubdivisionPoint (n m : ℕ)
+    (i : Fin (n + 2)) (j : Fin (m + 1)) : ClosedUnitInterval × UnitAddCircle :=
+  (radialSubdivisionPoint n i, angularSubdivisionPoint m j)
+
+/-- A horizontal angular edge in the radial parameter cylinder. -/
+def cylinderAngularEdgePath (n m : ℕ)
+    (i : Fin (n + 2)) (j : Fin (m + 1)) :
+    ClosedUnitInterval → ClosedUnitInterval × UnitAddCircle :=
+  fun x ↦ (radialSubdivisionPoint n i, angularSubdivisionArc m j x)
+
+theorem continuous_cylinderAngularEdgePath (n m : ℕ)
+    (i : Fin (n + 2)) (j : Fin (m + 1)) :
+    Continuous (cylinderAngularEdgePath n m i j) := by
+  exact continuous_const.prodMk (continuous_angularSubdivisionArc m j)
+
+theorem cylinderAngularEdgePath_start (n m : ℕ)
+    (i : Fin (n + 2)) (j : Fin (m + 1)) :
+    cylinderAngularEdgePath n m i j closedUnitIntervalStart =
+      cylinderSubdivisionPoint n m i j := by
+  simp [cylinderAngularEdgePath, cylinderSubdivisionPoint, angularSubdivisionArc_start]
+
+theorem cylinderAngularEdgePath_finish (n m : ℕ)
+    (i : Fin (n + 2)) (j : Fin (m + 1)) :
+    cylinderAngularEdgePath n m i j closedUnitIntervalFinish =
+      cylinderSubdivisionPoint n m i (cyclicSucc j) := by
+  simp [cylinderAngularEdgePath, cylinderSubdivisionPoint, angularSubdivisionArc_finish]
+
+/-- A vertical radial edge in the radial parameter cylinder. -/
+def cylinderRadialEdgePath (n m : ℕ)
+    (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    ClosedUnitInterval → ClosedUnitInterval × UnitAddCircle :=
+  fun x ↦ (radialSubdivisionArc n i x, angularSubdivisionPoint m j)
+
+theorem continuous_cylinderRadialEdgePath (n m : ℕ)
+    (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    Continuous (cylinderRadialEdgePath n m i j) := by
+  exact (continuous_radialSubdivisionArc n i).prodMk continuous_const
+
+theorem cylinderRadialEdgePath_start (n m : ℕ)
+    (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    cylinderRadialEdgePath n m i j closedUnitIntervalStart =
+      cylinderSubdivisionPoint n m (radialSubdivisionLower i) j := by
+  simp [cylinderRadialEdgePath, cylinderSubdivisionPoint, radialSubdivisionArc_start]
+
+theorem cylinderRadialEdgePath_finish (n m : ℕ)
+    (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    cylinderRadialEdgePath n m i j closedUnitIntervalFinish =
+      cylinderSubdivisionPoint n m (radialSubdivisionUpper i) j := by
+  simp [cylinderRadialEdgePath, cylinderSubdivisionPoint, radialSubdivisionArc_finish]
+
+/-- A diagonal edge across one parameter-space cell. -/
+def cylinderDiagonalEdgePath (n m : ℕ)
+    (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    ClosedUnitInterval → ClosedUnitInterval × UnitAddCircle :=
+  fun x ↦ (radialSubdivisionArc n i x, angularSubdivisionArc m j x)
+
+theorem continuous_cylinderDiagonalEdgePath (n m : ℕ)
+    (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    Continuous (cylinderDiagonalEdgePath n m i j) := by
+  exact (continuous_radialSubdivisionArc n i).prodMk (continuous_angularSubdivisionArc m j)
+
+theorem cylinderDiagonalEdgePath_start (n m : ℕ)
+    (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    cylinderDiagonalEdgePath n m i j closedUnitIntervalStart =
+      cylinderSubdivisionPoint n m (radialSubdivisionLower i) j := by
+  simp [cylinderDiagonalEdgePath, cylinderSubdivisionPoint, radialSubdivisionArc_start,
+    angularSubdivisionArc_start]
+
+theorem cylinderDiagonalEdgePath_finish (n m : ℕ)
+    (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    cylinderDiagonalEdgePath n m i j closedUnitIntervalFinish =
+      cylinderSubdivisionPoint n m (radialSubdivisionUpper i) (cyclicSucc j) := by
+  simp [cylinderDiagonalEdgePath, cylinderSubdivisionPoint, radialSubdivisionArc_finish,
+    angularSubdivisionArc_finish]
+
 theorem complexSupNorm_le_norm (z : ℂ) : complexSupNorm z ≤ ‖z‖ := by
   rw [complexSupNorm]
   exact max_le (Complex.abs_re_le_norm z) (Complex.abs_im_le_norm z)
@@ -267,6 +476,12 @@ theorem continuous_closedUnitSquareCylinderBoundary :
     Continuous closedUnitSquareCylinderBoundary := by
   simpa [closedUnitSquareCylinderBoundary] using
     (continuous_const.prodMk continuous_id)
+
+theorem cylinderAngularEdgePath_on_closedUnitSquareCylinderBoundary
+    (n m : ℕ) (j : Fin (m + 1)) (x : ClosedUnitInterval) :
+    cylinderAngularEdgePath n m (Fin.last (n + 1)) j x =
+      closedUnitSquareCylinderBoundary (angularSubdivisionArc m j x) := by
+  simp [cylinderAngularEdgePath, closedUnitSquareCylinderBoundary, radialSubdivisionPoint_last]
 
 theorem closedUnitSquareRadial_comp_cylinderBoundary :
     closedUnitSquareBoundary =
