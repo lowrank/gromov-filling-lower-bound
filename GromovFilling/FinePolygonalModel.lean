@@ -164,6 +164,120 @@ theorem closedUnitSquareBoundary_coe (t : UnitAddCircle) :
       (Complex.ofReal ((complexSupNorm (unitAddCircleEquivComplexUnitCircle t : ℂ))⁻¹)) *
         (unitAddCircleEquivComplexUnitCircle t : ℂ) := rfl
 
+
+theorem complexSupNorm_le_norm (z : ℂ) : complexSupNorm z ≤ ‖z‖ := by
+  rw [complexSupNorm]
+  exact max_le (Complex.abs_re_le_norm z) (Complex.abs_im_le_norm z)
+
+theorem complexSupNorm_real_smul (r : ℝ) (z : ℂ) :
+    complexSupNorm (r • z) = |r| * complexSupNorm z := by
+  rw [complexSupNorm, Complex.smul_re, Complex.smul_im, smul_eq_mul, smul_eq_mul, abs_mul, abs_mul]
+  simpa [complexSupNorm, mul_comm, mul_left_comm, mul_assoc] using
+    (max_mul_of_nonneg |z.re| |z.im| (abs_nonneg r)).symm
+
+/-- Radial map from the closed unit square to the closed unit disk.  It preserves
+rays from the origin and rescales each nonzero point so that its Euclidean norm
+becomes its square sup norm. -/
+def closedUnitSquareToDiskFun (z : ℂ) : ℂ :=
+  Complex.ofReal (complexSupNorm z / ‖z‖) * z
+
+theorem norm_closedUnitSquareToDiskFun (z : ℂ) :
+    ‖closedUnitSquareToDiskFun z‖ = complexSupNorm z := by
+  by_cases hz : z = 0
+  · simp [closedUnitSquareToDiskFun, hz, complexSupNorm]
+  · have hn : ‖z‖ ≠ 0 := norm_ne_zero_iff.mpr hz
+    have hsnonneg : 0 ≤ complexSupNorm z := complexSupNorm_nonneg z
+    simp [closedUnitSquareToDiskFun, hsnonneg, hn, div_eq_mul_inv, mul_assoc]
+
+theorem continuous_closedUnitSquareToDiskFun : Continuous closedUnitSquareToDiskFun := by
+  rw [continuous_iff_continuousAt]
+  intro z
+  by_cases hz : z = 0
+  · subst hz
+    rw [Metric.continuousAt_iff]
+    intro ε hε
+    refine ⟨ε, hε, ?_⟩
+    intro w hw
+    calc
+      dist (closedUnitSquareToDiskFun w) (closedUnitSquareToDiskFun 0)
+          = ‖closedUnitSquareToDiskFun w‖ := by simp [closedUnitSquareToDiskFun]
+      _ = complexSupNorm w := norm_closedUnitSquareToDiskFun w
+      _ ≤ ‖w‖ := complexSupNorm_le_norm w
+      _ = dist w 0 := by simp [dist_eq_norm]
+      _ < ε := hw
+  · have hs : ContinuousAt (fun w : ℂ => complexSupNorm w / ‖w‖) z :=
+      (continuous_complexSupNorm.continuousAt.div continuous_norm.continuousAt
+        (by simpa using norm_ne_zero_iff.mpr hz))
+    simpa [closedUnitSquareToDiskFun] using
+      (Complex.continuous_ofReal.continuousAt.comp hs).mul continuousAt_id
+
+/-- Bundled radial map from the closed unit square to the closed unit disk. -/
+def closedUnitSquareToDisk (z : ClosedUnitSquare) : ClosedUnitDisk := by
+  refine ⟨closedUnitSquareToDiskFun z, ?_⟩
+  change dist (closedUnitSquareToDiskFun (z : ℂ)) 0 ≤ 1
+  rw [dist_eq_norm, sub_zero, norm_closedUnitSquareToDiskFun]
+  exact z.2
+
+theorem continuous_closedUnitSquareToDisk : Continuous closedUnitSquareToDisk := by
+  have hbase : Continuous fun z : ClosedUnitSquare => closedUnitSquareToDiskFun z :=
+    continuous_closedUnitSquareToDiskFun.comp continuous_subtype_val
+  have hcont : Continuous fun z : ClosedUnitSquare =>
+      ((⟨closedUnitSquareToDiskFun z, by
+          change dist (closedUnitSquareToDiskFun (z : ℂ)) 0 ≤ 1
+          rw [dist_eq_norm, sub_zero, norm_closedUnitSquareToDiskFun]
+          exact z.2⟩) : ClosedUnitDisk) := by
+    exact hbase.subtype_mk fun z => by
+      change dist (closedUnitSquareToDiskFun (z : ℂ)) 0 ≤ 1
+      rw [dist_eq_norm, sub_zero, norm_closedUnitSquareToDiskFun]
+      exact z.2
+  have hEq : closedUnitSquareToDisk = fun z : ClosedUnitSquare =>
+      ((⟨closedUnitSquareToDiskFun z, by
+          change dist (closedUnitSquareToDiskFun (z : ℂ)) 0 ≤ 1
+          rw [dist_eq_norm, sub_zero, norm_closedUnitSquareToDiskFun]
+          exact z.2⟩) : ClosedUnitDisk) := by
+    funext z
+    rfl
+  rw [hEq]
+  exact hcont
+
+theorem closedUnitSquareToDiskFun_radial_cancel {u : ℂ} {s : ℝ}
+    (hsdef : complexSupNorm u = s) (hu : ‖u‖ = 1) (hs : s ≠ 0) :
+    closedUnitSquareToDiskFun (Complex.ofReal (s⁻¹) * u) = u := by
+  have hsnonneg : 0 ≤ s := by
+    rw [← hsdef]
+    exact complexSupNorm_nonneg u
+  have hsup : complexSupNorm (Complex.ofReal (s⁻¹) * u) = 1 := by
+    simpa [smul_eq_mul, hsdef, abs_of_nonneg (inv_nonneg.mpr hsnonneg), inv_mul_cancel₀ hs] using
+      complexSupNorm_real_smul (s⁻¹) u
+  have hnorm : ‖Complex.ofReal (s⁻¹) * u‖ = s⁻¹ := by
+    rw [norm_mul, Complex.norm_real, Real.norm_eq_abs,
+      abs_of_nonneg (inv_nonneg.mpr hsnonneg), hu, mul_one]
+  have hratio : 1 / s⁻¹ = s := by
+    field_simp [hs]
+  rw [closedUnitSquareToDiskFun, hsup, hnorm, hratio]
+  simp [hs]
+
+theorem closedUnitSquareToDisk_boundary_coe (t : UnitAddCircle) :
+    ((closedUnitSquareToDisk (closedUnitSquareBoundary t) : ClosedUnitDisk) : ℂ) =
+      (unitAddCircleEquivComplexUnitCircle t : ℂ) := by
+  let u : ℂ := (unitAddCircleEquivComplexUnitCircle t : ℂ)
+  let s : ℝ := complexSupNorm u
+  have hs : s ≠ 0 := by
+    simpa [u, s] using complexSupNorm_ne_zero_unitAddCircle t
+  simpa [closedUnitSquareToDisk, closedUnitSquareBoundary_coe, u, s] using
+    closedUnitSquareToDiskFun_radial_cancel (u := u) (s := s) rfl
+      (by simpa [u] using (unitAddCircleEquivComplexUnitCircle t).property) hs
+
+theorem closedUnitSquareToDisk_boundary (t : UnitAddCircle) :
+    closedUnitSquareToDisk (closedUnitSquareBoundary t) = closedUnitDiskBoundary t := by
+  apply Subtype.ext
+  simpa [closedUnitDiskBoundary_coe] using closedUnitSquareToDisk_boundary_coe t
+
+theorem closedUnitSquareToDisk_comp_boundary :
+    closedUnitDiskBoundary = closedUnitSquareToDisk ∘ closedUnitSquareBoundary := by
+  funext t
+  exact (closedUnitSquareToDisk_boundary t).symm
+
 /-- A boundary parametrization has the mod-two extension obstruction when
 no continuous circle-valued map on the whole domain can restrict to odd
 degree on that boundary. -/
@@ -500,6 +614,17 @@ theorem hasArbitrarilyFinePolygonalModels_of_homeomorph
     HasArbitrarilyFinePolygonalModels boundary' :=
   hasArbitrarilyFinePolygonalModels_of_compact_continuous
     e e.continuous_toFun hboundary hmodels
+
+
+/-- Closed-square models transfer to the closed disk through the radial square-to-disk
+map.  This reduces the remaining disk existence theorem to an explicit square-mesh
+construction. -/
+theorem hasArbitrarilyFinePolygonalModels_of_closedUnitSquare
+    (hsquare : HasArbitrarilyFinePolygonalModels closedUnitSquareBoundary) :
+    HasArbitrarilyFinePolygonalModels closedUnitDiskBoundary :=
+  hasArbitrarilyFinePolygonalModels_of_compact_continuous
+    closedUnitSquareToDisk continuous_closedUnitSquareToDisk
+    closedUnitSquareToDisk_comp_boundary hsquare
 
 /-- On a compact metric domain, arbitrarily fine geometric polygonal
 models provide the map-dependent half-turn models needed by the mod-two
