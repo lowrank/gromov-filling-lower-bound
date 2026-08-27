@@ -258,6 +258,22 @@ theorem closedUnitSquareRadial_finish (t : UnitAddCircle) :
     closedUnitSquareRadial (closedUnitIntervalFinish, t) = closedUnitSquareBoundary t := by
   simp [closedUnitSquareRadial, closedUnitSquareScale_finish]
 
+/-- The outer boundary circle of the radial square parameter cylinder. -/
+def closedUnitSquareCylinderBoundary (t : UnitAddCircle) :
+    ClosedUnitInterval × UnitAddCircle :=
+  (closedUnitIntervalFinish, t)
+
+theorem continuous_closedUnitSquareCylinderBoundary :
+    Continuous closedUnitSquareCylinderBoundary := by
+  simpa [closedUnitSquareCylinderBoundary] using
+    (continuous_const.prodMk continuous_id)
+
+theorem closedUnitSquareRadial_comp_cylinderBoundary :
+    closedUnitSquareBoundary =
+      closedUnitSquareRadial ∘ closedUnitSquareCylinderBoundary := by
+  funext t
+  exact (closedUnitSquareRadial_finish t).symm
+
 
 /-- Radial map from the closed unit square to the closed unit disk.  It preserves
 rays from the origin and rescales each nonzero point so that its Euclidean norm
@@ -1091,6 +1107,16 @@ theorem hasAbstractArbitrarilyFinePolygonalModels_of_closedUnitSquare
     closedUnitSquareToDisk continuous_closedUnitSquareToDisk
     closedUnitSquareToDisk_comp_boundary hsquare
 
+/-- A sufficiently fine abstract polygonal model on the radial cylinder boundary
+pushes forward directly to the closed unit square boundary.  This isolates the
+remaining existence theorem to one explicit cone-mesh construction. -/
+theorem hasAbstractArbitrarilyFinePolygonalModels_of_closedUnitSquareCylinderBoundary
+    (hcyl : HasAbstractArbitrarilyFinePolygonalModels closedUnitSquareCylinderBoundary) :
+    HasAbstractArbitrarilyFinePolygonalModels closedUnitSquareBoundary :=
+  hasAbstractArbitrarilyFinePolygonalModels_of_compact_continuous
+    closedUnitSquareRadial continuous_closedUnitSquareRadial
+    closedUnitSquareRadial_comp_cylinderBoundary hcyl
+
 /-- On a compact metric domain, abstract arbitrarily fine geometric polygonal models
 provide the map-dependent abstract fine models needed by the mod-two argument. -/
 theorem hasAbstractFinePolygonalModels_of_abstractArbitrarilyFine
@@ -1144,6 +1170,15 @@ theorem hasArbitrarilyFinePolygonalModels_of_abstract_closedUnitSquare
     HasArbitrarilyFinePolygonalModels closedUnitDiskBoundary :=
   hasArbitrarilyFinePolygonalModels_of_abstractArbitrarilyFine
     (hasAbstractArbitrarilyFinePolygonalModels_of_closedUnitSquare hsquare)
+
+/-- The same radial-cylinder input already yields the concrete closed-disk
+polygonal-model interface used downstream, via the square transfer and finite
+reindexing lemmas formalized above. -/
+theorem hasArbitrarilyFinePolygonalModels_of_closedUnitSquareCylinderBoundary
+    (hcyl : HasAbstractArbitrarilyFinePolygonalModels closedUnitSquareCylinderBoundary) :
+    HasArbitrarilyFinePolygonalModels closedUnitDiskBoundary :=
+  hasArbitrarilyFinePolygonalModels_of_abstract_closedUnitSquare
+    (hasAbstractArbitrarilyFinePolygonalModels_of_closedUnitSquareCylinderBoundary hcyl)
 
 /-- Arbitrarily fine polygonal models transport across continuous maps from a
 compact source: choose a sufficiently small source mesh using uniform
