@@ -382,6 +382,95 @@ theorem cylinderDiagonalEdgePath_finish (n m : ℕ)
   simp [cylinderDiagonalEdgePath, cylinderSubdivisionPoint, radialSubdivisionArc_finish,
     angularSubdivisionArc_finish]
 
+/-- Core grid vertices for the checkerboard cylinder mesh. -/
+abbrev CylinderCoreVertex (n m : ℕ) := Fin (n + 2) × Fin (m + 1)
+
+/-- Directed core edges for the checkerboard cylinder mesh.  We keep both
+orientations of the radial and angular grid segments because the finite
+obstruction theorem records an oriented cyclic boundary for each face. -/
+inductive CylinderCoreEdge (n m : ℕ) : Type
+  | radialUp : Fin (n + 1) → Fin (m + 1) → CylinderCoreEdge n m
+  | radialDown : Fin (n + 1) → Fin (m + 1) → CylinderCoreEdge n m
+  | angularForward : Fin (n + 2) → Fin (m + 1) → CylinderCoreEdge n m
+  | angularBackward : Fin (n + 2) → Fin (m + 1) → CylinderCoreEdge n m
+  deriving DecidableEq, Fintype
+
+/-- Core faces of the checkerboard cylinder mesh, indexed by the rectangular
+parameter cells.  Their cyclic order alternates with the parity of `i + j` so
+that adjacent faces can share the same oriented edge objects. -/
+abbrev CylinderCoreFace (n m : ℕ) := Fin (n + 1) × Fin (m + 1)
+
+def cylinderCoreFaceEven {n m : ℕ} (f : CylinderCoreFace n m) : Prop :=
+  Even (f.1.1 + f.2.1)
+
+def cylinderCoreFaceParity {n m : ℕ} (f : CylinderCoreFace n m) : Bool :=
+  decide (Even (f.1.1 + f.2.1))
+
+def cylinderCoreLL {n m : ℕ} (f : CylinderCoreFace n m) : CylinderCoreVertex n m :=
+  (radialSubdivisionLower f.1, f.2)
+
+def cylinderCoreUL {n m : ℕ} (f : CylinderCoreFace n m) : CylinderCoreVertex n m :=
+  (radialSubdivisionUpper f.1, f.2)
+
+def cylinderCoreLR {n m : ℕ} (f : CylinderCoreFace n m) : CylinderCoreVertex n m :=
+  (radialSubdivisionLower f.1, cyclicSucc f.2)
+
+def cylinderCoreUR {n m : ℕ} (f : CylinderCoreFace n m) : CylinderCoreVertex n m :=
+  (radialSubdivisionUpper f.1, cyclicSucc f.2)
+
+def cylinderCoreEdgeEnds {n m : ℕ} :
+    CylinderCoreEdge n m → CylinderCoreVertex n m × CylinderCoreVertex n m
+  | .radialUp i j => ((radialSubdivisionLower i, j), (radialSubdivisionUpper i, j))
+  | .radialDown i j => ((radialSubdivisionUpper i, j), (radialSubdivisionLower i, j))
+  | .angularForward i j => ((i, j), (i, cyclicSucc j))
+  | .angularBackward i j => ((i, cyclicSucc j), (i, j))
+
+def cylinderCoreFaceVertex {n m : ℕ} (f : CylinderCoreFace n m) :
+    Fin (3 + 1) → CylinderCoreVertex n m :=
+  if cylinderCoreFaceParity f then
+    fun k =>
+      match k.1 with
+      | 0 => cylinderCoreLL f
+      | 1 => cylinderCoreUL f
+      | 2 => cylinderCoreUR f
+      | _ => cylinderCoreLR f
+  else
+    fun k =>
+      match k.1 with
+      | 0 => cylinderCoreUL f
+      | 1 => cylinderCoreLL f
+      | 2 => cylinderCoreLR f
+      | _ => cylinderCoreUR f
+
+def cylinderCoreFaceEdge {n m : ℕ} (f : CylinderCoreFace n m) :
+    Fin (3 + 1) → CylinderCoreEdge n m :=
+  if cylinderCoreFaceParity f then
+    fun k =>
+      match k.1 with
+      | 0 => .radialUp f.1 f.2
+      | 1 => .angularForward (radialSubdivisionUpper f.1) f.2
+      | 2 => .radialDown f.1 (cyclicSucc f.2)
+      | _ => .angularBackward (radialSubdivisionLower f.1) f.2
+  else
+    fun k =>
+      match k.1 with
+      | 0 => .radialDown f.1 f.2
+      | 1 => .angularForward (radialSubdivisionLower f.1) f.2
+      | 2 => .radialUp f.1 (cyclicSucc f.2)
+      | _ => .angularBackward (radialSubdivisionUpper f.1) f.2
+
+def cylinderCoreBoundaryVertex {n m : ℕ} (j : Fin (m + 1)) : CylinderCoreVertex n m :=
+  (Fin.last (n + 1), j)
+
+def cylinderCoreBoundaryEdge {n m : ℕ} (j : Fin (m + 1)) : CylinderCoreEdge n m :=
+  .angularForward (Fin.last (n + 1)) j
+
+theorem cylinderCoreBoundaryEdge_ends {n m : ℕ} (j : Fin (m + 1)) :
+    cylinderCoreEdgeEnds (cylinderCoreBoundaryEdge (n := n) (m := m) j) =
+      (cylinderCoreBoundaryVertex (n := n) (m := m) j,
+        cylinderCoreBoundaryVertex (n := n) (m := m) (cyclicSucc j)) := by
+  simp [cylinderCoreBoundaryEdge, cylinderCoreBoundaryVertex, cylinderCoreEdgeEnds]
+
 theorem complexSupNorm_le_norm (z : ℂ) : complexSupNorm z ≤ ‖z‖ := by
   rw [complexSupNorm]
   exact max_le (Complex.abs_re_le_norm z) (Complex.abs_im_le_norm z)
