@@ -51,6 +51,28 @@ theorem universal_ennreal_bound_of_finite_certificates {area : ℝ≥0∞}
   rw [← ENNReal.ofReal_le_iff_le_toReal htop]
   exact hfinite N
 
+/-- `ENNReal` additive version of the finite-to-infinite passage, carrying a
+common defect term unchanged through the limit. -/
+theorem universal_ennreal_bound_of_finite_certificates_add
+    {area defect : ℝ≥0∞}
+    (hfinite : ∀ N,
+      ENNReal.ofReal (finiteUniversalConstant N) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area := by
+  by_cases harea : area = ∞
+  · simp [harea]
+  by_cases hdefect : defect = ∞
+  · have : area = ∞ := by
+      simpa [hdefect, finiteUniversalConstant] using hfinite 0
+    exact (harea this).elim
+  have hdefect_le_area : defect ≤ area := by
+    simpa [finiteUniversalConstant, add_comm] using hfinite 0
+  have hfinite' : ∀ N, ENNReal.ofReal (finiteUniversalConstant N) ≤ area - defect := by
+    intro N
+    exact (ENNReal.le_sub_iff_add_le_right hdefect hdefect_le_area).2 (hfinite N)
+  have huniv' : ENNReal.ofReal universalConstant ≤ area - defect :=
+    universal_ennreal_bound_of_finite_certificates hfinite'
+  exact (ENNReal.le_sub_iff_add_le_right hdefect hdefect_le_area).1 huniv'
+
 /-- Area enclosed by the boundary curve associated to one row of a mixing
 matrix.  This is the expression obtained from Green's formula. -/
 def mixedBoundaryArea {N : ℕ} (U : Matrix (Fin N) (Fin N) ℝ) (j : Fin N) : ℝ :=

@@ -263,6 +263,116 @@ theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefe
   exact givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian
     j boundary hboundary hfine
 
+/-- Infinite slack-refined planar certificate derived from the finite additive
+slack-defect certificates. -/
+theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_maps_of_coordinateEnergy
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hfine : HasFinePolygonalModels boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  exact
+    finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_coordinateEnergy
+      N area boundary hboundary hfine harea
+
+/-- Finite slack-refined planar certificate when the boundary extends across
+the standard closed disk. -/
+theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_closedUnitDisk_extension
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitDisk → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area := by
+  let defectMass : ℝ≥0∞ :=
+    ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume
+  have hbudget :
+      (∑ j : Fin N, ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) +
+          defectMass ≤ volume (Set.univ : Set ℂ) := by
+    simpa [defectMass, Measure.restrict_univ] using
+      sum_lintegral_givensMetricFourierMap_add_lintegral_distanceSlackDerivativeEnergyDefect_le_volume
+        boundary hboundary N Set.univ MeasurableSet.univ
+  refine (finite_universal_ennreal_of_givens_coverage_budget_add N
+    (volume (Set.univ : Set ℂ)) defectMass
+    (fun j ↦ ∫⁻ x, ENNReal.ofReal
+      |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ?_ hbudget).trans harea
+  intro j
+  exact givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_closedUnitDisk_extension
+    j boundary F hF hboundaryExtension hboundary
+
+/-- Infinite slack-refined planar certificate when the boundary extends across
+the standard closed disk. -/
+theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_maps_of_closedUnitDisk_extension
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitDisk → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  exact
+    finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_closedUnitDisk_extension
+      N area boundary F hF hboundaryExtension hboundary harea
+
+/-- Finite slack-refined planar certificate when the boundary loop is
+nullhomotopic in the source plane. -/
+theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_nullhomotopy
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (center : ℂ)
+    (F : C(I × UnitAddCircle, ℂ))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (hboundary : IsometricCircleBoundary boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area := by
+  let defectMass : ℝ≥0∞ :=
+    ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume
+  have hbudget :
+      (∑ j : Fin N, ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) +
+          defectMass ≤ volume (Set.univ : Set ℂ) := by
+    simpa [defectMass, Measure.restrict_univ] using
+      sum_lintegral_givensMetricFourierMap_add_lintegral_distanceSlackDerivativeEnergyDefect_le_volume
+        boundary hboundary N Set.univ MeasurableSet.univ
+  refine (finite_universal_ennreal_of_givens_coverage_budget_add N
+    (volume (Set.univ : Set ℂ)) defectMass
+    (fun j ↦ ∫⁻ x, ENNReal.ofReal
+      |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ?_ hbudget).trans harea
+  intro j
+  exact givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_nullhomotopy
+    j boundary center F hF0 hF1 hboundary
+
+/-- Infinite slack-refined planar certificate when the boundary loop is
+nullhomotopic in the source plane. -/
+theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_maps_of_nullhomotopy
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (center : ℂ)
+    (F : C(I × UnitAddCircle, ℂ))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (hboundary : IsometricCircleBoundary boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  exact
+    finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_nullhomotopy
+      N area boundary center F hF0 hF1 hboundary harea
+
 /-- The complete finite planar certificate for the actual metric Fourier
 family when the boundary extends continuously across the standard closed
  disk. -/
