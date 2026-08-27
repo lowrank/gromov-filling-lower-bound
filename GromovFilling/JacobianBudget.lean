@@ -1,5 +1,6 @@
 import GromovFilling.Universal
 import Mathlib.Analysis.InnerProductSpace.Orthonormal
+import Mathlib.MeasureTheory.Integral.Lebesgue.Add
 
 /-!
 # The pointwise orthogonal Jacobian budget
@@ -10,7 +11,8 @@ energies; the result below converts those bounds into a sum of absolute
 two-dimensional Jacobians.
 -/
 
-open scoped BigOperators InnerProductSpace
+open scoped BigOperators ENNReal InnerProductSpace
+open MeasureTheory
 
 namespace GromovFilling
 
@@ -64,6 +66,74 @@ theorem orthogonal_jacobian_budget {ι : Type*} [Fintype ι]
     (∑ j, planarJacobian (p j) (q j)) ≤ budget := by
   have hdet := sum_planarJacobian_le_half_energy p q
   linarith
+
+/-- Integrating a pointwise finite Jacobian budget commutes with the finite
+sum.  This is the measure-theoretic passage used after the pointwise
+orthogonal estimate in Proposition 3.2. -/
+theorem sum_lintegral_planarJacobian_le_lintegral_budget
+    {ι X : Type*} [Fintype ι] [MeasurableSpace X]
+    (μ : Measure X) (p q : ι → X → ℝ × ℝ) (budget : X → ℝ)
+    (hmeasurable : ∀ j,
+      Measurable (fun x ↦
+        ENNReal.ofReal (planarJacobian (p j x) (q j x))))
+    (hbudget : ∀ x,
+      (∑ j, planarJacobian (p j x) (q j x)) ≤ budget x) :
+    (∑ j, ∫⁻ x, ENNReal.ofReal
+      (planarJacobian (p j x) (q j x)) ∂μ) ≤
+      ∫⁻ x, ENNReal.ofReal (budget x) ∂μ := by
+  rw [← lintegral_finset_sum Finset.univ (fun j _ ↦ hmeasurable j)]
+  apply lintegral_mono
+  intro x
+  change (∑ j, ENNReal.ofReal
+      (planarJacobian (p j x) (q j x))) ≤
+    ENNReal.ofReal (budget x)
+  rw [← ENNReal.ofReal_sum_of_nonneg]
+  · exact ENNReal.ofReal_le_ofReal (hbudget x)
+  · intro j _
+    exact abs_nonneg _
+
+/-- In particular, a pointwise unit budget bounds the total integrated
+Jacobian by the measure of the domain. -/
+theorem sum_lintegral_planarJacobian_le_measure_univ
+    {ι X : Type*} [Fintype ι] [MeasurableSpace X]
+    (μ : Measure X) (p q : ι → X → ℝ × ℝ)
+    (hmeasurable : ∀ j,
+      Measurable (fun x ↦
+        ENNReal.ofReal (planarJacobian (p j x) (q j x))))
+    (hbudget : ∀ x,
+      (∑ j, planarJacobian (p j x) (q j x)) ≤ 1) :
+    (∑ j, ∫⁻ x, ENNReal.ofReal
+      (planarJacobian (p j x) (q j x)) ∂μ) ≤ μ Set.univ := by
+  simpa using
+    (sum_lintegral_planarJacobian_le_lintegral_budget
+      μ p q (fun _ ↦ 1) hmeasurable hbudget)
+
+/-- Almost-everywhere form of the unit integrated Jacobian budget.  This is
+the natural interface after Rademacher differentiability. -/
+theorem sum_lintegral_planarJacobian_le_measure_univ_ae
+    {ι X : Type*} [Fintype ι] [MeasurableSpace X]
+    (μ : Measure X) (p q : ι → X → ℝ × ℝ)
+    (hmeasurable : ∀ j,
+      Measurable (fun x ↦
+        ENNReal.ofReal (planarJacobian (p j x) (q j x))))
+    (hbudget : ∀ᵐ x ∂μ,
+      (∑ j, planarJacobian (p j x) (q j x)) ≤ 1) :
+    (∑ j, ∫⁻ x, ENNReal.ofReal
+      (planarJacobian (p j x) (q j x)) ∂μ) ≤ μ Set.univ := by
+  rw [← lintegral_finset_sum Finset.univ (fun j _ ↦ hmeasurable j)]
+  have hpointwise : ∀ᵐ x ∂μ,
+      (∑ j, ENNReal.ofReal (planarJacobian (p j x) (q j x))) ≤
+        ENNReal.ofReal 1 := by
+    filter_upwards [hbudget] with x hx
+    rw [← ENNReal.ofReal_sum_of_nonneg]
+    · exact ENNReal.ofReal_le_ofReal hx
+    · intro j _
+      exact abs_nonneg _
+  calc
+    (∫⁻ x, ∑ j, ENNReal.ofReal
+        (planarJacobian (p j x) (q j x)) ∂μ) ≤
+        ∫⁻ _x, ENNReal.ofReal 1 ∂μ := lintegral_mono_ae hpointwise
+    _ = μ Set.univ := by simp
 
 /-- A matrix with `UᵀU = I` preserves the sum of coordinate squares. -/
 theorem orthogonal_mulVec_energy {ι : Type*} [Fintype ι] [DecidableEq ι]

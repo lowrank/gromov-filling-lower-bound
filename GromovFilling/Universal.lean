@@ -9,7 +9,7 @@ the proposition is isolated as the inequality saying that the sum of the
 areas enclosed by the mixed boundary curves is at most the filling area.
 -/
 
-open scoped BigOperators
+open scoped BigOperators ENNReal
 
 namespace GromovFilling
 
@@ -37,11 +37,32 @@ theorem universal_bound_of_finite_certificates {area : ℝ}
     universalConstant ≤ area :=
   le_of_tendsto' tendsto_finiteUniversalConstant hfinite
 
+/-- `ENNReal` version of the finite-to-infinite passage, used when area is
+presented as a measure or a Jacobian `lintegral`. -/
+theorem universal_ennreal_bound_of_finite_certificates {area : ℝ≥0∞}
+    (hfinite : ∀ N,
+      ENNReal.ofReal (finiteUniversalConstant N) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  by_cases htop : area = ∞
+  · simp [htop]
+  rw [ENNReal.ofReal_le_iff_le_toReal htop]
+  apply universal_bound_of_finite_certificates
+  intro N
+  rw [← ENNReal.ofReal_le_iff_le_toReal htop]
+  exact hfinite N
+
 /-- Area enclosed by the boundary curve associated to one row of a mixing
 matrix.  This is the expression obtained from Green's formula. -/
 def mixedBoundaryArea {N : ℕ} (U : Matrix (Fin N) (Fin N) ℝ) (j : Fin N) : ℝ :=
   Real.pi * ∑ k : Fin N,
     (oddMode k : ℝ) * boundaryRadius (oddMode k) ^ 2 * U j k ^ 2
+
+lemma mixedBoundaryArea_nonneg {N : ℕ}
+    (U : Matrix (Fin N) (Fin N) ℝ) (j : Fin N) :
+    0 ≤ mixedBoundaryArea U j := by
+  unfold mixedBoundaryArea
+  apply mul_nonneg Real.pi_pos.le
+  exact Finset.sum_nonneg fun k _ ↦ by positivity
 
 private lemma boundary_area_weight (k : ℕ) :
     Real.pi * ((oddMode k : ℝ) * boundaryRadius (oddMode k) ^ 2) =
