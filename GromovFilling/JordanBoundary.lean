@@ -1,4 +1,4 @@
-import GromovFilling.BoundaryDegreeComponents
+import GromovFilling.GivensDisk
 import Mathlib.Topology.Connected.Clopen
 import JordanCurveTheorem.JordanCurveTheoremStatement
 
@@ -246,6 +246,17 @@ theorem givensBoundaryCurve_jordan_region_at_origin
     region₁ = connectedComponentIn
       (Set.range (givensBoundaryCurveAddCircle j))ᶜ 0 :=
   hpartition.region₁_eq_connectedComponentIn hzero
+
+/-- The Jordan region containing the origin is concretely the image of the
+open unit disk under the mixed boundary polynomial. -/
+theorem givensBoundaryCurve_jordan_region_eq_polynomial_image_ball
+    {N : ℕ} (j : Fin N) {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ = givensBoundaryPolynomial j '' Metric.ball 0 1 := by
+  rw [givensBoundaryCurve_jordan_region_at_origin j hpartition hzero,
+    givensBoundaryPolynomial_image_ball_eq_origin_component j]
 
 /-- Consequently the Jordan region containing the origin is bounded. -/
 theorem givensBoundaryCurve_jordan_region_at_origin_bounded
