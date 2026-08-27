@@ -164,6 +164,12 @@ theorem closedUnitSquareBoundary_coe (t : UnitAddCircle) :
       (Complex.ofReal ((complexSupNorm (unitAddCircleEquivComplexUnitCircle t : ℂ))⁻¹)) *
         (unitAddCircleEquivComplexUnitCircle t : ℂ) := rfl
 
+/-- The standard closed parameter interval for every polygonal edge. -/
+abbrev ClosedUnitInterval := Set.Icc (0 : ℝ) 1
+
+def closedUnitIntervalStart : ClosedUnitInterval := ⟨0, by norm_num⟩
+
+def closedUnitIntervalFinish : ClosedUnitInterval := ⟨1, by norm_num⟩
 
 theorem complexSupNorm_le_norm (z : ℂ) : complexSupNorm z ≤ ‖z‖ := by
   rw [complexSupNorm]
@@ -174,6 +180,82 @@ theorem complexSupNorm_real_smul (r : ℝ) (z : ℂ) :
   rw [complexSupNorm, Complex.smul_re, Complex.smul_im, smul_eq_mul, smul_eq_mul, abs_mul, abs_mul]
   simpa [complexSupNorm, mul_comm, mul_left_comm, mul_assoc] using
     (max_mul_of_nonneg |z.re| |z.im| (abs_nonneg r)).symm
+
+theorem complexSupNorm_ofReal_mul (r : ℝ) (z : ℂ) :
+    complexSupNorm (Complex.ofReal r * z) = |r| * complexSupNorm z := by
+  simpa [smul_eq_mul] using complexSupNorm_real_smul r z
+
+/-- The center point of the closed unit square. -/
+def closedUnitSquareCenter : ClosedUnitSquare := ⟨0, by simp [complexSupNorm]⟩
+
+/-- Radial scaling inside the closed unit square. -/
+def closedUnitSquareScale (r : ClosedUnitInterval) (z : ClosedUnitSquare) : ClosedUnitSquare := by
+  refine ⟨Complex.ofReal (r : ℝ) * (z : ℂ), ?_⟩
+  have hr0 : 0 ≤ (r : ℝ) := r.2.1
+  have hr1 : (r : ℝ) ≤ 1 := r.2.2
+  rw [complexSupNorm_ofReal_mul, abs_of_nonneg hr0]
+  nlinarith [z.2, complexSupNorm_nonneg (z : ℂ)]
+
+theorem continuous_closedUnitSquareScale :
+    Continuous fun p : ClosedUnitInterval × ClosedUnitSquare => closedUnitSquareScale p.1 p.2 := by
+  have hbase : Continuous fun p : ClosedUnitInterval × ClosedUnitSquare =>
+      Complex.ofReal ((p.1 : ClosedUnitInterval) : ℝ) * ((p.2 : ClosedUnitSquare) : ℂ) := by
+    exact (Complex.continuous_ofReal.comp (continuous_subtype_val.comp continuous_fst)).mul
+      (continuous_subtype_val.comp continuous_snd)
+  have hcont : Continuous fun p : ClosedUnitInterval × ClosedUnitSquare =>
+      ((⟨Complex.ofReal ((p.1 : ClosedUnitInterval) : ℝ) * ((p.2 : ClosedUnitSquare) : ℂ), by
+          have hr0 : 0 ≤ ((p.1 : ClosedUnitInterval) : ℝ) := p.1.2.1
+          have hr1 : ((p.1 : ClosedUnitInterval) : ℝ) ≤ 1 := p.1.2.2
+          rw [complexSupNorm_ofReal_mul, abs_of_nonneg hr0]
+          nlinarith [p.2.2, complexSupNorm_nonneg ((p.2 : ClosedUnitSquare) : ℂ)]⟩) : ClosedUnitSquare) := by
+    exact hbase.subtype_mk fun p => by
+      have hr0 : 0 ≤ ((p.1 : ClosedUnitInterval) : ℝ) := p.1.2.1
+      have hr1 : ((p.1 : ClosedUnitInterval) : ℝ) ≤ 1 := p.1.2.2
+      rw [complexSupNorm_ofReal_mul, abs_of_nonneg hr0]
+      nlinarith [p.2.2, complexSupNorm_nonneg ((p.2 : ClosedUnitSquare) : ℂ)]
+  have hEq : (fun p : ClosedUnitInterval × ClosedUnitSquare => closedUnitSquareScale p.1 p.2) =
+      fun p : ClosedUnitInterval × ClosedUnitSquare =>
+        ((⟨Complex.ofReal ((p.1 : ClosedUnitInterval) : ℝ) * ((p.2 : ClosedUnitSquare) : ℂ), by
+            have hr0 : 0 ≤ ((p.1 : ClosedUnitInterval) : ℝ) := p.1.2.1
+            have hr1 : ((p.1 : ClosedUnitInterval) : ℝ) ≤ 1 := p.1.2.2
+            rw [complexSupNorm_ofReal_mul, abs_of_nonneg hr0]
+            nlinarith [p.2.2, complexSupNorm_nonneg ((p.2 : ClosedUnitSquare) : ℂ)]⟩) : ClosedUnitSquare) := by
+    funext p
+    rfl
+  rw [hEq]
+  exact hcont
+
+/-- The radial filling of the closed unit square, obtained by scaling the square
+boundary toward the center. -/
+def closedUnitSquareRadial (p : ClosedUnitInterval × UnitAddCircle) : ClosedUnitSquare :=
+  closedUnitSquareScale p.1 (closedUnitSquareBoundary p.2)
+
+theorem continuous_closedUnitSquareRadial : Continuous closedUnitSquareRadial := by
+  have hpair : Continuous fun p : ClosedUnitInterval × UnitAddCircle =>
+      (p.1, closedUnitSquareBoundary p.2) :=
+    continuous_fst.prodMk (continuous_closedUnitSquareBoundary.comp continuous_snd)
+  simpa [closedUnitSquareRadial] using continuous_closedUnitSquareScale.comp hpair
+
+theorem closedUnitSquareScale_start (z : ClosedUnitSquare) :
+    closedUnitSquareScale closedUnitIntervalStart z = closedUnitSquareCenter := by
+  apply Subtype.ext
+  change Complex.ofReal ((closedUnitIntervalStart : ClosedUnitInterval) : ℝ) * (z : ℂ) = 0
+  norm_num [closedUnitIntervalStart]
+
+theorem closedUnitSquareScale_finish (z : ClosedUnitSquare) :
+    closedUnitSquareScale closedUnitIntervalFinish z = z := by
+  apply Subtype.ext
+  change Complex.ofReal ((closedUnitIntervalFinish : ClosedUnitInterval) : ℝ) * (z : ℂ) = (z : ℂ)
+  norm_num [closedUnitIntervalFinish]
+
+theorem closedUnitSquareRadial_start (t : UnitAddCircle) :
+    closedUnitSquareRadial (closedUnitIntervalStart, t) = closedUnitSquareCenter := by
+  simp [closedUnitSquareRadial, closedUnitSquareScale_start]
+
+theorem closedUnitSquareRadial_finish (t : UnitAddCircle) :
+    closedUnitSquareRadial (closedUnitIntervalFinish, t) = closedUnitSquareBoundary t := by
+  simp [closedUnitSquareRadial, closedUnitSquareScale_finish]
+
 
 /-- Radial map from the closed unit square to the closed unit disk.  It preserves
 rays from the origin and rescales each nonzero point so that its Euclidean norm
@@ -286,13 +368,6 @@ def HasOddBoundaryDegreeObstruction
     (boundary : UnitAddCircle → X) : Prop :=
   ∀ (H : X → UnitAddCircle), Continuous H →
     ∀ d : ℤ, HasCircleDegree (H ∘ boundary) d → Odd d → False
-
-/-- The standard closed parameter interval for every polygonal edge. -/
-abbrev ClosedUnitInterval := Set.Icc (0 : ℝ) 1
-
-def closedUnitIntervalStart : ClosedUnitInterval := ⟨0, by norm_num⟩
-
-def closedUnitIntervalFinish : ClosedUnitInterval := ⟨1, by norm_num⟩
 
 /-- A finite polygonal model fine enough for the particular circle map
 `H`.  All indexing types are explicit finite types, every face is a
