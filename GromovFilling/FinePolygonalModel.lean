@@ -1,4 +1,5 @@
 import GromovFilling.PolygonalSurfaceObstruction
+import Mathlib.Analysis.Complex.Norm
 import Mathlib.Topology.UniformSpace.Compact
 
 /-!
@@ -38,6 +39,130 @@ theorem continuous_closedUnitDiskBoundary :
 theorem closedUnitDiskBoundary_coe (t : UnitAddCircle) :
     ((closedUnitDiskBoundary t : ClosedUnitDisk) : ℂ) =
       (unitAddCircleEquivComplexUnitCircle t : ℂ) := rfl
+
+/-- The sup norm on `ℂ ≃ ℝ²`, used for a square model domain. -/
+def complexSupNorm (z : ℂ) : ℝ :=
+  max |z.re| |z.im|
+
+theorem complexSupNorm_nonneg (z : ℂ) : 0 ≤ complexSupNorm z := by
+  simp [complexSupNorm]
+
+theorem abs_re_le_complexSupNorm (z : ℂ) : |z.re| ≤ complexSupNorm z := by
+  simp [complexSupNorm]
+
+theorem abs_im_le_complexSupNorm (z : ℂ) : |z.im| ≤ complexSupNorm z := by
+  simp [complexSupNorm]
+
+theorem complexSupNorm_eq_zero_iff (z : ℂ) : complexSupNorm z = 0 ↔ z = 0 := by
+  constructor
+  · intro h
+    apply Complex.ext <;> apply abs_eq_zero.mp
+    · exact le_antisymm
+        (by simpa [h] using (abs_re_le_complexSupNorm z))
+        (abs_nonneg _)
+    · exact le_antisymm
+        (by simpa [h] using (abs_im_le_complexSupNorm z))
+        (abs_nonneg _)
+  · intro h
+    simp [complexSupNorm, h]
+
+theorem complexSupNorm_ne_zero_iff (z : ℂ) : complexSupNorm z ≠ 0 ↔ z ≠ 0 := by
+  constructor
+  · intro hz hz'
+    exact hz ((complexSupNorm_eq_zero_iff z).2 hz')
+  · intro hz hzero
+    exact hz ((complexSupNorm_eq_zero_iff z).1 hzero)
+
+theorem continuous_complexSupNorm : Continuous complexSupNorm := by
+  simpa [complexSupNorm] using
+    (Complex.continuous_re.abs.max Complex.continuous_im.abs)
+
+/-- The closed unit square in `ℂ`, i.e. the unit ball for `complexSupNorm`. -/
+abbrev ClosedUnitSquare := {z : ℂ // complexSupNorm z ≤ 1}
+
+instance : CompactSpace ClosedUnitSquare := by
+  let s : Set ℂ := {z | complexSupNorm z ≤ 1}
+  have hs_closed : IsClosed s := by
+    simpa [s] using isClosed_le continuous_complexSupNorm continuous_const
+  have hs_subset : s ⊆ Metric.closedBall (0 : ℂ) (Real.sqrt 2) := by
+    intro z hz
+    change dist z 0 ≤ Real.sqrt 2
+    rw [dist_eq_norm, sub_zero]
+    calc
+      ‖z‖ ≤ Real.sqrt 2 * complexSupNorm z := by
+        simpa [complexSupNorm] using Complex.norm_le_sqrt_two_mul_max z
+      _ ≤ Real.sqrt 2 * 1 := mul_le_mul_of_nonneg_left hz (Real.sqrt_nonneg 2)
+      _ = Real.sqrt 2 := by ring
+  have hs_compact : IsCompact s :=
+    IsCompact.of_isClosed_subset
+      (isCompact_closedBall (0 : ℂ) (Real.sqrt 2)) hs_closed hs_subset
+  simpa [ClosedUnitSquare, s] using isCompact_iff_compactSpace.mp hs_compact
+
+theorem complexSupNorm_inv_smul_le_one {z : ℂ} (hz : complexSupNorm z ≠ 0) :
+    complexSupNorm (((complexSupNorm z)⁻¹ : ℝ) • z) ≤ 1 := by
+  rw [complexSupNorm]
+  refine max_le_iff.mpr ⟨?_, ?_⟩
+  · have h := mul_le_mul_of_nonneg_left
+        (abs_re_le_complexSupNorm z)
+        (inv_nonneg.mpr (complexSupNorm_nonneg z))
+    rw [Complex.smul_re, smul_eq_mul, abs_mul,
+      abs_of_nonneg (inv_nonneg.mpr (complexSupNorm_nonneg z))]
+    simpa [inv_mul_cancel₀ hz] using h
+  · have h := mul_le_mul_of_nonneg_left
+        (abs_im_le_complexSupNorm z)
+        (inv_nonneg.mpr (complexSupNorm_nonneg z))
+    rw [Complex.smul_im, smul_eq_mul, abs_mul,
+      abs_of_nonneg (inv_nonneg.mpr (complexSupNorm_nonneg z))]
+    simpa [inv_mul_cancel₀ hz] using h
+
+theorem complexSupNorm_ne_zero_unitAddCircle (t : UnitAddCircle) :
+    complexSupNorm (unitAddCircleEquivComplexUnitCircle t : ℂ) ≠ 0 := by
+  intro h
+  have hz : (unitAddCircleEquivComplexUnitCircle t : ℂ) = 0 :=
+    (complexSupNorm_eq_zero_iff _).1 h
+  have h01 : (0 : ℝ) = 1 := by
+    simpa [hz] using (unitAddCircleEquivComplexUnitCircle t).property
+  norm_num at h01
+
+/-- Boundary parametrization of the closed unit square by radial projection of
+the standard unit circle. -/
+def closedUnitSquareBoundary (t : UnitAddCircle) : ClosedUnitSquare := by
+  refine ⟨(Complex.ofReal ((complexSupNorm (unitAddCircleEquivComplexUnitCircle t : ℂ))⁻¹)) *
+      (unitAddCircleEquivComplexUnitCircle t : ℂ), ?_⟩
+  simpa [smul_eq_mul] using
+    complexSupNorm_inv_smul_le_one (complexSupNorm_ne_zero_unitAddCircle t)
+
+theorem continuous_closedUnitSquareBoundary :
+    Continuous closedUnitSquareBoundary := by
+  let z : UnitAddCircle → ℂ := fun t => (unitAddCircleEquivComplexUnitCircle t : ℂ)
+  have hz : Continuous z :=
+    continuous_subtype_val.comp unitAddCircleEquivComplexUnitCircle.continuous
+  have hs : Continuous fun t : UnitAddCircle => Complex.ofReal ((complexSupNorm (z t))⁻¹) := by
+    exact Complex.continuous_ofReal.comp <|
+      (continuous_complexSupNorm.comp hz).inv₀ fun t => by
+        simpa [z] using complexSupNorm_ne_zero_unitAddCircle t
+  have hcont : Continuous fun t : UnitAddCircle =>
+      ((⟨(Complex.ofReal ((complexSupNorm (z t))⁻¹)) * z t, by
+          simpa [smul_eq_mul, z] using
+            complexSupNorm_inv_smul_le_one (complexSupNorm_ne_zero_unitAddCircle t)⟩) :
+        ClosedUnitSquare) := by
+    exact (hs.mul hz).subtype_mk fun t => by
+      simpa [smul_eq_mul, z] using
+        complexSupNorm_inv_smul_le_one (complexSupNorm_ne_zero_unitAddCircle t)
+  have hEq : closedUnitSquareBoundary = fun t : UnitAddCircle =>
+      ((⟨(Complex.ofReal ((complexSupNorm (z t))⁻¹)) * z t, by
+          simpa [smul_eq_mul, z] using
+            complexSupNorm_inv_smul_le_one (complexSupNorm_ne_zero_unitAddCircle t)⟩) :
+        ClosedUnitSquare) := by
+    funext t
+    rfl
+  rw [hEq]
+  exact hcont
+
+theorem closedUnitSquareBoundary_coe (t : UnitAddCircle) :
+    ((closedUnitSquareBoundary t : ClosedUnitSquare) : ℂ) =
+      (Complex.ofReal ((complexSupNorm (unitAddCircleEquivComplexUnitCircle t : ℂ))⁻¹)) *
+        (unitAddCircleEquivComplexUnitCircle t : ℂ) := rfl
 
 /-- A boundary parametrization has the mod-two extension obstruction when
 no continuous circle-valued map on the whole domain can restrict to odd
