@@ -860,6 +860,290 @@ theorem hasFDerivAt_oddProfileFourierMap
   simpa only [oddProfileFourierMap, oddProfileFourierDerivative] using
     hcos.add (hsin.mul_const Complex.I)
 
+private lemma neg_pi_lt_pi : -Real.pi < Real.pi := by
+  linarith [Real.pi_pos]
+
+private theorem intervalIntegrable_oddProfileDerivativeField
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary)
+    (x : ℂ) :
+    IntervalIntegrable (oddProfileDerivativeField boundary x)
+      volume (-Real.pi) Real.pi := by
+  apply IntervalIntegrable.mono_fun'
+    (g := fun _ : ℝ ↦ (1 : ℝ))
+  · exact
+      (continuous_const : Continuous (fun _ : ℝ ↦ (1 : ℝ))).intervalIntegrable _ _
+  · exact (measurable_oddProfileDerivativeField hboundary x).aestronglyMeasurable
+  · apply ae_of_all
+    intro t
+    exact norm_oddProfileDerivativeField_le_one boundary x t
+
+private theorem intervalIntegrable_oddProfileDerivativeField_apply
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary)
+    (x v : ℂ) (hv : ‖v‖ ≤ 1) :
+    IntervalIntegrable
+      (fun t ↦ oddProfileDerivativeField boundary x t v)
+      volume (-Real.pi) Real.pi := by
+  apply IntervalIntegrable.mono_fun'
+    (g := fun _ : ℝ ↦ (1 : ℝ))
+  · exact
+      (continuous_const : Continuous (fun _ : ℝ ↦ (1 : ℝ))).intervalIntegrable _ _
+  · exact
+      ((ContinuousLinearMap.measurable_apply v).comp
+        (measurable_oddProfileDerivativeField hboundary x)).aestronglyMeasurable
+  · apply ae_of_all
+    intro t
+    calc
+      ‖oddProfileDerivativeField boundary x t v‖ ≤
+          ‖oddProfileDerivativeField boundary x t‖ * ‖v‖ :=
+        (oddProfileDerivativeField boundary x t).le_opNorm v
+      _ ≤ 1 * 1 := mul_le_mul
+        (norm_oddProfileDerivativeField_le_one boundary x t) hv
+        (norm_nonneg _) (by norm_num)
+      _ = 1 := by ring
+
+private theorem oddProfileCosineDerivative_apply
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary)
+    (n : ℕ) (x v : ℂ) :
+    oddProfileCosineDerivative boundary n x v =
+      (1 / Real.pi) *
+        ∫ t in (-Real.pi)..Real.pi,
+          oddProfileDerivativeField boundary x t v *
+            Real.cos ((n : ℝ) * t) := by
+  unfold oddProfileCosineDerivative
+  have hD := intervalIntegrable_oddProfileDerivativeField hboundary x
+  have hcos : IntervalIntegrable
+      (fun t ↦ Real.cos ((n : ℝ) * t) • oddProfileDerivativeField boundary x t)
+      volume (-Real.pi) Real.pi := by
+    exact hD.continuousOn_smul (by
+      simpa [Set.uIcc_of_le neg_pi_lt_pi.le] using
+        (show ContinuousOn (fun t : ℝ ↦ Real.cos ((n : ℝ) * t))
+          (Set.Icc (-Real.pi) Real.pi) from by fun_prop))
+  rw [ContinuousLinearMap.smul_apply, ContinuousLinearMap.intervalIntegral_apply hcos v]
+  apply congrArg
+  apply intervalIntegral.integral_congr_ae_restrict
+  filter_upwards [] with t
+  simp [smul_eq_mul, mul_comm, mul_left_comm, mul_assoc]
+
+private theorem oddProfileSineDerivative_apply
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary)
+    (n : ℕ) (x v : ℂ) :
+    oddProfileSineDerivative boundary n x v =
+      (1 / Real.pi) *
+        ∫ t in (-Real.pi)..Real.pi,
+          oddProfileDerivativeField boundary x t v *
+            Real.sin ((n : ℝ) * t) := by
+  unfold oddProfileSineDerivative
+  have hD := intervalIntegrable_oddProfileDerivativeField hboundary x
+  have hsin : IntervalIntegrable
+      (fun t ↦ Real.sin ((n : ℝ) * t) • oddProfileDerivativeField boundary x t)
+      volume (-Real.pi) Real.pi := by
+    exact hD.continuousOn_smul (by
+      simpa [Set.uIcc_of_le neg_pi_lt_pi.le] using
+        (show ContinuousOn (fun t : ℝ ↦ Real.sin ((n : ℝ) * t))
+          (Set.Icc (-Real.pi) Real.pi) from by fun_prop))
+  rw [ContinuousLinearMap.smul_apply, ContinuousLinearMap.intervalIntegral_apply hsin v]
+  apply congrArg
+  apply intervalIntegral.integral_congr_ae_restrict
+  filter_upwards [] with t
+  simp [smul_eq_mul, mul_comm, mul_left_comm, mul_assoc]
+
+private theorem oddProfileFourierDerivative_apply_eq_two_mul_fourierCoeffOn
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary)
+    (n : ℕ) (x v : ℂ) (hv : ‖v‖ ≤ 1) :
+    oddProfileFourierDerivative boundary n x v =
+      2 * fourierCoeffOn neg_pi_lt_pi
+        (fun t ↦ ((oddProfileDerivativeField boundary x t v : ℝ) : ℂ))
+        (-(n : ℤ)) := by
+  have hInt : IntervalIntegrable
+      (fun t ↦ ((oddProfileDerivativeField boundary x t v : ℝ) : ℂ))
+      volume (-Real.pi) Real.pi := by
+    rw [intervalIntegrable_iff_integrableOn_Ioc_of_le neg_pi_lt_pi.le]
+    simpa [IntegrableOn] using
+      ((memLp_oddProfileDerivativeField_apply hboundary x v hv).integrable
+        (μ := volume.restrict (Set.Ioc (-Real.pi) Real.pi)) (by norm_num))
+  have hcoeff := GromovFilling.two_mul_fourierCoeffOn_neg_eq_cos_add_sin neg_pi_lt_pi hInt n
+  unfold oddProfileFourierDerivative
+  rw [hcoeff]
+  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.comp_apply,
+    Complex.ofRealCLM_apply, ContinuousLinearMap.smul_apply]
+  rw [oddProfileCosineDerivative_apply hboundary n x v,
+    oddProfileSineDerivative_apply hboundary n x v]
+  have hcosInt :
+      IntervalIntegrable
+        (fun t ↦ oddProfileDerivativeField boundary x t v * Real.cos ((n : ℝ) * t))
+        volume (-Real.pi) Real.pi := by
+    exact (intervalIntegrable_oddProfileDerivativeField_apply hboundary x v hv).mul_continuousOn (by
+      simpa [Set.uIcc_of_le neg_pi_lt_pi.le] using
+        (show ContinuousOn (fun t : ℝ ↦ Real.cos ((n : ℝ) * t))
+          (Set.Icc (-Real.pi) Real.pi) from by fun_prop))
+  have hsinInt :
+      IntervalIntegrable
+        (fun t ↦ oddProfileDerivativeField boundary x t v * Real.sin ((n : ℝ) * t))
+        volume (-Real.pi) Real.pi := by
+    exact (intervalIntegrable_oddProfileDerivativeField_apply hboundary x v hv).mul_continuousOn (by
+      simpa [Set.uIcc_of_le neg_pi_lt_pi.le] using
+        (show ContinuousOn (fun t : ℝ ↦ Real.sin ((n : ℝ) * t))
+          (Set.Icc (-Real.pi) Real.pi) from by fun_prop))
+  have hcosCast :
+      (∫ t in (-Real.pi)..Real.pi,
+          ((oddProfileDerivativeField boundary x t v *
+              Real.cos ((n : ℝ) * t) : ℝ) : ℂ)) =
+        ((∫ t in (-Real.pi)..Real.pi,
+            oddProfileDerivativeField boundary x t v *
+              Real.cos ((n : ℝ) * t) : ℝ) : ℂ) := by
+    simpa using
+      (Complex.ofRealCLM.intervalIntegral_comp_comm
+        (f := fun t ↦ oddProfileDerivativeField boundary x t v *
+          Real.cos ((n : ℝ) * t)) hcosInt)
+  have hsinCast :
+      (∫ t in (-Real.pi)..Real.pi,
+          ((oddProfileDerivativeField boundary x t v *
+              Real.sin ((n : ℝ) * t) : ℝ) : ℂ)) =
+        ((∫ t in (-Real.pi)..Real.pi,
+            oddProfileDerivativeField boundary x t v *
+              Real.sin ((n : ℝ) * t) : ℝ) : ℂ) := by
+    simpa using
+      (Complex.ofRealCLM.intervalIntegral_comp_comm
+        (f := fun t ↦ oddProfileDerivativeField boundary x t v *
+          Real.sin ((n : ℝ) * t)) hsinInt)
+  rw [smul_eq_mul]
+  rw [Complex.ofReal_mul, Complex.ofReal_mul, ← hcosCast, ← hsinCast]
+  ring
+
+private theorem oddProfileDerivativeField_energy_budget
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary) (x : ℂ) :
+    2 * ((Real.pi - -Real.pi)⁻¹ *
+        ∫ t in (-Real.pi)..Real.pi,
+          ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2) +
+      2 * ((Real.pi - -Real.pi)⁻¹ *
+        ∫ t in (-Real.pi)..Real.pi,
+          ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2) ≤ 2 := by
+  have h1L2 := memLp_oddProfileDerivativeField_apply hboundary x 1 (by simp)
+  have hIL2 := memLp_oddProfileDerivativeField_apply hboundary x Complex.I (by simp)
+  have hpow1 : IntervalIntegrable
+      (fun t ↦ ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2)
+      volume (-Real.pi) Real.pi := by
+    rw [intervalIntegrable_iff_integrableOn_Ioc_of_le neg_pi_lt_pi.le]
+    simpa [IntegrableOn] using
+      (MemLp.integrable_norm_pow' (μ := volume.restrict (Set.Ioc (-Real.pi) Real.pi)) h1L2)
+  have hpowI : IntervalIntegrable
+      (fun t ↦ ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2)
+      volume (-Real.pi) Real.pi := by
+    rw [intervalIntegrable_iff_integrableOn_Ioc_of_le neg_pi_lt_pi.le]
+    simpa [IntegrableOn] using
+      (MemLp.integrable_norm_pow' (μ := volume.restrict (Set.Ioc (-Real.pi) Real.pi)) hIL2)
+  have hsum := hpow1.add hpowI
+  have hconst : IntervalIntegrable (fun _ : ℝ ↦ (1 : ℝ)) volume (-Real.pi) Real.pi :=
+    (continuous_const : Continuous (fun _ : ℝ ↦ (1 : ℝ))).intervalIntegrable _ _
+  have hnonneg1 :
+      0 ≤ ∫ t in (-Real.pi)..Real.pi,
+        ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2 := by
+    exact intervalIntegral.integral_nonneg_of_forall neg_pi_lt_pi.le
+      (fun t ↦ by positivity)
+  have hnonnegI :
+      0 ≤ ∫ t in (-Real.pi)..Real.pi,
+        ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2 := by
+    exact intervalIntegral.integral_nonneg_of_forall neg_pi_lt_pi.le
+      (fun t ↦ by positivity)
+  have hint :
+      (∫ t in (-Real.pi)..Real.pi,
+          ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2 +
+            ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2) ≤
+        ∫ t in (-Real.pi)..Real.pi, (1 : ℝ) := by
+    exact intervalIntegral.integral_mono_on neg_pi_lt_pi.le hsum hconst
+      (fun t _ ↦ by
+        simpa [Complex.norm_real, sq_abs] using
+          oddProfileDerivativeField_basis_energy_le_one boundary x t)
+  have hadd :
+      (∫ t in (-Real.pi)..Real.pi,
+          ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2 +
+            ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2) =
+        (∫ t in (-Real.pi)..Real.pi,
+          ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2) +
+        ∫ t in (-Real.pi)..Real.pi,
+          ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2 := by
+    rw [intervalIntegral.integral_add hpow1 hpowI]
+  have hlength : ∫ t in (-Real.pi)..Real.pi, (1 : ℝ) = Real.pi - -Real.pi := by
+    have hpi_nonneg : 0 ≤ Real.pi := le_of_lt Real.pi_pos
+    simp [intervalIntegral.integral_of_le neg_pi_lt_pi.le, hpi_nonneg]
+  have hsum' :
+      (∫ t in (-Real.pi)..Real.pi,
+          ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2) +
+        ∫ t in (-Real.pi)..Real.pi,
+          ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2 ≤
+        Real.pi - -Real.pi := by
+    rw [hadd] at hint
+    simpa [hlength] using hint
+  have hlenpos : 0 < Real.pi - -Real.pi := sub_pos.mpr neg_pi_lt_pi
+  set A : ℝ := ∫ t in (-Real.pi)..Real.pi,
+    ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2
+  set B : ℝ := ∫ t in (-Real.pi)..Real.pi,
+    ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2
+  have hsumAB : A + B ≤ Real.pi - -Real.pi := by
+    simpa [A, B] using hsum'
+  have hrewrite :
+      2 * ((Real.pi - -Real.pi)⁻¹ * A) +
+        2 * ((Real.pi - -Real.pi)⁻¹ * B) =
+      2 * ((Real.pi - -Real.pi)⁻¹ * (A + B)) := by
+    ring
+  rw [hrewrite]
+  have hfac : 0 ≤ (Real.pi - -Real.pi)⁻¹ := by positivity
+  have hratio : (Real.pi - -Real.pi)⁻¹ * (A + B) ≤ 1 := by
+    have hmul := mul_le_mul_of_nonneg_left hsumAB hfac
+    have hunit : (Real.pi - -Real.pi)⁻¹ * (Real.pi - -Real.pi) = 1 := by
+      field_simp [ne_of_gt hlenpos]
+    simpa [hunit] using hmul
+  nlinarith
+
+theorem sum_complexDerivativeEnergy_oddProfileFourierDerivative_le_two
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary) (N : ℕ) (x : ℂ) :
+    (∑ k : Fin N,
+      complexDerivativeEnergy
+        (oddProfileFourierDerivative boundary (oddMode k) x)) ≤ 2 := by
+  refine sum_complexDerivativeEnergy_le_two_of_fourierCoeffOn
+    neg_pi_lt_pi N
+    (fun t ↦ oddProfileDerivativeField boundary x t 1)
+    (fun t ↦ oddProfileDerivativeField boundary x t Complex.I)
+    (memLp_oddProfileDerivativeField_apply hboundary x 1 (by simp))
+    (memLp_oddProfileDerivativeField_apply hboundary x Complex.I (by simp))
+    (fun k ↦ oddProfileFourierDerivative boundary (oddMode k) x)
+    ?_ ?_ (oddProfileDerivativeField_energy_budget hboundary x)
+  · intro k
+    simpa using oddProfileFourierDerivative_apply_eq_two_mul_fourierCoeffOn
+      hboundary (oddMode k) x 1 (by simp)
+  · intro k
+    simpa using oddProfileFourierDerivative_apply_eq_two_mul_fourierCoeffOn
+      hboundary (oddMode k) x Complex.I (by simp)
+
+theorem ae_sum_complexDerivativeEnergy_fderiv_oddProfileFourierMap_le_two
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary) (N : ℕ) :
+    ∀ᵐ x ∂volume,
+      (∑ k : Fin N, complexDerivativeEnergy
+        (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2 := by
+  filter_upwards [ae_ae_differentiableAt_oddDistanceProfile hboundary] with x hdiff
+  have hderiv : ∀ k : Fin N,
+      fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x =
+        oddProfileFourierDerivative boundary (oddMode k) x := by
+    intro k
+    exact (hasFDerivAt_oddProfileFourierMap hboundary (oddMode k) x hdiff).fderiv
+  calc
+    (∑ k : Fin N, complexDerivativeEnergy
+        (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) =
+      ∑ k : Fin N,
+        complexDerivativeEnergy
+          (oddProfileFourierDerivative boundary (oddMode k) x) := by
+        simp [hderiv]
+    _ ≤ 2 := sum_complexDerivativeEnergy_oddProfileFourierDerivative_le_two
+      hboundary N x
+
 private lemma odd_profile_cos_intervalIntegrable
     {X : Type*} [PseudoMetricSpace X]
     {boundary : UnitAddCircle → X}

@@ -144,6 +144,130 @@ theorem two_mul_sum_norm_fourierCoeffOn_neg_sq_le
     _ ≤ (b - a)⁻¹ • ∫ x in a..b, ‖(f x : ℂ)‖ ^ 2 :=
       finset_sum_norm_fourierCoeffOn_sq_le hab hL2 (p ∪ q)
 
+/-- On `[-π, π]`, twice a negative Fourier coefficient of a real-valued
+function is exactly the complex number assembled from its cosine and sine
+coefficients with the normalization used in the metric Fourier maps. -/
+theorem two_mul_fourierCoeffOn_neg_eq_cos_add_sin
+    (hπ : -Real.pi < Real.pi)
+    {f : ℝ → ℝ}
+    (hf : IntervalIntegrable (fun x ↦ (f x : ℂ)) volume (-Real.pi) Real.pi)
+    (n : ℕ) :
+    2 * fourierCoeffOn hπ
+        (fun x ↦ (f x : ℂ)) (-(n : ℤ)) =
+      (((1 / Real.pi : ℝ) : ℂ) *
+          ∫ x in (-Real.pi)..Real.pi,
+            ((f x * Real.cos ((n : ℝ) * x) : ℝ) : ℂ)) +
+        ((((1 / Real.pi : ℝ) : ℂ) *
+            ∫ x in (-Real.pi)..Real.pi,
+              ((f x * Real.sin ((n : ℝ) * x) : ℝ) : ℂ)) * Complex.I) := by
+  have hcos' : IntervalIntegrable
+      (fun x ↦ (f x : ℂ) * (((Real.cos ((n : ℝ) * x) : ℝ) : ℂ)))
+      volume (-Real.pi) Real.pi := by
+    exact hf.mul_continuousOn (by
+      simpa [Set.uIcc_of_le hπ.le] using
+        (show ContinuousOn
+          (fun x : ℝ ↦ ((Real.cos ((n : ℝ) * x) : ℝ) : ℂ))
+          (Set.Icc (-Real.pi) Real.pi) from by fun_prop))
+  have hcos : IntervalIntegrable
+      (fun x ↦ ((f x * Real.cos ((n : ℝ) * x) : ℝ) : ℂ))
+      volume (-Real.pi) Real.pi := by
+    simpa [Complex.ofReal_mul] using hcos'
+  have hsin' : IntervalIntegrable
+      (fun x ↦ (f x : ℂ) * (((Real.sin ((n : ℝ) * x) : ℝ) : ℂ)))
+      volume (-Real.pi) Real.pi := by
+    exact hf.mul_continuousOn (by
+      simpa [Set.uIcc_of_le hπ.le] using
+        (show ContinuousOn
+          (fun x : ℝ ↦ ((Real.sin ((n : ℝ) * x) : ℝ) : ℂ))
+          (Set.Icc (-Real.pi) Real.pi) from by fun_prop))
+  have hsin : IntervalIntegrable
+      (fun x ↦ ((f x * Real.sin ((n : ℝ) * x) : ℝ) : ℂ))
+      volume (-Real.pi) Real.pi := by
+    simpa [Complex.ofReal_mul] using hsin'
+  have hsinI : IntervalIntegrable
+      (fun x ↦ ((f x * Real.sin ((n : ℝ) * x) : ℝ) : ℂ) * Complex.I)
+      volume (-Real.pi) Real.pi :=
+    hsin.mul_const Complex.I
+  have hscaleR : (2 : ℝ) * (1 / (Real.pi - -Real.pi)) = 1 / Real.pi := by
+    field_simp [Real.pi_ne_zero]
+    ring
+  have hscale :
+      (2 : ℂ) * (((1 / (Real.pi - -Real.pi) : ℝ) : ℂ)) =
+        (((1 / Real.pi : ℝ) : ℂ)) := by
+    exact_mod_cast hscaleR
+  calc
+    2 * fourierCoeffOn hπ (fun x ↦ (f x : ℂ)) (-(n : ℤ)) =
+        (((1 / Real.pi : ℝ) : ℂ) *
+          ∫ x in (-Real.pi)..Real.pi,
+            fourier (n : ℤ) (x : AddCircle (Real.pi - -Real.pi)) * (f x : ℂ)) := by
+      rw [fourierCoeffOn_eq_integral]
+      simp only [Int.neg_neg]
+      calc
+        2 * ((1 / (Real.pi - -Real.pi)) •
+            ∫ x in (-Real.pi)..Real.pi,
+              fourier (n : ℤ) (x : AddCircle (Real.pi - -Real.pi)) • (f x : ℂ)) =
+            (2 : ℂ) * ((((1 / (Real.pi - -Real.pi) : ℝ) : ℂ)) *
+              ∫ x in (-Real.pi)..Real.pi,
+                fourier (n : ℤ) (x : AddCircle (Real.pi - -Real.pi)) * (f x : ℂ)) := by
+            rw [RCLike.real_smul_eq_coe_mul]
+            rfl
+        _ = (((1 / Real.pi : ℝ) : ℂ) *
+              ∫ x in (-Real.pi)..Real.pi,
+                fourier (n : ℤ) (x : AddCircle (Real.pi - -Real.pi)) * (f x : ℂ)) := by
+            rw [← mul_assoc, hscale]
+    _ = (((1 / Real.pi : ℝ) : ℂ) *
+          ∫ x in (-Real.pi)..Real.pi,
+            (((f x * Real.cos ((n : ℝ) * x) : ℝ) : ℂ) +
+              ((f x * Real.sin ((n : ℝ) * x) : ℝ) : ℂ) * Complex.I)) := by
+      congr 1
+      apply intervalIntegral.integral_congr_ae_restrict
+      filter_upwards [] with x
+      rw [fourier_coe_apply]
+      have hfourier :
+          Complex.exp
+              (2 * (Real.pi : ℂ) * Complex.I * (n : ℤ) * (x : ℂ) /
+                ((Real.pi - -Real.pi : ℝ) : ℂ)) =
+            Complex.exp (((((n : ℝ) * x : ℝ) : ℂ) * Complex.I)) := by
+        congr 1
+        field_simp [Real.pi_ne_zero]
+        norm_num
+        ring
+      rw [hfourier, Complex.exp_mul_I]
+      push_cast
+      ring
+    _ = (((1 / Real.pi : ℝ) : ℂ) *
+          ((∫ x in (-Real.pi)..Real.pi,
+              ((f x * Real.cos ((n : ℝ) * x) : ℝ) : ℂ)) +
+            ∫ x in (-Real.pi)..Real.pi,
+              ((f x * Real.sin ((n : ℝ) * x) : ℝ) : ℂ) * Complex.I)) := by
+      rw [intervalIntegral.integral_add hcos hsinI]
+    _ = (((1 / Real.pi : ℝ) : ℂ) *
+          ∫ x in (-Real.pi)..Real.pi,
+            ((f x * Real.cos ((n : ℝ) * x) : ℝ) : ℂ)) +
+        ((((1 / Real.pi : ℝ) : ℂ) *
+            ∫ x in (-Real.pi)..Real.pi,
+              ((f x * Real.sin ((n : ℝ) * x) : ℝ) : ℂ)) * Complex.I) := by
+      have hmul :
+          ∫ x in (-Real.pi)..Real.pi,
+            ((f x * Real.sin ((n : ℝ) * x) : ℝ) : ℂ) * Complex.I =
+              (∫ x in (-Real.pi)..Real.pi,
+                ((f x * Real.sin ((n : ℝ) * x) : ℝ) : ℂ)) * Complex.I := by
+        exact intervalIntegral.integral_mul_const
+          (a := -Real.pi) (b := Real.pi)
+          (r := Complex.I)
+          (f := fun x ↦ ((f x * Real.sin ((n : ℝ) * x) : ℝ) : ℂ))
+      rw [hmul]
+      let A : ℂ := ∫ x in (-Real.pi)..Real.pi,
+        ((f x * Real.cos ((n : ℝ) * x) : ℝ) : ℂ)
+      let B : ℂ := ∫ x in (-Real.pi)..Real.pi,
+        ((f x * Real.sin ((n : ℝ) * x) : ℝ) : ℂ)
+      have hdist :
+          (((1 / Real.pi : ℝ) : ℂ) * (A + B * Complex.I)) =
+            (((1 / Real.pi : ℝ) : ℂ) * A) +
+              ((((1 / Real.pi : ℝ) : ℂ) * B) * Complex.I) := by
+        ring
+      simpa [A, B] using hdist
+
 /-- The normalization step in the derivative-energy proof of Lemma 5.4.
 If the two columns of a family of complex derivatives are twice the
 negative odd Fourier coefficients of two real `L²` fields, then their
