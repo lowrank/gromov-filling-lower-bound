@@ -204,6 +204,34 @@ theorem givens_jordan_region_volume_le_complex_jacobian_of_closedUnitDisk_extens
     (complex_volume_le_lintegral_abs_det_fderiv_of_subset_range
       G Set.univ region₁ MeasurableSet.univ hGLipschitz hcoverage')
 
+/-- If the boundary is identified with the standard closed-disk boundary by a
+homeomorphism, the Jordan region forced by Lemma 5.4 is covered directly from
+that disk model, so the global complex Jacobian bound applies without a
+polygonal-model hypothesis. -/
+theorem givens_jordan_region_volume_le_complex_jacobian_of_closedUnitDisk_homeomorph_direct
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitDisk ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    volume region₁ ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  have hcoverage : region₁ ⊆ Set.range G :=
+    givensBoundaryCurve_jordan_region_subset_range_of_closedUnitDisk_homeomorph_direct
+      j e hboundaryHomeomorph G hG hboundary hpartition hzero
+  have hcoverage' : region₁ ⊆ G '' (Set.univ : Set ℂ) := by
+    simpa only [Set.image_univ] using hcoverage
+  simpa only [Measure.restrict_univ] using
+    (complex_volume_le_lintegral_abs_det_fderiv_of_subset_range
+      G Set.univ region₁ MeasurableSet.univ hGLipschitz hcoverage')
+
 /-- The same Jacobian bound follows when the boundary loop is nullhomotopic:
 Lemma 5.4's Jordan region is then covered directly by the odd-degree
 obstruction extracted from that nullhomotopy. -/
@@ -274,6 +302,26 @@ theorem givens_mixedBoundaryArea_le_complex_jacobian_of_closedUnitDisk_extension
   exact givens_jordan_region_volume_le_complex_jacobian_of_closedUnitDisk_extension
     j boundary F hF hboundaryExtension G hG hboundary hpartition hzero hGLipschitz
 
+/-- If the boundary is identified with the standard closed-disk boundary by a
+homeomorphism, Jordan separation and coverage can be discharged internally with
+no polygonal-model hypothesis. -/
+theorem givens_mixedBoundaryArea_le_complex_jacobian_of_closedUnitDisk_homeomorph_direct
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitDisk ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
+    exists_givensBoundaryCurve_jordanPartition_at_origin j
+  rw [← volume_givensBoundaryCurve_jordan_region j hpartition hzero]
+  exact givens_jordan_region_volume_le_complex_jacobian_of_closedUnitDisk_homeomorph_direct
+    j boundary e hboundaryHomeomorph G hG hboundary hpartition hzero hGLipschitz
+
 /-- The planar Lemma 5.4 inequality also follows directly from a nullhomotopy
 of the boundary loop, with no polygonal-model hypothesis. -/
 theorem givens_mixedBoundaryArea_le_complex_jacobian_of_nullhomotopy
@@ -294,6 +342,35 @@ theorem givens_mixedBoundaryArea_le_complex_jacobian_of_nullhomotopy
   rw [← volume_givensBoundaryCurve_jordan_region j hpartition hzero]
   exact givens_jordan_region_volume_le_complex_jacobian_of_nullhomotopy
     j boundary center F hF0 hF1 G hG hboundary hpartition hzero hGLipschitz
+
+/-- If the boundary is identified with the standard closed-disk boundary by a
+homeomorphism, Jordan separation and coverage can be discharged internally:
+there is a bounded open connected region containing the origin whose volume is
+controlled by the Jacobian integral of the extension, with no
+polygonal-model hypothesis. -/
+theorem exists_givens_bounded_region_volume_le_complex_jacobian_of_closedUnitDisk_homeomorph_direct
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitDisk ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
+    exists_givensBoundaryCurve_jordanPartition_at_origin j
+  exact ⟨region₁, hpartition.region₁_open,
+    hpartition.region₁_connected,
+    givensBoundaryCurve_jordan_region_at_origin_bounded
+      j hpartition hzero,
+    hzero,
+    givens_jordan_region_volume_le_complex_jacobian_of_closedUnitDisk_homeomorph_direct
+      j boundary e hboundaryHomeomorph G hG hboundary hpartition hzero hGLipschitz⟩
 
 /-- Jordan separation and coverage can be discharged internally: there is
 a bounded open connected region containing the origin whose volume is
