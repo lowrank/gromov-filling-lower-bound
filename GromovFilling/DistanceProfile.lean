@@ -265,6 +265,22 @@ theorem distanceSlack_on_boundary
   rw [hboundary, hboundary, unitAddCircle_dist_add_half_eq]
   ring
 
+/-- An isometric boundary parametrization is injective. -/
+theorem IsometricCircleBoundary.injective
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X}
+    (hboundary : IsometricCircleBoundary boundary) :
+    Function.Injective boundary := by
+  intro s t hst
+  have hdist : dist (boundary s) (boundary t) = 2 * Real.pi * dist s t :=
+    hboundary s t
+  rw [hst, dist_self] at hdist
+  have hpi : 0 < (2 * Real.pi : ℝ) := by positivity
+  have hst' : dist s t = 0 := by
+    have hst_nonneg : 0 ≤ dist s t := dist_nonneg
+    nlinarith [hst_nonneg, hpi, hdist]
+  exact dist_eq_zero.mp hst'
+
 end
 
 end GromovFilling

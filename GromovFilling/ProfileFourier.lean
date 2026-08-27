@@ -860,38 +860,32 @@ private theorem distanceSlackDerivativeField_eq_half_add_boundaryDistance_of_ne
   unfold distanceSlackDerivativeField
   exact hderiv.fderiv
 
-/-- Away from the boundary curve, the odd profile and the antipodal slack
-satisfy the exact planar parallelogram identity at the derivative level. -/
-theorem oddProfileDerivativeField_add_distanceSlackDerivativeField_basis_energy_eq_one_of_not_mem_range
-    {boundary : UnitAddCircle → ℂ} {x : ℂ}
-    (hx : x ∉ Set.range boundary) (t : ℝ) :
+private theorem oddProfileDerivativeField_add_distanceSlackDerivativeField_basis_energy_eq_one_of_ne
+    (boundary : UnitAddCircle → ℂ) (x : ℂ) (t : ℝ)
+    (hxt : x ≠ boundary (angleToUnitAddCircle t))
+    (hxhalf : x ≠ boundary
+      (angleToUnitAddCircle t + ((1 / 2 : ℝ) : UnitAddCircle))) :
     ((oddProfileDerivativeField boundary x t 1) ^ 2 +
         (oddProfileDerivativeField boundary x t Complex.I) ^ 2) +
       ((distanceSlackDerivativeField boundary x t 1) ^ 2 +
         (distanceSlackDerivativeField boundary x t Complex.I) ^ 2) = 1 := by
   let θ : UnitAddCircle := angleToUnitAddCircle t
-  have hxθ : x ≠ boundary θ := by
-    intro h
-    exact hx ⟨θ, h.symm⟩
-  have hxθhalf : x ≠ boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle)) := by
-    intro h
-    exact hx ⟨θ + ((1 / 2 : ℝ) : UnitAddCircle), h.symm⟩
   let D₁ : ℂ →L[ℝ] ℝ := fderiv ℝ (boundaryDistance boundary θ) x
   let D₂ : ℂ →L[ℝ] ℝ :=
     fderiv ℝ (boundaryDistance boundary (θ + ((1 / 2 : ℝ) : UnitAddCircle))) x
   have hodd :=
     oddProfileDerivativeField_eq_half_sub_boundaryDistance_of_ne
-      boundary x t hxθ hxθhalf
+      boundary x t hxt hxhalf
   have hslack :=
     distanceSlackDerivativeField_eq_half_add_boundaryDistance_of_ne
-      boundary x t hxθ hxθhalf
+      boundary x t hxt hxhalf
   have hnorm1 : ‖D₁‖ = 1 := by
     simpa [D₁, θ] using
-      norm_fderiv_boundaryDistance_eq_one_of_ne boundary θ hxθ
+      norm_fderiv_boundaryDistance_eq_one_of_ne boundary θ hxt
   have hnorm2 : ‖D₂‖ = 1 := by
     simpa [D₂, θ] using
       norm_fderiv_boundaryDistance_eq_one_of_ne boundary
-        (θ + ((1 / 2 : ℝ) : UnitAddCircle)) hxθhalf
+        (θ + ((1 / 2 : ℝ) : UnitAddCircle)) hxhalf
   rw [hodd, hslack]
   have hpar :
       ((((1 / 2 : ℝ) • (D₁ - D₂)) 1) ^ 2 +
@@ -905,6 +899,25 @@ theorem oddProfileDerivativeField_add_distanceSlackDerivativeField_basis_energy_
   rw [hpar, realCovector_apply_one_sq_add_apply_I_sq,
     realCovector_apply_one_sq_add_apply_I_sq, hnorm1, hnorm2]
   ring
+
+/-- Away from the boundary curve, the odd profile and the antipodal slack
+satisfy the exact planar parallelogram identity at the derivative level. -/
+theorem oddProfileDerivativeField_add_distanceSlackDerivativeField_basis_energy_eq_one_of_not_mem_range
+    {boundary : UnitAddCircle → ℂ} {x : ℂ}
+    (hx : x ∉ Set.range boundary) (t : ℝ) :
+    ((oddProfileDerivativeField boundary x t 1) ^ 2 +
+        (oddProfileDerivativeField boundary x t Complex.I) ^ 2) +
+      ((distanceSlackDerivativeField boundary x t 1) ^ 2 +
+        (distanceSlackDerivativeField boundary x t Complex.I) ^ 2) = 1 := by
+  have hxt : x ≠ boundary (angleToUnitAddCircle t) := by
+    intro h
+    exact hx ⟨angleToUnitAddCircle t, h.symm⟩
+  have hxhalf : x ≠ boundary
+      (angleToUnitAddCircle t + ((1 / 2 : ℝ) : UnitAddCircle)) := by
+    intro h
+    exact hx ⟨angleToUnitAddCircle t + ((1 / 2 : ℝ) : UnitAddCircle), h.symm⟩
+  exact oddProfileDerivativeField_add_distanceSlackDerivativeField_basis_energy_eq_one_of_ne
+    boundary x t hxt hxhalf
 
 /-- Every unit directional component of the profile derivative is `L²`
 on the angular period. -/
@@ -931,6 +944,34 @@ theorem memLp_oddProfileDerivativeField_apply
       (oddProfileDerivativeField boundary x t).le_opNorm v
     _ ≤ 1 * 1 := mul_le_mul
       (norm_oddProfileDerivativeField_le_one boundary x t) hv
+      (norm_nonneg _) (by norm_num)
+    _ = 1 := by ring
+
+/-- Every unit directional component of the slack derivative is `L²`
+on the angular period. -/
+theorem memLp_distanceSlackDerivativeField_apply
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary)
+    (x v : ℂ) (hv : ‖v‖ ≤ 1) :
+    MemLp (fun t ↦
+      ((distanceSlackDerivativeField boundary x t v : ℝ) : ℂ)) 2
+      (volume.restrict (Set.Ioc (-Real.pi) Real.pi)) := by
+  have hDmeas : Measurable (distanceSlackDerivativeField boundary x) :=
+    measurable_distanceSlackDerivativeField hboundary x
+  have hreal : Measurable (fun t ↦
+      distanceSlackDerivativeField boundary x t v) :=
+    (ContinuousLinearMap.measurable_apply v).comp hDmeas
+  apply MemLp.of_bound
+    (Complex.continuous_ofReal.measurable.comp hreal).aestronglyMeasurable 1
+  apply ae_of_all
+  intro t
+  calc
+    ‖((distanceSlackDerivativeField boundary x t v : ℝ) : ℂ)‖ =
+        ‖distanceSlackDerivativeField boundary x t v‖ := by simp
+    _ ≤ ‖distanceSlackDerivativeField boundary x t‖ * ‖v‖ :=
+      (distanceSlackDerivativeField boundary x t).le_opNorm v
+    _ ≤ 1 * 1 := mul_le_mul
+      (norm_distanceSlackDerivativeField_le_one boundary x t) hv
       (norm_nonneg _) (by norm_num)
     _ = 1 := by ring
 
@@ -1231,7 +1272,109 @@ private theorem oddProfileFourierDerivative_apply_eq_two_mul_fourierCoeffOn
   rw [Complex.ofReal_mul, Complex.ofReal_mul, ← hcosCast, ← hsinCast]
   ring
 
-private theorem oddProfileDerivativeField_energy_budget
+private theorem angleToUnitAddCircle_eq_iff_of_mem_Ioc {s t : ℝ}
+    (hs : s ∈ Set.Ioc (-Real.pi) Real.pi)
+    (ht : t ∈ Set.Ioc (-Real.pi) Real.pi) :
+    angleToUnitAddCircle s = angleToUnitAddCircle t ↔ s = t := by
+  have htwoPi : 0 < (2 * Real.pi : ℝ) := by positivity
+  have hs' : s / (2 * Real.pi) ∈ Set.Ioc (-(1 / 2 : ℝ)) (-(1 / 2 : ℝ) + 1) := by
+    constructor
+    · rw [lt_div_iff₀ htwoPi]
+      nlinarith [hs.1, Real.pi_pos]
+    · rw [div_le_iff₀ htwoPi]
+      nlinarith [hs.2, Real.pi_pos]
+  have ht' : t / (2 * Real.pi) ∈ Set.Ioc (-(1 / 2 : ℝ)) (-(1 / 2 : ℝ) + 1) := by
+    constructor
+    · rw [lt_div_iff₀ htwoPi]
+      nlinarith [ht.1, Real.pi_pos]
+    · rw [div_le_iff₀ htwoPi]
+      nlinarith [ht.2, Real.pi_pos]
+  constructor
+  · intro hst
+    have hsub :
+        (⟨s / (2 * Real.pi), hs'⟩ : Set.Ioc (-(1 / 2 : ℝ)) (-(1 / 2 : ℝ) + 1)) =
+          ⟨t / (2 * Real.pi), ht'⟩ := by
+      have h' :
+          (AddCircle.equivIoc 1 (-(1 / 2 : ℝ))) (((s / (2 * Real.pi) : ℝ) : UnitAddCircle)) =
+            (AddCircle.equivIoc 1 (-(1 / 2 : ℝ))) (((t / (2 * Real.pi) : ℝ) : UnitAddCircle)) := by
+        simpa [angleToUnitAddCircle] using
+          congrArg (AddCircle.equivIoc 1 (-(1 / 2 : ℝ))) hst
+      rwa [AddCircle.equivIoc_coe_eq hs', AddCircle.equivIoc_coe_eq ht'] at h'
+    have hdiv : s / (2 * Real.pi) = t / (2 * Real.pi) := congrArg Subtype.val hsub
+    have hmul := congrArg (fun u : ℝ ↦ u * (2 * Real.pi)) hdiv
+    field_simp [Real.pi_ne_zero] at hmul
+    exact hmul
+  · intro hst
+    simp [hst]
+
+private theorem exists_angleToUnitAddCircle_eq_mem_Ioc (θ : UnitAddCircle) :
+    ∃ t ∈ Set.Ioc (-Real.pi) Real.pi, angleToUnitAddCircle t = θ := by
+  let u : Set.Ioc (-(1 / 2 : ℝ)) (-(1 / 2 : ℝ) + 1) :=
+    AddCircle.equivIoc 1 (-(1 / 2 : ℝ)) θ
+  refine ⟨2 * Real.pi * u.1, ?_, ?_⟩
+  · constructor
+    · nlinarith [u.2.1, Real.pi_pos]
+    · nlinarith [u.2.2, Real.pi_pos]
+  · have hu := (AddCircle.equivIoc 1 (-(1 / 2 : ℝ))).symm_apply_apply θ
+    change (((↑u : ℝ) : UnitAddCircle) = θ) at hu
+    unfold angleToUnitAddCircle
+    rw [show (2 * Real.pi * u.1 : ℝ) / (2 * Real.pi) = u.1 by
+      field_simp [Real.pi_ne_zero]]
+    exact hu
+
+private theorem ae_oddProfileDerivativeField_add_distanceSlackDerivativeField_basis_energy_eq_one
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary) (x : ℂ) :
+    ∀ᵐ t ∂volume.restrict (Set.Ioc (-Real.pi) Real.pi),
+      ((oddProfileDerivativeField boundary x t 1) ^ 2 +
+          (oddProfileDerivativeField boundary x t Complex.I) ^ 2) +
+        ((distanceSlackDerivativeField boundary x t 1) ^ 2 +
+          (distanceSlackDerivativeField boundary x t Complex.I) ^ 2) = 1 := by
+  have hboundary_injective : Function.Injective boundary := by
+    intro s t hst
+    have hdist : dist (boundary s) (boundary t) = 2 * Real.pi * dist s t :=
+      hboundary s t
+    rw [hst, dist_self] at hdist
+    have hpi : 0 < (2 * Real.pi : ℝ) := by positivity
+    have hst' : dist s t = 0 := by
+      have hst_nonneg : 0 ≤ dist s t := dist_nonneg
+      nlinarith [hst_nonneg, hpi, hdist]
+    exact dist_eq_zero.mp hst'
+  by_cases hx : x ∈ Set.range boundary
+  · rcases hx with ⟨θ, rfl⟩
+    obtain ⟨t₀, ht₀mem, ht₀eq⟩ := exists_angleToUnitAddCircle_eq_mem_Ioc θ
+    obtain ⟨t₁, ht₁mem, ht₁eq⟩ :=
+      exists_angleToUnitAddCircle_eq_mem_Ioc
+        (θ - ((1 / 2 : ℝ) : UnitAddCircle))
+    filter_upwards [ae_restrict_mem measurableSet_Ioc,
+      Measure.ae_ne (volume.restrict (Set.Ioc (-Real.pi) Real.pi)) t₀,
+      Measure.ae_ne (volume.restrict (Set.Ioc (-Real.pi) Real.pi)) t₁] with t htmem htne₀ htne₁
+    have hxt : boundary θ ≠ boundary (angleToUnitAddCircle t) := by
+      intro h
+      have hangle : angleToUnitAddCircle t = θ :=
+        hboundary_injective h.symm
+      have htt₀ : t = t₀ :=
+        (angleToUnitAddCircle_eq_iff_of_mem_Ioc htmem ht₀mem).mp (hangle.trans ht₀eq.symm)
+      exact htne₀ htt₀
+    have hxhalf : boundary θ ≠ boundary
+        (angleToUnitAddCircle t + ((1 / 2 : ℝ) : UnitAddCircle)) := by
+      intro h
+      have hangle : angleToUnitAddCircle t + ((1 / 2 : ℝ) : UnitAddCircle) = θ :=
+        hboundary_injective h.symm
+      have hangle' : angleToUnitAddCircle t = θ - ((1 / 2 : ℝ) : UnitAddCircle) := by
+        have hshift := congrArg
+          (fun z : UnitAddCircle ↦ z - ((1 / 2 : ℝ) : UnitAddCircle)) hangle
+        simpa [sub_eq_add_neg, add_assoc, add_left_comm, add_comm] using hshift
+      have htt₁ : t = t₁ :=
+        (angleToUnitAddCircle_eq_iff_of_mem_Ioc htmem ht₁mem).mp (hangle'.trans ht₁eq.symm)
+      exact htne₁ htt₁
+    simpa using
+      oddProfileDerivativeField_add_distanceSlackDerivativeField_basis_energy_eq_one_of_ne
+        boundary (boundary θ) t hxt hxhalf
+  · exact ae_restrict_of_ae (Filter.Eventually.of_forall fun t ↦
+      oddProfileDerivativeField_add_distanceSlackDerivativeField_basis_energy_eq_one_of_not_mem_range hx t)
+
+private theorem oddProfileDerivativeField_energy_budget_with_slack
     {boundary : UnitAddCircle → ℂ}
     (hboundary : IsometricCircleBoundary boundary) (x : ℂ) :
     2 * ((Real.pi - -Real.pi)⁻¹ *
@@ -1239,9 +1382,17 @@ private theorem oddProfileDerivativeField_energy_budget
           ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2) +
       2 * ((Real.pi - -Real.pi)⁻¹ *
         ∫ t in (-Real.pi)..Real.pi,
-          ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2) ≤ 2 := by
+          ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2) +
+      2 * ((Real.pi - -Real.pi)⁻¹ *
+        ∫ t in (-Real.pi)..Real.pi,
+          ‖((distanceSlackDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2) +
+      2 * ((Real.pi - -Real.pi)⁻¹ *
+        ∫ t in (-Real.pi)..Real.pi,
+          ‖((distanceSlackDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2) = 2 := by
   have h1L2 := memLp_oddProfileDerivativeField_apply hboundary x 1 (by simp)
   have hIL2 := memLp_oddProfileDerivativeField_apply hboundary x Complex.I (by simp)
+  have hs1L2 := memLp_distanceSlackDerivativeField_apply hboundary x 1 (by simp)
+  have hsIL2 := memLp_distanceSlackDerivativeField_apply hboundary x Complex.I (by simp)
   have hpow1 : IntervalIntegrable
       (fun t ↦ ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2)
       volume (-Real.pi) Real.pi := by
@@ -1254,29 +1405,31 @@ private theorem oddProfileDerivativeField_energy_budget
     rw [intervalIntegrable_iff_integrableOn_Ioc_of_le neg_pi_lt_pi.le]
     simpa [IntegrableOn] using
       (MemLp.integrable_norm_pow' (μ := volume.restrict (Set.Ioc (-Real.pi) Real.pi)) hIL2)
-  have hsum := hpow1.add hpowI
-  have hconst : IntervalIntegrable (fun _ : ℝ ↦ (1 : ℝ)) volume (-Real.pi) Real.pi :=
-    (continuous_const : Continuous (fun _ : ℝ ↦ (1 : ℝ))).intervalIntegrable _ _
-  have hnonneg1 :
-      0 ≤ ∫ t in (-Real.pi)..Real.pi,
-        ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2 := by
-    exact intervalIntegral.integral_nonneg_of_forall neg_pi_lt_pi.le
-      (fun t ↦ by positivity)
-  have hnonnegI :
-      0 ≤ ∫ t in (-Real.pi)..Real.pi,
-        ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2 := by
-    exact intervalIntegral.integral_nonneg_of_forall neg_pi_lt_pi.le
-      (fun t ↦ by positivity)
-  have hint :
+  have hspow1 : IntervalIntegrable
+      (fun t ↦ ‖((distanceSlackDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2)
+      volume (-Real.pi) Real.pi := by
+    rw [intervalIntegrable_iff_integrableOn_Ioc_of_le neg_pi_lt_pi.le]
+    simpa [IntegrableOn] using
+      (MemLp.integrable_norm_pow' (μ := volume.restrict (Set.Ioc (-Real.pi) Real.pi)) hs1L2)
+  have hspowI : IntervalIntegrable
+      (fun t ↦ ‖((distanceSlackDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2)
+      volume (-Real.pi) Real.pi := by
+    rw [intervalIntegrable_iff_integrableOn_Ioc_of_le neg_pi_lt_pi.le]
+    simpa [IntegrableOn] using
+      (MemLp.integrable_norm_pow' (μ := volume.restrict (Set.Ioc (-Real.pi) Real.pi)) hsIL2)
+  have hintEq :
       (∫ t in (-Real.pi)..Real.pi,
-          ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2 +
-            ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2) ≤
+          (‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2 +
+            ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2) +
+          (‖((distanceSlackDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2 +
+            ‖((distanceSlackDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2)) =
         ∫ t in (-Real.pi)..Real.pi, (1 : ℝ) := by
-    exact intervalIntegral.integral_mono_on neg_pi_lt_pi.le hsum hconst
-      (fun t _ ↦ by
-        simpa [Complex.norm_real, sq_abs] using
-          oddProfileDerivativeField_basis_energy_le_one boundary x t)
-  have hadd :
+    apply intervalIntegral.integral_congr_ae_restrict
+    simp only [Set.uIoc_of_le neg_pi_lt_pi.le]
+    filter_upwards [ae_oddProfileDerivativeField_add_distanceSlackDerivativeField_basis_energy_eq_one
+      hboundary x] with t ht
+    simpa [Complex.norm_real, sq_abs] using ht
+  have haddOdd :
       (∫ t in (-Real.pi)..Real.pi,
           ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2 +
             ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2) =
@@ -1285,36 +1438,64 @@ private theorem oddProfileDerivativeField_energy_budget
         ∫ t in (-Real.pi)..Real.pi,
           ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2 := by
     rw [intervalIntegral.integral_add hpow1 hpowI]
+  have haddSlack :
+      (∫ t in (-Real.pi)..Real.pi,
+          ‖((distanceSlackDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2 +
+            ‖((distanceSlackDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2) =
+        (∫ t in (-Real.pi)..Real.pi,
+          ‖((distanceSlackDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2) +
+        ∫ t in (-Real.pi)..Real.pi,
+          ‖((distanceSlackDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2 := by
+    rw [intervalIntegral.integral_add hspow1 hspowI]
   have hlength : ∫ t in (-Real.pi)..Real.pi, (1 : ℝ) = Real.pi - -Real.pi := by
     have hpi_nonneg : 0 ≤ Real.pi := le_of_lt Real.pi_pos
     simp [intervalIntegral.integral_of_le neg_pi_lt_pi.le, hpi_nonneg]
-  have hsum' :
-      (∫ t in (-Real.pi)..Real.pi,
-          ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2) +
-        ∫ t in (-Real.pi)..Real.pi,
-          ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2 ≤
-        Real.pi - -Real.pi := by
-    rw [hadd] at hint
-    simpa [hlength] using hint
-  have hlenpos : 0 < Real.pi - -Real.pi := sub_pos.mpr neg_pi_lt_pi
   set A : ℝ := ∫ t in (-Real.pi)..Real.pi,
     ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2
   set B : ℝ := ∫ t in (-Real.pi)..Real.pi,
     ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2
-  have hsumAB : A + B ≤ Real.pi - -Real.pi := by
-    simpa [A, B] using hsum'
+  set C : ℝ := ∫ t in (-Real.pi)..Real.pi,
+    ‖((distanceSlackDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2
+  set D : ℝ := ∫ t in (-Real.pi)..Real.pi,
+    ‖((distanceSlackDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2
+  have hsumABCD : A + B + (C + D) = Real.pi - -Real.pi := by
+    rw [intervalIntegral.integral_add (hpow1.add hpowI) (hspow1.add hspowI), haddOdd, haddSlack] at hintEq
+    simpa [hlength, A, B, C, D, add_assoc, add_left_comm, add_comm] using hintEq
+  have hlenpos : 0 < Real.pi - -Real.pi := sub_pos.mpr neg_pi_lt_pi
   have hrewrite :
       2 * ((Real.pi - -Real.pi)⁻¹ * A) +
-        2 * ((Real.pi - -Real.pi)⁻¹ * B) =
-      2 * ((Real.pi - -Real.pi)⁻¹ * (A + B)) := by
+        2 * ((Real.pi - -Real.pi)⁻¹ * B) +
+        2 * ((Real.pi - -Real.pi)⁻¹ * C) +
+        2 * ((Real.pi - -Real.pi)⁻¹ * D) =
+      2 * ((Real.pi - -Real.pi)⁻¹ * (A + B + (C + D))) := by
     ring
-  rw [hrewrite]
-  have hfac : 0 ≤ (Real.pi - -Real.pi)⁻¹ := by positivity
-  have hratio : (Real.pi - -Real.pi)⁻¹ * (A + B) ≤ 1 := by
-    have hmul := mul_le_mul_of_nonneg_left hsumAB hfac
-    have hunit : (Real.pi - -Real.pi)⁻¹ * (Real.pi - -Real.pi) = 1 := by
-      field_simp [ne_of_gt hlenpos]
-    simpa [hunit] using hmul
+  rw [hrewrite, hsumABCD]
+  have hunit : (Real.pi - -Real.pi)⁻¹ * (Real.pi - -Real.pi) = 1 := by
+    field_simp [ne_of_gt hlenpos]
+  nlinarith [hunit]
+
+private theorem oddProfileDerivativeField_energy_budget
+    {boundary : UnitAddCircle → ℂ}
+    (hboundary : IsometricCircleBoundary boundary) (x : ℂ) :
+    2 * ((Real.pi - -Real.pi)⁻¹ *
+        ∫ t in (-Real.pi)..Real.pi,
+          ‖((oddProfileDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2) +
+      2 * ((Real.pi - -Real.pi)⁻¹ *
+        ∫ t in (-Real.pi)..Real.pi,
+          ‖((oddProfileDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2) ≤ 2 := by
+  have hsharp := oddProfileDerivativeField_energy_budget_with_slack hboundary x
+  have hnonneg1 :
+      0 ≤ ∫ t in (-Real.pi)..Real.pi,
+        ‖((distanceSlackDerivativeField boundary x t 1 : ℝ) : ℂ)‖ ^ 2 := by
+    exact intervalIntegral.integral_nonneg_of_forall neg_pi_lt_pi.le
+      (fun t ↦ by positivity)
+  have hnonnegI :
+      0 ≤ ∫ t in (-Real.pi)..Real.pi,
+        ‖((distanceSlackDerivativeField boundary x t Complex.I : ℝ) : ℂ)‖ ^ 2 := by
+    exact intervalIntegral.integral_nonneg_of_forall neg_pi_lt_pi.le
+      (fun t ↦ by positivity)
+  have hlenpos : 0 < Real.pi - -Real.pi := sub_pos.mpr neg_pi_lt_pi
+  have hfac : 0 ≤ (Real.pi - -Real.pi)⁻¹ := inv_nonneg.mpr hlenpos.le
   nlinarith
 
 theorem sum_complexDerivativeEnergy_oddProfileFourierDerivative_le_two
