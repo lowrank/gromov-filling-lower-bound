@@ -406,6 +406,11 @@ def cylinderCoreFaceEven {n m : ℕ} (f : CylinderCoreFace n m) : Prop :=
 def cylinderCoreFaceParity {n m : ℕ} (f : CylinderCoreFace n m) : Bool :=
   decide (Even (f.1.1 + f.2.1))
 
+instance cylinderCoreFaceEvenDecidable {n m : ℕ} (f : CylinderCoreFace n m) :
+    Decidable (cylinderCoreFaceEven f) := by
+  unfold cylinderCoreFaceEven
+  infer_instance
+
 def cylinderCoreLL {n m : ℕ} (f : CylinderCoreFace n m) : CylinderCoreVertex n m :=
   (radialSubdivisionLower f.1, f.2)
 
@@ -459,11 +464,147 @@ def cylinderCoreFaceEdge {n m : ℕ} (f : CylinderCoreFace n m) :
       | 2 => .radialUp f.1 (cyclicSucc f.2)
       | _ => .angularBackward (radialSubdivisionUpper f.1) f.2
 
+theorem cylinderCoreFaceParity_eq_true_iff {n m : ℕ} (f : CylinderCoreFace n m) :
+    cylinderCoreFaceParity f = true ↔ cylinderCoreFaceEven f := by
+  unfold cylinderCoreFaceParity cylinderCoreFaceEven
+  by_cases h : Even (f.1.1 + f.2.1) <;> simp [h]
+
+theorem cylinderCoreFaceParity_eq_false_iff {n m : ℕ} (f : CylinderCoreFace n m) :
+    cylinderCoreFaceParity f = false ↔ ¬ cylinderCoreFaceEven f := by
+  unfold cylinderCoreFaceParity cylinderCoreFaceEven
+  by_cases h : Even (f.1.1 + f.2.1) <;> simp [h]
+
+@[simp] theorem cylinderCoreFaceVertex_zero {n m : ℕ} (f : CylinderCoreFace n m) :
+    cylinderCoreFaceVertex f 0 =
+      if cylinderCoreFaceEven f then cylinderCoreLL f else cylinderCoreUL f := by
+  by_cases h : cylinderCoreFaceEven f
+  · have hp : cylinderCoreFaceParity f = true :=
+      (cylinderCoreFaceParity_eq_true_iff f).2 h
+    simp [cylinderCoreFaceVertex, hp, h]
+  · have hp : cylinderCoreFaceParity f = false :=
+      (cylinderCoreFaceParity_eq_false_iff f).2 h
+    simp [cylinderCoreFaceVertex, hp, h]
+
+@[simp] theorem cylinderCoreFaceVertex_one {n m : ℕ} (f : CylinderCoreFace n m) :
+    cylinderCoreFaceVertex f 1 =
+      if cylinderCoreFaceEven f then cylinderCoreUL f else cylinderCoreLL f := by
+  by_cases h : cylinderCoreFaceEven f
+  · have hp : cylinderCoreFaceParity f = true :=
+      (cylinderCoreFaceParity_eq_true_iff f).2 h
+    simp [cylinderCoreFaceVertex, hp, h]
+  · have hp : cylinderCoreFaceParity f = false :=
+      (cylinderCoreFaceParity_eq_false_iff f).2 h
+    simp [cylinderCoreFaceVertex, hp, h]
+
+@[simp] theorem cylinderCoreFaceVertex_two {n m : ℕ} (f : CylinderCoreFace n m) :
+    cylinderCoreFaceVertex f 2 =
+      if cylinderCoreFaceEven f then cylinderCoreUR f else cylinderCoreLR f := by
+  by_cases h : cylinderCoreFaceEven f
+  · have hp : cylinderCoreFaceParity f = true :=
+      (cylinderCoreFaceParity_eq_true_iff f).2 h
+    simp [cylinderCoreFaceVertex, hp, h]
+  · have hp : cylinderCoreFaceParity f = false :=
+      (cylinderCoreFaceParity_eq_false_iff f).2 h
+    simp [cylinderCoreFaceVertex, hp, h]
+
+@[simp] theorem cylinderCoreFaceVertex_three {n m : ℕ} (f : CylinderCoreFace n m) :
+    cylinderCoreFaceVertex f 3 =
+      if cylinderCoreFaceEven f then cylinderCoreLR f else cylinderCoreUR f := by
+  by_cases h : cylinderCoreFaceEven f
+  · have hp : cylinderCoreFaceParity f = true :=
+      (cylinderCoreFaceParity_eq_true_iff f).2 h
+    simp [cylinderCoreFaceVertex, hp, h]
+  · have hp : cylinderCoreFaceParity f = false :=
+      (cylinderCoreFaceParity_eq_false_iff f).2 h
+    simp [cylinderCoreFaceVertex, hp, h]
+
+@[simp] theorem cylinderCoreFaceEdge_zero {n m : ℕ} (f : CylinderCoreFace n m) :
+    cylinderCoreFaceEdge f 0 =
+      if cylinderCoreFaceEven f then CylinderCoreEdge.radialUp f.1 f.2 else CylinderCoreEdge.radialDown f.1 f.2 := by
+  by_cases h : cylinderCoreFaceEven f
+  · have hp : cylinderCoreFaceParity f = true :=
+      (cylinderCoreFaceParity_eq_true_iff f).2 h
+    simp [cylinderCoreFaceEdge, hp, h]
+  · have hp : cylinderCoreFaceParity f = false :=
+      (cylinderCoreFaceParity_eq_false_iff f).2 h
+    simp [cylinderCoreFaceEdge, hp, h]
+
+@[simp] theorem cylinderCoreFaceEdge_one {n m : ℕ} (f : CylinderCoreFace n m) :
+    cylinderCoreFaceEdge f 1 =
+      if cylinderCoreFaceEven f then CylinderCoreEdge.angularForward (radialSubdivisionUpper f.1) f.2
+      else CylinderCoreEdge.angularForward (radialSubdivisionLower f.1) f.2 := by
+  by_cases h : cylinderCoreFaceEven f
+  · have hp : cylinderCoreFaceParity f = true :=
+      (cylinderCoreFaceParity_eq_true_iff f).2 h
+    simp [cylinderCoreFaceEdge, hp, h]
+  · have hp : cylinderCoreFaceParity f = false :=
+      (cylinderCoreFaceParity_eq_false_iff f).2 h
+    simp [cylinderCoreFaceEdge, hp, h]
+
+@[simp] theorem cylinderCoreFaceEdge_two {n m : ℕ} (f : CylinderCoreFace n m) :
+    cylinderCoreFaceEdge f 2 =
+      if cylinderCoreFaceEven f then CylinderCoreEdge.radialDown f.1 (cyclicSucc f.2)
+      else CylinderCoreEdge.radialUp f.1 (cyclicSucc f.2) := by
+  by_cases h : cylinderCoreFaceEven f
+  · have hp : cylinderCoreFaceParity f = true :=
+      (cylinderCoreFaceParity_eq_true_iff f).2 h
+    simp [cylinderCoreFaceEdge, hp, h]
+  · have hp : cylinderCoreFaceParity f = false :=
+      (cylinderCoreFaceParity_eq_false_iff f).2 h
+    simp [cylinderCoreFaceEdge, hp, h]
+
+@[simp] theorem cylinderCoreFaceEdge_three {n m : ℕ} (f : CylinderCoreFace n m) :
+    cylinderCoreFaceEdge f 3 =
+      if cylinderCoreFaceEven f then CylinderCoreEdge.angularBackward (radialSubdivisionLower f.1) f.2
+      else CylinderCoreEdge.angularBackward (radialSubdivisionUpper f.1) f.2 := by
+  by_cases h : cylinderCoreFaceEven f
+  · have hp : cylinderCoreFaceParity f = true :=
+      (cylinderCoreFaceParity_eq_true_iff f).2 h
+    simp [cylinderCoreFaceEdge, hp, h]
+  · have hp : cylinderCoreFaceParity f = false :=
+      (cylinderCoreFaceParity_eq_false_iff f).2 h
+    simp [cylinderCoreFaceEdge, hp, h]
+
+def cylinderCoreFaceEdges {n m : ℕ} (f : CylinderCoreFace n m) :
+    Finset (CylinderCoreEdge n m) :=
+  Finset.univ.image (cylinderCoreFaceEdge f)
+
+theorem cylinderCoreFaceEdges_eq {n m : ℕ} (f : CylinderCoreFace n m) :
+    cylinderCoreFaceEdges f = Finset.univ.image (cylinderCoreFaceEdge f) := rfl
+
+theorem cylinderCoreFaceEdge_ends {n m : ℕ} (f : CylinderCoreFace n m)
+    (k : Fin (3 + 1)) :
+    cylinderCoreEdgeEnds (cylinderCoreFaceEdge f k) =
+      (cylinderCoreFaceVertex f k, cylinderCoreFaceVertex f (cyclicSucc k)) := by
+  by_cases h : cylinderCoreFaceEven f
+  · have hp : cylinderCoreFaceParity f = true :=
+      (cylinderCoreFaceParity_eq_true_iff f).2 h
+    fin_cases k <;>
+      simp [cylinderCoreEdgeEnds, cylinderCoreFaceEdge, cylinderCoreFaceVertex,
+        cylinderCoreLL, cylinderCoreUL, cylinderCoreUR, cylinderCoreLR, hp, cyclicSucc]
+  · have hp : cylinderCoreFaceParity f = false :=
+      (cylinderCoreFaceParity_eq_false_iff f).2 h
+    fin_cases k <;>
+      simp [cylinderCoreEdgeEnds, cylinderCoreFaceEdge, cylinderCoreFaceVertex,
+        cylinderCoreLL, cylinderCoreUL, cylinderCoreUR, cylinderCoreLR, hp, cyclicSucc]
+
 def cylinderCoreBoundaryVertex {n m : ℕ} (j : Fin (m + 1)) : CylinderCoreVertex n m :=
   (Fin.last (n + 1), j)
 
 def cylinderCoreBoundaryEdge {n m : ℕ} (j : Fin (m + 1)) : CylinderCoreEdge n m :=
   .angularForward (Fin.last (n + 1)) j
+
+theorem cylinderCoreBoundaryEdge_injective {n m : ℕ} :
+    Function.Injective (cylinderCoreBoundaryEdge (n := n) (m := m)) := by
+  intro a b h
+  simpa [cylinderCoreBoundaryEdge] using h
+
+def cylinderCoreBoundaryEdges {n m : ℕ} : Finset (CylinderCoreEdge n m) :=
+  Finset.univ.image (cylinderCoreBoundaryEdge (n := n) (m := m))
+
+theorem cylinderCoreBoundaryEdges_eq {n m : ℕ} :
+    cylinderCoreBoundaryEdges (n := n) (m := m) =
+      Finset.univ.image (cylinderCoreBoundaryEdge (n := n) (m := m)) := rfl
 
 theorem cylinderCoreBoundaryEdge_ends {n m : ℕ} (j : Fin (m + 1)) :
     cylinderCoreEdgeEnds (cylinderCoreBoundaryEdge (n := n) (m := m) j) =
