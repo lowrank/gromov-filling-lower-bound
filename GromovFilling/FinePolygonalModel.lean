@@ -576,6 +576,137 @@ def GeometricPolygonalModel.map
           simpa using congrArg f (D.model.boundaryPath k x) }
     mesh := hmesh }
 
+
+/-- An abstract geometric polygonal model indexed by arbitrary finite types.  This is
+convenient for explicit mesh constructions before choosing concrete `Fin` encodings of
+vertices, edges, and faces. -/
+structure AbstractGeometricPolygonalModel
+    {X : Type*} [PseudoMetricSpace X]
+    (boundary : UnitAddCircle → X) (ε : ℝ) where
+  model : AbstractFinePolygonalModel boundary (fun _ ↦ (0 : UnitAddCircle))
+  mesh : ∀ (f : model.Face) (e : model.Edge),
+    e ∈ model.faceEdges f → ∀ x : ClosedUnitInterval,
+      dist (model.faceCenter f) (model.edgeToX e x) < ε
+
+/-- Replace the vacuous constant-map half-turn estimate in an abstract geometric
+model by a supplied estimate for a particular circle-valued map. -/
+def AbstractGeometricPolygonalModel.toAbstractFinePolygonalModel
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {ε : ℝ}
+    (D : AbstractGeometricPolygonalModel boundary ε)
+    (H : X → UnitAddCircle)
+    (hhalf : ∀ (f : D.model.Face) (e : D.model.Edge),
+      e ∈ D.model.faceEdges f → ∀ x : ClosedUnitInterval,
+        dist (H (D.model.faceCenter f)) (H (D.model.edgeToX e x)) < 1 / 2) :
+    AbstractFinePolygonalModel boundary H :=
+  { D.model with halfTurn_mesh := hhalf }
+
+/-- Push an abstract geometric polygonal model forward along a continuous map whose
+restriction to the boundary agrees with a new parametrization. -/
+def AbstractGeometricPolygonalModel.map
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    {δ ε : ℝ} (D : AbstractGeometricPolygonalModel boundary δ)
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmesh : ∀ (face : D.model.Face) (e : D.model.Edge),
+      e ∈ D.model.faceEdges face → ∀ x : ClosedUnitInterval,
+        dist (f (D.model.faceCenter face)) (f (D.model.edgeToX e x)) < ε) :
+    AbstractGeometricPolygonalModel boundary' ε :=
+  { model :=
+      { D.model with
+        vertexPoint := fun v ↦ f (D.model.vertexPoint v)
+        edgeToX := fun e x ↦ f (D.model.edgeToX e x)
+        edgeToX_continuous := fun e ↦ hf.comp (D.model.edgeToX_continuous e)
+        edgeToX_start := by
+          intro e
+          rw [D.model.edgeToX_start]
+        edgeToX_finish := by
+          intro e
+          rw [D.model.edgeToX_finish]
+        faceCenter := fun face ↦ f (D.model.faceCenter face)
+        halfTurn_mesh := by
+          intro face e he x
+          simp
+        boundaryPath := by
+          intro k x
+          rw [hboundary]
+          simpa using congrArg f (D.model.boundaryPath k x) }
+    mesh := hmesh }
+
+/-- The abstract map-independent surface input: compatible polygonal models exist
+at every positive geometric mesh scale, with arbitrary finite index sets. -/
+def HasAbstractArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X]
+    (boundary : UnitAddCircle → X) : Prop :=
+  ∀ ε : ℝ, 0 < ε → Nonempty (AbstractGeometricPolygonalModel boundary ε)
+
+/-- Abstract arbitrarily fine polygonal models transport across continuous maps from a
+compact source by uniform continuity. -/
+theorem hasAbstractArbitrarilyFinePolygonalModels_of_compact_continuous
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractArbitrarilyFinePolygonalModels boundary' := by
+  intro ε hε
+  have hUniform : UniformContinuous f :=
+    CompactSpace.uniformContinuous_of_continuous hf
+  obtain ⟨δ, hδ, hδf⟩ :=
+    Metric.uniformContinuous_iff.mp hUniform ε hε
+  obtain ⟨D⟩ := hmodels δ hδ
+  refine ⟨D.map f hf hboundary ?_⟩
+  intro face e he x
+  exact hδf (D.mesh face e he x)
+
+/-- Homeomorphic compact images inherit abstract arbitrarily fine polygonal models. -/
+theorem hasAbstractArbitrarilyFinePolygonalModels_of_homeomorph
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundary : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractArbitrarilyFinePolygonalModels boundary' :=
+  hasAbstractArbitrarilyFinePolygonalModels_of_compact_continuous
+    e e.continuous_toFun hboundary hmodels
+
+/-- Abstract closed-square models transfer to abstract closed-disk models through the
+radial square-to-disk map. -/
+theorem hasAbstractArbitrarilyFinePolygonalModels_of_closedUnitSquare
+    (hsquare : HasAbstractArbitrarilyFinePolygonalModels closedUnitSquareBoundary) :
+    HasAbstractArbitrarilyFinePolygonalModels closedUnitDiskBoundary :=
+  hasAbstractArbitrarilyFinePolygonalModels_of_compact_continuous
+    closedUnitSquareToDisk continuous_closedUnitSquareToDisk
+    closedUnitSquareToDisk_comp_boundary hsquare
+
+/-- On a compact metric domain, abstract arbitrarily fine geometric polygonal models
+provide the map-dependent abstract fine models needed by the mod-two argument. -/
+theorem hasAbstractFinePolygonalModels_of_abstractArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X}
+    (hmodels : HasAbstractArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractFinePolygonalModels boundary := by
+  intro H hH
+  have hUniform : UniformContinuous H :=
+    CompactSpace.uniformContinuous_of_continuous hH
+  obtain ⟨δ, hδ, hδH⟩ :=
+    Metric.uniformContinuous_iff.mp hUniform (1 / 2) (by norm_num)
+  obtain ⟨D⟩ := hmodels δ hδ
+  refine ⟨D.toAbstractFinePolygonalModel H ?_⟩
+  intro f e he x
+  exact hδH (D.mesh f e he x)
+
+/-- Abstract arbitrarily fine compatible geometric models imply the odd boundary-degree
+obstruction. -/
+theorem hasOddBoundaryDegreeObstruction_of_abstractArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X}
+    (hmodels : HasAbstractArbitrarilyFinePolygonalModels boundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_abstractFinePolygonalModels
+    (hasAbstractFinePolygonalModels_of_abstractArbitrarilyFine hmodels)
+
 /-- The map-independent surface input: compatible polygonal models exist
 at every positive geometric mesh scale. -/
 def HasArbitrarilyFinePolygonalModels
