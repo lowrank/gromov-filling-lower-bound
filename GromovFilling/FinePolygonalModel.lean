@@ -3088,6 +3088,46 @@ theorem cylinderStripLowerBoundaryEdgeOrbit_equivalence {m : ℕ}
   apply Quotient.sound
   exact Relation.EqvGen.rel _ _ ⟨j, rfl, rfl⟩
 
+@[simp] theorem mk_cylinderStripGluedLowerEdge_eq_iff {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j k : Fin (m + 1)) :
+    Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+        (CylinderStripEdge.angular (0 : Fin (n + 2)) j) =
+      Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+        (CylinderStripEdge.angular (0 : Fin (n + 2)) k) ↔
+      k = j ∨ k = P.edgePair j := by
+  let lowerClass : CylinderStripGluedEdge n P → Option (CylinderStripLowerBoundaryEdgeClass P) :=
+    Quotient.lift
+      (fun e : CylinderStripEdge n m =>
+        match e with
+        | .radial _ _ => none
+        | .angular i l => if i = 0 then some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) l) else none)
+      (by
+        intro a b hab
+        induction hab with
+        | rel _ _ hstep =>
+            rcases hstep with ⟨l, ha, hb⟩
+            cases ha
+            cases hb
+            change some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) l) =
+              some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) (P.edgePair l))
+            rw [mk_cylinderStripLowerBoundaryEdgeClass_pair]
+        | refl _ => rfl
+        | symm _ _ _ ih => exact ih.symm
+        | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂)
+  constructor
+  · intro h
+    have hsome := congrArg lowerClass h
+    change some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) j) =
+        some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) k) at hsome
+    have hclass : Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) j =
+        Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) k := Option.some.inj hsome
+    exact (mk_cylinderStripLowerBoundaryEdgeClass_eq_iff P j k).1 hclass
+  · intro h
+    rcases h with rfl | hpair
+    · rfl
+    · rw [hpair]
+      exact mk_cylinderStripGluedEdge_pair P j
+
 @[simp] theorem mk_cylinderStripGluedVertex_start {n m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
     Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
