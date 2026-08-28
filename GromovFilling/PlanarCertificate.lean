@@ -410,9 +410,12 @@ def FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.toFiniteComplexSo
   rowMap := D.rowMap
   rowMap_covers := by
     intro j
-    exact givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
-      j boundary D.hobstruction (D.rowMap j) (D.rowMap_cont j) (D.rowMap_boundary j)
-      (givensBoundaryCurveChosenJordanPartition j)
+    exact jordan_region_subset_range_of_odd_boundary_degree_obstruction
+      boundary D.hobstruction (D.rowMap j) (D.rowMap_cont j)
+      (givensBoundaryCurveAddCircle j) (continuous_givensBoundaryCurveAddCircle j)
+      (D.rowMap_boundary j) 0 (givensBoundaryCurveAddCircle_ne_zero j) 1
+      (by simpa [givensBoundaryCurveAddCircle] using givensBoundaryCurve_degree_one j)
+      odd_one (givensBoundaryCurveChosenJordanPartition j)
       (zero_mem_givensBoundaryCurveChosenJordanRegion j)
   sourcePiece := D.sourcePiece
   sourcePiece_cover := D.sourcePiece_cover
