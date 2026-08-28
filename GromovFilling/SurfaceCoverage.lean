@@ -90,6 +90,67 @@ theorem complement_component_subset_range_of_odd_degree
       hboundary]
   · exact hodd
 
+/-- If a continuous boundary extension traces a Jordan curve and one point in
+its complementary region has odd radial degree, then that entire Jordan
+region is covered.  This is the topological content of Lemma 5.4, separated
+from the explicit degree computation for any particular boundary curve. -/
+theorem jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    {X : Type*} [TopologicalSpace X]
+    (boundary : UnitAddCircle → X)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G := by
+  rw [hpartition.region₁_eq_connectedComponentIn hy₀]
+  exact complement_component_subset_range_of_odd_degree boundary hobstruction
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- Separation-free form of the same Jordan coverage theorem: once the boundary
+curve is known to be homeomorphic to the circle, an odd radial degree at one
+omitted point determines a bounded complementary region which is covered. -/
+theorem exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    {X : Type*} [TopologicalSpace X]
+    (boundary : UnitAddCircle → X)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G := by
+  obtain ⟨region₁, region₂, hpartition, hy₀⟩ :=
+    exists_jordanPartition_at_point_complex (Set.range curve) hcurveJordan y₀
+      (by
+        intro hyRange
+        obtain ⟨t, ht⟩ := hyRange
+        exact havoid₀ t ht)
+  refine ⟨region₁, hpartition.region₁_open, hpartition.region₁_connected, ?_, hy₀, ?_⟩
+  · rw [hpartition.region₁_eq_connectedComponentIn hy₀]
+    have hdeg_ne_zero : degree ≠ 0 := by
+      obtain ⟨k, hk⟩ := hodd
+      omega
+    exact complement_component_bounded_of_degree_ne_zero curve hcurve y₀ havoid₀
+      hdegree hdeg_ne_zero
+  · exact jordan_region_subset_range_of_odd_boundary_degree_obstruction
+      boundary hobstruction G hG curve hcurve hboundary y₀ havoid₀ degree
+      hdegree hodd hpartition hy₀
+
 /-- For a mixed Givens boundary curve, every point in the origin
 component of the complement lies in the image of any continuous extension
 on a domain with the odd boundary-degree obstruction. -/
@@ -146,16 +207,14 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_d
     ∃ region : Set ℂ,
       IsOpen region ∧ IsConnected region ∧
       Bornology.IsBounded region ∧ 0 ∈ region ∧
-      region ⊆ Set.range G := by
-  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
-    exists_givensBoundaryCurve_jordanPartition_at_origin j
-  exact ⟨region₁, hpartition.region₁_open,
-    hpartition.region₁_connected,
-    givensBoundaryCurve_jordan_region_at_origin_bounded
-      j hpartition hzero,
-    hzero,
-    givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
-      j boundary hobstruction G hG hboundary hpartition hzero⟩
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary hobstruction G hG (givensBoundaryCurveAddCircle j)
+    (continuous_givensBoundaryCurveAddCircle j)
+    (givensBoundaryCurve_range_homeomorph_circle j) hboundary 0
+    (givensBoundaryCurveAddCircle_ne_zero j) 1
+    (by simpa [givensBoundaryCurveAddCircle] using givensBoundaryCurve_degree_one j)
+    odd_one
 
 /-- If the boundary loop is nullhomotopic in the source space, the Jordan
 region containing the origin is covered directly from the resulting odd
