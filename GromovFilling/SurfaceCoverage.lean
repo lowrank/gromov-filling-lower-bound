@@ -370,9 +370,9 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_closedUnitDisk_homeomo
       (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
     (hzero : 0 ∈ region₁) :
     region₁ ⊆ Set.range G :=
-  givensBoundaryCurve_jordan_region_subset_range_of_abstractVariableDirectedArbitrarilyFine
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
     j boundary
-    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitDisk_homeomorph
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_abstractVariableDirected
       e hboundaryHomeomorph)
     G hG hboundary hpartition hzero
 
@@ -393,9 +393,8 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitDisk
       region ⊆ Set.range G :=
   exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
     j boundary
-    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
-      (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitDisk_homeomorph
-        e hboundaryHomeomorph))
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_abstractVariableDirected
+      e hboundaryHomeomorph)
     G hG hboundary
 
 /-- If the boundary is identified with the standard closed-disk boundary by a
