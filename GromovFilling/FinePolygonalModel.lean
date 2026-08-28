@@ -2101,6 +2101,477 @@ theorem hasOddBoundaryDegreeObstruction_of_abstractVariableArbitrarilyFinePolygo
   hasOddBoundaryDegreeObstruction_of_abstractVariableFinePolygonalModels
     (hasAbstractVariableFinePolygonalModels_of_abstractVariableArbitrarilyFine hmodels)
 
+/-- Continuity of the real boundary parameter on one angular subdivision arc. -/
+theorem continuous_angularSubdivisionParameter (m : ℕ) (j : Fin (m + 1)) :
+    Continuous (angularSubdivisionParameter m j) := by
+  have hbase : Continuous fun x : ClosedUnitInterval =>
+      (((x : ℝ) + (j : ℝ)) / (m + 1) : ℝ) := by
+    simpa [angularSubdivisionParameter, div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using
+      ((continuous_subtype_val.add continuous_const).const_mul (((m + 1 : ℕ) : ℝ)⁻¹))
+  simpa [angularSubdivisionParameter] using hbase
+
+/-- Abstract finite-index polygonal models with both variable face sizes and
+face-local edge directions. -/
+structure AbstractVariableDirectedFinePolygonalModel
+    {X : Type*} [TopologicalSpace X]
+    (boundary : UnitAddCircle → X) (H : X → UnitAddCircle) where
+  Vertex : Type
+  Edge : Type
+  Face : Type
+  [instVertexFintype : Fintype Vertex]
+  [instEdgeFintype : Fintype Edge]
+  [instFaceFintype : Fintype Face]
+  [instVertexDecidableEq : DecidableEq Vertex]
+  [instEdgeDecidableEq : DecidableEq Edge]
+  [instFaceDecidableEq : DecidableEq Face]
+  faceSize : Face → ℕ
+  boundarySize : ℕ
+  edgeEnds : Edge → Vertex × Vertex
+  faceEdges : Face → Finset Edge
+  boundaryEdges : Finset Edge
+  edgeFaceCount : ∀ e : Edge,
+    (Finset.univ.filter fun f ↦ e ∈ faceEdges f).card =
+      if e ∈ boundaryEdges then 1 else 2
+  faceVertex : ∀ f, Fin (faceSize f + 1) → Vertex
+  faceEdge : ∀ f, Fin (faceSize f + 1) → Edge
+  faceEdgeForward : ∀ f, Fin (faceSize f + 1) → Bool
+  faceVertex_injective : ∀ f, Function.Injective (faceVertex f)
+  faceEdge_injective : ∀ f, Function.Injective (faceEdge f)
+  faceEdges_eq : ∀ f, faceEdges f = Finset.univ.image (faceEdge f)
+  faceEdge_ends : ∀ f k, edgeEnds (faceEdge f k) =
+    if faceEdgeForward f k then
+      (faceVertex f k, faceVertex f (cyclicSucc k))
+    else
+      (faceVertex f (cyclicSucc k), faceVertex f k)
+  boundaryEdge : Fin (boundarySize + 1) → Edge
+  boundaryEdge_injective : Function.Injective boundaryEdge
+  boundaryVertex : Fin (boundarySize + 1) → Vertex
+  boundaryEdge_ends : ∀ k, edgeEnds (boundaryEdge k) =
+    (boundaryVertex k, boundaryVertex (cyclicSucc k))
+  boundaryEdges_eq : boundaryEdges = Finset.univ.image boundaryEdge
+  vertexPoint : Vertex → X
+  edgeToX : Edge → ClosedUnitInterval → X
+  edgeToX_continuous : ∀ e, Continuous (edgeToX e)
+  edgeToX_start : ∀ e, edgeToX e closedUnitIntervalStart =
+    vertexPoint (edgeEnds e).1
+  edgeToX_finish : ∀ e, edgeToX e closedUnitIntervalFinish =
+    vertexPoint (edgeEnds e).2
+  faceCenter : Face → X
+  halfTurn_mesh : ∀ (f : Face) (e : Edge),
+    e ∈ faceEdges f → ∀ x : ClosedUnitInterval,
+      dist (H (faceCenter f)) (H (edgeToX e x)) < 1 / 2
+  boundaryParameter : ∀ _k,
+    ClosedUnitInterval → ℝ
+  boundaryParameter_continuous : ∀ k, Continuous (boundaryParameter k)
+  boundaryParameter_start : ∀ k,
+    boundaryParameter k closedUnitIntervalStart = cyclicVertexParameter k
+  boundaryParameter_finish : ∀ k,
+    boundaryParameter k closedUnitIntervalFinish =
+      cyclicEdgeFinishParameter k
+  boundaryPath : ∀ k x,
+    edgeToX (boundaryEdge k) x =
+      boundary ((boundaryParameter k x : ℝ) : UnitAddCircle)
+
+/-- The face-local-direction obstruction theorem applied to a bundled abstract
+finite model. -/
+theorem AbstractVariableDirectedFinePolygonalModel.no_odd_boundary_degree
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {H : X → UnitAddCircle}
+    (D : AbstractVariableDirectedFinePolygonalModel boundary H) (hH : Continuous H)
+    (degree : ℤ) (hdegree : HasCircleDegree (H ∘ boundary) degree)
+    (hodd : Odd degree) : False := by
+  classical
+  let _ := D.instVertexFintype
+  let _ := D.instEdgeFintype
+  let _ := D.instFaceFintype
+  let _ := D.instVertexDecidableEq
+  let _ := D.instEdgeDecidableEq
+  let _ := D.instFaceDecidableEq
+  exact no_odd_degree_of_fine_polygonal_circle_extension_variable_with_edge_directions
+    D.edgeEnds D.faceEdges D.boundaryEdges D.edgeFaceCount D.faceSize
+    D.faceVertex D.faceEdge D.faceEdgeForward D.faceVertex_injective
+    D.faceEdge_injective D.faceEdges_eq D.faceEdge_ends D.boundaryEdge
+    D.boundaryEdge_injective D.boundaryVertex D.boundaryEdge_ends
+    D.boundaryEdges_eq D.vertexPoint (fun _ ↦ ClosedUnitInterval)
+    (fun _ ↦ closedUnitIntervalStart) (fun _ ↦ closedUnitIntervalFinish)
+    D.edgeToX D.edgeToX_continuous D.edgeToX_start D.edgeToX_finish
+    H hH D.faceCenter D.halfTurn_mesh boundary D.boundaryParameter
+    D.boundaryParameter_continuous D.boundaryParameter_start
+    D.boundaryParameter_finish D.boundaryPath degree hdegree hodd
+
+/-- Map-dependent directed fine polygonal models with arbitrary finite index
+sets. -/
+def HasAbstractVariableDirectedFinePolygonalModels
+    {X : Type*} [TopologicalSpace X]
+    (boundary : UnitAddCircle → X) : Prop :=
+  ∀ (H : X → UnitAddCircle), Continuous H →
+    Nonempty (AbstractVariableDirectedFinePolygonalModel boundary H)
+
+/-- Directed abstract fine polygonal models imply the odd boundary-degree
+obstruction. -/
+theorem hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedFinePolygonalModels
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (hfine : HasAbstractVariableDirectedFinePolygonalModels boundary) :
+    HasOddBoundaryDegreeObstruction boundary := by
+  intro H hH degree hdegree hodd
+  obtain ⟨D⟩ := hfine H hH
+  exact D.no_odd_boundary_degree hH degree hdegree hodd
+
+/-- An abstract geometric polygonal model with variable face sizes and
+face-local edge directions. -/
+structure AbstractVariableDirectedGeometricPolygonalModel
+    {X : Type*} [PseudoMetricSpace X]
+    (boundary : UnitAddCircle → X) (ε : ℝ) where
+  model : AbstractVariableDirectedFinePolygonalModel boundary (fun _ ↦ (0 : UnitAddCircle))
+  mesh : ∀ (f : model.Face) (e : model.Edge),
+    e ∈ model.faceEdges f → ∀ x : ClosedUnitInterval,
+      dist (model.faceCenter f) (model.edgeToX e x) < ε
+
+/-- Replace the vacuous constant-map half-turn estimate in a directed abstract
+geometric model by a supplied estimate for a particular circle-valued map. -/
+def AbstractVariableDirectedGeometricPolygonalModel.toAbstractVariableDirectedFinePolygonalModel
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {ε : ℝ}
+    (D : AbstractVariableDirectedGeometricPolygonalModel boundary ε)
+    (H : X → UnitAddCircle)
+    (hhalf : ∀ (f : D.model.Face) (e : D.model.Edge),
+      e ∈ D.model.faceEdges f → ∀ x : ClosedUnitInterval,
+        dist (H (D.model.faceCenter f)) (H (D.model.edgeToX e x)) < 1 / 2) :
+    AbstractVariableDirectedFinePolygonalModel boundary H :=
+  { D.model with halfTurn_mesh := hhalf }
+
+/-- The map-independent directed surface input: compatible polygonal models
+exist at every positive geometric mesh scale. -/
+def HasAbstractVariableDirectedArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X]
+    (boundary : UnitAddCircle → X) : Prop :=
+  ∀ ε : ℝ, 0 < ε → Nonempty (AbstractVariableDirectedGeometricPolygonalModel boundary ε)
+
+/-- On a compact metric domain, directed abstract arbitrarily fine geometric
+polygonal models provide the map-dependent abstract fine models needed by the
+mod-two argument. -/
+theorem hasAbstractVariableDirectedFinePolygonalModels_of_abstractVariableDirectedArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X}
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractVariableDirectedFinePolygonalModels boundary := by
+  intro H hH
+  have hUniform : UniformContinuous H :=
+    CompactSpace.uniformContinuous_of_continuous hH
+  obtain ⟨δ, hδ, hδH⟩ :=
+    Metric.uniformContinuous_iff.mp hUniform (1 / 2) (by norm_num)
+  obtain ⟨D⟩ := hmodels δ hδ
+  refine ⟨D.toAbstractVariableDirectedFinePolygonalModel H ?_⟩
+  intro f e he x
+  exact hδH (D.mesh f e he x)
+
+/-- Directed abstract arbitrarily fine compatible geometric models imply the
+odd boundary-degree obstruction. -/
+theorem hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X}
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedFinePolygonalModels
+    (hasAbstractVariableDirectedFinePolygonalModels_of_abstractVariableDirectedArbitrarilyFine hmodels)
+
+/-- Vertices of the disk-like model with one central polygon and a quadrilateral annulus. -/
+abbrev SquareCenterPolygonVertex (n m : ℕ) := Fin (n + 1) × Fin (m + 1)
+
+/-- Global edges of the disk-like model with one central polygon and a quadrilateral annulus. -/
+inductive SquareCenterPolygonEdge (n m : ℕ)
+  | radial (i : Fin n) (j : Fin (m + 1))
+  | angular (i : Fin (n + 1)) (j : Fin (m + 1))
+  deriving DecidableEq, Fintype
+
+/-- Faces of the disk-like model with one central polygon and a quadrilateral annulus. -/
+inductive SquareCenterPolygonFace (n m : ℕ)
+  | center
+  | annulus (i : Fin n) (j : Fin (m + 1))
+  deriving DecidableEq, Fintype
+
+/-- Edge endpoints in the center-polygon annulus model. -/
+def squareCenterPolygonEdgeEnds {n m : ℕ} :
+    SquareCenterPolygonEdge n m → SquareCenterPolygonVertex n m × SquareCenterPolygonVertex n m
+  | .radial i j => ((lowerSquareRingLevel i, j), (upperSquareRingLevel i, j))
+  | .angular i j => ((i, j), (i, cyclicSucc j))
+
+/-- Geometric location of a vertex in the center-polygon annulus model. -/
+def squareCenterPolygonVertexPoint (n m : ℕ) :
+    SquareCenterPolygonVertex n m → ClosedUnitSquare
+  | (i, j) =>
+      closedUnitSquareRadial
+        (radialSubdivisionPoint n (radialSubdivisionUpper i), angularSubdivisionPoint m j)
+
+/-- Edge paths in the center-polygon annulus model. -/
+def squareCenterPolygonEdgePath (n m : ℕ) :
+    SquareCenterPolygonEdge n m → ClosedUnitInterval → ClosedUnitSquare
+  | .radial i j =>
+      fun x ↦ closedUnitSquareRadial
+        (cylinderRadialEdgePath n m (upperSquareRingLevel i) j x)
+  | .angular i j =>
+      fun x ↦ closedUnitSquareRadial
+        (cylinderAngularEdgePath n m (radialSubdivisionUpper i) j x)
+
+theorem continuous_squareCenterPolygonEdgePath (n m : ℕ)
+    (e : SquareCenterPolygonEdge n m) :
+    Continuous (squareCenterPolygonEdgePath n m e) := by
+  cases e with
+  | radial i j =>
+      exact continuous_closedUnitSquareRadial.comp <|
+        continuous_cylinderRadialEdgePath n m (upperSquareRingLevel i) j
+  | angular i j =>
+      exact continuous_closedUnitSquareRadial.comp <|
+        continuous_cylinderAngularEdgePath n m (radialSubdivisionUpper i) j
+
+theorem squareCenterPolygonEdgePath_start {n m : ℕ}
+    (e : SquareCenterPolygonEdge n m) :
+    squareCenterPolygonEdgePath n m e closedUnitIntervalStart =
+      squareCenterPolygonVertexPoint n m (squareCenterPolygonEdgeEnds e).1 := by
+  cases e with
+  | radial i j =>
+      simp [squareCenterPolygonEdgePath, squareCenterPolygonEdgeEnds,
+        squareCenterPolygonVertexPoint, cylinderRadialEdgePath_start,
+        cylinderSubdivisionPoint, radialSubdivisionLower_upperSquareRingLevel]
+  | angular i j =>
+      simp [squareCenterPolygonEdgePath, squareCenterPolygonEdgeEnds,
+        squareCenterPolygonVertexPoint, cylinderAngularEdgePath_start,
+        cylinderSubdivisionPoint]
+
+theorem squareCenterPolygonEdgePath_finish {n m : ℕ}
+    (e : SquareCenterPolygonEdge n m) :
+    squareCenterPolygonEdgePath n m e closedUnitIntervalFinish =
+      squareCenterPolygonVertexPoint n m (squareCenterPolygonEdgeEnds e).2 := by
+  cases e with
+  | radial i j =>
+      simp [squareCenterPolygonEdgePath, squareCenterPolygonEdgeEnds,
+        squareCenterPolygonVertexPoint, cylinderRadialEdgePath_finish,
+        cylinderSubdivisionPoint]
+  | angular i j =>
+      simp [squareCenterPolygonEdgePath, squareCenterPolygonEdgeEnds,
+        squareCenterPolygonVertexPoint, cylinderAngularEdgePath_finish,
+        cylinderSubdivisionPoint]
+
+/-- Face sizes for the center-polygon annulus model. -/
+def squareCenterPolygonFaceSize {n m : ℕ} : SquareCenterPolygonFace n m → ℕ
+  | .center => m
+  | .annulus _ _ => 3
+
+/-- Face vertices for the center-polygon annulus model. -/
+def squareCenterPolygonFaceVertex {n m : ℕ} :
+    ∀ f : SquareCenterPolygonFace n m,
+      Fin (squareCenterPolygonFaceSize f + 1) → SquareCenterPolygonVertex n m
+  | .center => fun k => (0, k)
+  | .annulus i j =>
+      fun k =>
+        match k.1 with
+        | 0 => (lowerSquareRingLevel i, j)
+        | 1 => (upperSquareRingLevel i, j)
+        | 2 => (upperSquareRingLevel i, cyclicSucc j)
+        | _ => (lowerSquareRingLevel i, cyclicSucc j)
+
+/-- Face edges for the center-polygon annulus model. -/
+def squareCenterPolygonFaceEdge {n m : ℕ} :
+    ∀ f : SquareCenterPolygonFace n m,
+      Fin (squareCenterPolygonFaceSize f + 1) → SquareCenterPolygonEdge n m
+  | .center => fun k => .angular 0 k
+  | .annulus i j =>
+      fun k =>
+        match k.1 with
+        | 0 => .radial i j
+        | 1 => .angular (upperSquareRingLevel i) j
+        | 2 => .radial i (cyclicSucc j)
+        | _ => .angular (lowerSquareRingLevel i) j
+
+/-- Whether a face traverses a global edge in its forward direction. -/
+def squareCenterPolygonFaceEdgeForward {n m : ℕ} :
+    ∀ f : SquareCenterPolygonFace n m,
+      Fin (squareCenterPolygonFaceSize f + 1) → Bool
+  | .center => fun _ => true
+  | .annulus _ _ =>
+      fun k =>
+        match k.1 with
+        | 0 => true
+        | 1 => true
+        | 2 => false
+        | _ => false
+
+def squareCenterPolygonFaceEdges {n m : ℕ} (f : SquareCenterPolygonFace n m) :
+    Finset (SquareCenterPolygonEdge n m) :=
+  Finset.univ.image (squareCenterPolygonFaceEdge f)
+
+theorem squareCenterPolygonFaceEdges_eq {n m : ℕ} (f : SquareCenterPolygonFace n m) :
+    squareCenterPolygonFaceEdges f = Finset.univ.image (squareCenterPolygonFaceEdge f) := rfl
+
+theorem squareCenterPolygonFaceVertex_injective_of_pos {n m : ℕ} (hm : 0 < m)
+    (f : SquareCenterPolygonFace n m) :
+    Function.Injective (squareCenterPolygonFaceVertex f) := by
+  intro a b h
+  cases f with
+  | center =>
+      simpa [squareCenterPolygonFaceSize, squareCenterPolygonFaceVertex] using congrArg Prod.snd h
+  | annulus i j =>
+      have hcyc₁ : j ≠ cyclicSucc j := self_ne_cyclicSucc_of_pos hm j
+      have hcyc₂ : cyclicSucc j ≠ j := cyclicSucc_ne_self_of_pos hm j
+      have hlevel₁ : lowerSquareRingLevel i ≠ upperSquareRingLevel i :=
+        lowerSquareRingLevel_ne_upperSquareRingLevel i
+      have hlevel₂ : upperSquareRingLevel i ≠ lowerSquareRingLevel i :=
+        upperSquareRingLevel_ne_lowerSquareRingLevel i
+      fin_cases a <;> fin_cases b <;>
+        simp [squareCenterPolygonFaceSize, squareCenterPolygonFaceVertex,
+          hcyc₁, hcyc₂, hlevel₁, hlevel₂] at h ⊢
+
+theorem squareCenterPolygonFaceEdge_injective_of_pos {n m : ℕ} (hm : 0 < m)
+    (f : SquareCenterPolygonFace n m) :
+    Function.Injective (squareCenterPolygonFaceEdge f) := by
+  intro a b h
+  cases f with
+  | center =>
+      simpa [squareCenterPolygonFaceSize, squareCenterPolygonFaceEdge] using
+        congrArg (fun e => match e with | .angular _ j => j | _ => 0) h
+  | annulus i j =>
+      have hcyc₁ : j ≠ cyclicSucc j := self_ne_cyclicSucc_of_pos hm j
+      have hcyc₂ : cyclicSucc j ≠ j := cyclicSucc_ne_self_of_pos hm j
+      have hlevel₁ : lowerSquareRingLevel i ≠ upperSquareRingLevel i :=
+        lowerSquareRingLevel_ne_upperSquareRingLevel i
+      have hlevel₂ : upperSquareRingLevel i ≠ lowerSquareRingLevel i :=
+        upperSquareRingLevel_ne_lowerSquareRingLevel i
+      fin_cases a <;> fin_cases b <;>
+        simp [squareCenterPolygonFaceSize, squareCenterPolygonFaceEdge,
+          hcyc₁, hcyc₂, hlevel₁, hlevel₂] at h ⊢
+
+theorem squareCenterPolygonFaceEdge_ends {n m : ℕ}
+    (f : SquareCenterPolygonFace n m)
+    (k : Fin (squareCenterPolygonFaceSize f + 1)) :
+    squareCenterPolygonEdgeEnds (squareCenterPolygonFaceEdge f k) =
+      if squareCenterPolygonFaceEdgeForward f k then
+        (squareCenterPolygonFaceVertex f k,
+          squareCenterPolygonFaceVertex f (cyclicSucc k))
+      else
+        (squareCenterPolygonFaceVertex f (cyclicSucc k),
+          squareCenterPolygonFaceVertex f k) := by
+  cases f with
+  | center =>
+      simp [squareCenterPolygonFaceSize, squareCenterPolygonFaceEdge,
+        squareCenterPolygonFaceVertex, squareCenterPolygonFaceEdgeForward,
+        squareCenterPolygonEdgeEnds, cyclicSucc]
+  | annulus i j =>
+      fin_cases k <;>
+        simp [squareCenterPolygonFaceSize, squareCenterPolygonFaceEdge,
+          squareCenterPolygonFaceVertex, squareCenterPolygonFaceEdgeForward,
+          squareCenterPolygonEdgeEnds, cyclicSucc]
+
+/-- Boundary vertices of the center-polygon annulus model. -/
+def squareCenterPolygonBoundaryVertex {n m : ℕ} (j : Fin (m + 1)) :
+    SquareCenterPolygonVertex n m :=
+  (Fin.last n, j)
+
+/-- Boundary edges of the center-polygon annulus model. -/
+def squareCenterPolygonBoundaryEdge {n m : ℕ} (j : Fin (m + 1)) :
+    SquareCenterPolygonEdge n m :=
+  .angular (Fin.last n) j
+
+@[simp] theorem squareCenterPolygonBoundaryEdge_injective {n m : ℕ} :
+    Function.Injective (squareCenterPolygonBoundaryEdge (n := n) (m := m)) := by
+  intro a b h
+  simpa [squareCenterPolygonBoundaryEdge] using h
+
+def squareCenterPolygonBoundaryEdges {n m : ℕ} : Finset (SquareCenterPolygonEdge n m) :=
+  Finset.univ.image (squareCenterPolygonBoundaryEdge (n := n) (m := m))
+
+theorem squareCenterPolygonBoundaryEdges_eq {n m : ℕ} :
+    squareCenterPolygonBoundaryEdges (n := n) (m := m) =
+      Finset.univ.image (squareCenterPolygonBoundaryEdge (n := n) (m := m)) := rfl
+
+@[simp] theorem squareCenterPolygonBoundaryEdge_ends {n m : ℕ} (j : Fin (m + 1)) :
+    squareCenterPolygonEdgeEnds (squareCenterPolygonBoundaryEdge (n := n) (m := m) j) =
+      (squareCenterPolygonBoundaryVertex (n := n) (m := m) j,
+        squareCenterPolygonBoundaryVertex (n := n) (m := m) (cyclicSucc j)) := by
+  simp [squareCenterPolygonBoundaryEdge, squareCenterPolygonBoundaryVertex,
+    squareCenterPolygonEdgeEnds]
+
+/-- Bundle the explicit center-polygon annulus data into the abstract directed
+variable-face-size geometric interface, isolating the remaining global edge-count
+and mesh estimates as hypotheses. -/
+def squareCenterPolygonAbstractVariableDirectedGeometricModel_of_edgeFaceCount_of_mesh
+    (n m : ℕ) (hm : 0 < m) {ε : ℝ}
+    (faceCenter : SquareCenterPolygonFace n m → ClosedUnitSquare)
+    (hedgeFaceCount : ∀ e : SquareCenterPolygonEdge n m,
+      (Finset.univ.filter fun f ↦ e ∈ squareCenterPolygonFaceEdges f).card =
+        if e ∈ squareCenterPolygonBoundaryEdges (n := n) (m := m) then 1 else 2)
+    (hmesh : ∀ (f : SquareCenterPolygonFace n m) (e : SquareCenterPolygonEdge n m),
+      e ∈ squareCenterPolygonFaceEdges f → ∀ x : ClosedUnitInterval,
+        dist (faceCenter f) (squareCenterPolygonEdgePath n m e x) < ε) :
+    AbstractVariableDirectedGeometricPolygonalModel closedUnitSquareBoundary ε where
+  model :=
+    { Vertex := SquareCenterPolygonVertex n m
+      Edge := SquareCenterPolygonEdge n m
+      Face := SquareCenterPolygonFace n m
+      faceSize := squareCenterPolygonFaceSize
+      boundarySize := m
+      edgeEnds := squareCenterPolygonEdgeEnds
+      faceEdges := squareCenterPolygonFaceEdges
+      boundaryEdges := squareCenterPolygonBoundaryEdges (n := n) (m := m)
+      edgeFaceCount := hedgeFaceCount
+      faceVertex := squareCenterPolygonFaceVertex
+      faceEdge := squareCenterPolygonFaceEdge
+      faceEdgeForward := squareCenterPolygonFaceEdgeForward
+      faceVertex_injective := squareCenterPolygonFaceVertex_injective_of_pos hm
+      faceEdge_injective := squareCenterPolygonFaceEdge_injective_of_pos hm
+      faceEdges_eq := squareCenterPolygonFaceEdges_eq
+      faceEdge_ends := squareCenterPolygonFaceEdge_ends
+      boundaryEdge := squareCenterPolygonBoundaryEdge (n := n) (m := m)
+      boundaryEdge_injective := squareCenterPolygonBoundaryEdge_injective (n := n) (m := m)
+      boundaryVertex := squareCenterPolygonBoundaryVertex (n := n) (m := m)
+      boundaryEdge_ends := squareCenterPolygonBoundaryEdge_ends (n := n) (m := m)
+      boundaryEdges_eq := squareCenterPolygonBoundaryEdges_eq (n := n) (m := m)
+      vertexPoint := squareCenterPolygonVertexPoint n m
+      edgeToX := squareCenterPolygonEdgePath n m
+      edgeToX_continuous := continuous_squareCenterPolygonEdgePath n m
+      edgeToX_start := squareCenterPolygonEdgePath_start
+      edgeToX_finish := squareCenterPolygonEdgePath_finish
+      faceCenter := faceCenter
+      halfTurn_mesh := by
+        intro f e he x
+        simp
+      boundaryParameter := angularSubdivisionParameter m
+      boundaryParameter_continuous := continuous_angularSubdivisionParameter m
+      boundaryParameter_start := by
+        intro k
+        simp [angularSubdivisionParameter, cyclicVertexParameter, closedUnitIntervalStart]
+      boundaryParameter_finish := by
+        intro k
+        simp [angularSubdivisionParameter, cyclicEdgeFinishParameter, closedUnitIntervalFinish]
+        ring_nf
+      boundaryPath := by
+        intro k x
+        rw [show squareCenterPolygonEdgePath n m (squareCenterPolygonBoundaryEdge (n := n) (m := m) k) x =
+            closedUnitSquareRadial (cylinderAngularEdgePath n m (Fin.last (n + 1)) k x) by
+              simp [squareCenterPolygonEdgePath, squareCenterPolygonBoundaryEdge, radialSubdivisionUpper_last]]
+        rw [closedUnitSquareRadial_comp_cylinderBoundary]
+        simp [cylinderAngularEdgePath_on_closedUnitSquareCylinderBoundary,
+          angularSubdivisionArc, angularSubdivisionParameter] }
+  mesh := hmesh
+
+/-- The explicit center-polygon annulus data already yields abstract directed
+variable-face-size fine polygonal models as soon as the remaining edge-count and
+mesh estimates are supplied at every scale. -/
+theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_squareCenterPolygon_data
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ faceCenter : SquareCenterPolygonFace n m → ClosedUnitSquare,
+      (∀ e : SquareCenterPolygonEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ squareCenterPolygonFaceEdges f).card =
+          if e ∈ squareCenterPolygonBoundaryEdges (n := n) (m := m) then 1 else 2) ∧
+      (∀ (f : SquareCenterPolygonFace n m) (e : SquareCenterPolygonEdge n m),
+        e ∈ squareCenterPolygonFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f) (squareCenterPolygonEdgePath n m e x) < ε)) :
+    HasAbstractVariableDirectedArbitrarilyFinePolygonalModels closedUnitSquareBoundary := by
+  intro ε hε
+  obtain ⟨n, m, hm, faceCenter, hcount, hmesh⟩ := hmodels ε hε
+  exact ⟨squareCenterPolygonAbstractVariableDirectedGeometricModel_of_edgeFaceCount_of_mesh
+    n m hm faceCenter hcount hmesh⟩
+
 /-- Every concrete `Fin`-indexed model is an abstract finite-index model. -/
 def FinePolygonalModel.toAbstractFinePolygonalModel
     {X : Type*} [TopologicalSpace X]
