@@ -19,11 +19,16 @@ jobs:
 
       - name: Build Lean project
         uses: leanprover/lean-action@v1
+        with:
+          mk_all-check: true
+          axiom-audit: true
+          axiom-audit-allow: propext,Classical.choice,Quot.sound
+          axiom-audit-root: GromovFilling
 
       - name: Reject proof placeholders
         shell: bash
         run: |
-          if rg -n '\b(sorry|admit|axiom|unsafe)\b' \
+          if rg -n '\b(sorry|admit|axiom|unsafe|native_decide)\b' \
               --glob '*.lean' GromovFilling GromovFilling.lean; then
             echo 'Lean proof placeholder or unsafe declaration found.'
             exit 1
