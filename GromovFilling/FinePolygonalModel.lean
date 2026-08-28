@@ -1314,6 +1314,63 @@ theorem squareDiskCenterFaceEdgeAlt_ends_of_odd {n m : ℕ} (_hm : Odd m)
       simp [squareDiskCenterFaceEdgeAlt, squareDiskCenterFaceVertexAlt,
         squareDiskEdgeEnds, hj, cyclicSucc]
 
+/-- The alternating center-face ordering assembled into a full cyclic vertex
+order for the disk-like mesh.  Only the center faces change; the annular
+triangles keep the standard order. -/
+def squareDiskFaceVertexAlt {n m : ℕ} :
+    SquareDiskFace n m → Fin (2 + 1) → SquareDiskVertex n m
+  | .center j => squareDiskCenterFaceVertexAlt (n := n) j
+  | .lower i j => squareDiskFaceVertex (.lower i j)
+  | .upper i j => squareDiskFaceVertex (.upper i j)
+
+/-- The matching alternating cyclic edge order for the disk-like mesh. -/
+def squareDiskFaceEdgeAlt {n m : ℕ} :
+    SquareDiskFace n m → Fin (2 + 1) → SquareDiskEdge n m
+  | .center j => squareDiskCenterFaceEdgeAlt (n := n) j
+  | .lower i j => squareDiskFaceEdge (.lower i j)
+  | .upper i j => squareDiskFaceEdge (.upper i j)
+
+theorem squareDiskFaceVertexAlt_injective_of_odd {n m : ℕ} (hm : Odd m)
+    (f : SquareDiskFace n m) :
+    Function.Injective (squareDiskFaceVertexAlt f) := by
+  cases f with
+  | center j => simpa [squareDiskFaceVertexAlt] using
+      squareDiskCenterFaceVertexAlt_injective_of_odd (n := n) hm j
+  | lower i j => simpa [squareDiskFaceVertexAlt] using
+      squareDiskFaceVertex_injective_of_pos hm.pos (.lower i j)
+  | upper i j => simpa [squareDiskFaceVertexAlt] using
+      squareDiskFaceVertex_injective_of_pos hm.pos (.upper i j)
+
+theorem squareDiskFaceEdgeAlt_injective_of_odd {n m : ℕ} (hm : Odd m)
+    (f : SquareDiskFace n m) :
+    Function.Injective (squareDiskFaceEdgeAlt f) := by
+  cases f with
+  | center j => simpa [squareDiskFaceEdgeAlt] using
+      squareDiskCenterFaceEdgeAlt_injective_of_odd (n := n) hm j
+  | lower i j => simpa [squareDiskFaceEdgeAlt] using
+      squareDiskFaceEdge_injective (.lower i j)
+  | upper i j => simpa [squareDiskFaceEdgeAlt] using
+      squareDiskFaceEdge_injective (.upper i j)
+
+def squareDiskFaceEdgesAlt {n m : ℕ} (f : SquareDiskFace n m) :
+    Finset (SquareDiskEdge n m) :=
+  Finset.univ.image (squareDiskFaceEdgeAlt f)
+
+theorem squareDiskFaceEdgesAlt_eq {n m : ℕ} (f : SquareDiskFace n m) :
+    squareDiskFaceEdgesAlt f = Finset.univ.image (squareDiskFaceEdgeAlt f) := rfl
+
+theorem squareDiskFaceEdgeAlt_ends_of_odd {n m : ℕ} (hm : Odd m)
+    (f : SquareDiskFace n m) (k : Fin (2 + 1)) :
+    squareDiskEdgeEnds (squareDiskFaceEdgeAlt f k) =
+      (squareDiskFaceVertexAlt f k, squareDiskFaceVertexAlt f (cyclicSucc k)) := by
+  cases f with
+  | center j => simpa [squareDiskFaceEdgeAlt, squareDiskFaceVertexAlt] using
+      squareDiskCenterFaceEdgeAlt_ends_of_odd (n := n) hm j k
+  | lower i j => simpa [squareDiskFaceEdgeAlt, squareDiskFaceVertexAlt] using
+      squareDiskFaceEdge_ends (.lower i j) k
+  | upper i j => simpa [squareDiskFaceEdgeAlt, squareDiskFaceVertexAlt] using
+      squareDiskFaceEdge_ends (.upper i j) k
+
 theorem cyclicPred_even_iff_not_even_of_odd {m : ℕ} (hm : Odd m)
     (j : Fin (m + 1)) :
     Even (cyclicPred j).1 ↔ ¬ Even j.1 := by
@@ -1368,6 +1425,112 @@ theorem mem_squareDiskCenterFaceEdgesAlt_spokeIn_iff
   · rintro (⟨hk, rfl⟩ | ⟨hk, hsucc⟩)
     · exact Finset.mem_image.mpr ⟨0, Finset.mem_univ _, by simp [squareDiskCenterFaceEdgeAlt, hk]⟩
     · exact Finset.mem_image.mpr ⟨2, Finset.mem_univ _, by simp [squareDiskCenterFaceEdgeAlt, hk, hsucc]⟩
+
+theorem mem_squareDiskCenterFaceEdgesAlt_angularForward_iff
+    {n m : ℕ} (k j : Fin (m + 1)) :
+    SquareDiskEdge.angularForward 0 j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k) ↔
+      Even k.1 ∧ k = j := by
+  constructor
+  · intro h
+    rcases Finset.mem_image.mp h with ⟨t, _ht, ht⟩
+    by_cases hk : Even k.1
+    · fin_cases t
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+        exact ⟨hk, ht⟩
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+    · fin_cases t <;> simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+  · rintro ⟨hk, rfl⟩
+    exact Finset.mem_image.mpr ⟨1, Finset.mem_univ _, by simp [squareDiskCenterFaceEdgeAlt, hk]⟩
+
+theorem mem_squareDiskCenterFaceEdgesAlt_angularBackward_iff
+    {n m : ℕ} (k j : Fin (m + 1)) :
+    SquareDiskEdge.angularBackward 0 j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k) ↔
+      ¬ Even k.1 ∧ k = j := by
+  constructor
+  · intro h
+    rcases Finset.mem_image.mp h with ⟨t, _ht, ht⟩
+    by_cases hk : Even k.1
+    · fin_cases t <;> simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+    · fin_cases t
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+        exact ⟨hk, ht⟩
+  · rintro ⟨hk, rfl⟩
+    exact Finset.mem_image.mpr ⟨2, Finset.mem_univ _, by simp [squareDiskCenterFaceEdgeAlt, hk]⟩
+
+theorem squareDiskCenterFaceAlt_angularForward_faceCount_of_odd
+    {n m : ℕ} (_hm : Odd m) (j : Fin (m + 1)) :
+    (Finset.univ.filter fun k : Fin (m + 1) ↦
+      SquareDiskEdge.angularForward 0 j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k)).card =
+        if Even j.1 then 1 else 0 := by
+  by_cases hj : Even j.1
+  · have hfilter :
+      (Finset.univ.filter fun k : Fin (m + 1) ↦
+        SquareDiskEdge.angularForward 0 j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k)) =
+          ({j} : Finset (Fin (m + 1))) := by
+      ext k
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+      rw [mem_squareDiskCenterFaceEdgesAlt_angularForward_iff]
+      constructor
+      · rintro ⟨hk, hk'⟩
+        simpa [hk'] using hk
+      · intro hk
+        subst hk
+        exact ⟨hj, rfl⟩
+    rw [hfilter, if_pos hj]
+    simp
+  · have hfilter :
+      (Finset.univ.filter fun k : Fin (m + 1) ↦
+        SquareDiskEdge.angularForward 0 j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k)) =
+          (∅ : Finset (Fin (m + 1))) := by
+      ext k
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      rw [mem_squareDiskCenterFaceEdgesAlt_angularForward_iff]
+      constructor
+      · rintro ⟨hk, hk'⟩
+        exact False.elim (hj (by simpa [hk'] using hk))
+      · intro hk
+        simp at hk
+    rw [hfilter, if_neg hj]
+    simp
+
+theorem squareDiskCenterFaceAlt_angularBackward_faceCount_of_odd
+    {n m : ℕ} (_hm : Odd m) (j : Fin (m + 1)) :
+    (Finset.univ.filter fun k : Fin (m + 1) ↦
+      SquareDiskEdge.angularBackward 0 j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k)).card =
+        if Even j.1 then 0 else 1 := by
+  by_cases hj : Even j.1
+  · have hfilter :
+      (Finset.univ.filter fun k : Fin (m + 1) ↦
+        SquareDiskEdge.angularBackward 0 j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k)) =
+          (∅ : Finset (Fin (m + 1))) := by
+      ext k
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      rw [mem_squareDiskCenterFaceEdgesAlt_angularBackward_iff]
+      constructor
+      · rintro ⟨hk, hk'⟩
+        simpa using hk (by simpa [hk'] using hj)
+      · intro hk
+        simp at hk
+    rw [hfilter, if_pos hj]
+    simp
+  · have hfilter :
+      (Finset.univ.filter fun k : Fin (m + 1) ↦
+        SquareDiskEdge.angularBackward 0 j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k)) =
+          ({j} : Finset (Fin (m + 1))) := by
+      ext k
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+      rw [mem_squareDiskCenterFaceEdgesAlt_angularBackward_iff]
+      constructor
+      · rintro ⟨hk, hk'⟩
+        exact hk'
+      · intro hk
+        subst hk
+        exact ⟨hj, rfl⟩
+    rw [hfilter, if_neg hj]
+    simp
 
 theorem squareDiskCenterFaceAlt_spokeOut_faceCount_of_odd
     {n m : ℕ} (hm : Odd m) (j : Fin (m + 1)) :
