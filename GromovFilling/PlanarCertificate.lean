@@ -149,6 +149,78 @@ theorem universal_ennreal_of_complex_local_planar_maps
   exact finite_universal_ennreal_of_complex_local_planar_maps
     N m area omega homega pieces hpieces G K hGLipschitz hcoverage hbudget
 
+/-- Bundled source-side finite chart data sufficient to produce one local
+planar certificate.  The source pieces cover the whole source, each local chart
+lands in an open planar piece, and the row maps agree there with planar local
+representatives. -/
+structure FiniteComplexSourceChartCertificateData (N : ℕ) (X : Type*) where
+  m : ℕ
+  omega : Fin N → Set ℂ
+  witness : ∀ j : Fin N,
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤ volume (omega j)
+  rowMap : Fin N → X → ℂ
+  rowMap_covers : ∀ j : Fin N, omega j ⊆ Set.range (rowMap j)
+  sourcePiece : Fin m → Set X
+  sourcePiece_cover : Set.univ ⊆ ⋃ i, sourcePiece i
+  targetPiece : Fin m → Set ℂ
+  chart : ∀ i, sourcePiece i → targetPiece i
+  targetPiece_open : ∀ i, IsOpen (targetPiece i)
+  localMap : Fin N → Fin m → ℂ → ℂ
+  K : Fin N → Fin m → ℝ≥0
+  local_lipschitz : ∀ j i, LipschitzOnWith (K j i) (localMap j i) (targetPiece i)
+  local_agree : ∀ j i (x : sourcePiece i),
+    rowMap j x = localMap j i (chart i x)
+
+/-- Source-side chart data canonically yields the local planar certificate data
+used by the finite and infinite planar certificate theorems. -/
+def FiniteComplexSourceChartCertificateData.toFiniteComplexLocalCertificateData
+    {N : ℕ} {X : Type*} (D : FiniteComplexSourceChartCertificateData N X) :
+    FiniteComplexLocalCertificateData N where
+  m := D.m
+  omega := D.omega
+  witness := D.witness
+  pieces := D.targetPiece
+  open_pieces := D.targetPiece_open
+  G := D.localMap
+  K := D.K
+  lipschitz := D.local_lipschitz
+  cover := by
+    intro j z hz
+    rcases D.rowMap_covers j hz with ⟨x, rfl⟩
+    have hx : x ∈ ⋃ i, D.sourcePiece i := D.sourcePiece_cover (by trivial)
+    rcases Set.mem_iUnion.mp hx with ⟨i, hxi⟩
+    let y : D.targetPiece i := D.chart i ⟨x, hxi⟩
+    refine Set.mem_iUnion.mpr ⟨i, ?_⟩
+    refine ⟨y, y.property, ?_⟩
+    simpa [y] using (D.local_agree j i ⟨x, hxi⟩).symm
+
+/-- A bundled source-side finite chart certificate implies the `N`-mode
+orientation-free lower bound once its total Jacobian budget is available. -/
+theorem FiniteComplexSourceChartCertificateData.finite_universal_ennreal
+    {N : ℕ} {X : Type*} (D : FiniteComplexSourceChartCertificateData N X)
+    (area : ℝ≥0∞)
+    (hbudget :
+      (∑ j : Fin N, (D.toFiniteComplexLocalCertificateData).jacobianMass j) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
+  (D.toFiniteComplexLocalCertificateData).finite_universal_ennreal area hbudget
+
+/-- Bundled source-side chart data for every finite truncation at a common area
+budget.  Constructing this object is the next concrete surface-side obligation
+for the orientation-free argument. -/
+structure ComplexSourceChartCertificateSystem (X : Type*) (area : ℝ≥0∞) where
+  data : ∀ N : ℕ, FiniteComplexSourceChartCertificateData N X
+  budget : ∀ N : ℕ,
+    (∑ j : Fin N, ((data N).toFiniteComplexLocalCertificateData).jacobianMass j) ≤ area
+
+/-- A bundled source-side chart certificate system implies the full
+orientation-free universal bound. -/
+theorem ComplexSourceChartCertificateSystem.universal_ennreal
+    {X : Type*} {area : ℝ≥0∞} (S : ComplexSourceChartCertificateSystem X area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact (S.data N).finite_universal_ennreal area (S.budget N)
+
 /-- The finite orientation-free Fourier certificate for complex-plane
 domains under the exact topological interface: an odd boundary-degree
 obstruction and the global Jacobian budget. -/
