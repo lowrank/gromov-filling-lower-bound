@@ -695,6 +695,67 @@ structure ComplexSourceChartSystemOfOddBoundaryDegreeObstruction
     (∑ j : Fin N,
       (((data N).toFiniteComplexSourceChartCertificateData).toFiniteComplexLocalCertificateData).jacobianMass j) ≤ area
 
+/-- A compact-source family of open chart covers, one for each truncation level
+`N`, packages directly into the bundled obstruction-level source-chart system. -/
+noncomputable def ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+    {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : ℕ → Type*}
+    (area : ℝ≥0∞)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (rowMap : ∀ N : ℕ, Fin N → X → ℂ)
+    (rowMap_cont : ∀ N : ℕ, ∀ j : Fin N, Continuous (rowMap N j))
+    (rowMap_boundary : ∀ N : ℕ, ∀ j : Fin N, ∀ t,
+      rowMap N j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (sourcePiece : ∀ N : ℕ, ι N → Set X)
+    (sourcePiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (sourcePiece N i))
+    (sourcePiece_cover : ∀ N : ℕ, Set.univ ⊆ ⋃ i, sourcePiece N i)
+    (targetPiece : ∀ N : ℕ, ι N → Set ℂ)
+    (chart : ∀ N : ℕ, ∀ i : ι N, sourcePiece N i → targetPiece N i)
+    (targetPiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (targetPiece N i))
+    (localMap : ∀ N : ℕ, Fin N → ι N → ℂ → ℂ)
+    (K : ∀ N : ℕ, Fin N → ι N → ℝ≥0)
+    (local_lipschitz : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N,
+      LipschitzOnWith (K N j i) (localMap N j i) (targetPiece N i))
+    (local_agree : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N, ∀ x : sourcePiece N i,
+      rowMap N j x = localMap N j i (chart N i x))
+    (budget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (((FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+          hobstruction
+          (rowMap N)
+          (fun j ↦ rowMap_cont N j)
+          (fun j t ↦ rowMap_boundary N j t)
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).toFiniteComplexSourceChartCertificateData).toFiniteComplexLocalCertificateData).jacobianMass j) ≤ area) :
+    ComplexSourceChartSystemOfOddBoundaryDegreeObstruction X boundary area where
+  data := fun N ↦
+    FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+      hobstruction
+      (rowMap N)
+      (fun j ↦ rowMap_cont N j)
+      (fun j t ↦ rowMap_boundary N j t)
+      (sourcePiece N)
+      (fun i ↦ sourcePiece_open N i)
+      (sourcePiece_cover N)
+      (targetPiece N)
+      (chart N)
+      (fun i ↦ targetPiece_open N i)
+      (localMap N)
+      (K N)
+      (fun j i ↦ local_lipschitz N j i)
+      (fun j i x ↦ local_agree N j i x)
+  budget := by
+    intro N
+    simpa using budget N
+
 /-- An obstruction-level bundled source-side chart certificate system implies
 the full orientation-free universal bound. -/
 theorem ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal
@@ -1957,6 +2018,60 @@ structure MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction
   hboundary : IsometricCircleBoundary boundary
   data : ∀ N : ℕ, FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary
   budget : ∀ N : ℕ, (∑ j : Fin N, (data N).jacobianMass hboundary j) ≤ area
+
+/-- A compact-source family of open chart covers, one for each truncation level
+`N`, packages directly into the bundled metric obstruction-level source-chart
+system. -/
+noncomputable def MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : ℕ → Type*}
+    (area : ℝ≥0∞)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (sourcePiece : ∀ N : ℕ, ι N → Set X)
+    (sourcePiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (sourcePiece N i))
+    (sourcePiece_cover : ∀ N : ℕ, Set.univ ⊆ ⋃ i, sourcePiece N i)
+    (targetPiece : ∀ N : ℕ, ι N → Set ℂ)
+    (chart : ∀ N : ℕ, ∀ i : ι N, sourcePiece N i → targetPiece N i)
+    (targetPiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (targetPiece N i))
+    (localMap : ∀ N : ℕ, Fin N → ι N → ℂ → ℂ)
+    (K : ∀ N : ℕ, Fin N → ι N → ℝ≥0)
+    (local_lipschitz : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N,
+      LipschitzOnWith (K N j i) (localMap N j i) (targetPiece N i))
+    (local_agree : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N, ∀ x : sourcePiece N i,
+      givensMetricFourierMap boundary N j x = localMap N j i (chart N i x))
+    (budget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+          hobstruction
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).jacobianMass hboundary j) ≤ area) :
+    MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction X boundary area where
+  hboundary := hboundary
+  data := fun N ↦
+    FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+      hobstruction
+      (sourcePiece N)
+      (fun i ↦ sourcePiece_open N i)
+      (sourcePiece_cover N)
+      (targetPiece N)
+      (chart N)
+      (fun i ↦ targetPiece_open N i)
+      (localMap N)
+      (K N)
+      (fun j i ↦ local_lipschitz N j i)
+      (fun j i x ↦ local_agree N j i x)
+  budget := by
+    intro N
+    simpa using budget N
 
 /-- Bundled metric obstruction-level source-chart data converts to the generic
 obstruction-level source-chart system by taking the row maps to be the genuine
