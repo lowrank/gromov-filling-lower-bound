@@ -3021,6 +3021,50 @@ noncomputable instance {n m : ℕ} (P : CylinderStripLowerBoundaryPairing m) :
   apply Quotient.sound
   exact Relation.EqvGen.rel _ _ (CylinderStripLowerBoundaryEdgeStep.pair j)
 
+theorem cylinderStripLowerBoundaryEdgeOrbit_equivalence {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    Equivalence (fun j k : Fin (m + 1) ↦ k = j ∨ k = P.edgePair j) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro j
+    exact Or.inl rfl
+  · intro j k h
+    rcases h with rfl | hpair
+    · exact Or.inl rfl
+    · right
+      rw [hpair, P.edgePair_edgePair]
+  · intro j k l hjk hkl
+    rcases hjk with rfl | hjk
+    · exact hkl
+    · rcases hkl with hkl | hkl
+      · right
+        simpa [hkl] using hjk
+      · left
+        rw [hkl, hjk, P.edgePair_edgePair]
+
+@[simp] theorem mk_cylinderStripLowerBoundaryEdgeClass_eq_iff {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j k : Fin (m + 1)) :
+    Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) j =
+      Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) k ↔
+      k = j ∨ k = P.edgePair j := by
+  constructor
+  · intro h
+    have hrel : Relation.EqvGen (CylinderStripLowerBoundaryEdgeStep P) j k := by
+      simpa [cylinderStripLowerBoundaryEdgeSetoid] using Quotient.exact h
+    have horbit : Relation.EqvGen
+        (fun a b : Fin (m + 1) ↦ b = a ∨ b = P.edgePair a) j k :=
+      Relation.EqvGen.mono
+        (fun _ _ hab ↦ by
+          cases hab
+          exact Or.inr rfl)
+        hrel
+    exact (Equivalence.eqvGen_iff
+      (cylinderStripLowerBoundaryEdgeOrbit_equivalence P)).1 horbit
+  · intro h
+    rcases h with rfl | hpair
+    · rfl
+    · rw [hpair]
+      exact mk_cylinderStripLowerBoundaryEdgeClass_pair P j
+
 @[simp] theorem mk_cylinderStripLowerBoundaryVertexClass_start {m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
     Quotient.mk (cylinderStripLowerBoundaryVertexSetoid P) j =
