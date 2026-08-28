@@ -106,21 +106,25 @@ theorem cyclic_face_vertex_incidence_even {n : ℕ} (v : Fin (n + 1)) :
   change (2 : ZMod 2) = 0
   exact ZMod.natCast_self 2
 
-/-- The same even-incidence fact after injectively labelling the vertices
-of the polygon by vertices of a global cell complex. -/
+/-- The same even-incidence fact after labelling the vertices of the polygon
+by vertices of a global cell complex.  Injectivity is unnecessary: over `ZMod 2`,
+every cyclic face still contributes each labelled vertex an even number of times,
+counted with multiplicity. -/
 theorem mapped_cyclic_face_vertex_incidence_even
     {V : Type*} [DecidableEq V] {n : ℕ} (faceVertex : Fin (n + 1) → V)
-    (hfaceVertex : Function.Injective faceVertex) (v : V) :
+    (v : V) :
     (∑ k : Fin (n + 1),
       ((if v = faceVertex k then (1 : ZMod 2) else 0) +
         if v = faceVertex (cyclicSucc k) then (1 : ZMod 2) else 0)) = 0 := by
-  by_cases hv : v ∈ Set.range faceVertex
-  · obtain ⟨w, rfl⟩ := hv
-    simpa [hfaceVertex.eq_iff] using cyclic_face_vertex_incidence_even w
-  · have hne (k : Fin (n + 1)) : v ≠ faceVertex k := by
-      intro hvk
-      exact hv ⟨k, hvk.symm⟩
-    simp [hne]
+  rw [Finset.sum_add_distrib]
+  have hshift :
+      (∑ k : Fin (n + 1), if v = faceVertex (cyclicSucc k) then (1 : ZMod 2) else 0) =
+        ∑ k : Fin (n + 1), if v = faceVertex k then (1 : ZMod 2) else 0 := by
+    simpa using (cyclicSucc_bijective.sum_comp
+      (fun k : Fin (n + 1) ↦ if v = faceVertex k then (1 : ZMod 2) else 0))
+  rw [hshift, ← two_mul]
+  have htwo : (2 : ZMod 2) = 0 := ZMod.natCast_self 2
+  rw [htwo, zero_mul]
 
 /-- Cyclic vertex/edge data for every face discharge the `hfaceEven`
 hypothesis of the mod-2 obstruction.  Triangulations use `n = 2`, while
@@ -130,7 +134,7 @@ theorem faceEven_of_cyclic_face_data
     (edgeEnds : E → V × V) (faceEdges : F → Finset E)
     {n : ℕ} (faceVertex : F → Fin (n + 1) → V)
     (faceEdge : F → Fin (n + 1) → E)
-    (hfaceVertex : ∀ f, Function.Injective (faceVertex f))
+    (_hfaceVertex : ∀ f, Function.Injective (faceVertex f))
     (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
     (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
     (hends : ∀ f k, edgeEnds (faceEdge f k) =
@@ -144,7 +148,7 @@ theorem faceEven_of_cyclic_face_data
     (fun x _hx y _hy hxy ↦ hfaceEdge f hxy)]
   simp_rw [hends]
   exact mapped_cyclic_face_vertex_incidence_even
-    (faceVertex f) (hfaceVertex f) v
+    (faceVertex f) v
 
 /-- The same cyclic-face incidence discharge, but allowing each face to
 have its own cyclic size. -/
@@ -154,7 +158,7 @@ theorem faceEven_of_variable_cyclic_face_data
     (faceSize : F → ℕ)
     (faceVertex : ∀ f, Fin (faceSize f + 1) → V)
     (faceEdge : ∀ f, Fin (faceSize f + 1) → E)
-    (hfaceVertex : ∀ f, Function.Injective (faceVertex f))
+    (_hfaceVertex : ∀ f, Function.Injective (faceVertex f))
     (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
     (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
     (hends : ∀ f k, edgeEnds (faceEdge f k) =
@@ -168,7 +172,7 @@ theorem faceEven_of_variable_cyclic_face_data
     (fun x _hx y _hy hxy ↦ hfaceEdge f hxy)]
   simp_rw [hends]
   exact mapped_cyclic_face_vertex_incidence_even
-    (faceVertex f) (hfaceVertex f) v
+    (faceVertex f) v
 
 /-- The usual surface incidence rule—one incident face for a boundary
 edge and two for an interior edge—implies the mod-2 incidence identity
@@ -364,7 +368,7 @@ theorem no_odd_integer_degree_of_polygonal_surface_local_lifts
         if e ∈ boundaryEdges then 1 else 2)
     {faceSize : ℕ} (faceVertex : F → Fin (faceSize + 1) → V)
     (faceEdge : F → Fin (faceSize + 1) → E)
-    (hfaceVertex : ∀ f, Function.Injective (faceVertex f))
+    (_hfaceVertex : ∀ f, Function.Injective (faceVertex f))
     (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
     (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
     (hends : ∀ f k, edgeEnds (faceEdge f k) =
@@ -382,7 +386,7 @@ theorem no_odd_integer_degree_of_polygonal_surface_local_lifts
   apply no_odd_integer_degree_of_local_lifts edgeEnds faceEdges boundaryEdges
     (modTwo_incidence_of_face_count faceEdges boundaryEdges hcount)
     (faceEven_of_cyclic_face_data edgeEnds faceEdges faceVertex faceEdge
-      hfaceVertex hfaceEdge hfaceEdges hends)
+      _hfaceVertex hfaceEdge hfaceEdges hends)
     transition turn hlocal (-degree)
   · rw [hboundary, Finset.sum_image
       (fun x _hx y _hy hxy ↦ hboundaryEdge hxy)]
@@ -439,7 +443,7 @@ theorem faceEven_of_variable_cyclic_face_data_with_edge_directions
     (faceVertex : ∀ f, Fin (faceSize f + 1) → V)
     (faceEdge : ∀ f, Fin (faceSize f + 1) → E)
     (faceEdgeForward : ∀ f, Fin (faceSize f + 1) → Bool)
-    (hfaceVertex : ∀ f, Function.Injective (faceVertex f))
+    (_hfaceVertex : ∀ f, Function.Injective (faceVertex f))
     (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
     (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
     (hends : ∀ f k, edgeEnds (faceEdge f k) =
@@ -468,7 +472,7 @@ theorem faceEven_of_variable_cyclic_face_data_with_edge_directions
     · simp [hends, hk, add_comm]
   rw [hsum]
   exact mapped_cyclic_face_vertex_incidence_even
-    (faceVertex f) (hfaceVertex f) v
+    (faceVertex f) v
 
 /-- For a face-edge occurrence, the parity of the edge turn depends only on
 its two endpoint transition values, regardless of whether the face traverses
