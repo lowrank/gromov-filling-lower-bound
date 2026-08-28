@@ -285,6 +285,28 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_arbitrarily_fine_model
     j boundary (hasFinePolygonalModels_of_arbitrarilyFine hmodels)
     G hG hboundary hpartition hzero
 
+/-- The same coverage conclusion follows directly from the variable-face-size
+ directed interface: its mod-two obstruction is already formalized, so no
+ reindexing to the undirected `Fin`-model API is required. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_abstractVariableDirectedArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → X)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+      hmodels)
+    G hG hboundary hpartition hzero
+
 /-- If the boundary extends continuously across the standard closed disk, the
 Jordan region containing the origin is covered directly from the closed-disk
 odd-degree obstruction, with no polygonal-model hypothesis. -/
@@ -417,6 +439,26 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_arbitrarily_fi
       region ⊆ Set.range G :=
   exists_givensBoundaryCurve_bounded_region_subset_range_of_fine_models
     j boundary (hasFinePolygonalModels_of_arbitrarilyFine hmodels)
+    G hG hboundary
+
+/-- Separation-free coverage also follows directly from the variable-face-size
+ directed interface. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_abstractVariableDirectedArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → X)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+      hmodels)
     G hG hboundary
 
 /-- Separation-free coverage also transfers from a compact source with
