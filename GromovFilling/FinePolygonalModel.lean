@@ -6528,6 +6528,22 @@ theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitDisk
   hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitSquare
     hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
 
+/-- The explicit square-center construction also yields the quotient-friendly
+directed arbitrarily-fine interface on the standard closed-square boundary, by
+forgetting the stronger directed-face data. -/
+theorem hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closedUnitSquareBoundary :
+    HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels closedUnitSquareBoundary :=
+  hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+    hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
+
+/-- The same explicit square-center construction therefore yields the
+quotient-friendly directed arbitrarily-fine interface on the standard closed-
+disk boundary as well. -/
+theorem hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closedUnitDiskBoundary :
+    HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels closedUnitDiskBoundary :=
+  hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+    hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitDiskBoundary
+
 /-- Any compact metric boundary identified with the standard closed-disk
 boundary inherits the directed variable-face-size abstract arbitrarily fine
 polygonal-model interface from the explicit square-center disk construction. -/
