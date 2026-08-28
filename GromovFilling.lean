@@ -1,50 +1,40 @@
-import GromovFilling.Constants
-import GromovFilling.FourierBoundary
-import GromovFilling.FourierBessel
-import GromovFilling.Universal
-import GromovFilling.JacobianBudget
-import GromovFilling.ComplexJacobianBudget
-import GromovFilling.Givens
-import GromovFilling.DominantHarmonic
-import GromovFilling.DominantHarmonicDisk
-import GromovFilling.PolynomialDiskArea
-import GromovFilling.GivensDisk
-import GromovFilling.GivensDiskArea
-import GromovFilling.PlanarCertificate
-import GromovFilling.DistanceProfile
-import GromovFilling.ProfileFourier
-import GromovFilling.MetricPlanarCoverage
-import GromovFilling.BoundaryCertificate
-import GromovFilling.FourierArea
-import GromovFilling.ModTwoDegree
-import GromovFilling.RadialProjection
-import GromovFilling.CircleDegree
-import GromovFilling.BoundarySubdivisionDegree
-import GromovFilling.PolygonalSurfaceObstruction
-import GromovFilling.FinePolygonalModel
-import GromovFilling.SurfaceCoverage
-import GromovFilling.EuclideanAreaFormula
-import GromovFilling.ComplexAreaFormula
-import GromovFilling.DominantHarmonicDegree
-import GromovFilling.BoundaryDegree
-import GromovFilling.RadialDegreeStability
-import GromovFilling.BoundaryDegreeComponents
-import GromovFilling.JordanBoundary
-import GromovFilling.ClosedOneForm
-import GromovFilling.Oriented
 import GromovFilling.BoundaryActionSeries
-import GromovFilling.Numerics
+import GromovFilling.BoundaryCertificate
+import GromovFilling.BoundaryDegree
+import GromovFilling.BoundaryDegreeComponents
+import GromovFilling.BoundarySubdivisionDegree
 import GromovFilling.Certificates
+import GromovFilling.CircleDegree
+import GromovFilling.ClosedOneForm
+import GromovFilling.ComplexAreaFormula
+import GromovFilling.ComplexJacobianBudget
+import GromovFilling.Constants
+import GromovFilling.DistanceProfile
+import GromovFilling.DominantHarmonic
+import GromovFilling.DominantHarmonicDegree
+import GromovFilling.DominantHarmonicDisk
+import GromovFilling.EuclideanAreaFormula
+import GromovFilling.FinePolygonalModel
+import GromovFilling.FourierArea
+import GromovFilling.FourierBessel
+import GromovFilling.FourierBoundary
+import GromovFilling.GeneralSurfaceObstruction
 import GromovFilling.GeometricCertificates
 import GromovFilling.GeometricClosedOneForm
-
-/-!
-# Fourier certificates for Gromov's filling-area problem
-
-This file formalizes the exact real-analysis and certificate arguments used by
-the two headline bounds in `fourier_resonant_filling_area_v3.tex`.
--/
-
-namespace GromovFilling
-
-end GromovFilling
+import GromovFilling.Givens
+import GromovFilling.GivensDisk
+import GromovFilling.GivensDiskArea
+import GromovFilling.JacobianBudget
+import GromovFilling.JordanBoundary
+import GromovFilling.MetricPlanarCoverage
+import GromovFilling.ModTwoDegree
+import GromovFilling.Numerics
+import GromovFilling.Oriented
+import GromovFilling.PlanarCertificate
+import GromovFilling.PolygonalSurfaceObstruction
+import GromovFilling.PolynomialDiskArea
+import GromovFilling.ProfileFourier
+import GromovFilling.RadialDegreeStability
+import GromovFilling.RadialProjection
+import GromovFilling.SurfaceCoverage
+import GromovFilling.Universal
