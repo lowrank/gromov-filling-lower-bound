@@ -852,6 +852,64 @@ theorem continuous_reverseClosedUnitInterval :
   rw [hEq]
   exact hcont
 
+/-- Edge paths for the checkerboard cylinder mesh. -/
+def cylinderCoreEdgePath (n m : ℕ) :
+    CylinderCoreEdge n m → ClosedUnitInterval → ClosedUnitInterval × UnitAddCircle
+  | .radialUp i j => cylinderRadialEdgePath n m i j
+  | .radialDown i j => cylinderRadialEdgePath n m i j ∘ reverseClosedUnitInterval
+  | .angularForward i j => cylinderAngularEdgePath n m i j
+  | .angularBackward i j => cylinderAngularEdgePath n m i j ∘ reverseClosedUnitInterval
+
+theorem continuous_cylinderCoreEdgePath (n m : ℕ) (e : CylinderCoreEdge n m) :
+    Continuous (cylinderCoreEdgePath n m e) := by
+  cases e with
+  | radialUp i j =>
+      exact continuous_cylinderRadialEdgePath n m i j
+  | radialDown i j =>
+      exact (continuous_cylinderRadialEdgePath n m i j).comp continuous_reverseClosedUnitInterval
+  | angularForward i j =>
+      exact continuous_cylinderAngularEdgePath n m i j
+  | angularBackward i j =>
+      exact (continuous_cylinderAngularEdgePath n m i j).comp continuous_reverseClosedUnitInterval
+
+theorem cylinderCoreEdgePath_start {n m : ℕ} (e : CylinderCoreEdge n m) :
+    cylinderCoreEdgePath n m e closedUnitIntervalStart =
+      cylinderSubdivisionPoint n m (cylinderCoreEdgeEnds e).1.1 (cylinderCoreEdgeEnds e).1.2 := by
+  cases e with
+  | radialUp i j =>
+      simp [cylinderCoreEdgePath, cylinderCoreEdgeEnds, cylinderRadialEdgePath_start, cylinderSubdivisionPoint]
+  | radialDown i j =>
+      simp [cylinderCoreEdgePath, cylinderCoreEdgeEnds, reverseClosedUnitInterval_start,
+        cylinderRadialEdgePath_finish, cylinderSubdivisionPoint]
+  | angularForward i j =>
+      simp [cylinderCoreEdgePath, cylinderCoreEdgeEnds, cylinderAngularEdgePath_start, cylinderSubdivisionPoint]
+  | angularBackward i j =>
+      simp [cylinderCoreEdgePath, cylinderCoreEdgeEnds, reverseClosedUnitInterval_start,
+        cylinderAngularEdgePath_finish, cylinderSubdivisionPoint]
+
+theorem cylinderCoreEdgePath_finish {n m : ℕ} (e : CylinderCoreEdge n m) :
+    cylinderCoreEdgePath n m e closedUnitIntervalFinish =
+      cylinderSubdivisionPoint n m (cylinderCoreEdgeEnds e).2.1 (cylinderCoreEdgeEnds e).2.2 := by
+  cases e with
+  | radialUp i j =>
+      simp [cylinderCoreEdgePath, cylinderCoreEdgeEnds, cylinderRadialEdgePath_finish, cylinderSubdivisionPoint]
+  | radialDown i j =>
+      simp [cylinderCoreEdgePath, cylinderCoreEdgeEnds, reverseClosedUnitInterval_finish,
+        cylinderRadialEdgePath_start, cylinderSubdivisionPoint]
+  | angularForward i j =>
+      simp [cylinderCoreEdgePath, cylinderCoreEdgeEnds, cylinderAngularEdgePath_finish, cylinderSubdivisionPoint]
+  | angularBackward i j =>
+      simp [cylinderCoreEdgePath, cylinderCoreEdgeEnds, reverseClosedUnitInterval_finish,
+        cylinderAngularEdgePath_start, cylinderSubdivisionPoint]
+
+@[simp] theorem cylinderCoreBoundaryEdgePath_eq {n m : ℕ} (j : Fin (m + 1)) :
+    cylinderCoreEdgePath n m (cylinderCoreBoundaryEdge (n := n) (m := m) j) =
+      fun x ↦ closedUnitSquareCylinderBoundary (angularSubdivisionArc m j x) := by
+  funext x
+  simp [cylinderCoreEdgePath, cylinderCoreBoundaryEdge, cylinderAngularEdgePath,
+    closedUnitSquareCylinderBoundary, radialSubdivisionPoint_last]
+
+
 /-- Vertex locations in the closed unit square. -/
 def squareDiskVertexPoint (n m : ℕ) : SquareDiskVertex n m → ClosedUnitSquare
   | .center => closedUnitSquareCenter
@@ -3233,8 +3291,7 @@ def squareCenterPolygonAbstractVariableDirectedGeometricModel_of_mesh
         simp [angularSubdivisionParameter, cyclicVertexParameter, closedUnitIntervalStart]
       boundaryParameter_finish := by
         intro k
-        simp [angularSubdivisionParameter, cyclicEdgeFinishParameter, closedUnitIntervalFinish]
-        ring_nf
+        simp [angularSubdivisionParameter, cyclicEdgeFinishParameter, closedUnitIntervalFinish, add_comm]
       boundaryPath := by
         intro k x
         rw [show squareCenterPolygonEdgePath n m (squareCenterPolygonBoundaryEdge (n := n) (m := m) k) x =
@@ -3829,6 +3886,83 @@ def HasAbstractArbitrarilyFinePolygonalModels
     {X : Type*} [PseudoMetricSpace X]
     (boundary : UnitAddCircle → X) : Prop :=
   ∀ ε : ℝ, 0 < ε → Nonempty (AbstractGeometricPolygonalModel boundary ε)
+
+/-- Bundle explicit checkerboard-cylinder data into the ordinary abstract
+geometric polygonal-model interface on the square-cylinder boundary. -/
+def cylinderCoreAbstractGeometricModel_of_mesh
+    {ε : ℝ} (n m : ℕ) (hm : 0 < m)
+    (hedgeFaceCount : ∀ e : CylinderCoreEdge n m,
+      (Finset.univ.filter fun f ↦ e ∈ cylinderCoreFaceEdges f).card =
+        if e ∈ cylinderCoreBoundaryEdges (n := n) (m := m) then 1 else 2)
+    (faceCenter : CylinderCoreFace n m → ClosedUnitInterval × UnitAddCircle)
+    (hmesh : ∀ (f : CylinderCoreFace n m) (e : CylinderCoreEdge n m),
+      e ∈ cylinderCoreFaceEdges f → ∀ x : ClosedUnitInterval,
+        dist (faceCenter f) (cylinderCoreEdgePath n m e x) < ε) :
+    AbstractGeometricPolygonalModel closedUnitSquareCylinderBoundary ε where
+  model :=
+    { Vertex := CylinderCoreVertex n m
+      Edge := CylinderCoreEdge n m
+      Face := CylinderCoreFace n m
+      faceSize := 3
+      boundarySize := m
+      edgeEnds := cylinderCoreEdgeEnds
+      faceEdges := cylinderCoreFaceEdges
+      boundaryEdges := cylinderCoreBoundaryEdges (n := n) (m := m)
+      edgeFaceCount := hedgeFaceCount
+      faceVertex := cylinderCoreFaceVertex
+      faceEdge := cylinderCoreFaceEdge
+      faceVertex_injective := cylinderCoreFaceVertex_injective_of_pos hm
+      faceEdge_injective := cylinderCoreFaceEdge_injective
+      faceEdges_eq := cylinderCoreFaceEdges_eq
+      faceEdge_ends := cylinderCoreFaceEdge_ends
+      boundaryEdge := cylinderCoreBoundaryEdge (n := n) (m := m)
+      boundaryEdge_injective := cylinderCoreBoundaryEdge_injective (n := n) (m := m)
+      boundaryVertex := cylinderCoreBoundaryVertex (n := n) (m := m)
+      boundaryEdge_ends := cylinderCoreBoundaryEdge_ends (n := n) (m := m)
+      boundaryEdges_eq := cylinderCoreBoundaryEdges_eq (n := n) (m := m)
+      vertexPoint := fun v ↦ cylinderSubdivisionPoint n m v.1 v.2
+      edgeToX := cylinderCoreEdgePath n m
+      edgeToX_continuous := continuous_cylinderCoreEdgePath n m
+      edgeToX_start := by
+        intro e
+        simpa using cylinderCoreEdgePath_start (n := n) (m := m) e
+      edgeToX_finish := by
+        intro e
+        simpa using cylinderCoreEdgePath_finish (n := n) (m := m) e
+      faceCenter := faceCenter
+      halfTurn_mesh := by
+        intro f e he x
+        simp
+      boundaryParameter := fun k ↦ angularSubdivisionParameter m k
+      boundaryParameter_continuous := continuous_angularSubdivisionParameter m
+      boundaryParameter_start := by
+        intro k
+        simp [angularSubdivisionParameter, cyclicVertexParameter, closedUnitIntervalStart]
+      boundaryParameter_finish := by
+        intro k
+        simp [angularSubdivisionParameter, cyclicEdgeFinishParameter, closedUnitIntervalFinish, add_comm]
+      boundaryPath := by
+        intro k x
+        simpa [angularSubdivisionArc, angularSubdivisionParameter] using
+          cylinderCoreBoundaryEdgePath_eq (n := n) (m := m) k x }
+  mesh := hmesh
+
+/-- A source-level wrapper reducing the ordinary abstract square-cylinder
+existence theorem to explicit checkerboard-cylinder data. -/
+theorem hasAbstractArbitrarilyFinePolygonalModels_of_cylinderCore_data
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ hm : 0 < m,
+      ∃ hedgeFaceCount : ∀ e : CylinderCoreEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderCoreFaceEdges f).card =
+          if e ∈ cylinderCoreBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderCoreFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderCoreFace n m) (e : CylinderCoreEdge n m),
+        e ∈ cylinderCoreFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f) (cylinderCoreEdgePath n m e x) < ε) :
+    HasAbstractArbitrarilyFinePolygonalModels closedUnitSquareCylinderBoundary := by
+  intro ε hε
+  obtain ⟨n, m, hm, hedgeFaceCount, faceCenter, hmesh⟩ := hmodels ε hε
+  exact ⟨cylinderCoreAbstractGeometricModel_of_mesh n m hm hedgeFaceCount faceCenter hmesh⟩
+
 
 /-- Abstract arbitrarily fine polygonal models transport across continuous maps from a
 compact source by uniform continuity. -/
