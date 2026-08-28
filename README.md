@@ -85,7 +85,7 @@ runs both checks on every push and pull request.
   the same local inequality now glues across finitely many open planar
   pieces both for one global map and for families of chartwise local maps,
   and the resulting finite and infinite local-map certificate interfaces
-  are formalized;
+  are now also bundled as explicit data structures;
 - the exact identification of mathlib's real determinant on `ℂ` with the
   elementary planar Jacobian, its finite-sum integrated `ENNReal` form,
   and the passage from a Hilbert--Schmidt derivative-energy bound to a

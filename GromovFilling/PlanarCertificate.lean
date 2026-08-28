@@ -20,6 +20,57 @@ noncomputable section
 
 open unitInterval
 
+/-- Bundled finite chartwise local planar data sufficient for one `N`-mode
+orientation-free certificate.  This is the finite atlas-style interface left by
+the current planar formalization. -/
+structure FiniteComplexLocalCertificateData (N : ℕ) where
+  m : ℕ
+  omega : Fin N → Set ℂ
+  witness : ∀ j : Fin N,
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤ volume (omega j)
+  pieces : Fin m → Set ℂ
+  open_pieces : ∀ i, IsOpen (pieces i)
+  G : Fin N → Fin m → ℂ → ℂ
+  K : Fin N → Fin m → ℝ≥0
+  lipschitz : ∀ j i, LipschitzOnWith (K j i) (G j i) (pieces i)
+  cover : ∀ j : Fin N, omega j ⊆ ⋃ i, G j i '' pieces i
+
+/-- The summed local Jacobian mass attached to one row of a finite chartwise
+local certificate. -/
+def FiniteComplexLocalCertificateData.jacobianMass
+    {N : ℕ} (D : FiniteComplexLocalCertificateData N) (j : Fin N) : ℝ≥0∞ :=
+  ∑ i : Fin D.m,
+    ∫⁻ x in D.pieces i, ENNReal.ofReal |(fderiv ℝ (D.G j i) x).det| ∂volume
+
+/-- A bundled finite chartwise local certificate implies the `N`-mode
+orientation-free lower bound once its total Jacobian budget is available. -/
+theorem FiniteComplexLocalCertificateData.finite_universal_ennreal
+    {N : ℕ} (D : FiniteComplexLocalCertificateData N)
+    (area : ℝ≥0∞)
+    (hbudget : (∑ j : Fin N, D.jacobianMass j) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  refine finite_universal_ennreal_of_givens_coverage_budget N area D.jacobianMass ?_ hbudget
+  intro j
+  exact (D.witness j).trans
+    (complex_volume_le_sum_lintegral_abs_det_fderiv_of_isOpen_of_subset_iUnion_image
+      D.pieces (D.G j) (D.omega j) D.open_pieces (D.lipschitz j) (D.cover j))
+
+/-- Bundled chartwise local planar certificates for every finite truncation at a
+common area budget.  Constructing this object is exactly the remaining
+certificate-level surface-chart globalization task on the orientation-free side. -/
+structure ComplexLocalCertificateSystem (area : ℝ≥0∞) where
+  data : ∀ N : ℕ, FiniteComplexLocalCertificateData N
+  budget : ∀ N : ℕ, (∑ j : Fin N, (data N).jacobianMass j) ≤ area
+
+/-- A bundled system of chartwise local planar certificates for all finite
+truncations implies the full orientation-free universal bound. -/
+theorem ComplexLocalCertificateSystem.universal_ennreal
+    {area : ℝ≥0∞} (S : ComplexLocalCertificateSystem area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact (S.data N).finite_universal_ennreal area (S.budget N)
+
 /-- The finite orientation-free Fourier certificate for complex-plane
 domains, with every rowwise area inequality discharged internally. -/
 theorem finite_universal_ennreal_of_complex_planar_maps
