@@ -1,0 +1,90 @@
+import GromovFilling.ClosedOneForm
+
+/-!
+# Geometric closed-form boundary endpoints
+
+This file exposes the currently formalized oriented-side boundary-vanishing
+statements at the same square homeomorphism plus glued-strip interfaces used
+elsewhere in the development.
+-/
+
+open Set
+open scoped unitInterval
+
+namespace GromovFilling
+
+noncomputable section
+
+/-- Oriented boundary vanishing at the bundled square-homeomorphism plus
+glued-strip interface. The boundary continuity is inferred automatically from
+the bundled homeomorphism data. -/
+theorem curveIntegral_eq_zero_of_closedUnitSquare_homeomorph_cylinderStripGluedArbitrarilyFineData_of_diffContOnCl
+    {𝕜 E G Y : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+    [NormedSpace ℝ E] [NormedAddCommGroup G] [NormedSpace 𝕜 G] [NormedSpace ℝ G]
+    [PseudoMetricSpace Y]
+    {t : Set E} {ω : E → E →L[𝕜] G}
+    {boundary : UnitAddCircle → Y}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData closedUnitSquareBoundary boundary)
+    (F : C(Y, E))
+    (ht : ∀ a ∈ Set.Ioo (0 : I) 1, ∀ b ∈ Set.Ioo (0 : I) 1,
+      F (D.homeomorph (closedUnitSquareRadial (a, unitIntervalToUnitAddCircle b))) ∈ t)
+    (hω : DiffContOnCl ℝ ω t)
+    (hdω_symm : ∀ x ∈ t, ∀ u ∈ tangentConeAt ℝ t x, ∀ v ∈ tangentConeAt ℝ t x,
+      fderivWithin ℝ ω t x u v = fderivWithin ℝ ω t x v u)
+    (hcontdiff : ContDiffOn ℝ 2
+      (fun xy : ℝ × ℝ ↦
+        Set.IccExtend zero_le_one
+          ((circleHomotopyToUnitAddCirclePath
+            (ContinuousMap.closedUnitSquareBoundaryNullhomotopy
+              (F.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩))).extend xy.1) xy.2)
+      (Set.Icc 0 1)) :
+    ∫ᶜ x in unitAddCirclePath
+      (F.comp ⟨boundary, by
+        rw [D.boundaryHomeomorph]
+        exact D.homeomorph.continuous_toFun.comp continuous_closedUnitSquareBoundary⟩), ω x = 0 := by
+  have hboundaryCont : Continuous boundary := by
+    rw [D.boundaryHomeomorph]
+    exact D.homeomorph.continuous_toFun.comp continuous_closedUnitSquareBoundary
+  simpa using
+    (curveIntegral_eq_zero_of_closedUnitSquare_homeomorphCylinderStripGluedArbitrarilyFineData_of_diffContOnCl
+      (hboundaryCont := hboundaryCont) (D := D) (F := F) (ht := ht)
+      hω hdω_symm hcontdiff)
+
+/-- Oriented boundary vanishing at the direct square-homeomorphism plus
+glued-strip interface furnished by the explicit square strip data. -/
+theorem curveIntegral_eq_zero_of_closedUnitSquare_homeomorph_cylinderStripGlued_of_diffContOnCl
+    {𝕜 E G Y : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+    [NormedSpace ℝ E] [NormedAddCommGroup G] [NormedSpace 𝕜 G] [NormedSpace ℝ G]
+    [PseudoMetricSpace Y] [CompactSpace Y]
+    {t : Set E} {ω : E → E →L[𝕜] G}
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundaryMap : boundary = e ∘ closedUnitSquareBoundary)
+    (F : C(Y, E))
+    (ht : ∀ a ∈ Set.Ioo (0 : I) 1, ∀ b ∈ Set.Ioo (0 : I) 1,
+      F (e (closedUnitSquareRadial (a, unitIntervalToUnitAddCircle b))) ∈ t)
+    (hω : DiffContOnCl ℝ ω t)
+    (hdω_symm : ∀ x ∈ t, ∀ u ∈ tangentConeAt ℝ t x, ∀ v ∈ tangentConeAt ℝ t x,
+      fderivWithin ℝ ω t x u v = fderivWithin ℝ ω t x v u)
+    (hcontdiff : ContDiffOn ℝ 2
+      (fun xy : ℝ × ℝ ↦
+        Set.IccExtend zero_le_one
+          ((circleHomotopyToUnitAddCirclePath
+            (ContinuousMap.closedUnitSquareBoundaryNullhomotopy
+              (F.comp ⟨e, e.continuous_toFun⟩))).extend xy.1) xy.2)
+      (Set.Icc 0 1)) :
+    ∫ᶜ x in unitAddCirclePath
+      (F.comp ⟨boundary, by
+        rw [hboundaryMap]
+        exact e.continuous_toFun.comp continuous_closedUnitSquareBoundary⟩), ω x = 0 := by
+  let D : HomeomorphCylinderStripGluedArbitrarilyFineData closedUnitSquareBoundary boundary :=
+    { homeomorph := e
+      boundaryHomeomorph := hboundaryMap
+      models := hasCylinderStripGluedArbitrarilyFineData_closedUnitSquareBoundary }
+  simpa [D] using
+    (curveIntegral_eq_zero_of_closedUnitSquare_homeomorph_cylinderStripGluedArbitrarilyFineData_of_diffContOnCl
+      (D := D) (F := F) (ht := ht) hω hdω_symm hcontdiff)
+
+end
+
+end GromovFilling
