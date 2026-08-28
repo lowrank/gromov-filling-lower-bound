@@ -5556,6 +5556,48 @@ theorem hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_hom
     (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData
       D.models)
 
+/-- The bundled homeomorphism-plus-glued-strip interface also supplies the
+map-dependent quotient-friendly directed fine polygonal-model input on the
+target boundary after the compact uniform-continuity step. -/
+theorem hasAbstractVariableDirectedQuotientFinePolygonalModels_of_homeomorphCylinderStripGluedArbitrarilyFineData
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary') :
+    HasAbstractVariableDirectedQuotientFinePolygonalModels boundary' := by
+  let _ : CompactSpace Y := Homeomorph.compactSpace D.homeomorph
+  exact hasAbstractVariableDirectedQuotientFinePolygonalModels_of_abstractVariableDirectedQuotientArbitrarilyFine
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_homeomorphCylinderStripGluedArbitrarilyFineData D)
+
+/-- The original unbundled homeomorphism-plus-glued-strip hypothesis likewise
+supplies the quotient-friendly directed fine polygonal-model interface after
+repackaging into the bundled data object. -/
+theorem hasAbstractVariableDirectedQuotientFinePolygonalModels_of_homeomorphCylinderStripGlued_data
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle))) :
+    HasAbstractVariableDirectedQuotientFinePolygonalModels boundary' := by
+  exact hasAbstractVariableDirectedQuotientFinePolygonalModels_of_homeomorphCylinderStripGluedArbitrarilyFineData
+    (homeomorphCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data
+      e hboundaryHomeomorph hmodels)
+
 /-- Consequently the bundled homeomorphism-plus-glued-strip interface already
 supplies the odd boundary-degree obstruction on the target boundary. -/
 theorem hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedArbitrarilyFineData
