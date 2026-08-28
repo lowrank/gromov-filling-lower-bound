@@ -15,6 +15,71 @@ namespace GromovFilling
 
 noncomputable section
 
+private def cylinderStripLowerBoundaryVertexValue
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    (H : CylinderStripGluedPointSpace P → UnitAddCircle)
+    (j : Fin (m + 1)) : UnitAddCircle :=
+  H (cylinderStripGluedPointLowerBoundary P
+    (angularSubdivisionPoint m j))
+
+private theorem cylinderStripLowerBoundaryVertexStep_preserves_value
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    (H : CylinderStripGluedPointSpace P → UnitAddCircle)
+    {a b : Fin (m + 1)}
+    (hstep : CylinderStripLowerBoundaryVertexStep P a b) :
+    cylinderStripLowerBoundaryVertexValue P H a =
+      cylinderStripLowerBoundaryVertexValue P H b := by
+  apply congrArg H
+  cases hstep with
+  | start j =>
+      rcases horient : P.orientation j with _ | _
+      · rw [P.pairedStart_preserving horient]
+        change cylinderStripPointQuotientMap P
+            (closedUnitIntervalStart, angularSubdivisionPoint m j) =
+          cylinderStripPointQuotientMap P
+            (closedUnitIntervalStart,
+              angularSubdivisionPoint m (P.edgePair j))
+        rw [← angularSubdivisionArc_start m j,
+          ← angularSubdivisionArc_start m (P.edgePair j)]
+        exact cylinderStripPointQuotientMap_lower_pair_preserving
+          P horient closedUnitIntervalStart
+      · rw [P.pairedStart_reversing horient]
+        change cylinderStripPointQuotientMap P
+            (closedUnitIntervalStart, angularSubdivisionPoint m j) =
+          cylinderStripPointQuotientMap P
+            (closedUnitIntervalStart,
+              angularSubdivisionPoint m (cyclicSucc (P.edgePair j)))
+        rw [← angularSubdivisionArc_start m j,
+          ← angularSubdivisionArc_finish m (P.edgePair j)]
+        simpa using
+          cylinderStripPointQuotientMap_lower_pair_reversing
+            P horient closedUnitIntervalStart
+  | finish j =>
+      rcases horient : P.orientation j with _ | _
+      · rw [P.pairedFinish_preserving horient]
+        change cylinderStripPointQuotientMap P
+            (closedUnitIntervalStart,
+              angularSubdivisionPoint m (cyclicSucc j)) =
+          cylinderStripPointQuotientMap P
+            (closedUnitIntervalStart,
+              angularSubdivisionPoint m (cyclicSucc (P.edgePair j)))
+        rw [← angularSubdivisionArc_finish m j,
+          ← angularSubdivisionArc_finish m (P.edgePair j)]
+        exact cylinderStripPointQuotientMap_lower_pair_preserving
+          P horient closedUnitIntervalFinish
+      · rw [P.pairedFinish_reversing horient]
+        change cylinderStripPointQuotientMap P
+            (closedUnitIntervalStart,
+              angularSubdivisionPoint m (cyclicSucc j)) =
+          cylinderStripPointQuotientMap P
+            (closedUnitIntervalStart,
+              angularSubdivisionPoint m (P.edgePair j))
+        rw [← angularSubdivisionArc_finish m j,
+          ← angularSubdivisionArc_start m (P.edgePair j)]
+        simpa using
+          cylinderStripPointQuotientMap_lower_pair_reversing
+            P horient closedUnitIntervalFinish
+
 /-- The value of a circle map on a lower-boundary vertex.  The value descends
 to the vertex quotient because the point quotient identifies exactly the
 paired endpoints. -/
@@ -23,62 +88,12 @@ def cylinderStripGluedLowerBoundaryVertexValue
     (H : CylinderStripGluedPointSpace P → UnitAddCircle) :
     CylinderStripLowerBoundaryVertexClass P → UnitAddCircle :=
   Quotient.lift
-    (fun j ↦ H (cylinderStripGluedPointLowerBoundary P
-      (angularSubdivisionPoint m j)))
+    (cylinderStripLowerBoundaryVertexValue P H)
     (by
       intro a b hab
-      apply congrArg H
       induction hab with
-      | rel a b hstep =>
-          cases hstep with
-          | start j =>
-              rcases horient : P.orientation j with _ | _
-              · rw [P.pairedStart_preserving horient]
-                change cylinderStripPointQuotientMap P
-                    (closedUnitIntervalStart, angularSubdivisionPoint m j) =
-                  cylinderStripPointQuotientMap P
-                    (closedUnitIntervalStart,
-                      angularSubdivisionPoint m (P.edgePair j))
-                rw [← angularSubdivisionArc_start m j,
-                  ← angularSubdivisionArc_start m (P.edgePair j)]
-                exact cylinderStripPointQuotientMap_lower_pair_preserving
-                  P horient closedUnitIntervalStart
-              · rw [P.pairedStart_reversing horient]
-                change cylinderStripPointQuotientMap P
-                    (closedUnitIntervalStart, angularSubdivisionPoint m j) =
-                  cylinderStripPointQuotientMap P
-                    (closedUnitIntervalStart,
-                      angularSubdivisionPoint m (cyclicSucc (P.edgePair j)))
-                rw [← angularSubdivisionArc_start m j,
-                  ← angularSubdivisionArc_finish m (P.edgePair j)]
-                simpa using
-                  cylinderStripPointQuotientMap_lower_pair_reversing
-                    P horient closedUnitIntervalStart
-          | finish j =>
-              rcases horient : P.orientation j with _ | _
-              · rw [P.pairedFinish_preserving horient]
-                change cylinderStripPointQuotientMap P
-                    (closedUnitIntervalStart,
-                      angularSubdivisionPoint m (cyclicSucc j)) =
-                  cylinderStripPointQuotientMap P
-                    (closedUnitIntervalStart,
-                      angularSubdivisionPoint m (cyclicSucc (P.edgePair j)))
-                rw [← angularSubdivisionArc_finish m j,
-                  ← angularSubdivisionArc_finish m (P.edgePair j)]
-                exact cylinderStripPointQuotientMap_lower_pair_preserving
-                  P horient closedUnitIntervalFinish
-              · rw [P.pairedFinish_reversing horient]
-                change cylinderStripPointQuotientMap P
-                    (closedUnitIntervalStart,
-                      angularSubdivisionPoint m (cyclicSucc j)) =
-                  cylinderStripPointQuotientMap P
-                    (closedUnitIntervalStart,
-                      angularSubdivisionPoint m (P.edgePair j))
-                rw [← angularSubdivisionArc_finish m j,
-                  ← angularSubdivisionArc_start m (P.edgePair j)]
-                simpa using
-                  cylinderStripPointQuotientMap_lower_pair_reversing
-                    P horient closedUnitIntervalFinish
+      | rel _ _ hstep =>
+          exact cylinderStripLowerBoundaryVertexStep_preserves_value P H hstep
       | refl _ => rfl
       | symm _ _ _ ih => exact ih.symm
       | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂)
@@ -117,8 +132,9 @@ theorem continuous_cylinderStripGluedLowerBoundaryEdgeValue
         closedUnitIntervalStart =
       cylinderStripGluedLowerBoundaryVertexValue P H
         (Quotient.mk (cylinderStripLowerBoundaryVertexSetoid P) j) := by
-  simp [cylinderStripGluedLowerBoundaryEdgeValue,
-    angularSubdivisionArc_start]
+  unfold cylinderStripGluedLowerBoundaryEdgeValue
+  rw [angularSubdivisionArc_start]
+  rfl
 
 @[simp] theorem cylinderStripGluedLowerBoundaryEdgeValue_finish
     {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
@@ -129,8 +145,9 @@ theorem continuous_cylinderStripGluedLowerBoundaryEdgeValue
       cylinderStripGluedLowerBoundaryVertexValue P H
         (Quotient.mk (cylinderStripLowerBoundaryVertexSetoid P)
           (cyclicSucc j)) := by
-  simp [cylinderStripGluedLowerBoundaryEdgeValue,
-    angularSubdivisionArc_finish]
+  unfold cylinderStripGluedLowerBoundaryEdgeValue
+  rw [angularSubdivisionArc_finish]
+  rfl
 
 theorem cylinderStripGluedLowerBoundaryEdgeValue_pair_preserving
     {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
@@ -164,6 +181,7 @@ theorem even_circleDegree_cylinderStripGluedPointLowerBoundary
       (H ∘ cylinderStripGluedPointLowerBoundary P) degree) :
     Even degree := by
   classical
+  have hdegreeOriginal := hdegree
   obtain ⟨degreeLift, hdegreeLift, hdegreeLiftProjects, _hperiod⟩ := hdegree
   choose vertexLift _hvertexIco hvertexLift using fun v :
       CylinderStripLowerBoundaryVertexClass P ↦
@@ -256,7 +274,7 @@ theorem even_circleDegree_cylinderStripGluedPointLowerBoundary
         intro j x
         rfl)
       vertexLift edgeLift hedgeLift hedgeLiftProjects turn hturn degree
-      (by simpa using hdegree)
+      (by simpa using hdegreeOriginal)
     simpa using hsum
   have hturn_pair (j : Fin (m + 1)) :
       turn j = turn (P.edgePair j) ∨
@@ -341,6 +359,7 @@ theorem even_circleDegree_cylinderStripGluedPointLowerBoundary
             (cyclicSucc j)))
         (turn j) (hturn j)
       have hreal : (turn j : ℝ) = -(turn (P.edgePair j) : ℝ) := by
+        dsimp only at hcompare
         rw [reverseClosedUnitInterval_start,
           reverseClosedUnitInterval_finish,
           hvertexStart, hvertexFinish] at hcompare
@@ -349,11 +368,17 @@ theorem even_circleDegree_cylinderStripGluedPointLowerBoundary
   have hpairParity (j : Fin (m + 1)) :
       integerEdgeParity turn j +
           integerEdgeParity turn (P.edgePair j) = 0 := by
-    rcases hturn_pair j with hsame | hneg
-    · rw [integerEdgeParity, integerEdgeParity, hsame]
-      rw [← ZMod.neg_eq_self_mod_two]
-      exact neg_add_cancel _
-    · simp [integerEdgeParity, hneg]
+    have heq : integerEdgeParity turn j =
+        integerEdgeParity turn (P.edgePair j) := by
+      rcases hturn_pair j with hsame | hneg
+      · simp [integerEdgeParity, hsame]
+      · simp [integerEdgeParity, hneg]
+    rw [heq]
+    let a : ZMod 2 := integerEdgeParity turn (P.edgePair j)
+    change a + a = 0
+    calc
+      a + a = -a + a := by rw [ZMod.neg_eq_self_mod_two]
+      _ = 0 := neg_add_cancel a
   have hparitySum :
       ∑ j : Fin (m + 1), integerEdgeParity turn j = 0 := by
     simpa using Finset.sum_ninvolution
