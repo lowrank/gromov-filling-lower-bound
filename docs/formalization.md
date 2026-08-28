@@ -16,6 +16,13 @@ manuscript ledger is maintained in
 | Planar analysis | Lipschitz area inequality, determinant identity, Jacobian budgets |
 | Certificate logic | finite-to-infinite universal deduction, defect propagation, scalar optimization |
 | Rigorous numerics | rational bounds for `π`, `ζ(3)`, and the displayed constants |
+| De Sitter profile algebra | quadric membership, formal-velocity speed, pairwise Lorentz product, Züst kernel identity |
+
+Proposition 15.1 is verified at an explicit denominator interface:
+`DeSitterProfile.lean` takes profile values and the derivative value as scalars
+and requires the relevant sine denominators to be nonzero. It does not claim a
+separate almost-everywhere differentiability theorem for arbitrary Lipschitz
+profiles.
 
 ## General polygon-side pairings
 
@@ -48,6 +55,5 @@ are not yet verified for every compact Riemannian surface:
 
 Several later finite or algebraic manuscript claims remain suitable for future
 formalization, including the separable barrier, Hardy stationarity, the
-one-high-leg spectral ceiling, and the de Sitter profile identities. Their
+stationary-resonance hierarchy, and the one-high-leg spectral ceiling. Their
 current status is recorded individually in the root statement ledger.
-

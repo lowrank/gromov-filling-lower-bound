@@ -39,7 +39,7 @@ Riemannian surfaces.
 | Theorem 14.2, Finite one-high-leg ceiling | **Open feasible obligation** | Not formalized. |
 | Lemma 14.3, Exact trace | **Open feasible obligation** | Not formalized. |
 | Theorem 14.4, Rigorous one-high-leg spectral ceiling | **Open feasible obligation** | The required operator/spectral estimate and numerical enclosure are absent. |
-| Proposition 15.1, de Sitter identities | **Open feasible obligation** | Not formalized. |
+| Proposition 15.1, de Sitter identities | **Verified** | `DeSitterProfile.lean` proves the de Sitter quadric identity, the formal-velocity Lorentz speed, the pairwise Lorentz inner product, and Züst's coefficient-kernel identity. The interface takes the profile values and derivative value as explicit scalars and exposes every required nonzero sine denominator; it does not assert the separate almost-everywhere differentiability bridge for a Lipschitz profile. |
 
 ## End-to-end foundations not supplied by the pinned libraries
 
@@ -64,8 +64,9 @@ so this project records them explicitly instead.
 
 - Lean `4.29.0`, mathlib `v4.29.0`, JordanCurveTheorem
   `e442525a662e9e3beb8205b9fa1fc99509076ded`.
-- GitHub Actions run `33216885215` on commit `1d6221b`: canonical umbrella
-  check, full package build, source escape scan, and live axiom audit.
-- Live audit result: 3,965 declarations under `GromovFilling`; allowed axioms
+- GitHub Actions run `33219684635` on commit
+  `46ac397810212da2574f90b46ccc9c98a95613f8`, merged as
+  `265f1f9d2029d801907d8efd61221c040246d1cf`: canonical umbrella check,
+  full package build, and live axiom audit.
+- Live audit result: 3,992 declarations under `GromovFilling`; allowed axioms
   exactly `propext`, `Classical.choice`, and `Quot.sound`.
-
