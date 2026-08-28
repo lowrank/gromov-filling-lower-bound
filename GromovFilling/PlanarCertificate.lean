@@ -4697,6 +4697,55 @@ theorem universal_ennreal_of_complex_planar_maps_of_closedUnitSquare_homeomorph_
   exact finite_universal_ennreal_of_complex_planar_maps_of_closedUnitSquare_homeomorph_direct
     N area boundary e hboundaryHomeomorph G hG hboundary K hGLipschitz hbudget
 
+/-- The finite orientation-free Fourier certificate for complex-plane
+domains whose boundary is identified with the standard closed-square boundary by
+a homeomorphism and the odd boundary-degree obstruction is supplied through the
+quotient-friendly directed polygonal-model interface. -/
+theorem finite_universal_ennreal_of_complex_planar_maps_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (G : Fin N → ℂ → ℂ)
+    (hG : ∀ j, Continuous (G j))
+    (hboundary : ∀ j t,
+      G j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (K : Fin N → ℝ≥0)
+    (hGLipschitz : ∀ j, LipschitzWith (K j) (G j))
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
+  finite_universal_ennreal_of_complex_planar_maps_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    N area e hboundaryHomeomorph
+    hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
+    G hG hboundary K hGLipschitz hbudget
+
+/-- Infinite orientation-free Fourier certificate for complex-plane domains
+whose boundary is identified with the standard closed-square boundary by a
+homeomorphism and the odd boundary-degree obstruction is supplied through the
+quotient-friendly directed polygonal-model interface. -/
+theorem universal_ennreal_of_complex_planar_maps_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hfinite : ∀ N : ℕ,
+      ∃ G : Fin N → ℂ → ℂ,
+        (∀ j, Continuous (G j)) ∧
+        (∀ j t, G j (boundary t) = givensBoundaryCurveAddCircle j t) ∧
+        ∃ K : Fin N → ℝ≥0,
+          (∀ j, LipschitzWith (K j) (G j)) ∧
+          (∑ j : Fin N,
+            ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  rcases hfinite N with ⟨G, hG, hboundary, K, hGLipschitz, hbudget⟩
+  exact
+    finite_universal_ennreal_of_complex_planar_maps_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+      N area boundary e hboundaryHomeomorph G hG hboundary K hGLipschitz hbudget
+
 /-- Planar Lemma 5.4 for the genuine metric distance-profile map when the
 boundary extends continuously across the standard closed square. -/
 theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_closedUnitSquare_extension
@@ -4772,6 +4821,45 @@ theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_
     (continuous_givensMetricFourierMap hboundary N j)
     (givensMetricFourierMap_on_boundary hboundary j)
     (givensMetricFourierMap_lipschitzWith hboundary N j)
+
+/-- Planar Lemma 5.4 for the genuine metric distance-profile map when the
+boundary is identified with the standard closed-square boundary by a
+homeomorphism and the odd boundary-degree obstruction is supplied through the
+quotient-friendly directed polygonal-model interface. -/
+theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume :=
+  givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    j e hboundaryHomeomorph
+    hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
+    hboundary
+
+/-- Bounded-region form of planar Lemma 5.4 for the genuine metric Fourier
+map when the boundary is identified with the standard closed-square boundary by
+a homeomorphism and the odd boundary-degree obstruction is supplied through the
+quotient-friendly directed polygonal-model interface. -/
+theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume :=
+  exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    j e hboundaryHomeomorph
+    hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
+    hboundary
 
 /-- Finite slack-refined planar certificate when the boundary extends across
 the standard closed square. -/
@@ -4865,6 +4953,42 @@ theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_m
     finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_closedUnitSquare_homeomorph_direct
       N area boundary e hboundaryHomeomorph hboundary harea
 
+/-- Finite slack-refined planar certificate when the boundary is identified
+with the standard closed-square boundary by a homeomorphism and the odd
+boundary-degree obstruction is supplied through the quotient-friendly directed
+polygonal-model interface. -/
+theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area :=
+  finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    N area e hboundaryHomeomorph
+    hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
+    hboundary harea
+
+/-- Infinite slack-refined planar certificate when the boundary is identified
+with the standard closed-square boundary by a homeomorphism and the odd
+boundary-degree obstruction is supplied through the quotient-friendly directed
+polygonal-model interface. -/
+theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_maps_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area :=
+  universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_maps_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    area e hboundaryHomeomorph
+    hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
+    hboundary harea
+
 /-- The complete finite planar certificate for the actual metric Fourier
 family when the boundary extends continuously across the standard closed
 square. -/
@@ -4949,6 +5073,49 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_closedUnitSquare_home
   intro N
   exact finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitSquare_homeomorph_direct
     N area boundary e hboundaryHomeomorph hboundary (hbudget N)
+
+/-- The complete finite planar certificate for the actual metric Fourier
+family when the boundary is identified with the standard closed-square boundary
+by a homeomorphism and the odd boundary-degree obstruction is supplied through
+the quotient-friendly directed polygonal-model interface. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
+  finite_universal_ennreal_of_metric_complex_planar_map_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    N area e hboundaryHomeomorph
+    hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
+    hboundary hbudget
+
+/-- Infinite-mode planar conclusion for the actual metric Fourier family when
+the boundary is identified with the standard closed-square boundary by a
+homeomorphism and the odd boundary-degree obstruction is supplied through the
+quotient-friendly directed polygonal-model interface. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact
+    finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+      N area boundary e hboundaryHomeomorph hboundary (hbudget N)
 
 /-- The finite planar certificate with coordinate-energy budget when the
 boundary extends continuously across the standard closed square. -/
@@ -5040,6 +5207,49 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_c
   intro N
   exact
     finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_closedUnitSquare_homeomorph_direct
+      N area boundary e hboundaryHomeomorph hboundary (hbudget N) harea
+
+/-- The finite planar certificate with coordinate-energy budget when the
+boundary is identified with the standard closed-square boundary by a
+homeomorphism and the odd boundary-degree obstruction is supplied through the
+quotient-friendly directed polygonal-model interface. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget :
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
+  finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    N area e hboundaryHomeomorph
+    hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
+    hboundary hbudget harea
+
+/-- Infinite-mode planar certificate with coordinate-energy budget when the
+boundary is identified with the standard closed-square boundary by a
+homeomorphism and the odd boundary-degree obstruction is supplied through the
+quotient-friendly directed polygonal-model interface. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget : ∀ N : ℕ,
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact
+    finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
       N area boundary e hboundaryHomeomorph hboundary (hbudget N) harea
 
 end
