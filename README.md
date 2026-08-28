@@ -90,7 +90,11 @@ runs both checks on every push and pull request.
   obstruction-level variant now generates the Jordan witness regions
   automatically from the mixed boundary curves, and the corresponding
   source-side metric-chart interface now feeds that certificate layer
-  directly for the genuine mixed Fourier maps;
+  directly for the genuine mixed Fourier maps, and a topologically
+  neutral version now separates the chart data from the odd-degree
+  obstruction, with direct wrappers from nullhomotopies and the
+  quotient-friendly directed abstract arbitrarily-fine polygonal-model
+  interface;
 - the exact identification of mathlib's real determinant on `ℂ` with the
   elementary planar Jacobian, its finite-sum integrated `ENNReal` form,
   and the passage from a Hilbert--Schmidt derivative-energy bound to a
