@@ -59,8 +59,9 @@ runs both checks on every push and pull request.
 - a quotient-friendly directed abstract polygonal-model interface,
   omitting face-vertex injectivity so it applies to quotient cell
   structures with repeated face vertices after gluing, together with its
-  arbitrarily-fine, compact-map, and homeomorphism transport theorems and
-  the resulting odd boundary-degree obstruction;
+  arbitrarily-fine, compact-map, and homeomorphism transport theorems, the
+  resulting odd boundary-degree obstruction, and the downstream homeomorph
+  wrappers that now reach the planar Jacobian and certificate layers;
 - the resulting coverage implication: an odd radial boundary degree forces
   the puncture into the extension image, hence every point in the bounded
   nonzero-degree component of a mixed Givens curve is covered;
@@ -104,7 +105,8 @@ runs both checks on every push and pull request.
 - the explicit square-center directed polygonal-model construction on the
   closed square and closed disk boundaries, together with transfer of that
   directed arbitrarily-fine interface to every compact metric boundary
-  homeomorphic to the closed disk and the resulting direct coverage wrappers.
+  homeomorphic to the closed disk and the resulting direct coverage,
+  Jacobian, and certificate wrappers.
 
 ## Not yet end-to-end
 
@@ -121,8 +123,9 @@ needs:
    interface.  The quotient-friendly directed interface
    `HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels` is now
    formalized for cell decompositions where face vertices may repeat after
-   gluing, and it already transports across compact continuous maps and
-   homeomorphisms.  The stronger directed interface
+   gluing, it already transports across compact continuous maps and
+   homeomorphisms, and its homeomorphism-level wrappers now reach the planar
+   coverage, Jacobian, slack-defect, and certificate statements.  The stronger directed interface
    `HasAbstractVariableDirectedArbitrarilyFinePolygonalModels` and the
    undirected interfaces `HasArbitrarilyFinePolygonalModels` /
    `HasFinePolygonalModels` are also formalized and still suffice when
