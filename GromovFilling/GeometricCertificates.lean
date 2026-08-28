@@ -122,6 +122,78 @@ theorem universal_ennreal_add_of_metric_chartSystem_homeomorphCylinderStripGlued
   S.universal_ennreal_add_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
     D hbudget
 
+/-- Direct adjacent-preserving glued-strip homeomorphism input for the generic
+source-chart endpoint. -/
+theorem universal_ennreal_of_chartSystem_homeomorph_adjacentPreservingCylinderStripGluedPointBoundary
+    {m : ℕ} (hm : Odd m)
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : CylinderStripGluedPointSpace
+      (adjacentPreservingCylinderStripLowerBoundaryPairing hm) ≃ₜ X)
+    (hboundaryMap : boundary =
+      e ∘ cylinderStripGluedPointBoundary
+        (adjacentPreservingCylinderStripLowerBoundaryPairing hm)) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    (homeomorphCylinderStripGluedPointBoundaryObstructionData_of_adjacentPreserving
+      hm e hboundaryMap)
+
+/-- Direct adjacent-preserving glued-strip homeomorphism input for the generic
+slack-refined source-chart endpoint. -/
+theorem universal_ennreal_add_of_chartSystem_homeomorph_adjacentPreservingCylinderStripGluedPointBoundary
+    {m : ℕ} (hm : Odd m)
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : CylinderStripGluedPointSpace
+      (adjacentPreservingCylinderStripLowerBoundaryPairing hm) ≃ₜ X)
+    (hboundaryMap : boundary =
+      e ∘ cylinderStripGluedPointBoundary
+        (adjacentPreservingCylinderStripLowerBoundaryPairing hm))
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    (homeomorphCylinderStripGluedPointBoundaryObstructionData_of_adjacentPreserving
+      hm e hboundaryMap)
+    hbudget
+
+/-- Direct adjacent-preserving glued-strip homeomorphism input for the metric
+source-chart endpoint. -/
+theorem universal_ennreal_of_metric_chartSystem_homeomorph_adjacentPreservingCylinderStripGluedPointBoundary
+    {m : ℕ} (hm : Odd m)
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (e : CylinderStripGluedPointSpace
+      (adjacentPreservingCylinderStripLowerBoundaryPairing hm) ≃ₜ X)
+    (hboundaryMap : boundary =
+      e ∘ cylinderStripGluedPointBoundary
+        (adjacentPreservingCylinderStripLowerBoundaryPairing hm)) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    (homeomorphCylinderStripGluedPointBoundaryObstructionData_of_adjacentPreserving
+      hm e hboundaryMap)
+
+/-- Direct adjacent-preserving glued-strip homeomorphism input for the metric
+slack-refined source-chart endpoint. -/
+theorem universal_ennreal_add_of_metric_chartSystem_homeomorph_adjacentPreservingCylinderStripGluedPointBoundary
+    {m : ℕ} (hm : Odd m)
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (e : CylinderStripGluedPointSpace
+      (adjacentPreservingCylinderStripLowerBoundaryPairing hm) ≃ₜ X)
+    (hboundaryMap : boundary =
+      e ∘ cylinderStripGluedPointBoundary
+        (adjacentPreservingCylinderStripLowerBoundaryPairing hm))
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    (homeomorphCylinderStripGluedPointBoundaryObstructionData_of_adjacentPreserving
+      hm e hboundaryMap)
+    hbudget
+
 /-- Exact orientation-free compact-open-cover endpoint at the generic
 source-chart layer from the bundled point-quotient homeomorphism-plus-
 obstruction interface. -/
