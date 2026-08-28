@@ -2201,6 +2201,51 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitSqua
     G hG hboundary
 
 /-- If the boundary is identified with the standard closed-square boundary by a
+homeomorphism, the Jordan region at the origin is already covered through the
+quotient-friendly directed polygonal-model interface furnished by the square
+model. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+      e hboundaryHomeomorph)
+    G hG hboundary hpartition hzero
+
+/-- The separation-free square-homeomorphic coverage conclusion likewise
+follows from the quotient-friendly directed polygonal-model route. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+      e hboundaryHomeomorph)
+    G hG hboundary
+
+/-- If the boundary is identified with the standard closed-square boundary by a
 homeomorphism, the Jordan region at the origin is covered directly from that
 square model, with no polygonal-model hypothesis. -/
 theorem givensBoundaryCurve_jordan_region_subset_range_of_closedUnitSquare_homeomorph_direct

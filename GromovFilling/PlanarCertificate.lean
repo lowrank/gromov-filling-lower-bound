@@ -937,6 +937,20 @@ theorem ComplexSourceChartSystem.universal_ennreal_of_closedUnitSquare_homeomorp
   S.universal_ennreal_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_direct e hboundaryMap)
 
+/-- The square-homeomorphic route through the quotient-friendly directed
+abstract polygonal-model interface likewise supplies the odd boundary-degree
+obstruction for a generic source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitSquare ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitSquareBoundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+      e hboundaryMap)
+
 /-- A bundled generic source-chart system implies the full orientation-free
 universal bound with a common additive defect term once the odd
 boundary-degree obstruction is available on the source. -/
@@ -1310,6 +1324,22 @@ theorem ComplexSourceChartSystem.universal_ennreal_add_of_closedUnitSquare_homeo
     ENNReal.ofReal universalConstant + defect ≤ area :=
   S.universal_ennreal_add_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_direct e hboundaryMap)
+    hbudget
+
+/-- The square-homeomorphic route through the quotient-friendly directed
+abstract polygonal-model interface also supplies the odd boundary-degree
+obstruction for the additive-defect generic source-chart certificate. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitSquare ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitSquareBoundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+      e hboundaryMap)
     hbudget
 
 /-- Source-side finite chart data for the actual metric Fourier family, with
@@ -1812,6 +1842,20 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_of_closedUnitSquare_hom
   S.universal_ennreal_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_direct e hboundaryMap)
 
+/-- The square-homeomorphic route through the quotient-friendly directed
+abstract polygonal-model interface likewise supplies the odd boundary-degree
+obstruction for a metric source-chart system. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitSquare ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitSquareBoundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+      e hboundaryMap)
+
 /-- A bundled metric source-chart system implies the full orientation-free
 universal bound with a common additive defect term once the odd
 boundary-degree obstruction is available on the source. -/
@@ -2186,6 +2230,22 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_closedUnitSquare
   S.universal_ennreal_add_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_direct e hboundaryMap)
     hbudget
+/-- The square-homeomorphic route through the quotient-friendly directed
+abstract polygonal-model interface also supplies the odd boundary-degree
+obstruction for the additive-defect metric source-chart certificate. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitSquare ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitSquareBoundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+      e hboundaryMap)
+    hbudget
+
 /-- The finite orientation-free Fourier certificate for complex-plane
 domains under the exact topological interface: an odd boundary-degree
 obstruction and the global Jacobian budget. -/

@@ -6544,6 +6544,57 @@ theorem hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closed
   hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
     hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitDiskBoundary
 
+
+/-- Any compact metric boundary identified with the standard closed-square
+boundary inherits the directed variable-face-size abstract arbitrarily fine
+polygonal-model interface from the explicit square-center construction. -/
+theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitSquare_homeomorph
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitSquareBoundary) :
+    HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary :=
+  hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_homeomorph e hboundary
+    hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
+
+/-- The same square-homeomorphic hypothesis also yields the map-dependent
+directed fine polygonal-model interface after the compact
+uniform-continuity step. -/
+theorem hasAbstractVariableDirectedFinePolygonalModels_of_closedUnitSquare_homeomorph
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitSquareBoundary) :
+    HasAbstractVariableDirectedFinePolygonalModels boundary :=
+  hasAbstractVariableDirectedFinePolygonalModels_of_abstractVariableDirectedArbitrarilyFine
+    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitSquare_homeomorph
+      e hboundary)
+
+/-- The same square-homeomorphic hypothesis also yields the quotient-friendly
+directed abstract arbitrarily fine polygonal-model interface furnished by the
+explicit square-center construction. -/
+theorem hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_closedUnitSquare_homeomorph
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitSquareBoundary) :
+    HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary :=
+  hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_homeomorph e hboundary
+    hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
+
+/-- The same square-homeomorphic hypothesis also yields the map-dependent
+quotient-friendly directed fine polygonal-model interface after the compact
+uniform-continuity step. -/
+theorem hasAbstractVariableDirectedQuotientFinePolygonalModels_of_closedUnitSquare_homeomorph
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitSquareBoundary) :
+    HasAbstractVariableDirectedQuotientFinePolygonalModels boundary :=
+  hasAbstractVariableDirectedQuotientFinePolygonalModels_of_abstractVariableDirectedQuotientArbitrarilyFine
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_closedUnitSquare_homeomorph
+      e hboundary)
+
 /-- Any compact metric boundary identified with the standard closed-disk
 boundary inherits the directed variable-face-size abstract arbitrarily fine
 polygonal-model interface from the explicit square-center disk construction. -/
@@ -7527,6 +7578,33 @@ theorem hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_direct
     HasOddBoundaryDegreeObstruction boundary :=
   hasOddBoundaryDegreeObstruction_of_closedUnitSquare_extension
     e e.continuous_toFun hboundary
+
+
+/-- The same square-homeomorphic hypothesis also discharges the odd
+boundary-degree obstruction through the quotient-friendly directed abstract
+polygonal-model interface furnished by the explicit square-center construction. -/
+theorem hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitSquareBoundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    e hboundary
+    hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
+
+/-- The same square-homeomorphic hypothesis also discharges the odd
+boundary-degree obstruction through the directed abstract polygonal-model
+interface furnished by the explicit square-center construction. -/
+theorem hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_abstractVariableDirected
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitSquareBoundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+    e hboundary
+    hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
 
 end
 
