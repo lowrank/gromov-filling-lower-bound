@@ -471,8 +471,6 @@ theorem ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal
   intro N
   exact (S.data N).finite_universal_ennreal area (S.budget N)
 
-/-- Source-side finite chart data for the actual metric Fourier family, with
-
 /-- An obstruction-level bundled source-side chart certificate system also
 carries any common additive defect term unchanged through the limit. -/
 theorem ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal_add
@@ -485,6 +483,378 @@ theorem ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal
   apply universal_ennreal_bound_of_finite_certificates_add
   intro N
   exact (S.data N).finite_universal_ennreal_add area defect (hbudget N)
+
+/-- Source-side finite chart data for a generic family of row maps, separated
+from the topological input that will later force coverage of the Jordan witness
+regions. -/
+structure FiniteComplexSourceChartData
+    (N : ℕ) (X : Type*) [TopologicalSpace X] (boundary : UnitAddCircle → X) where
+  rowMap : Fin N → X → ℂ
+  rowMap_cont : ∀ j, Continuous (rowMap j)
+  rowMap_boundary : ∀ j t, rowMap j (boundary t) = givensBoundaryCurveAddCircle j t
+  m : ℕ
+  sourcePiece : Fin m → Set X
+  sourcePiece_cover : Set.univ ⊆ ⋃ i, sourcePiece i
+  targetPiece : Fin m → Set ℂ
+  chart : ∀ i, sourcePiece i → targetPiece i
+  targetPiece_open : ∀ i, IsOpen (targetPiece i)
+  localMap : Fin N → Fin m → ℂ → ℂ
+  K : Fin N → Fin m → ℝ≥0
+  local_lipschitz : ∀ j i, LipschitzOnWith (K j i) (localMap j i) (targetPiece i)
+  local_agree : ∀ j i (x : sourcePiece i),
+    rowMap j x = localMap j i (chart i x)
+
+/-- The summed local planar Jacobian mass attached to one row of a generic
+source-chart system. -/
+def FiniteComplexSourceChartData.jacobianMass
+    {N : ℕ} {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteComplexSourceChartData N X boundary) (j : Fin N) : ℝ≥0∞ :=
+  ∑ i : Fin D.m,
+    ∫⁻ x in D.targetPiece i, ENNReal.ofReal |(fderiv ℝ (D.localMap j i) x).det| ∂volume
+
+/-- A generic source-chart system becomes an obstruction-level one once an odd
+boundary-degree obstruction has been supplied. -/
+def FiniteComplexSourceChartData.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction
+    {N : ℕ} {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteComplexSourceChartData N X boundary)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary) :
+    FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary where
+  hobstruction := hobstruction
+  rowMap := D.rowMap
+  rowMap_cont := D.rowMap_cont
+  rowMap_boundary := D.rowMap_boundary
+  m := D.m
+  sourcePiece := D.sourcePiece
+  sourcePiece_cover := D.sourcePiece_cover
+  targetPiece := D.targetPiece
+  chart := D.chart
+  targetPiece_open := D.targetPiece_open
+  localMap := D.localMap
+  K := D.K
+  local_lipschitz := D.local_lipschitz
+  local_agree := D.local_agree
+
+/-- A finite generic source-chart certificate yields the `N`-mode
+orientation-free lower bound once the odd-degree obstruction and its summed
+local planar Jacobian budget are available. -/
+theorem FiniteComplexSourceChartData.finite_universal_ennreal_of_odd_boundary_degree_obstruction
+    {N : ℕ} {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteComplexSourceChartData N X boundary)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (area : ℝ≥0∞)
+    (hbudget : (∑ j : Fin N, D.jacobianMass j) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  simpa [FiniteComplexSourceChartData.jacobianMass,
+    FiniteComplexSourceChartData.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction,
+    FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.toFiniteComplexSourceChartCertificateData,
+    FiniteComplexSourceChartCertificateData.toFiniteComplexLocalCertificateData,
+    FiniteComplexLocalCertificateData.jacobianMass]
+    using
+      (D.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction hobstruction).finite_universal_ennreal
+        area hbudget
+
+/-- A finite generic source-chart certificate carries any common additive
+defect term once the odd-degree obstruction is supplied separately. -/
+theorem FiniteComplexSourceChartData.finite_universal_ennreal_add_of_odd_boundary_degree_obstruction
+    {N : ℕ} {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteComplexSourceChartData N X boundary)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (area defect : ℝ≥0∞)
+    (hbudget : (∑ j : Fin N, D.jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) + defect ≤ area := by
+  simpa [FiniteComplexSourceChartData.jacobianMass,
+    FiniteComplexSourceChartData.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction,
+    FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.toFiniteComplexSourceChartCertificateData,
+    FiniteComplexSourceChartCertificateData.toFiniteComplexLocalCertificateData,
+    FiniteComplexLocalCertificateData.jacobianMass]
+    using
+      (D.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction hobstruction).finite_universal_ennreal_add
+        area defect hbudget
+
+/-- Bundled source-side chart data for a generic family of row maps, separated
+from the topological input that forces coverage of the Jordan witness regions. -/
+structure ComplexSourceChartSystem
+    (X : Type*) [TopologicalSpace X]
+    (boundary : UnitAddCircle → X) (area : ℝ≥0∞) where
+  data : ∀ N : ℕ, FiniteComplexSourceChartData N X boundary
+  budget : ∀ N : ℕ, (∑ j : Fin N, (data N).jacobianMass j) ≤ area
+
+/-- A bundled generic source-chart system implies the full orientation-free
+universal bound once the odd boundary-degree obstruction is available on the
+source. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_odd_boundary_degree_obstruction
+    {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact (S.data N).finite_universal_ennreal_of_odd_boundary_degree_obstruction
+    hobstruction area (S.budget N)
+
+/-- The quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface supplies the odd boundary-degree obstruction needed by a generic
+source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+      hmodels)
+
+/-- A nullhomotopy of the source boundary loop likewise supplies the odd
+boundary-degree obstruction needed by a generic source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_nullhomotopy
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (center : X)
+    (F : C(I × UnitAddCircle, X))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_nullhomotopy center F hF0 hF1)
+
+/-- A closed-disk extension of the source boundary supplies the odd
+boundary-degree obstruction needed by a generic source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_closedUnitDisk_extension
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (F : ClosedUnitDisk → X) (hF : Continuous F)
+    (hboundaryMap : boundary = F ∘ closedUnitDiskBoundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_extension F hF hboundaryMap)
+
+/-- A closed-disk homeomorphism with the source boundary supplies the odd
+boundary-degree obstruction needed by a generic source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_closedUnitDisk_homeomorph_direct
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_direct e hboundaryMap)
+
+/-- The disk-homeomorphic route through the packaged disk existence interface
+likewise supplies the odd boundary-degree obstruction for a generic
+source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_closedUnitDisk_homeomorph
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary)
+    (hdisk : HasArbitrarilyFinePolygonalModels closedUnitDiskBoundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph e hboundaryMap hdisk)
+
+/-- Cylinder-strip arbitrarily-fine model data on the standard disk induces
+the odd boundary-degree obstruction needed by a compact generic source-chart
+system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (e : CylinderStripEdge n m),
+        e ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match e with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_cylinderStrip_data
+      e hboundaryMap hmodels)
+
+/-- A closed-square extension of the source boundary supplies the odd
+boundary-degree obstruction needed by a generic source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_closedUnitSquare_extension
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (F : ClosedUnitSquare → X) (hF : Continuous F)
+    (hboundaryMap : boundary = F ∘ closedUnitSquareBoundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_extension F hF hboundaryMap)
+
+/-- A closed-square homeomorphism with the source boundary supplies the odd
+boundary-degree obstruction needed by a generic source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_closedUnitSquare_homeomorph_direct
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitSquare ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitSquareBoundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_direct e hboundaryMap)
+
+/-- A bundled generic source-chart system implies the full orientation-free
+universal bound with a common additive defect term once the odd
+boundary-degree obstruction is available on the source. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  exact (S.data N).finite_universal_ennreal_add_of_odd_boundary_degree_obstruction
+    hobstruction area defect (hbudget N)
+
+/-- The quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface also supplies the odd boundary-degree obstruction needed for the
+additive-defect generic source-chart certificate. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+      hmodels)
+    hbudget
+
+/-- A nullhomotopy of the source boundary loop likewise supplies the odd
+boundary-degree obstruction needed for the additive-defect generic source-chart
+certificate. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_nullhomotopy
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (center : X)
+    (F : C(I × UnitAddCircle, X))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_nullhomotopy center F hF0 hF1)
+    hbudget
+
+/-- A closed-disk extension of the source boundary also supplies the odd
+boundary-degree obstruction needed for the additive-defect generic
+source-chart certificate. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_closedUnitDisk_extension
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (F : ClosedUnitDisk → X) (hF : Continuous F)
+    (hboundaryMap : boundary = F ∘ closedUnitDiskBoundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_extension F hF hboundaryMap)
+    hbudget
+
+/-- A closed-disk homeomorphism with the source boundary also supplies the odd
+boundary-degree obstruction needed for the additive-defect generic
+source-chart certificate. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_closedUnitDisk_homeomorph_direct
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_direct e hboundaryMap)
+    hbudget
+
+/-- The disk-homeomorphic route through the packaged disk existence interface
+likewise supplies the additive-defect generic source-chart certificate. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_closedUnitDisk_homeomorph
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary)
+    (hdisk : HasArbitrarilyFinePolygonalModels closedUnitDiskBoundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph e hboundaryMap hdisk)
+    hbudget
+
+/-- Cylinder-strip arbitrarily-fine model data on the standard disk also
+induces the additive-defect generic source-chart certificate on a compact
+boundary homeomorphic to the closed disk. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (e : CylinderStripEdge n m),
+        e ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match e with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_cylinderStrip_data
+      e hboundaryMap hmodels)
+    hbudget
+
+/-- A closed-square extension of the source boundary also supplies the odd
+boundary-degree obstruction needed for the additive-defect generic
+source-chart certificate. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_closedUnitSquare_extension
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (F : ClosedUnitSquare → X) (hF : Continuous F)
+    (hboundaryMap : boundary = F ∘ closedUnitSquareBoundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_extension F hF hboundaryMap)
+    hbudget
+
+/-- A closed-square homeomorphism with the source boundary also supplies the
+odd boundary-degree obstruction needed for the additive-defect generic
+source-chart certificate. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_closedUnitSquare_homeomorph_direct
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitSquare ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitSquareBoundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_direct e hboundaryMap)
+    hbudget
+
+/-- Source-side finite chart data for the actual metric Fourier family, with
 the topological witness again generated internally from an odd boundary-degree
 obstruction.  This is the direct chart-globalization interface for the genuine
 mixed metric maps. -/

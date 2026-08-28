@@ -90,8 +90,9 @@ runs both checks on every push and pull request.
   obstruction-level variant now generates the Jordan witness regions
   automatically from the mixed boundary curves, and the corresponding
   source-side metric-chart interface now feeds that certificate layer
-  directly for the genuine mixed Fourier maps, and a topologically
-  neutral version now separates the chart data from the odd-degree
+  directly for the genuine mixed Fourier maps, and both the generic
+  source-chart and metric source-chart interfaces now have topologically
+  neutral versions separating the chart data from the odd-degree
   obstruction, with direct wrappers from nullhomotopies and the
   quotient-friendly directed abstract arbitrarily-fine polygonal-model
   interface, and the same local, source-chart, and metric source-chart
