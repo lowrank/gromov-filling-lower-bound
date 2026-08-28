@@ -3891,6 +3891,41 @@ theorem hasOddBoundaryDegreeObstruction_cylinderStripGluedPointLowerBoundary_adj
     even_circleDegree_cylinderStripGluedPointLowerBoundary_adjacentPreserving hm hdegree
   exact (Int.not_odd_iff_even.mpr heven) hodd
 
+/-- Package an odd adjacent-preserving strip quotient and a boundary-respecting
+homeomorphism into the bundled lower-obstruction interface. -/
+def homeomorphCylinderStripGluedPointBoundaryObstructionData_of_adjacentPreserving
+    {m : ℕ} (hm : Odd m)
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (e : CylinderStripGluedPointSpace
+      (adjacentPreservingCylinderStripLowerBoundaryPairing hm) ≃ₜ X)
+    (hboundary : boundary =
+      e ∘ cylinderStripGluedPointBoundary
+        (adjacentPreservingCylinderStripLowerBoundaryPairing hm)) :
+    HomeomorphCylinderStripGluedPointBoundaryObstructionData boundary where
+  m := m
+  pairing := adjacentPreservingCylinderStripLowerBoundaryPairing hm
+  homeomorph := e
+  boundaryHomeomorph := hboundary
+  lowerObstruction :=
+    hasOddBoundaryDegreeObstruction_cylinderStripGluedPointLowerBoundary_adjacentPreserving hm
+
+/-- Any boundary homeomorphic to the free upper loop of the odd adjacent-
+preserving strip quotient inherits the odd boundary-degree obstruction. -/
+theorem hasOddBoundaryDegreeObstruction_of_homeomorph_adjacentPreservingCylinderStripGluedPointBoundary
+    {m : ℕ} (hm : Odd m)
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (e : CylinderStripGluedPointSpace
+      (adjacentPreservingCylinderStripLowerBoundaryPairing hm) ≃ₜ X)
+    (hboundary : boundary =
+      e ∘ cylinderStripGluedPointBoundary
+        (adjacentPreservingCylinderStripLowerBoundaryPairing hm)) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    (homeomorphCylinderStripGluedPointBoundaryObstructionData_of_adjacentPreserving
+      hm e hboundary)
+
 /-- Generated relation on lower boundary edges coming from the chosen pairing. -/
 inductive CylinderStripLowerBoundaryEdgeStep {m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) :
