@@ -17,10 +17,12 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Check canonical umbrella
+        run: ./scripts/check_umbrella.sh
+
       - name: Build Lean project
         uses: leanprover/lean-action@v1
         with:
-          mk_all-check: true
           axiom-audit: true
           axiom-audit-allow: propext,Classical.choice,Quot.sound
           axiom-audit-root: GromovFilling

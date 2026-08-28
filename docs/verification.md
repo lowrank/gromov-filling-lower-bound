@@ -17,7 +17,7 @@ cd conj-gromov-filling
 The script runs:
 
 ```text
-lake exe mk_all --check
+./scripts/check_umbrella.sh
 lake exe cache get
 lake build
 rg -n "proof escape tokens" GromovFilling GromovFilling.lean
@@ -62,4 +62,3 @@ claim. That semantic boundary is maintained in the
 Full Lean replay can require more memory than a workstation safely provides.
 Repository contributors should use GitHub CI or a calibrated high-memory host
 for full checking rather than bypassing local resource guards.
-
