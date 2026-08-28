@@ -103,9 +103,10 @@ runs both checks on every push and pull request.
 - the algebraic/numerical conclusions of the orientation-free and oriented
   certificates at their stated geometric interfaces;
 - fixed-endpoint path-homotopy invariance of closed `1`-form curve
-  integrals, plus vanishing on nullhomotopic loops, packaged at a reusable
-  Euclidean chart-level interface for the future oriented Stokes/comass
-  argument;
+  integrals, together with the free-loop equal-side cancellation criterion
+  for square homotopies and the resulting nullhomotopic-loop vanishing
+  statement, packaged at a reusable Euclidean chart-level interface for the
+  future oriented Stokes/comass argument;
 - the explicit square-center directed polygonal-model construction on the
   closed square and closed disk boundaries, together with transfer of that
   directed arbitrarily-fine interface to every compact metric boundary
