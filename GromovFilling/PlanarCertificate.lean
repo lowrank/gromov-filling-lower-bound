@@ -565,6 +565,20 @@ theorem ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal
   intro N
   exact (S.data N).finite_universal_ennreal_add area defect (hbudget N)
 
+/-- In an obstruction-level bundled source-side chart system, each row in
+every finite truncation produces a bounded open connected witness region at
+the origin whose volume is controlled by that row's chartwise Jacobian mass. -/
+theorem ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.exists_bounded_region_volume_le_jacobianMass
+    {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystemOfOddBoundaryDegreeObstruction X boundary area)
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        (((S.data N).toFiniteComplexSourceChartCertificateData).toFiniteComplexLocalCertificateData).jacobianMass j := by
+  exact (S.data N).exists_bounded_region_volume_le_jacobianMass j
+
 /-- Source-side finite chart data for a generic family of row maps, separated
 from the topological input that will later force coverage of the Jordan witness
 regions. -/
@@ -707,6 +721,22 @@ theorem ComplexSourceChartSystem.universal_ennreal_of_odd_boundary_degree_obstru
   intro N
   exact (S.data N).finite_universal_ennreal_of_odd_boundary_degree_obstruction
     hobstruction area (S.budget N)
+
+/-- Once the odd boundary-degree obstruction is supplied, each row in every
+finite truncation of a bundled generic source-chart system produces a bounded
+open connected witness region at the origin whose volume is controlled by that
+row's Jacobian mass. -/
+theorem ComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
+    {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ (S.data N).jacobianMass j := by
+  exact (S.data N).exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
+    hobstruction j
 
 /-- The quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface supplies the odd boundary-degree obstruction needed by a generic
@@ -1656,6 +1686,19 @@ theorem MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_e
   intro N
   exact (S.data N).finite_universal_ennreal_add S.hboundary area defect (hbudget N)
 
+/-- In an obstruction-level bundled metric source-chart system, each row in
+every finite truncation produces a bounded open connected witness region at
+the origin whose volume is controlled by that row's chartwise Jacobian mass. -/
+theorem MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.exists_bounded_region_volume_le_jacobianMass
+    {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction X boundary area)
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ (S.data N).jacobianMass S.hboundary j := by
+  exact (S.data N).exists_bounded_region_volume_le_jacobianMass S.hboundary j
+
 /-- A metric source-chart system becomes an obstruction-level one once an odd
 boundary-degree obstruction has been supplied. -/
 def FiniteMetricComplexSourceChartData.toFiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction
@@ -1780,6 +1823,22 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_of_odd_boundary_degree_
   intro N
   exact (S.data N).finite_universal_ennreal_of_odd_boundary_degree_obstruction
     hobstruction S.hboundary area (S.budget N)
+
+/-- Once the odd boundary-degree obstruction is supplied, each row in every
+finite truncation of a bundled metric source-chart system produces a bounded
+open connected witness region at the origin whose volume is controlled by that
+row's Jacobian mass. -/
+theorem MetricComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
+    {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ (S.data N).jacobianMass j := by
+  exact (S.data N).exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
+    hobstruction S.hboundary j
 
 /-- The quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface supplies the odd boundary-degree obstruction needed by a metric
