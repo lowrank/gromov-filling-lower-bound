@@ -15,6 +15,79 @@ namespace GromovFilling
 
 noncomputable section
 
+/-- Oriented boundary vanishing when the boundary admits a continuous extension
+across the closed unit disk. The boundary continuity is inferred from the
+extension map. -/
+theorem curveIntegral_eq_zero_of_closedUnitDisk_extension_of_diffContOnCl
+    {𝕜 E G Y : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+    [NormedSpace ℝ E] [NormedAddCommGroup G] [NormedSpace 𝕜 G] [NormedSpace ℝ G]
+    [TopologicalSpace Y]
+    {t : Set E} {ω : E → E →L[𝕜] G}
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk → Y) (he : Continuous e)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary)
+    (F : C(Y, E))
+    (ht : ∀ a ∈ Set.Ioo (0 : I) 1, ∀ b ∈ Set.Ioo (0 : I) 1,
+      F (e (radialClosedUnitDiskPoint a (unitIntervalToUnitAddCircle b))) ∈ t)
+    (hω : DiffContOnCl ℝ ω t)
+    (hdω_symm : ∀ x ∈ t, ∀ u ∈ tangentConeAt ℝ t x, ∀ v ∈ tangentConeAt ℝ t x,
+      fderivWithin ℝ ω t x u v = fderivWithin ℝ ω t x v u)
+    (hcontdiff : ContDiffOn ℝ 2
+      (fun xy : ℝ × ℝ ↦
+        Set.IccExtend zero_le_one
+          ((circleHomotopyToUnitAddCirclePath
+            (ContinuousMap.closedUnitDiskBoundaryNullhomotopy
+              (F.comp ⟨e, he⟩))).extend xy.1) xy.2)
+      (Set.Icc 0 1)) :
+    ∫ᶜ x in unitAddCirclePath
+      (F.comp ⟨boundary, by
+        rw [hboundaryMap]
+        exact he.comp continuous_closedUnitDiskBoundary⟩), ω x = 0 := by
+  have hboundaryCont : Continuous (F ∘ boundary) := by
+    exact F.continuous.comp (by
+      rw [hboundaryMap]
+      exact he.comp continuous_closedUnitDiskBoundary)
+  simpa using
+    (curveIntegral_eq_zero_of_closedUnitDiskBoundaryExtension_unbundled_of_diffContOnCl
+      (boundary := F ∘ boundary) (hboundaryCont := hboundaryCont) (F := F.comp ⟨e, he⟩)
+      (by ext t; simp [hboundaryMap]) (ht := ht) hω hdω_symm hcontdiff)
+
+/-- Oriented boundary vanishing when the boundary is identified with the
+closed-unit-disk boundary by a homeomorphism. The boundary continuity is
+inferred automatically from the homeomorphism data. -/
+theorem curveIntegral_eq_zero_of_closedUnitDisk_homeomorph_of_diffContOnCl
+    {𝕜 E G Y : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+    [NormedSpace ℝ E] [NormedAddCommGroup G] [NormedSpace 𝕜 G] [NormedSpace ℝ G]
+    [TopologicalSpace Y]
+    {t : Set E} {ω : E → E →L[𝕜] G}
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary)
+    (F : C(Y, E))
+    (ht : ∀ a ∈ Set.Ioo (0 : I) 1, ∀ b ∈ Set.Ioo (0 : I) 1,
+      F (e (radialClosedUnitDiskPoint a (unitIntervalToUnitAddCircle b))) ∈ t)
+    (hω : DiffContOnCl ℝ ω t)
+    (hdω_symm : ∀ x ∈ t, ∀ u ∈ tangentConeAt ℝ t x, ∀ v ∈ tangentConeAt ℝ t x,
+      fderivWithin ℝ ω t x u v = fderivWithin ℝ ω t x v u)
+    (hcontdiff : ContDiffOn ℝ 2
+      (fun xy : ℝ × ℝ ↦
+        Set.IccExtend zero_le_one
+          ((circleHomotopyToUnitAddCirclePath
+            (ContinuousMap.closedUnitDiskBoundaryNullhomotopy
+              (F.comp ⟨e, e.continuous_toFun⟩))).extend xy.1) xy.2)
+      (Set.Icc 0 1)) :
+    ∫ᶜ x in unitAddCirclePath
+      (F.comp ⟨boundary, by
+        rw [hboundaryMap]
+        exact e.continuous_toFun.comp continuous_closedUnitDiskBoundary⟩), ω x = 0 := by
+  have hboundaryCont : Continuous boundary := by
+    rw [hboundaryMap]
+    exact e.continuous_toFun.comp continuous_closedUnitDiskBoundary
+  simpa using
+    (curveIntegral_eq_zero_of_closedUnitDiskHomeomorphBoundaryExtension_unbundled_of_diffContOnCl
+      (hboundaryCont := hboundaryCont) (e := e) (hboundary := hboundaryMap)
+      (F := F) (ht := ht) hω hdω_symm hcontdiff)
+
 /-- Oriented boundary vanishing at the bundled square-homeomorphism plus
 glued-strip interface. The boundary continuity is inferred automatically from
 the bundled homeomorphism data. -/
