@@ -4166,6 +4166,25 @@ theorem cylinderStripGluedFaceEdge_injective_of_pos {n m : ℕ}
   exact (cylinderStripFaceEdge_injective_of_pos hm (i₀, j₀)) <| by
     simpa [e₁, e₂] using heq
 
+theorem cylinderStripGluedFaceEven_of_pos {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (hm : 0 < m) :
+    ∀ (f : CylinderStripFace n m) (v : CylinderStripGluedVertex n P),
+      (∑ e ∈ cylinderStripGluedFaceEdges n P f,
+        ((if v = (cylinderStripGluedEdgeChosenEnds n P e).1 then (1 : ZMod 2) else 0) +
+          if v = (cylinderStripGluedEdgeChosenEnds n P e).2 then (1 : ZMod 2) else 0)) = 0 := by
+  intro f v
+  exact faceEven_of_variable_cyclic_face_data_with_edge_directions
+    (edgeEnds := cylinderStripGluedEdgeChosenEnds n P)
+    (faceEdges := cylinderStripGluedFaceEdges n P)
+    (faceSize := fun _ : CylinderStripFace n m => 3)
+    (faceVertex := cylinderStripGluedFaceVertex n P)
+    (faceEdge := cylinderStripGluedFaceEdge n P)
+    (faceEdgeForward := cylinderStripGluedFaceEdgeForward n P)
+    (hfaceEdge := cylinderStripGluedFaceEdge_injective_of_pos P hm)
+    (hfaceEdges := cylinderStripGluedFaceEdges_eq n P)
+    (hends := cylinderStripGluedFaceEdge_ends P)
+    f v
+
 theorem exists_mem_cylinderStripFaceEdges_eq_gluedLowerEdge_iff {n m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m)
     (i : Fin (n + 1)) (k j : Fin (m + 1)) :
