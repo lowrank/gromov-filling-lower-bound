@@ -2935,6 +2935,93 @@ theorem squareCenterPolygonEdgeFaceCount_of_pos {n m : ℕ} (hm : 0 < m)
         · exact squareCenterPolygonAngular_faceCount_of_ne_last hm i j hi
         · exact mt (mem_squareCenterPolygonBoundaryEdges_angular_iff (n := n) (m := m) i j).1 hi
 
+
+
+theorem norm_coe_closedUnitSquare_le_sqrt_two (z : ClosedUnitSquare) :
+    ‖(z : ℂ)‖ ≤ Real.sqrt 2 := by
+  calc
+    ‖(z : ℂ)‖ ≤ Real.sqrt 2 * complexSupNorm (z : ℂ) := by
+      simpa [complexSupNorm] using Complex.norm_le_sqrt_two_mul_max (z : ℂ)
+    _ ≤ Real.sqrt 2 * 1 := by
+      gcongr
+      exact z.2
+    _ = Real.sqrt 2 := by ring
+
+theorem dist_angularSubdivisionArc_point_le (m : ℕ) (hm : 0 < m)
+    (j : Fin (m + 1)) (x : ClosedUnitInterval) :
+    dist (angularSubdivisionArc m j x) (angularSubdivisionPoint m j) ≤ 1 / (m + 1 : ℝ) := by
+  have hadd : angularSubdivisionArc m j x =
+      angularSubdivisionPoint m j + ((((x : ℝ) / (m + 1 : ℝ)) : ℝ) : UnitAddCircle) := by
+    simp [angularSubdivisionArc, angularSubdivisionParameter, angularSubdivisionPoint]
+    rw [← AddCircle.coe_add]
+    congr 1
+    ring
+  rw [dist_eq_norm, hadd, add_sub_cancel_left]
+  have hxnonneg : 0 ≤ (x : ℝ) / (m + 1 : ℝ) := by
+    exact div_nonneg x.2.1 (by positivity : 0 ≤ (m + 1 : ℝ))
+  have hhalf : |(x : ℝ) / (m + 1 : ℝ)| ≤ |(1 : ℝ)| / 2 := by
+    rw [abs_of_nonneg hxnonneg, abs_of_pos zero_lt_one]
+    have hxle : (x : ℝ) / (m + 1 : ℝ) ≤ 1 / (m + 1 : ℝ) := by
+      gcongr
+      exact x.2.2
+    have hm1 : (1 : ℝ) ≤ m := by exact_mod_cast hm
+    have hm2 : (2 : ℝ) ≤ m + 1 := by nlinarith
+    have hstep : 1 / (m + 1 : ℝ) ≤ 1 / 2 := by
+      exact one_div_le_one_div_of_le (by positivity : (0 : ℝ) < 2) hm2
+    exact hxle.trans hstep
+  calc
+    ‖((((x : ℝ) / (m + 1 : ℝ)) : ℝ) : UnitAddCircle)‖ = |(x : ℝ) / (m + 1 : ℝ)| := by
+      exact (AddCircle.norm_coe_eq_abs_iff (1 : ℝ) (by norm_num)).2 hhalf
+    _ ≤ 1 / (m + 1 : ℝ) := by
+      rw [abs_of_nonneg hxnonneg]
+      have hxle : (x : ℝ) / (m + 1 : ℝ) ≤ 1 / (m + 1 : ℝ) := by
+        gcongr
+        exact x.2.2
+      exact hxle
+
+theorem dist_angularSubdivisionPoint_cyclicSucc_le (m : ℕ) (hm : 0 < m)
+    (j : Fin (m + 1)) :
+    dist (angularSubdivisionPoint m j) (angularSubdivisionPoint m (cyclicSucc j)) ≤
+      1 / (m + 1 : ℝ) := by
+  simpa [dist_comm, angularSubdivisionArc_finish] using
+    dist_angularSubdivisionArc_point_le m hm j closedUnitIntervalFinish
+
+theorem dist_radialSubdivisionArc_start_le (n : ℕ) (i : Fin (n + 1))
+    (x : ClosedUnitInterval) :
+    dist (radialSubdivisionArc n i x)
+      (radialSubdivisionPoint n (radialSubdivisionLower i)) ≤ 1 / (n + 1 : ℝ) := by
+  rw [Subtype.dist_eq, Real.dist_eq]
+  have hxnonneg : 0 ≤ (x : ℝ) / (n + 1 : ℝ) := by
+    exact div_nonneg x.2.1 (by positivity : 0 ≤ (n + 1 : ℝ))
+  have hcalc : (((x : ℝ) + (i : ℝ)) / (n + 1 : ℝ)) - ((i : ℝ) / (n + 1 : ℝ)) =
+      (x : ℝ) / (n + 1 : ℝ) := by
+    ring
+  rw [radialSubdivisionArc, radialSubdivisionPoint, radialSubdivisionLower, hcalc,
+    abs_of_nonneg hxnonneg]
+  have hxle : (x : ℝ) / (n + 1 : ℝ) ≤ 1 / (n + 1 : ℝ) := by
+    gcongr
+    exact x.2.2
+  exact hxle
+
+theorem dist_radialSubdivision_upper_lower_le (n : ℕ) (i : Fin (n + 1)) :
+    dist (radialSubdivisionPoint n (radialSubdivisionUpper i))
+      (radialSubdivisionPoint n (radialSubdivisionLower i)) ≤ 1 / (n + 1 : ℝ) := by
+  simpa [radialSubdivisionArc_finish] using
+    dist_radialSubdivisionArc_start_le n i closedUnitIntervalFinish
+
+theorem dist_closedUnitSquareCenter_closedUnitSquareRadial_le
+    (r : ClosedUnitInterval) (t : UnitAddCircle) :
+    dist closedUnitSquareCenter (closedUnitSquareRadial (r, t)) ≤ (r : ℝ) * Real.sqrt 2 := by
+  rw [Subtype.dist_eq, dist_eq_norm]
+  simp [closedUnitSquareCenter, closedUnitSquareRadial, closedUnitSquareScale]
+  calc
+    |(r : ℝ)| * ‖((closedUnitSquareBoundary t : ClosedUnitSquare) : ℂ)‖
+        ≤ |(r : ℝ)| * Real.sqrt 2 := by
+          gcongr
+          exact norm_coe_closedUnitSquare_le_sqrt_two (closedUnitSquareBoundary t)
+    _ = (r : ℝ) * Real.sqrt 2 := by
+      rw [abs_of_nonneg r.2.1]
+
 /-- Bundle the explicit center-polygon annulus data into the abstract directed
 variable-face-size geometric interface, isolating the remaining global edge-count
 and mesh estimates as hypotheses. -/
@@ -3009,6 +3096,135 @@ theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_squareCente
   obtain ⟨n, m, hm, faceCenter, hmesh⟩ := hmodels ε hε
   exact ⟨squareCenterPolygonAbstractVariableDirectedGeometricModel_of_mesh
     n m hm faceCenter hmesh⟩
+
+
+
+theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitSquareBoundary :
+    HasAbstractVariableDirectedArbitrarilyFinePolygonalModels closedUnitSquareBoundary := by
+  apply hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_squareCenterPolygon_data
+  intro ε hε
+  have hUniform : UniformContinuous closedUnitSquareRadial :=
+    CompactSpace.uniformContinuous_of_continuous continuous_closedUnitSquareRadial
+  obtain ⟨δ, hδ, hδradial⟩ :=
+    Metric.uniformContinuous_iff.mp hUniform ε hε
+  have hsqrt : 0 < Real.sqrt 2 := Real.sqrt_pos.2 (by positivity : (0 : ℝ) < 2)
+  have hminpos : 0 < min (ε / Real.sqrt 2) δ := by
+    exact lt_min (div_pos hε hsqrt) hδ
+  obtain ⟨n, hn⟩ := exists_nat_one_div_lt hminpos
+  have hnε : 1 / (n + 1 : ℝ) < ε / Real.sqrt 2 := lt_of_lt_of_le hn (min_le_left _ _)
+  have hnδ : 1 / (n + 1 : ℝ) < δ := lt_of_lt_of_le hn (min_le_right _ _)
+  have hmpos : 0 < min δ (1 / 2 : ℝ) := by
+    exact lt_min hδ (by norm_num)
+  obtain ⟨m, hmstep⟩ := exists_nat_one_div_lt hmpos
+  have hm : 0 < m := by
+    by_contra hm0
+    have hmz : m = 0 := Nat.eq_zero_of_not_pos hm0
+    subst hmz
+    norm_num at hmstep
+  have hmδ : 1 / (m + 1 : ℝ) < δ := lt_of_lt_of_le hmstep (min_le_left _ _)
+  let faceCenter : SquareCenterPolygonFace n m → ClosedUnitSquare
+    | .center => closedUnitSquareCenter
+    | .annulus i j =>
+        closedUnitSquareRadial
+          (cylinderSubdivisionPoint n m (radialSubdivisionLower (upperSquareRingLevel i)) j)
+  refine ⟨n, m, hm, faceCenter, ?_⟩
+  intro f e he x
+  cases f with
+  | center =>
+      cases e with
+      | radial i j =>
+          exact False.elim ((mem_squareCenterPolygonFaceEdges_center_radial_iff i j).1 he)
+      | angular i j =>
+          have hi : i = 0 := (mem_squareCenterPolygonFaceEdges_center_angular_iff i j).1 he
+          subst hi
+          have hdist := dist_closedUnitSquareCenter_closedUnitSquareRadial_le
+            (radialSubdivisionPoint n (radialSubdivisionUpper 0)) (angularSubdivisionArc m j x)
+          have hr : ((radialSubdivisionPoint n (radialSubdivisionUpper 0) : ClosedUnitInterval) : ℝ) =
+              1 / (n + 1 : ℝ) := by
+            simp [radialSubdivisionPoint, radialSubdivisionUpper]
+          have hmul : (1 / (n + 1 : ℝ)) * Real.sqrt 2 < ε := by
+            calc
+              (1 / (n + 1 : ℝ)) * Real.sqrt 2 < (ε / Real.sqrt 2) * Real.sqrt 2 := by
+                gcongr
+              _ = ε := by
+                field_simp [hsqrt.ne']
+          have hdist' : dist (faceCenter SquareCenterPolygonFace.center)
+                (squareCenterPolygonEdgePath n m (SquareCenterPolygonEdge.angular 0 j) x) ≤
+                  (1 / (n + 1 : ℝ)) * Real.sqrt 2 := by
+            simpa [faceCenter, squareCenterPolygonEdgePath, hr] using hdist
+          exact hdist'.trans_lt hmul
+  | annulus i j =>
+      cases e with
+      | radial i' j' =>
+          rcases (mem_squareCenterPolygonFaceEdges_annulus_radial_iff i i' j j').1 he with ⟨hi', hj'⟩
+          subst hi'
+          rcases hj' with rfl | hsucc
+          · have hsrc :
+                dist
+                  (cylinderSubdivisionPoint n m (radialSubdivisionLower (upperSquareRingLevel i)) j)
+                  (cylinderRadialEdgePath n m (upperSquareRingLevel i) j x) < δ := by
+              rw [cylinderSubdivisionPoint, cylinderRadialEdgePath, Prod.dist_eq]
+              refine max_lt_iff.2 ?_
+              constructor
+              · simpa [cylinderSubdivisionPoint, cylinderRadialEdgePath, dist_comm,
+                  radialSubdivisionLower_upperSquareRingLevel] using
+                  (dist_radialSubdivisionArc_start_le n (upperSquareRingLevel i) x).trans_lt hnδ
+              · simpa
+            simpa [faceCenter, squareCenterPolygonEdgePath] using hδradial hsrc
+          · subst j'
+            have hang :
+                dist (angularSubdivisionPoint m j) (angularSubdivisionPoint m (cyclicSucc j)) < δ := by
+              exact (dist_angularSubdivisionPoint_cyclicSucc_le m hm j).trans_lt hmδ
+            have hsrc :
+                dist
+                  (cylinderSubdivisionPoint n m (radialSubdivisionLower (upperSquareRingLevel i)) j)
+                  (cylinderRadialEdgePath n m (upperSquareRingLevel i) (cyclicSucc j) x) < δ := by
+              rw [cylinderSubdivisionPoint, cylinderRadialEdgePath, Prod.dist_eq]
+              refine max_lt_iff.2 ?_
+              constructor
+              · simpa [cylinderSubdivisionPoint, cylinderRadialEdgePath, dist_comm,
+                  radialSubdivisionLower_upperSquareRingLevel] using
+                  (dist_radialSubdivisionArc_start_le n (upperSquareRingLevel i) x).trans_lt hnδ
+              · simpa [cylinderSubdivisionPoint, cylinderRadialEdgePath, dist_comm] using hang
+            simpa [faceCenter, squareCenterPolygonEdgePath] using hδradial hsrc
+      | angular i' j' =>
+          rcases (mem_squareCenterPolygonFaceEdges_annulus_angular_iff i' i j' j).1 he with h | h
+          · rcases h with ⟨hi', hj'⟩
+            subst hi'; subst hj'
+            have hsrc :
+                dist
+                  (cylinderSubdivisionPoint n m (radialSubdivisionLower (upperSquareRingLevel i)) j)
+                  (cylinderAngularEdgePath n m (radialSubdivisionUpper (upperSquareRingLevel i)) j x) < δ := by
+              rw [cylinderSubdivisionPoint, cylinderAngularEdgePath, Prod.dist_eq]
+              refine max_lt_iff.2 ?_
+              constructor
+              · simpa [cylinderSubdivisionPoint, cylinderAngularEdgePath, dist_comm] using
+                  (dist_radialSubdivision_upper_lower_le n (upperSquareRingLevel i)).trans_lt hnδ
+              · simpa [cylinderSubdivisionPoint, cylinderAngularEdgePath, dist_comm] using
+                  (dist_angularSubdivisionArc_point_le m hm j x).trans_lt hmδ
+            simpa [faceCenter, squareCenterPolygonEdgePath] using hδradial hsrc
+          · rcases h with ⟨hi', hj'⟩
+            subst hi'; subst hj'
+            have hsrc :
+                dist
+                  (cylinderSubdivisionPoint n m (radialSubdivisionLower (upperSquareRingLevel i)) j)
+                  (cylinderAngularEdgePath n m (radialSubdivisionUpper (lowerSquareRingLevel i)) j x) < δ := by
+              rw [cylinderSubdivisionPoint, cylinderAngularEdgePath, Prod.dist_eq]
+              refine max_lt_iff.2 ?_
+              constructor
+              · simpa [cylinderSubdivisionPoint, cylinderAngularEdgePath,
+                  radialSubdivisionLower_upperSquareRingLevel] using hδ
+              · simpa [cylinderSubdivisionPoint, cylinderAngularEdgePath, dist_comm] using
+                  (dist_angularSubdivisionArc_point_le m hm j x).trans_lt hmδ
+            simpa [faceCenter, squareCenterPolygonEdgePath] using hδradial hsrc
+
+/-- The explicit square-center construction immediately yields the directed
+closed-disk boundary model family via the radial square-to-disk map. -/
+theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitDiskBoundary :
+    HasAbstractVariableDirectedArbitrarilyFinePolygonalModels closedUnitDiskBoundary :=
+  hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitSquare
+    hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
+
 
 /-- Every concrete `Fin`-indexed model is an abstract finite-index model. -/
 def FinePolygonalModel.toAbstractFinePolygonalModel
