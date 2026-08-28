@@ -270,6 +270,73 @@ theorem givens_jordan_region_volume_le_complex_jacobian
     (complex_volume_le_lintegral_abs_det_fderiv_of_subset_range
       G Set.univ region₁ MeasurableSet.univ hGLipschitz hcoverage')
 
+/-- The same planar Jacobian bound also transfers from a compact source
+carrying the bundled homeomorphism-plus-glued-strip interface, once a
+boundary-respecting homeomorphism identifies that source with the planar
+boundary. -/
+theorem givens_jordan_region_volume_le_complex_jacobian_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    volume region₁ ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  exact givens_jordan_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedArbitrarilyFineData D)
+    G hG hboundary hpartition hzero hGLipschitz
+
+/-- The original unbundled homeomorphism-plus-glued-strip hypothesis likewise
+supplies the same planar Jacobian bound after repackaging. -/
+theorem givens_jordan_region_volume_le_complex_jacobian_of_homeomorph_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (e : X ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    volume region₁ ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  exact givens_jordan_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+      e e.continuous_toFun hboundaryHomeomorph
+      (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
+        hmodels))
+    G hG hboundary hpartition hzero hGLipschitz
+
 /-- If the boundary extends continuously across the standard closed disk, the
 Jordan region forced by Lemma 5.4 is covered directly from that extension, so
 the global complex Jacobian bound applies without a polygonal-model
@@ -423,6 +490,63 @@ theorem givens_mixedBoundaryArea_le_complex_jacobian
     j hpartition hzero]
   exact givens_jordan_region_volume_le_complex_jacobian
     j boundary hfine G hG hboundary hpartition hzero hGLipschitz
+
+/-- The same planar Lemma 5.4 inequality also transfers directly from a
+compact source carrying the bundled homeomorphism-plus-glued-strip
+interface. -/
+theorem givens_mixedBoundaryArea_le_complex_jacobian_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
+    exists_givensBoundaryCurve_jordanPartition_at_origin j
+  rw [← volume_givensBoundaryCurve_jordan_region j hpartition hzero]
+  exact givens_jordan_region_volume_le_complex_jacobian_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    j D G hG hboundary hpartition hzero hGLipschitz
+
+/-- The original unbundled homeomorphism-plus-glued-strip hypothesis likewise
+supplies the planar Lemma 5.4 inequality after repackaging. -/
+theorem givens_mixedBoundaryArea_le_complex_jacobian_of_homeomorph_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (e : X ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
+    exists_givensBoundaryCurve_jordanPartition_at_origin j
+  rw [← volume_givensBoundaryCurve_jordan_region j hpartition hzero]
+  exact givens_jordan_region_volume_le_complex_jacobian_of_homeomorph_cylinderStripGlued_data
+    j e hboundaryHomeomorph hmodels G hG hboundary hpartition hzero hGLipschitz
 
 /-- If the boundary extends continuously across the standard closed disk,
 Jordan separation and coverage can be discharged internally with no
@@ -614,6 +738,69 @@ theorem exists_givens_bounded_region_volume_le_complex_jacobian
     hzero,
     givens_jordan_region_volume_le_complex_jacobian
       j boundary hfine G hG hboundary hpartition hzero hGLipschitz⟩
+
+/-- The same bounded-region conclusion also transfers directly from a compact
+source carrying the bundled homeomorphism-plus-glued-strip interface. -/
+theorem exists_givens_bounded_region_volume_le_complex_jacobian_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  exact exists_givens_bounded_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedArbitrarilyFineData D)
+    G hG hboundary hGLipschitz
+
+/-- The original unbundled homeomorphism-plus-glued-strip hypothesis likewise
+supplies the bounded-region Jacobian conclusion after repackaging. -/
+theorem exists_givens_bounded_region_volume_le_complex_jacobian_of_homeomorph_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (e : X ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  exact exists_givens_bounded_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+      e e.continuous_toFun hboundaryHomeomorph
+      (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
+        hmodels))
+    G hG hboundary hGLipschitz
 
 /-- If the boundary extends continuously across the standard closed disk,
 there is a bounded open connected region containing the origin whose volume
