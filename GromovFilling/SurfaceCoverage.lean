@@ -574,6 +574,74 @@ theorem exists_bounded_jordan_region_subset_range_of_homeomorph_abstractVariable
       e hboundaryHomeomorph hmodels)
     G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
 
+/-- The generic Jordan-region coverage theorem also transfers across a
+boundary-respecting homeomorphism from a compact source carrying the bundled
+homeomorphism-plus-glued-strip interface. -/
+theorem jordan_region_subset_range_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary' t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary'
+    (hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedArbitrarilyFineData D)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- The original unbundled homeomorphism-plus-glued-strip hypothesis likewise
+supplies the generic Jordan-region coverage theorem after repackaging. -/
+theorem jordan_region_subset_range_of_homeomorph_cylinderStripGlued_data
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary' t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    (homeomorphCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data
+      e hboundaryHomeomorph hmodels)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
 /-- The generic Jordan-region coverage theorem transfers across a
 boundary-respecting homeomorphism from a compact source carrying the
 quotient-friendly directed abstract arbitrarily-fine polygonal-model
@@ -1585,6 +1653,67 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_compact_continuous_abs
         hmodels))
     G hG hboundary hpartition hzero
 
+/-- Coverage also transfers from any compact source carrying the bundled
+homeomorphism-plus-glued-strip interface once a boundary-respecting
+homeomorphism identifies that source with the target domain. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedArbitrarilyFineData D)
+    G hG hboundary hpartition hzero
+
+/-- The original unbundled homeomorphism-plus-glued-strip hypothesis likewise
+supplies the Givens-boundary coverage theorem after repackaging. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_homeomorph_cylinderStripGlued_data
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    j (homeomorphCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data
+      e hboundaryHomeomorph hmodels)
+    G hG hboundary hpartition hzero
+
 /-- Coverage also transfers from any compact source carrying the weaker
 quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface once a boundary-respecting homeomorphism identifies that source
@@ -1777,6 +1906,65 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_compact_contin
     (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
       (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
         hmodels))
+    G hG hboundary
+
+/-- Separation-free coverage also transfers from a compact source carrying
+the bundled homeomorphism-plus-glued-strip interface through a
+boundary-respecting homeomorphism. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedArbitrarilyFineData D)
+    G hG hboundary
+
+/-- The original unbundled homeomorphism-plus-glued-strip hypothesis likewise
+supplies the separation-free coverage theorem after repackaging. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorph_cylinderStripGlued_data
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    j (homeomorphCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data
+      e hboundaryHomeomorph hmodels)
     G hG hboundary
 
 /-- Separation-free coverage also transfers from a compact source carrying
