@@ -1314,6 +1314,171 @@ theorem squareDiskCenterFaceEdgeAlt_ends_of_odd {n m : ℕ} (_hm : Odd m)
       simp [squareDiskCenterFaceEdgeAlt, squareDiskCenterFaceVertexAlt,
         squareDiskEdgeEnds, hj, cyclicSucc]
 
+theorem cyclicPred_even_iff_not_even_of_odd {m : ℕ} (hm : Odd m)
+    (j : Fin (m + 1)) :
+    Even (cyclicPred j).1 ↔ ¬ Even j.1 := by
+  simpa using (cyclicSucc_not_even_iff_even_of_odd hm (cyclicPred j)).symm
+
+theorem cyclicPred_not_even_iff_even_of_odd {m : ℕ} (hm : Odd m)
+    (j : Fin (m + 1)) :
+    ¬ Even (cyclicPred j).1 ↔ Even j.1 := by
+  rw [cyclicPred_even_iff_not_even_of_odd hm j]
+  exact not_not
+
+theorem mem_squareDiskCenterFaceEdgesAlt_spokeOut_iff
+    {n m : ℕ} (k j : Fin (m + 1)) :
+    SquareDiskEdge.spokeOut j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k) ↔
+      (Even k.1 ∧ k = j) ∨ (¬ Even k.1 ∧ cyclicSucc k = j) := by
+  constructor
+  · intro h
+    rcases Finset.mem_image.mp h with ⟨t, _ht, ht⟩
+    by_cases hk : Even k.1
+    · fin_cases t
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+        exact Or.inl ⟨hk, ht⟩
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+    · fin_cases t
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+        exact Or.inr ⟨hk, ht⟩
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+  · rintro (⟨hk, rfl⟩ | ⟨hk, hsucc⟩)
+    · exact Finset.mem_image.mpr ⟨0, Finset.mem_univ _, by simp [squareDiskCenterFaceEdgeAlt, hk]⟩
+    · exact Finset.mem_image.mpr ⟨1, Finset.mem_univ _, by simp [squareDiskCenterFaceEdgeAlt, hk, hsucc]⟩
+
+theorem mem_squareDiskCenterFaceEdgesAlt_spokeIn_iff
+    {n m : ℕ} (k j : Fin (m + 1)) :
+    SquareDiskEdge.spokeIn j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k) ↔
+      (¬ Even k.1 ∧ k = j) ∨ (Even k.1 ∧ cyclicSucc k = j) := by
+  constructor
+  · intro h
+    rcases Finset.mem_image.mp h with ⟨t, _ht, ht⟩
+    by_cases hk : Even k.1
+    · fin_cases t
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+        exact Or.inr ⟨hk, ht⟩
+    · fin_cases t
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+        exact Or.inl ⟨hk, ht⟩
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+      · simp [squareDiskCenterFaceEdgeAlt, hk] at ht
+  · rintro (⟨hk, rfl⟩ | ⟨hk, hsucc⟩)
+    · exact Finset.mem_image.mpr ⟨0, Finset.mem_univ _, by simp [squareDiskCenterFaceEdgeAlt, hk]⟩
+    · exact Finset.mem_image.mpr ⟨2, Finset.mem_univ _, by simp [squareDiskCenterFaceEdgeAlt, hk, hsucc]⟩
+
+theorem squareDiskCenterFaceAlt_spokeOut_faceCount_of_odd
+    {n m : ℕ} (hm : Odd m) (j : Fin (m + 1)) :
+    (Finset.univ.filter fun k : Fin (m + 1) ↦
+      SquareDiskEdge.spokeOut j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k)).card =
+        if Even j.1 then 2 else 0 := by
+  by_cases hj : Even j.1
+  · have hpred : ¬ Even (cyclicPred j).1 :=
+      (cyclicPred_not_even_iff_even_of_odd hm j).2 hj
+    have hneq : cyclicPred j ≠ j := by
+      intro h
+      exact hpred (h.symm ▸ hj)
+    have hfilter :
+        (Finset.univ.filter fun k : Fin (m + 1) ↦
+          SquareDiskEdge.spokeOut j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k)) =
+            ({j, cyclicPred j} : Finset (Fin (m + 1))) := by
+      ext k
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert,
+        Finset.mem_singleton]
+      constructor
+      · intro hk
+        rcases (mem_squareDiskCenterFaceEdgesAlt_spokeOut_iff (n := n) k j).mp hk with h | h
+        · exact Or.inl h.2
+        · exact Or.inr <| by
+            have hsucc := h.2
+            apply_fun cyclicPred at hsucc
+            simpa using hsucc
+      · intro hk
+        rcases hk with hk | hk
+        · subst k
+          exact (mem_squareDiskCenterFaceEdgesAlt_spokeOut_iff (n := n) j j).2 <|
+            Or.inl ⟨hj, rfl⟩
+        · subst k
+          have hsucc : cyclicSucc (cyclicPred j) = j := by simp
+          exact (mem_squareDiskCenterFaceEdgesAlt_spokeOut_iff (n := n) (cyclicPred j) j).2 <|
+            Or.inr ⟨hpred, hsucc⟩
+    rw [hfilter, if_pos hj]
+    exact Finset.card_pair hneq.symm
+  · have hfilter :
+      (Finset.univ.filter fun k : Fin (m + 1) ↦
+        SquareDiskEdge.spokeOut j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k)) =
+          (∅ : Finset (Fin (m + 1))) := by
+      ext k
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      constructor
+      · intro hk
+        rcases (mem_squareDiskCenterFaceEdgesAlt_spokeOut_iff (n := n) k j).mp hk with h | h
+        · have : Even j.1 := by simpa [h.2] using h.1
+          exact False.elim (hj this)
+        · have : Even j.1 := by simpa [← h.2] using (cyclicSucc_even_iff_not_even_of_odd hm k).2 h.1
+          exact False.elim (hj this)
+      · intro hk
+        simp at hk
+    rw [hfilter, if_neg hj]
+    simp
+
+theorem squareDiskCenterFaceAlt_spokeIn_faceCount_of_odd
+    {n m : ℕ} (hm : Odd m) (j : Fin (m + 1)) :
+    (Finset.univ.filter fun k : Fin (m + 1) ↦
+      SquareDiskEdge.spokeIn j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k)).card =
+        if Even j.1 then 0 else 2 := by
+  by_cases hj : Even j.1
+  · have hfilter :
+      (Finset.univ.filter fun k : Fin (m + 1) ↦
+        SquareDiskEdge.spokeIn j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k)) =
+          (∅ : Finset (Fin (m + 1))) := by
+      ext k
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      constructor
+      · intro hk
+        rcases (mem_squareDiskCenterFaceEdgesAlt_spokeIn_iff (n := n) k j).mp hk with h | h
+        · have : Even k.1 := by simpa [h.2] using hj
+          exact False.elim (h.1 this)
+        · have : ¬ Even j.1 := by simpa [← h.2] using (cyclicSucc_not_even_iff_even_of_odd hm k).2 h.1
+          exact False.elim (this hj)
+      · intro hk
+        simp at hk
+    rw [hfilter, if_pos hj]
+    simp
+  · have hpred : Even (cyclicPred j).1 :=
+      (cyclicPred_even_iff_not_even_of_odd hm j).2 hj
+    have hneq : cyclicPred j ≠ j := by
+      intro h
+      exact hj (h.symm ▸ hpred)
+    have hfilter :
+        (Finset.univ.filter fun k : Fin (m + 1) ↦
+          SquareDiskEdge.spokeIn j ∈ Finset.univ.image (squareDiskCenterFaceEdgeAlt (n := n) k)) =
+            ({j, cyclicPred j} : Finset (Fin (m + 1))) := by
+      ext k
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert,
+        Finset.mem_singleton]
+      constructor
+      · intro hk
+        rcases (mem_squareDiskCenterFaceEdgesAlt_spokeIn_iff (n := n) k j).mp hk with h | h
+        · exact Or.inl h.2
+        · exact Or.inr <| by
+            have hsucc := h.2
+            apply_fun cyclicPred at hsucc
+            simpa using hsucc
+      · intro hk
+        rcases hk with hk | hk
+        · subst k
+          exact (mem_squareDiskCenterFaceEdgesAlt_spokeIn_iff (n := n) j j).2 <|
+            Or.inl ⟨hj, rfl⟩
+        · subst k
+          have hsucc : cyclicSucc (cyclicPred j) = j := by simp
+          exact (mem_squareDiskCenterFaceEdgesAlt_spokeIn_iff (n := n) (cyclicPred j) j).2 <|
+            Or.inr ⟨hpred, hsucc⟩
+    rw [hfilter, if_neg hj]
+    exact Finset.card_pair hneq.symm
+
 
 /-- Radial map from the closed unit square to the closed unit disk.  It preserves
 rays from the origin and rescales each nonzero point so that its Euclidean norm
