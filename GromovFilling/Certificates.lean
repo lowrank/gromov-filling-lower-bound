@@ -309,6 +309,50 @@ theorem oriented_area_gt_point_zero_three_of_closedUnitSquare_homeomorph_cylinde
       hboundaryAction hω hcontdiff hintegrand hJ hbound harea
   exact nonlinearCertificate_point_zero_three_gt.trans_le hcertificate
 
+/-- Uniform calibration bounds on every finite resonant Green truncation imply
+the full oriented certificate after passing to the limit. -/
+theorem oriented_area_ge_nonlinearCertificate_of_resonantGreenArea_bounds
+    {area lam : ℝ} (_hlam_nonneg : 0 ≤ lam)
+    (hlam : lam < Real.pi ^ 2 / 32)
+    (hfinite : ∀ N : ℕ,
+      fourierGreenArea
+        (fun k : Fin N ↦ oddMode k)
+        (fun k : Fin N ↦ resonantBoundaryCoefficient lam k) ≤
+          comassBound lam * area) :
+    nonlinearCertificate lam ≤ area := by
+  have hcalibration : boundaryAction lam ≤ comassBound lam * area := by
+    have hlim : Filter.Tendsto
+        (fun N : ℕ ↦
+          fourierGreenArea
+            (fun k : Fin N ↦ oddMode k)
+            (fun k : Fin N ↦ resonantBoundaryCoefficient lam k))
+        Filter.atTop (nhds (boundaryAction lam)) := by
+      simpa [boundaryActionSeries_eq lam] using
+        tendsto_fourierGreenArea_resonantBoundaryCoefficient lam
+    have hconst : Filter.Tendsto
+        (fun _ : ℕ ↦ comassBound lam * area)
+        Filter.atTop (nhds (comassBound lam * area)) :=
+      tendsto_const_nhds
+    exact le_of_tendsto_of_tendsto' hlim hconst hfinite
+  exact oriented_area_ge_nonlinearCertificate
+    (lam := lam) (area := area) (by assumption) hlam hcalibration
+
+/-- The point-`0.03` oriented decimal lower bound also follows from uniform
+bounds on all finite resonant Green truncations. -/
+theorem oriented_area_gt_point_zero_three_of_resonantGreenArea_bounds
+    {area : ℝ}
+    (hfinite : ∀ N : ℕ,
+      fourierGreenArea
+        (fun k : Fin N ↦ oddMode k)
+        (fun k : Fin N ↦ resonantBoundaryCoefficient (3 / 100) k) ≤
+          comassBound (3 / 100) * area) :
+    (538982446 / 100000000 : ℝ) < area := by
+  have hcertificate : nonlinearCertificate (3 / 100) ≤ area := by
+    exact oriented_area_ge_nonlinearCertificate_of_resonantGreenArea_bounds
+      (area := area) (lam := 3 / 100) (by norm_num)
+      lambda_point_zero_three_admissible hfinite
+  exact nonlinearCertificate_point_zero_three_gt.trans_le hcertificate
+
 /-- The exact oriented conclusion also accepts the unevaluated odd-mode boundary
 series directly; Proposition 9.1 identifies it with `boundaryAction`. -/
 theorem oriented_area_ge_nonlinearCertificate_of_boundaryActionSeries
