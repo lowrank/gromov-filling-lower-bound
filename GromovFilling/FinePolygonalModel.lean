@@ -3363,6 +3363,10 @@ abbrev CylinderStripGluedPointSpace {m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) :=
   Quotient (cylinderStripPointGluingSetoid P)
 
+instance {m : ℕ} (P : CylinderStripLowerBoundaryPairing m) :
+    CompactSpace (CylinderStripGluedPointSpace P) :=
+  Quotient.compactSpace
+
 /-- The quotient map from the radial cylinder to the glued-strip point space. -/
 def cylinderStripPointQuotientMap {m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) :
@@ -3420,6 +3424,79 @@ def cylinderStripGluedPointBoundary {m : ℕ}
           angularSubdivisionArc m (P.edgePair j) (reverseClosedUnitInterval x)) := by
   apply Quotient.sound
   exact Relation.EqvGen.rel _ _ ⟨j, x, rfl, rfl, rfl, by simpa [hj]⟩
+
+/-- A cylinder map descends through the glued-strip quotient exactly when it
+identifies every paired lower-boundary arc according to the chosen pairing. -/
+def CylinderStripPointMapRespectsGluing {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {Y : Type*} (f : ClosedUnitInterval × UnitAddCircle → Y) : Prop :=
+  ∀ (j : Fin (m + 1)) (x : ClosedUnitInterval),
+    f (closedUnitIntervalStart, angularSubdivisionArc m j x) =
+      f (closedUnitIntervalStart,
+        match P.orientation j with
+        | .preserving => angularSubdivisionArc m (P.edgePair j) x
+        | .reversing =>
+            angularSubdivisionArc m (P.edgePair j) (reverseClosedUnitInterval x))
+
+theorem cylinderStripPointMap_eq_of_gluingSetoid {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {Y : Type*} {f : ClosedUnitInterval × UnitAddCircle → Y}
+    (hglue : CylinderStripPointMapRespectsGluing P f) :
+    ∀ a b,
+      cylinderStripPointGluingSetoid P a b →
+        f a = f b := by
+  intro a b hab
+  induction hab with
+  | rel a b h =>
+      rcases a with ⟨r₁, u₁⟩
+      rcases b with ⟨r₂, u₂⟩
+      rcases h with ⟨j, x, hr₁, hr₂, hu₁, hu₂⟩
+      subst r₁
+      subst r₂
+      subst u₁
+      subst u₂
+      simpa [CylinderStripPointMapRespectsGluing] using hglue j x
+  | refl =>
+      rfl
+  | symm _ _ _ ih =>
+      exact ih.symm
+  | trans _ _ _ _ _ hab₁ hab₂ =>
+      exact hab₁.trans hab₂
+
+/-- Descend a map from the radial cylinder to the glued-strip point quotient
+once it respects the prescribed lower-boundary identifications. -/
+def cylinderStripGluedPointLift {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {Y : Type*} (f : ClosedUnitInterval × UnitAddCircle → Y)
+    (hglue : CylinderStripPointMapRespectsGluing P f) :
+    CylinderStripGluedPointSpace P → Y :=
+  Quotient.lift f (cylinderStripPointMap_eq_of_gluingSetoid P hglue)
+
+@[simp] theorem cylinderStripGluedPointLift_comp_quotientMap {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {Y : Type*} (f : ClosedUnitInterval × UnitAddCircle → Y)
+    (hglue : CylinderStripPointMapRespectsGluing P f)
+    (x : ClosedUnitInterval × UnitAddCircle) :
+    cylinderStripGluedPointLift P f hglue (cylinderStripPointQuotientMap P x) = f x :=
+  rfl
+
+@[continuity] theorem continuous_cylinderStripGluedPointLift {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {Y : Type*} [TopologicalSpace Y]
+    {f : ClosedUnitInterval × UnitAddCircle → Y}
+    (hf : Continuous f)
+    (hglue : CylinderStripPointMapRespectsGluing P f) :
+    Continuous (cylinderStripGluedPointLift P f hglue) :=
+  hf.quotient_lift (cylinderStripPointMap_eq_of_gluingSetoid P hglue)
+
+@[simp] theorem cylinderStripGluedPointLift_boundary_apply {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {Y : Type*} (f : ClosedUnitInterval × UnitAddCircle → Y)
+    (hglue : CylinderStripPointMapRespectsGluing P f)
+    (t : UnitAddCircle) :
+    cylinderStripGluedPointLift P f hglue (cylinderStripGluedPointBoundary P t) =
+      f (closedUnitIntervalFinish, t) :=
+  rfl
 
 /-- On an odd cyclic subdivision, pair each lower edge with its adjacent
 neighbor: even edges with their successor and odd edges with their predecessor.
