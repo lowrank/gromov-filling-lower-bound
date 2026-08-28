@@ -3062,6 +3062,124 @@ noncomputable instance {n m : ℕ} (P : CylinderStripLowerBoundaryPairing m) :
   apply Quotient.sound
   exact Relation.EqvGen.rel _ _ <| Or.inr ⟨j, rfl, rfl⟩
 
+def cylinderStripGluedBoundaryEdge (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    CylinderStripGluedEdge n P :=
+  Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+    (cylinderStripBoundaryEdge (n := n) (m := m) j)
+
+def cylinderStripGluedBoundaryVertex (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    CylinderStripGluedVertex n P :=
+  Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+    (cylinderStripBoundaryVertex (n := n) (m := m) j)
+
+def cylinderStripUpperBoundaryEdgeTag {n m : ℕ} :
+    CylinderStripEdge n m → Option (Fin (m + 1))
+  | .radial _ _ => none
+  | .angular i j => if i = Fin.last (n + 1) then some j else none
+
+def cylinderStripUpperBoundaryVertexTag {n m : ℕ} :
+    CylinderStripVertex n m → Option (Fin (m + 1))
+  | (i, j) => if i = Fin.last (n + 1) then some j else none
+
+theorem cylinderStripEdgeGluingStep_preserves_upperBoundaryEdgeTag {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {e₁ e₂ : CylinderStripEdge n m}
+    (h : ∃ j : Fin (m + 1),
+      e₁ = CylinderStripEdge.angular (0 : Fin (n + 2)) j ∧
+      e₂ = CylinderStripEdge.angular (0 : Fin (n + 2)) (P.edgePair j)) :
+    cylinderStripUpperBoundaryEdgeTag e₁ = cylinderStripUpperBoundaryEdgeTag e₂ := by
+  rcases h with ⟨j, rfl, rfl⟩
+  simp [cylinderStripUpperBoundaryEdgeTag]
+
+theorem cylinderStripVertexGluingStep_preserves_upperBoundaryVertexTag {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {v w : CylinderStripVertex n m}
+    (h :
+      (∃ j : Fin (m + 1),
+        v = ((0 : Fin (n + 2)), j) ∧
+        w = ((0 : Fin (n + 2)), P.pairedStart j)) ∨
+      (∃ j : Fin (m + 1),
+        v = ((0 : Fin (n + 2)), cyclicSucc j) ∧
+        w = ((0 : Fin (n + 2)), P.pairedFinish j))) :
+    cylinderStripUpperBoundaryVertexTag v = cylinderStripUpperBoundaryVertexTag w := by
+  rcases h with h | h
+  · rcases h with ⟨j, rfl, rfl⟩
+    simp [cylinderStripUpperBoundaryVertexTag]
+  · rcases h with ⟨j, rfl, rfl⟩
+    simp [cylinderStripUpperBoundaryVertexTag]
+
+theorem eqvGen_cylinderStripEdgeGluing_preserves_upperBoundaryEdgeTag {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {e₁ e₂ : CylinderStripEdge n m}
+    (h : Relation.EqvGen
+      (fun a b : CylinderStripEdge n m ↦
+        ∃ j : Fin (m + 1),
+          a = CylinderStripEdge.angular (0 : Fin (n + 2)) j ∧
+          b = CylinderStripEdge.angular (0 : Fin (n + 2)) (P.edgePair j))
+      e₁ e₂) :
+    cylinderStripUpperBoundaryEdgeTag e₁ = cylinderStripUpperBoundaryEdgeTag e₂ := by
+  induction h with
+  | rel _ _ hstep =>
+      exact cylinderStripEdgeGluingStep_preserves_upperBoundaryEdgeTag P hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+theorem eqvGen_cylinderStripVertexGluing_preserves_upperBoundaryVertexTag {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {v w : CylinderStripVertex n m}
+    (h : Relation.EqvGen
+      (fun v w : CylinderStripVertex n m ↦
+        (∃ j : Fin (m + 1),
+          v = ((0 : Fin (n + 2)), j) ∧
+          w = ((0 : Fin (n + 2)), P.pairedStart j)) ∨
+        (∃ j : Fin (m + 1),
+          v = ((0 : Fin (n + 2)), cyclicSucc j) ∧
+          w = ((0 : Fin (n + 2)), P.pairedFinish j)))
+      v w) :
+    cylinderStripUpperBoundaryVertexTag v = cylinderStripUpperBoundaryVertexTag w := by
+  induction h with
+  | rel _ _ hstep =>
+      exact cylinderStripVertexGluingStep_preserves_upperBoundaryVertexTag P hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+@[simp] theorem cylinderStripGluedBoundaryEdge_injective {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    Function.Injective (cylinderStripGluedBoundaryEdge (n := n) P) := by
+  intro j k h
+  have hrel : Relation.EqvGen
+      (fun a b : CylinderStripEdge n m ↦
+        ∃ l : Fin (m + 1),
+          a = CylinderStripEdge.angular (0 : Fin (n + 2)) l ∧
+          b = CylinderStripEdge.angular (0 : Fin (n + 2)) (P.edgePair l))
+      (cylinderStripBoundaryEdge (n := n) (m := m) j)
+      (cylinderStripBoundaryEdge (n := n) (m := m) k) := by
+    simpa [cylinderStripGluedBoundaryEdge, cylinderStripEdgeGluingSetoid] using Quotient.exact h
+  have htag := eqvGen_cylinderStripEdgeGluing_preserves_upperBoundaryEdgeTag P hrel
+  simpa [cylinderStripUpperBoundaryEdgeTag, cylinderStripBoundaryEdge] using htag
+
+@[simp] theorem cylinderStripGluedBoundaryVertex_injective {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    Function.Injective (cylinderStripGluedBoundaryVertex (n := n) P) := by
+  intro j k h
+  have hrel : Relation.EqvGen
+      (fun v w : CylinderStripVertex n m ↦
+        (∃ l : Fin (m + 1),
+          v = ((0 : Fin (n + 2)), l) ∧
+          w = ((0 : Fin (n + 2)), P.pairedStart l)) ∨
+        (∃ l : Fin (m + 1),
+          v = ((0 : Fin (n + 2)), cyclicSucc l) ∧
+          w = ((0 : Fin (n + 2)), P.pairedFinish l)))
+      (cylinderStripBoundaryVertex (n := n) (m := m) j)
+      (cylinderStripBoundaryVertex (n := n) (m := m) k) := by
+    simpa [cylinderStripGluedBoundaryVertex, cylinderStripVertexGluingSetoid] using Quotient.exact h
+  have htag := eqvGen_cylinderStripVertexGluing_preserves_upperBoundaryVertexTag P hrel
+  simpa [cylinderStripUpperBoundaryVertexTag, cylinderStripBoundaryVertex] using htag
+
 @[simp] theorem radialSubdivisionLower_injective {n : ℕ} :
     Function.Injective (@radialSubdivisionLower n) := by
   intro a b h
