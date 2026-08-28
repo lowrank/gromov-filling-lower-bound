@@ -318,6 +318,35 @@ theorem givens_jordan_region_volume_le_complex_jacobian_of_homeomorph_cylinderSt
       P e hboundaryHomeomorph hobstruction)
     G hG hboundary hpartition hzero hGLipschitz
 
+/-- The same planar Jacobian bound already transfers from any boundary
+obtained by a boundary-respecting continuous map from the free upper loop of
+the odd adjacent-preserving glued-strip quotient. -/
+theorem givens_jordan_region_volume_le_complex_jacobian_of_comp_continuous_adjacentPreservingCylinderStripGluedPointBoundary
+    {m : ℕ} (hm : Odd m)
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → ℂ}
+    (f : CylinderStripGluedPointSpace
+      (adjacentPreservingCylinderStripLowerBoundaryPairing hm) → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary =
+      f ∘ cylinderStripGluedPointBoundary
+        (adjacentPreservingCylinderStripLowerBoundaryPairing hm))
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    volume region₁ ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  exact givens_jordan_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous_adjacentPreservingCylinderStripGluedPointBoundary
+      hm f hf hboundaryMap)
+    G hG hboundary hpartition hzero hGLipschitz
+
 /-- The same planar Jacobian bound also transfers from the bundled
 point-quotient homeomorphism-plus-obstruction interface. -/
 theorem givens_jordan_region_volume_le_complex_jacobian_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
@@ -653,6 +682,31 @@ theorem givens_mixedBoundaryArea_le_complex_jacobian_of_homeomorph_cylinderStrip
   rw [← volume_givensBoundaryCurve_jordan_region j hpartition hzero]
   exact givens_jordan_region_volume_le_complex_jacobian_of_homeomorph_cylinderStripGluedPointBoundary
     P j e hboundaryHomeomorph hobstruction G hG hboundary hpartition hzero hGLipschitz
+
+/-- The same planar Lemma 5.4 inequality already transfers from any
+boundary obtained by a boundary-respecting continuous map from the free upper
+loop of the odd adjacent-preserving glued-strip quotient. -/
+theorem givens_mixedBoundaryArea_le_complex_jacobian_of_comp_continuous_adjacentPreservingCylinderStripGluedPointBoundary
+    {m : ℕ} (hm : Odd m)
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → ℂ}
+    (f : CylinderStripGluedPointSpace
+      (adjacentPreservingCylinderStripLowerBoundaryPairing hm) → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary =
+      f ∘ cylinderStripGluedPointBoundary
+        (adjacentPreservingCylinderStripLowerBoundaryPairing hm))
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
+    exists_givensBoundaryCurve_jordanPartition_at_origin j
+  rw [← volume_givensBoundaryCurve_jordan_region j hpartition hzero]
+  exact givens_jordan_region_volume_le_complex_jacobian_of_comp_continuous_adjacentPreservingCylinderStripGluedPointBoundary
+    hm j f hf hboundaryMap G hG hboundary hpartition hzero hGLipschitz
 
 /-- The same planar Lemma 5.4 inequality also transfers from the bundled
 point-quotient homeomorphism-plus-obstruction interface. -/
@@ -1014,6 +1068,34 @@ theorem exists_givens_bounded_region_volume_le_complex_jacobian_of_homeomorph_cy
     j boundary
     (hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
       P e hboundaryHomeomorph hobstruction)
+    G hG hboundary hGLipschitz
+
+/-- The same bounded-region conclusion already transfers from any
+boundary obtained by a boundary-respecting continuous map from the free upper
+loop of the odd adjacent-preserving glued-strip quotient. -/
+theorem exists_givens_bounded_region_volume_le_complex_jacobian_of_comp_continuous_adjacentPreservingCylinderStripGluedPointBoundary
+    {m : ℕ} (hm : Odd m)
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → ℂ}
+    (f : CylinderStripGluedPointSpace
+      (adjacentPreservingCylinderStripLowerBoundaryPairing hm) → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary =
+      f ∘ cylinderStripGluedPointBoundary
+        (adjacentPreservingCylinderStripLowerBoundaryPairing hm))
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  exact exists_givens_bounded_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous_adjacentPreservingCylinderStripGluedPointBoundary
+      hm f hf hboundaryMap)
     G hG hboundary hGLipschitz
 
 /-- The same bounded-region conclusion also transfers from the bundled
