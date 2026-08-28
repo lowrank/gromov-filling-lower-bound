@@ -30,6 +30,17 @@ theorem universal_ennreal_of_chartSystem_homeomorph_cylinderStripGluedPointBound
   S.universal_ennreal_of_homeomorph_cylinderStripGluedPointBoundary
     P e hboundaryMap hobstruction
 
+/-- Exact orientation-free geometric endpoint at the generic source-chart
+system layer from the bundled point-quotient homeomorphism-plus-obstruction
+interface. -/
+theorem universal_ennreal_of_chartSystem_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (D : HomeomorphCylinderStripGluedPointBoundaryObstructionData boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_homeomorphCylinderStripGluedPointBoundaryObstructionData D
+
 /-- The same generic chart-system endpoint also yields the slack-refined
 orientation-free conclusion. -/
 theorem universal_ennreal_add_of_chartSystem_homeomorph_cylinderStripGluedPointBoundary
@@ -44,6 +55,18 @@ theorem universal_ennreal_add_of_chartSystem_homeomorph_cylinderStripGluedPointB
     ENNReal.ofReal universalConstant + defect ≤ area :=
   S.universal_ennreal_add_of_homeomorph_cylinderStripGluedPointBoundary
     P e hboundaryMap hobstruction hbudget
+
+/-- The same generic chart-system endpoint also yields the slack-refined
+orientation-free conclusion from the bundled point-quotient interface. -/
+theorem universal_ennreal_add_of_chartSystem_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (D : HomeomorphCylinderStripGluedPointBoundaryObstructionData boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    D hbudget
 
 /-- Exact orientation-free geometric endpoint at the metric source-chart
 system layer for a boundary identified with the free upper loop of a glued-
@@ -61,6 +84,17 @@ theorem universal_ennreal_of_metric_chartSystem_homeomorph_cylinderStripGluedPoi
   S.universal_ennreal_of_homeomorph_cylinderStripGluedPointBoundary
     P e hboundaryMap hobstruction
 
+/-- Exact orientation-free geometric endpoint at the metric source-chart
+system layer from the bundled point-quotient homeomorphism-plus-obstruction
+interface. -/
+theorem universal_ennreal_of_metric_chartSystem_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (D : HomeomorphCylinderStripGluedPointBoundaryObstructionData boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_homeomorphCylinderStripGluedPointBoundaryObstructionData D
+
 /-- The same metric chart-system endpoint also yields the slack-refined
 orientation-free conclusion. -/
 theorem universal_ennreal_add_of_metric_chartSystem_homeomorph_cylinderStripGluedPointBoundary
@@ -75,6 +109,18 @@ theorem universal_ennreal_add_of_metric_chartSystem_homeomorph_cylinderStripGlue
     ENNReal.ofReal universalConstant + defect ≤ area :=
   S.universal_ennreal_add_of_homeomorph_cylinderStripGluedPointBoundary
     P e hboundaryMap hobstruction hbudget
+
+/-- The same metric chart-system endpoint also yields the slack-refined
+orientation-free conclusion from the bundled point-quotient interface. -/
+theorem universal_ennreal_add_of_metric_chartSystem_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (D : HomeomorphCylinderStripGluedPointBoundaryObstructionData boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    D hbudget
 
 /-- Current exact orientation-free geometric endpoint for the square
 homeomorphism plus glued-strip route at the final certificate layer, stated

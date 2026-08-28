@@ -1380,6 +1380,17 @@ theorem ComplexSourceChartSystem.universal_ennreal_of_homeomorph_cylinderStripGl
     (hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
       P e hboundaryHomeomorph hobstruction)
 
+/-- The bundled point-quotient homeomorphism-plus-obstruction interface also
+supplies the generic source-chart certificate. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary area)
+    (D : HomeomorphCylinderStripGluedPointBoundaryObstructionData boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_homeomorph_cylinderStripGluedPointBoundary
+    D.pairing D.homeomorph D.boundaryHomeomorph D.lowerObstruction
+
 /-- The quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface supplies the odd boundary-degree obstruction needed by a generic
 source-chart system. -/
@@ -1479,6 +1490,21 @@ theorem ComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of
   S.exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
       P e hboundaryHomeomorph hobstruction) N j
+
+/-- The bundled point-quotient homeomorphism-plus-obstruction interface also
+supplies the rowwise bounded-region certificate. -/
+theorem ComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary area)
+    (D : HomeomorphCylinderStripGluedPointBoundaryObstructionData boundary)
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ (S.data N).jacobianMass j :=
+  S.exists_bounded_region_volume_le_jacobianMass_of_homeomorph_cylinderStripGluedPointBoundary
+    D.pairing D.homeomorph D.boundaryHomeomorph D.lowerObstruction N j
 
 /-- The bundled homeomorphism-plus-glued-strip interface supplies the generic
 source-chart certificate through the homeomorphism-transfer route. -/
@@ -1944,6 +1970,18 @@ theorem ComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_cylinderStr
     (hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
       P e hboundaryHomeomorph hobstruction)
     hbudget
+
+/-- The bundled point-quotient homeomorphism-plus-obstruction interface also
+supplies the additive-defect generic source-chart certificate. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary area)
+    (D : HomeomorphCylinderStripGluedPointBoundaryObstructionData boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_homeomorph_cylinderStripGluedPointBoundary
+    D.pairing D.homeomorph D.boundaryHomeomorph D.lowerObstruction hbudget
 
 /-- The additive-defect generic source-chart certificate also transfers from a
  compact source carrying the quotient-friendly directed abstract arbitrarily-
@@ -2998,6 +3036,17 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_of_homeomorph_cylinderS
     (hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
       P e hboundaryHomeomorph hobstruction)
 
+/-- The bundled point-quotient homeomorphism-plus-obstruction interface also
+supplies the metric source-chart certificate. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    {Y : Type*} [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary area)
+    (D : HomeomorphCylinderStripGluedPointBoundaryObstructionData boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_homeomorph_cylinderStripGluedPointBoundary
+    D.pairing D.homeomorph D.boundaryHomeomorph D.lowerObstruction
+
 /-- The quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface supplies the odd boundary-degree obstruction needed by a metric
 source-chart system. -/
@@ -3097,6 +3146,21 @@ theorem MetricComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianM
   S.exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
       P e hboundaryHomeomorph hobstruction) N j
+
+/-- The bundled point-quotient homeomorphism-plus-obstruction interface also
+supplies the metric rowwise bounded-region certificate. -/
+theorem MetricComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    {Y : Type*} [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary area)
+    (D : HomeomorphCylinderStripGluedPointBoundaryObstructionData boundary)
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ (S.data N).jacobianMass j :=
+  S.exists_bounded_region_volume_le_jacobianMass_of_homeomorph_cylinderStripGluedPointBoundary
+    D.pairing D.homeomorph D.boundaryHomeomorph D.lowerObstruction N j
 
 /-- The bundled homeomorphism-plus-glued-strip interface supplies the metric
 source-chart certificate through the homeomorphism-transfer route. -/
@@ -3559,6 +3623,18 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_cylin
     (hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
       P e hboundaryHomeomorph hobstruction)
     hbudget
+
+/-- The bundled point-quotient homeomorphism-plus-obstruction interface also
+supplies the additive-defect metric source-chart certificate. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    {Y : Type*} [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary area)
+    (D : HomeomorphCylinderStripGluedPointBoundaryObstructionData boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_homeomorph_cylinderStripGluedPointBoundary
+    D.pairing D.homeomorph D.boundaryHomeomorph D.lowerObstruction hbudget
 
 /-- The additive-defect metric source-chart certificate also transfers from a
  compact source carrying the quotient-friendly directed abstract arbitrarily-

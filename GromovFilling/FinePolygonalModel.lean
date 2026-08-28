@@ -3528,6 +3528,30 @@ theorem hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBou
   apply Quotient.sound
   exact Relation.EqvGen.rel _ _ ⟨j, x, rfl, rfl, rfl, by simpa [hj]⟩
 
+/-- Bundled topological input consisting of a boundary-respecting homeomorphism
+from a glued-strip point quotient whose glued lower loop already carries the
+odd-degree obstruction.  This is a stable target for future compact-surface
+one-boundary constructions phrased directly at the point-quotient level. -/
+structure HomeomorphCylinderStripGluedPointBoundaryObstructionData
+    {X : Type*} [TopologicalSpace X]
+    (boundary : UnitAddCircle → X) where
+  m : ℕ
+  pairing : CylinderStripLowerBoundaryPairing m
+  homeomorph : CylinderStripGluedPointSpace pairing ≃ₜ X
+  boundaryHomeomorph : boundary = homeomorph ∘ cylinderStripGluedPointBoundary pairing
+  lowerObstruction : HasOddBoundaryDegreeObstruction
+    (cylinderStripGluedPointLowerBoundary pairing)
+
+/-- The bundled point-quotient homeomorphism-plus-lower-obstruction interface
+already supplies the odd boundary-degree obstruction on the target boundary. -/
+theorem hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (D : HomeomorphCylinderStripGluedPointBoundaryObstructionData boundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
+    D.pairing D.homeomorph D.boundaryHomeomorph D.lowerObstruction
+
 /-- A cylinder map descends through the glued-strip quotient exactly when it
 identifies every paired lower-boundary arc according to the chosen pairing. -/
 def CylinderStripPointMapRespectsGluing {m : ℕ}

@@ -1849,6 +1849,25 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_homeomorph_cylinderStr
       P e hboundaryHomeomorph hobstruction)
     G hG hboundary hpartition hzero
 
+/-- Coverage also transfers from the bundled point-quotient homeomorphism-plus-
+obstruction interface. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    {Y : Type*} [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (D : HomeomorphCylinderStripGluedPointBoundaryObstructionData boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_homeomorph_cylinderStripGluedPointBoundary
+    D.pairing j D.homeomorph D.boundaryHomeomorph D.lowerObstruction
+    G hG hboundary hpartition hzero
+
 /-- Coverage also transfers from any compact source carrying the bundled
 homeomorphism-plus-glued-strip interface once a boundary-respecting
 homeomorphism identifies that source with the target domain. -/
@@ -2147,6 +2166,24 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorph_cyl
     j boundary
     (hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
       P e hboundaryHomeomorph hobstruction)
+    G hG hboundary
+
+/-- Separation-free coverage also transfers from the bundled point-quotient
+homeomorphism-plus-obstruction interface. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    {Y : Type*} [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (D : HomeomorphCylinderStripGluedPointBoundaryObstructionData boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorph_cylinderStripGluedPointBoundary
+    D.pairing j D.homeomorph D.boundaryHomeomorph D.lowerObstruction
     G hG hboundary
 
 /-- Separation-free coverage also transfers from a compact source carrying
