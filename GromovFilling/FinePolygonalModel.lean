@@ -3767,6 +3767,12 @@ def cylinderStripGluedBoundaryVertex (n : ℕ) {m : ℕ}
   Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
     (cylinderStripBoundaryVertex (n := n) (m := m) j)
 
+theorem fin_last_succ_ne_zero {n : ℕ} :
+    (Fin.last (n + 1) : Fin (n + 2)) ≠ 0 := by
+  intro h0
+  have hval := congrArg Fin.val h0
+  simp at hval
+
 def cylinderStripGluedBoundaryEdge (n : ℕ) {m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
     CylinderStripGluedEdge n P :=
@@ -3804,6 +3810,103 @@ def cylinderStripGluedBoundaryEdge (n : ℕ) {m : ℕ}
       (Fin.last (n + 1)) b hlast0).1 <| by
         simpa [cylinderStripGluedBoundaryEdge, cylinderStripBoundaryEdge] using h
   simpa [cylinderStripBoundaryEdge] using hEq
+
+def cylinderStripGluedBoundaryEdges (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    Finset (CylinderStripGluedEdge n P) :=
+  Finset.univ.image (cylinderStripGluedBoundaryEdge n P)
+
+theorem cylinderStripGluedBoundaryEdges_eq (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    cylinderStripGluedBoundaryEdges n P =
+      Finset.univ.image (cylinderStripGluedBoundaryEdge n P) := rfl
+
+theorem mk_cylinderStripGluedEdge_mem_faceEdges_iff {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    (f : CylinderStripFace n m) (e : CylinderStripEdge n m) :
+    Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e ∈
+        cylinderStripGluedFaceEdges n P f ↔
+      ∃ e' ∈ cylinderStripFaceEdges f,
+        Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e' =
+          Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e := by
+  constructor
+  · intro h
+    rw [cylinderStripGluedFaceEdges_eq] at h
+    rcases Finset.mem_image.mp h with ⟨k, _hk, hk⟩
+    refine ⟨cylinderStripFaceEdge f k, ?_, ?_⟩
+    · rw [cylinderStripFaceEdges_eq]
+      exact Finset.mem_image.mpr ⟨k, Finset.mem_univ _, rfl⟩
+    · simpa [cylinderStripGluedFaceEdge] using hk
+  · rintro ⟨e', he', heq⟩
+    rw [cylinderStripFaceEdges_eq] at he'
+    rcases Finset.mem_image.mp he' with ⟨k, _hk, hk⟩
+    subst e'
+    rw [cylinderStripGluedFaceEdges_eq]
+    exact Finset.mem_image.mpr ⟨k, Finset.mem_univ _, by
+      simpa [cylinderStripGluedFaceEdge] using heq⟩
+
+@[simp] theorem mem_cylinderStripGluedBoundaryEdges_mk_radial_iff {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+        (CylinderStripEdge.radial i j) ∈
+      cylinderStripGluedBoundaryEdges n P ↔ False := by
+  constructor
+  · intro h
+    rw [cylinderStripGluedBoundaryEdges_eq] at h
+    rcases Finset.mem_image.mp h with ⟨k, _hk, hk⟩
+    have hEq : cylinderStripBoundaryEdge (n := n) (m := m) k =
+        CylinderStripEdge.radial i j := by
+      exact (mk_cylinderStripGluedEdge_eq_radial_iff P
+        (cylinderStripBoundaryEdge (n := n) (m := m) k) i j).1 <| by
+          simpa [cylinderStripGluedBoundaryEdge] using hk
+    simpa [cylinderStripBoundaryEdge] using hEq
+  · intro h
+    exact False.elim h
+
+@[simp] theorem mem_cylinderStripGluedBoundaryEdges_mk_lower_iff {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+        (CylinderStripEdge.angular (0 : Fin (n + 2)) j) ∈
+      cylinderStripGluedBoundaryEdges n P ↔ False := by
+  constructor
+  · intro h
+    rw [cylinderStripGluedBoundaryEdges_eq] at h
+    rcases Finset.mem_image.mp h with ⟨k, _hk, hk⟩
+    have htag := congrArg (cylinderStripGluedLowerBoundaryEdgeTag n P) hk
+    rw [cylinderStripGluedBoundaryEdge, cylinderStripBoundaryEdge,
+      cylinderStripGluedLowerBoundaryEdgeTag_mk_angular_ne_zero P
+        (Fin.last (n + 1)) k fin_last_succ_ne_zero,
+      cylinderStripGluedLowerBoundaryEdgeTag_mk_lower] at htag
+    cases htag
+  · intro h
+    exact False.elim h
+
+@[simp] theorem mem_cylinderStripGluedBoundaryEdges_mk_angular_ne_zero_iff {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (i : Fin (n + 2)) (j : Fin (m + 1))
+    (hi0 : i ≠ 0) :
+    Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+        (CylinderStripEdge.angular i j) ∈
+      cylinderStripGluedBoundaryEdges n P ↔ i = Fin.last (n + 1) := by
+  constructor
+  · intro h
+    rw [cylinderStripGluedBoundaryEdges_eq] at h
+    rcases Finset.mem_image.mp h with ⟨k, _hk, hk⟩
+    have hEq : cylinderStripBoundaryEdge (n := n) (m := m) k =
+        CylinderStripEdge.angular i j := by
+      exact (mk_cylinderStripGluedEdge_eq_angular_of_ne_zero_iff P
+        (cylinderStripBoundaryEdge (n := n) (m := m) k) i j hi0).1 <| by
+          simpa [cylinderStripGluedBoundaryEdge] using hk
+    have hi : i = Fin.last (n + 1) := by
+      simpa [cylinderStripBoundaryEdge] using
+        congrArg (fun e => match e with
+          | .radial _ _ => (0 : Fin (n + 2))
+          | .angular i _ => i) hEq.symm
+    exact hi
+  · intro hi
+    subst i
+    rw [cylinderStripGluedBoundaryEdges_eq]
+    exact Finset.mem_image.mpr ⟨j, Finset.mem_univ _, by
+      simp [cylinderStripGluedBoundaryEdge, cylinderStripBoundaryEdge]⟩
 
 @[simp] theorem cylinderStripGluedBoundaryEdge_ends {n m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
@@ -4543,6 +4646,63 @@ theorem cylinderStripGluedAngular_faceCount_of_ne_zero {n m : ℕ}
   · rw [if_neg hiLast]
     exact cylinderStripAngular_faceCount_of_ne_zero_ne_last i j hi0 hiLast
 
+
+theorem cylinderStripGluedEdge_faceCount_of_pos_rep {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (hm : 0 < m)
+    (e : CylinderStripEdge n m) :
+    (Finset.univ.filter fun f : CylinderStripFace n m ↦
+      Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e ∈
+        cylinderStripGluedFaceEdges n P f).card =
+      if Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e ∈
+          cylinderStripGluedBoundaryEdges n P then 1 else 2 := by
+  classical
+  have hfilter :
+      (Finset.univ.filter fun f : CylinderStripFace n m ↦
+        Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e ∈
+          cylinderStripGluedFaceEdges n P f) =
+      (Finset.univ.filter fun f : CylinderStripFace n m ↦
+        ∃ e' ∈ cylinderStripFaceEdges f,
+          Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e' =
+            Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e) := by
+    ext f
+    simp [mk_cylinderStripGluedEdge_mem_faceEdges_iff]
+  rw [hfilter]
+  cases e with
+  | radial i j =>
+      rw [cylinderStripGluedRadial_faceCount_of_pos P hm i j, if_neg]
+      simpa using (mem_cylinderStripGluedBoundaryEdges_mk_radial_iff P i j)
+  | angular i j =>
+      by_cases hi0 : i = 0
+      · subst hi0
+        have hb : Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+              (CylinderStripEdge.angular (0 : Fin (n + 2)) j) ∉
+              cylinderStripGluedBoundaryEdges n P := by
+          intro hmem
+          exact (mem_cylinderStripGluedBoundaryEdges_mk_lower_iff P j).1 hmem
+        rw [cylinderStripGluedLowerEdge_faceCount P j, if_neg hb]
+      · rw [cylinderStripGluedAngular_faceCount_of_ne_zero P i j hi0]
+        by_cases hiLast : i = Fin.last (n + 1)
+        · have hb : Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+              (CylinderStripEdge.angular i j) ∈ cylinderStripGluedBoundaryEdges n P :=
+            (mem_cylinderStripGluedBoundaryEdges_mk_angular_ne_zero_iff P i j hi0).2 hiLast
+          rw [if_pos hiLast, if_pos hb]
+        · have hb : Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+              (CylinderStripEdge.angular i j) ∉ cylinderStripGluedBoundaryEdges n P := by
+            intro hmem
+            exact hiLast ((mem_cylinderStripGluedBoundaryEdges_mk_angular_ne_zero_iff P i j hi0).1 hmem)
+          rw [if_neg hiLast, if_neg hb]
+
+theorem cylinderStripGluedEdge_faceCount_of_pos {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (hm : 0 < m)
+    (e : CylinderStripGluedEdge n P) :
+    (Finset.univ.filter fun f : CylinderStripFace n m ↦
+      e ∈ cylinderStripGluedFaceEdges n P f).card =
+      if e ∈ cylinderStripGluedBoundaryEdges n P then 1 else 2 := by
+  classical
+  let e' : CylinderStripEdge n m := e.out
+  have hout : Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e' = e :=
+    Quotient.out_eq e
+  simpa [e', hout] using cylinderStripGluedEdge_faceCount_of_pos_rep P hm e'
 
 /-- Bundle explicit checkerboard-cylinder strip data into the directed abstract
 variable-face-size geometric polygonal-model interface on the square-cylinder
