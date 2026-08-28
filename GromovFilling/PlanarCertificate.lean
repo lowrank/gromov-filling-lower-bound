@@ -6381,6 +6381,48 @@ theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_m
     hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
     hboundary harea
 
+/-- Finite slack-refined planar certificate when the boundary is identified
+with the standard closed-square boundary by a homeomorphism and the odd
+boundary-degree obstruction is supplied through the bundled explicit
+glued-strip square route. -/
+theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area := by
+  let _ : CompactSpace ℂ := Homeomorph.compactSpace e
+  exact
+    finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_odd_boundary_degree_obstruction
+      N area boundary
+      (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_cylinderStripGlued
+        e hboundaryHomeomorph)
+      hboundary harea
+
+/-- Infinite slack-refined planar certificate when the boundary is identified
+with the standard closed-square boundary by a homeomorphism and the odd
+boundary-degree obstruction is supplied through the bundled explicit
+glued-strip square route. -/
+theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_maps_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area := by
+  let _ : CompactSpace ℂ := Homeomorph.compactSpace e
+  exact
+    universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_maps_of_odd_boundary_degree_obstruction
+      area boundary
+      (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_cylinderStripGlued
+        e hboundaryHomeomorph)
+      hboundary harea
+
 /-- The complete finite planar certificate for the actual metric Fourier
 family when the boundary extends continuously across the standard closed
 square. -/
