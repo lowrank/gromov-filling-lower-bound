@@ -5769,6 +5769,225 @@ theorem continuous_cylinderStripGluedEdgePathOnClosedUnitSquare (n : ℕ) {m : �
     cylinderStripGluedEdgePathOnClosedUnitSquare,
     cylinderStripEdgePathOnClosedUnitSquare_boundary]
 
+@[simp] theorem cylinderStripGluedVertexPointOnClosedUnitSquare_chosenStart_lower {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    cylinderStripGluedVertexPointOnClosedUnitSquare n P
+      (cylinderStripGluedEdgeChosenEnds n P
+        (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+          (cylinderStripLowerBoundaryEdge (n := n) (m := m) j))).1 =
+      closedUnitSquareCenter := by
+  let q : CylinderStripGluedEdge n P :=
+    Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+      (cylinderStripLowerBoundaryEdge (n := n) (m := m) j)
+  let rawPair :=
+    cylinderStripGluedEdgeEndpointClasses P
+      (cylinderStripLowerBoundaryEdge (n := n) (m := m) j)
+  have hraw1 :
+      cylinderStripGluedVertexPointOnClosedUnitSquare n P rawPair.1 = closedUnitSquareCenter := by
+    change cylinderStripGluedVertexPointOnClosedUnitSquare n P
+      (Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        (cylinderStripLowerBoundaryVertex (n := n) (m := m) j)) =
+      closedUnitSquareCenter
+    exact cylinderStripGluedVertexPointOnClosedUnitSquare_mk_lower (n := n) (m := m) P j
+  have hraw2 :
+      cylinderStripGluedVertexPointOnClosedUnitSquare n P rawPair.2 = closedUnitSquareCenter := by
+    change cylinderStripGluedVertexPointOnClosedUnitSquare n P
+      (Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        (cylinderStripLowerBoundaryVertex (n := n) (m := m) (cyclicSucc j))) =
+      closedUnitSquareCenter
+    exact cylinderStripGluedVertexPointOnClosedUnitSquare_mk_lower (n := n) (m := m) P (cyclicSucc j)
+  have hpair0 :=
+    cylinderStripGluedEdgeEndpointClasses_eq_chosen_or_swapped
+      (n := n) (P := P)
+      (cylinderStripLowerBoundaryEdge (n := n) (m := m) j)
+  by_cases hagree :
+      cylinderStripGluedEdgeAgreesWithChosenEnds n P
+        (cylinderStripLowerBoundaryEdge (n := n) (m := m) j) = true
+  · have hpair : rawPair = cylinderStripGluedEdgeChosenEnds n P q := by
+      rw [if_pos hagree] at hpair0
+      change rawPair = cylinderStripGluedEdgeChosenEnds n P q
+      exact hpair0
+    rw [← hpair]
+    exact hraw1
+  · have hpair : rawPair = Prod.swap (cylinderStripGluedEdgeChosenEnds n P q) := by
+      rw [if_neg hagree] at hpair0
+      change rawPair = Prod.swap (cylinderStripGluedEdgeChosenEnds n P q)
+      exact hpair0
+    have hsnd : rawPair.2 = (cylinderStripGluedEdgeChosenEnds n P q).1 := by
+      change rawPair.2 = (Prod.swap (cylinderStripGluedEdgeChosenEnds n P q)).2
+      exact congrArg Prod.snd hpair
+    exact hsnd ▸ hraw2
+
+@[simp] theorem cylinderStripGluedVertexPointOnClosedUnitSquare_chosenFinish_lower {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    cylinderStripGluedVertexPointOnClosedUnitSquare n P
+      (cylinderStripGluedEdgeChosenEnds n P
+        (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+          (cylinderStripLowerBoundaryEdge (n := n) (m := m) j))).2 =
+      closedUnitSquareCenter := by
+  let q : CylinderStripGluedEdge n P :=
+    Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+      (cylinderStripLowerBoundaryEdge (n := n) (m := m) j)
+  let rawPair :=
+    cylinderStripGluedEdgeEndpointClasses P
+      (cylinderStripLowerBoundaryEdge (n := n) (m := m) j)
+  have hraw1 :
+      cylinderStripGluedVertexPointOnClosedUnitSquare n P rawPair.1 = closedUnitSquareCenter := by
+    change cylinderStripGluedVertexPointOnClosedUnitSquare n P
+      (Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        (cylinderStripLowerBoundaryVertex (n := n) (m := m) j)) =
+      closedUnitSquareCenter
+    exact cylinderStripGluedVertexPointOnClosedUnitSquare_mk_lower (n := n) (m := m) P j
+  have hraw2 :
+      cylinderStripGluedVertexPointOnClosedUnitSquare n P rawPair.2 = closedUnitSquareCenter := by
+    change cylinderStripGluedVertexPointOnClosedUnitSquare n P
+      (Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        (cylinderStripLowerBoundaryVertex (n := n) (m := m) (cyclicSucc j))) =
+      closedUnitSquareCenter
+    exact cylinderStripGluedVertexPointOnClosedUnitSquare_mk_lower (n := n) (m := m) P (cyclicSucc j)
+  have hpair0 :=
+    cylinderStripGluedEdgeEndpointClasses_eq_chosen_or_swapped
+      (n := n) (P := P)
+      (cylinderStripLowerBoundaryEdge (n := n) (m := m) j)
+  by_cases hagree :
+      cylinderStripGluedEdgeAgreesWithChosenEnds n P
+        (cylinderStripLowerBoundaryEdge (n := n) (m := m) j) = true
+  · have hpair : rawPair = cylinderStripGluedEdgeChosenEnds n P q := by
+      rw [if_pos hagree] at hpair0
+      change rawPair = cylinderStripGluedEdgeChosenEnds n P q
+      exact hpair0
+    rw [← hpair]
+    exact hraw2
+  · have hpair : rawPair = Prod.swap (cylinderStripGluedEdgeChosenEnds n P q) := by
+      rw [if_neg hagree] at hpair0
+      change rawPair = Prod.swap (cylinderStripGluedEdgeChosenEnds n P q)
+      exact hpair0
+    have hfst : rawPair.1 = (cylinderStripGluedEdgeChosenEnds n P q).2 := by
+      change rawPair.1 = (Prod.swap (cylinderStripGluedEdgeChosenEnds n P q)).1
+      exact congrArg Prod.fst hpair
+    exact hfst ▸ hraw1
+
+/-- Bundle square-valued strip mesh estimates into the glued-strip mesh-data
+interface by descending the square-radial strip geometry through the lower-edge
+quotient. -/
+def cylinderStripGluedMeshDataOnClosedUnitSquare_of_mesh
+    {ε : ℝ} {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (hm : 0 < m)
+    (faceCenter : CylinderStripFace n m → ClosedUnitSquare)
+    (hmesh : ∀ (f : CylinderStripFace n m) (e : CylinderStripEdge n m),
+      e ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+        dist (faceCenter f) (cylinderStripEdgePathOnClosedUnitSquare n m e x) < ε) :
+    CylinderStripGluedMeshData closedUnitSquareBoundary ε where
+  n := n
+  m := m
+  pairing := P
+  hm := hm
+  vertexPoint := cylinderStripGluedVertexPointOnClosedUnitSquare n P
+  edgeToX := cylinderStripGluedEdgePathOnClosedUnitSquare n P
+  hedgeToX := continuous_cylinderStripGluedEdgePathOnClosedUnitSquare n P
+  hedgeStart := by
+    intro e
+    refine Quotient.inductionOn e ?_
+    intro e
+    cases e with
+    | radial i j =>
+        simpa [cylinderStripGluedEdgePathOnClosedUnitSquare,
+          cylinderStripGluedVertexPointOnClosedUnitSquare,
+          cylinderStripGluedEdgeChosenEnds_mk_radial,
+          cylinderStripGluedEdgeEndpointClasses] using
+          (cylinderStripEdgePathOnClosedUnitSquare_start (n := n) (m := m)
+            (CylinderStripEdge.radial i j))
+    | angular i j =>
+        by_cases hi0 : i = 0
+        · subst hi0
+          have hconst :
+              cylinderStripGluedEdgePathOnClosedUnitSquare n P
+                (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+                  (CylinderStripEdge.angular (0 : Fin (n + 2)) j)) closedUnitIntervalStart =
+                closedUnitSquareCenter := by
+            exact congrArg (fun f => f closedUnitIntervalStart)
+              (cylinderStripGluedEdgePathOnClosedUnitSquare_mk_lower (n := n) (m := m) P j)
+          exact hconst.trans
+            (cylinderStripGluedVertexPointOnClosedUnitSquare_chosenStart_lower (n := n) P j).symm
+        · simpa [cylinderStripGluedEdgePathOnClosedUnitSquare,
+            cylinderStripGluedVertexPointOnClosedUnitSquare,
+            cylinderStripGluedEdgeChosenEnds_mk_angular_ne_zero P i j hi0,
+            cylinderStripGluedEdgeEndpointClasses] using
+            (cylinderStripEdgePathOnClosedUnitSquare_start (n := n) (m := m)
+              (CylinderStripEdge.angular i j))
+  hedgeFinish := by
+    intro e
+    refine Quotient.inductionOn e ?_
+    intro e
+    cases e with
+    | radial i j =>
+        simpa [cylinderStripGluedEdgePathOnClosedUnitSquare,
+          cylinderStripGluedVertexPointOnClosedUnitSquare,
+          cylinderStripGluedEdgeChosenEnds_mk_radial,
+          cylinderStripGluedEdgeEndpointClasses] using
+          (cylinderStripEdgePathOnClosedUnitSquare_finish (n := n) (m := m)
+            (CylinderStripEdge.radial i j))
+    | angular i j =>
+        by_cases hi0 : i = 0
+        · subst hi0
+          have hconst :
+              cylinderStripGluedEdgePathOnClosedUnitSquare n P
+                (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+                  (CylinderStripEdge.angular (0 : Fin (n + 2)) j)) closedUnitIntervalFinish =
+                closedUnitSquareCenter := by
+            exact congrArg (fun f => f closedUnitIntervalFinish)
+              (cylinderStripGluedEdgePathOnClosedUnitSquare_mk_lower (n := n) (m := m) P j)
+          exact hconst.trans
+            (cylinderStripGluedVertexPointOnClosedUnitSquare_chosenFinish_lower (n := n) P j).symm
+        · simpa [cylinderStripGluedEdgePathOnClosedUnitSquare,
+            cylinderStripGluedVertexPointOnClosedUnitSquare,
+            cylinderStripGluedEdgeChosenEnds_mk_angular_ne_zero P i j hi0,
+            cylinderStripGluedEdgeEndpointClasses] using
+            (cylinderStripEdgePathOnClosedUnitSquare_finish (n := n) (m := m)
+              (CylinderStripEdge.angular i j))
+  faceCenter := faceCenter
+  mesh := by
+    intro f e he x
+    have heOut :
+        Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e.out ∈
+          cylinderStripGluedFaceEdges n P f := by
+      simpa using he
+    rcases (mk_cylinderStripGluedEdge_mem_faceEdges_iff P f e.out).1 heOut with
+      ⟨e', he', heq⟩
+    have heq' : Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e' = e := by
+      calc
+        Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e' =
+            Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e.out := heq
+        _ = e := Quotient.out_eq e
+    have hpath :
+        cylinderStripGluedEdgePathOnClosedUnitSquare n P e x =
+          cylinderStripEdgePathOnClosedUnitSquare n m e' x := by
+      simpa [cylinderStripGluedEdgePathOnClosedUnitSquare] using
+        (congrArg (fun q ↦ cylinderStripGluedEdgePathOnClosedUnitSquare n P q x) heq'.symm)
+    rw [hpath]
+    exact hmesh f e' he' x
+  boundaryPath := by
+    intro k x
+    simpa [angularSubdivisionArc] using
+      congrArg (fun f ↦ f x)
+        (cylinderStripGluedEdgePathOnClosedUnitSquare_boundary (n := n) P k)
+
+/-- Repackage explicit square-valued strip mesh estimates as the bundled
+`HasCylinderStripGluedArbitrarilyFineData` interface on the standard square
+boundary. -/
+theorem hasCylinderStripGluedArbitrarilyFineData_of_closedUnitSquare_cylinderStrip_data
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitSquare,
+      ∀ (f : CylinderStripFace n m) (e : CylinderStripEdge n m),
+        e ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f) (cylinderStripEdgePathOnClosedUnitSquare n m e x) < ε) :
+    HasCylinderStripGluedArbitrarilyFineData closedUnitSquareBoundary := by
+  intro ε hε
+  obtain ⟨n, m, P, hm, faceCenter, hmesh⟩ := hmodels ε hε
+  exact ⟨cylinderStripGluedMeshDataOnClosedUnitSquare_of_mesh P hm faceCenter hmesh⟩
+
 /-- Bundle explicit checkerboard-cylinder strip data into the directed abstract
 variable-face-size geometric polygonal-model interface on the square-cylinder
 boundary. -/
