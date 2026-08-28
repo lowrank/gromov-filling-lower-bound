@@ -151,6 +151,98 @@ theorem exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruc
       boundary hobstruction G hG curve hcurve hboundary y₀ havoid₀ degree
       hdegree hodd hpartition hy₀
 
+/-- The same Jordan-region coverage conclusion follows directly from bundled
+fine polygonal models once the odd-degree point is fixed. -/
+theorem jordan_region_subset_range_of_fine_models
+    {X : Type*} [TopologicalSpace X]
+    (boundary : UnitAddCircle → X)
+    (hfine : HasFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary
+    (hasOddBoundaryDegreeObstruction_of_finePolygonalModels hfine)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free Jordan coverage also follows directly from bundled fine
+polygonal models. -/
+theorem exists_bounded_jordan_region_subset_range_of_fine_models
+    {X : Type*} [TopologicalSpace X]
+    (boundary : UnitAddCircle → X)
+    (hfine : HasFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary (hasOddBoundaryDegreeObstruction_of_finePolygonalModels hfine)
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- On a compact metric domain, arbitrary geometric mesh refinement supplies
+the same generic Jordan coverage conclusion by uniform continuity. -/
+theorem jordan_region_subset_range_of_arbitrarily_fine_models
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (boundary : UnitAddCircle → X)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_fine_models boundary
+    (hasFinePolygonalModels_of_arbitrarilyFine hmodels)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free Jordan coverage also follows directly from arbitrarily fine
+geometric polygonal models. -/
+theorem exists_bounded_jordan_region_subset_range_of_arbitrarily_fine_models
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (boundary : UnitAddCircle → X)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_fine_models boundary
+    (hasFinePolygonalModels_of_arbitrarilyFine hmodels)
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
 /-- For a mixed Givens boundary curve, every point in the origin
 component of the complement lies in the image of any continuous extension
 on a domain with the odd boundary-degree obstruction. -/
@@ -295,10 +387,13 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_fine_models
     (hpartition : IsJordanPartition
       (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
     (hzero : 0 ∈ region₁) :
-    region₁ ⊆ Set.range G := by
-  rw [givensBoundaryCurve_jordan_region_at_origin j hpartition hzero]
-  exact givensBoundaryCurve_origin_component_subset_range_of_fine_models
-    j boundary hfine G hG hboundary
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_fine_models boundary hfine G hG
+    (givensBoundaryCurveAddCircle j)
+    (continuous_givensBoundaryCurveAddCircle j) hboundary 0
+    (givensBoundaryCurveAddCircle_ne_zero j) 1
+    (by simpa [givensBoundaryCurveAddCircle] using givensBoundaryCurve_degree_one j)
+    odd_one hpartition hzero
 
 /-- The Jordan region needed in the coverage conclusion exists: no
 separation hypothesis is required from callers. -/
@@ -313,16 +408,14 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_fine_models
     ∃ region : Set ℂ,
       IsOpen region ∧ IsConnected region ∧
       Bornology.IsBounded region ∧ 0 ∈ region ∧
-      region ⊆ Set.range G := by
-  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
-    exists_givensBoundaryCurve_jordanPartition_at_origin j
-  exact ⟨region₁, hpartition.region₁_open,
-    hpartition.region₁_connected,
-    givensBoundaryCurve_jordan_region_at_origin_bounded
-      j hpartition hzero,
-    hzero,
-    givensBoundaryCurve_jordan_region_subset_range_of_fine_models
-      j boundary hfine G hG hboundary hpartition hzero⟩
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_fine_models boundary hfine
+    G hG (givensBoundaryCurveAddCircle j)
+    (continuous_givensBoundaryCurveAddCircle j)
+    (givensBoundaryCurve_range_homeomorph_circle j) hboundary 0
+    (givensBoundaryCurveAddCircle_ne_zero j) 1
+    (by simpa [givensBoundaryCurveAddCircle] using givensBoundaryCurve_degree_one j)
+    odd_one
 
 /-- Surface-form coverage from the map-independent geometric input.  On a
 compact metric domain, arbitrary geometric mesh refinement supplies the
@@ -340,9 +433,12 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_arbitrarily_fine_model
       (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
     (hzero : 0 ∈ region₁) :
     region₁ ⊆ Set.range G :=
-  givensBoundaryCurve_jordan_region_subset_range_of_fine_models
-    j boundary (hasFinePolygonalModels_of_arbitrarilyFine hmodels)
-    G hG hboundary hpartition hzero
+  jordan_region_subset_range_of_arbitrarily_fine_models boundary hmodels
+    G hG (givensBoundaryCurveAddCircle j)
+    (continuous_givensBoundaryCurveAddCircle j) hboundary 0
+    (givensBoundaryCurveAddCircle_ne_zero j) 1
+    (by simpa [givensBoundaryCurveAddCircle] using givensBoundaryCurve_degree_one j)
+    odd_one hpartition hzero
 
 /-- The same coverage conclusion follows directly from the variable-face-size
  directed interface: its mod-two obstruction is already formalized, so no
