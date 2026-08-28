@@ -2272,6 +2272,34 @@ theorem finite_universal_ennreal_of_complex_planar_maps_of_odd_boundary_degree_o
   · exact hbudget
 
 /-- The finite orientation-free Fourier certificate for complex-plane
+domains whose boundary is the image of a compact source carrying the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface under a boundary-respecting continuous map into the plane. -/
+theorem finite_universal_ennreal_of_complex_planar_maps_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (N : ℕ) (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (f : X → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : Fin N → ℂ → ℂ)
+    (hG : ∀ j, Continuous (G j))
+    (hboundary : ∀ j t,
+      G j (boundary' t) = givensBoundaryCurveAddCircle j t)
+    (K : Fin N → ℝ≥0)
+    (hGLipschitz : ∀ j, LipschitzWith (K j) (G j))
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  exact finite_universal_ennreal_of_complex_planar_maps_of_odd_boundary_degree_obstruction
+    N area boundary'
+    (hasOddBoundaryDegreeObstruction_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+      f hf hboundaryMap hmodels)
+    G hG hboundary K hGLipschitz hbudget
+
+/-- The finite orientation-free Fourier certificate for complex-plane
 domains whose boundary is identified with a compact source carrying the
 quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface.  This is the certificate-level handoff for future arbitrary
@@ -2524,6 +2552,33 @@ theorem universal_ennreal_of_complex_planar_maps_of_odd_boundary_degree_obstruct
   rcases hfinite N with ⟨G, hG, hboundary, K, hGLipschitz, hbudget⟩
   exact finite_universal_ennreal_of_complex_planar_maps_of_odd_boundary_degree_obstruction
     N area boundary hobstruction G hG hboundary K hGLipschitz hbudget
+
+/-- Infinite orientation-free Fourier certificate for complex-plane domains
+whose boundary is the image of a compact source carrying the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface under a boundary-respecting continuous map into the plane. -/
+theorem universal_ennreal_of_complex_planar_maps_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (f : X → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hfinite : ∀ N : ℕ,
+      ∃ G : Fin N → ℂ → ℂ,
+        (∀ j, Continuous (G j)) ∧
+        (∀ j t, G j (boundary' t) = givensBoundaryCurveAddCircle j t) ∧
+        ∃ K : Fin N → ℝ≥0,
+          (∀ j, LipschitzWith (K j) (G j)) ∧
+          (∑ j : Fin N,
+            ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  rcases hfinite N with ⟨G, hG, hboundary, K, hGLipschitz, hbudget⟩
+  exact finite_universal_ennreal_of_complex_planar_maps_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    N area f hf hboundaryMap hmodels G hG hboundary K hGLipschitz hbudget
 
 /-- Infinite orientation-free Fourier certificate for complex-plane domains
 whose boundary is identified with a compact source carrying the
@@ -2790,6 +2845,57 @@ theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_
     (continuous_givensMetricFourierMap hboundary N j)
     (givensMetricFourierMap_on_boundary hboundary j)
     (givensMetricFourierMap_lipschitzWith hboundary N j)
+
+/-- Planar Lemma 5.4 for the genuine metric distance-profile map when the
+boundary is the image of a compact source carrying the quotient-friendly
+directed abstract arbitrarily-fine polygonal-model interface under a
+boundary-respecting continuous map into the plane. -/
+theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (f : X → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hboundary' : IsometricCircleBoundary boundary') :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary' N j) x).det| ∂volume := by
+  exact
+    givens_mixedBoundaryArea_le_complex_jacobian_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+      j f hf hboundaryMap hmodels
+      (givensMetricFourierMap boundary' N j)
+      (continuous_givensMetricFourierMap hboundary' N j)
+      (givensMetricFourierMap_on_boundary hboundary' j)
+      (givensMetricFourierMap_lipschitzWith hboundary' N j)
+
+/-- Bounded-region form of planar Lemma 5.4 for the genuine metric Fourier
+map when the boundary is the image of a compact source carrying the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface under a boundary-respecting continuous map into the plane. -/
+theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (f : X → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hboundary' : IsometricCircleBoundary boundary') :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary' N j) x).det| ∂volume := by
+  exact
+    exists_givens_bounded_region_volume_le_complex_jacobian_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+      j f hf hboundaryMap hmodels
+      (givensMetricFourierMap boundary' N j)
+      (continuous_givensMetricFourierMap hboundary' N j)
+      (givensMetricFourierMap_on_boundary hboundary' j)
+      (givensMetricFourierMap_lipschitzWith hboundary' N j)
 
 /-- Planar Lemma 5.4 for the genuine metric distance-profile map when the
 boundary is identified with a compact source carrying the quotient-friendly
@@ -3371,6 +3477,62 @@ theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_m
     finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_odd_boundary_degree_obstruction
       N area boundary hobstruction hboundary harea
 
+/-- Finite slack-refined planar certificate when the boundary is the image of
+a compact source carrying the quotient-friendly directed abstract
+arbitrarily-fine polygonal-model interface under a boundary-respecting
+continuous map into the plane. -/
+theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (N : ℕ) (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (f : X → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hboundary' : IsometricCircleBoundary boundary')
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary' x) ∂volume ≤ area := by
+  let defectMass : ℝ≥0∞ :=
+    ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary' x) ∂volume
+  have hbudget :
+      (∑ j : Fin N, ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary' N j) x).det| ∂volume) +
+          defectMass ≤ volume (Set.univ : Set ℂ) := by
+    simpa [defectMass, Measure.restrict_univ] using
+      sum_lintegral_givensMetricFourierMap_add_lintegral_distanceSlackDerivativeEnergyDefect_le_volume
+        boundary' hboundary' N Set.univ MeasurableSet.univ
+  refine (finite_universal_ennreal_of_givens_coverage_budget_add N
+    (volume (Set.univ : Set ℂ)) defectMass
+    (fun j ↦ ∫⁻ x, ENNReal.ofReal
+      |(fderiv ℝ (givensMetricFourierMap boundary' N j) x).det| ∂volume) ?_ hbudget).trans harea
+  intro j
+  exact
+    givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+      j f hf hboundaryMap hmodels hboundary'
+
+/-- Infinite slack-refined planar certificate when the boundary is the image of
+a compact source carrying the quotient-friendly directed abstract
+arbitrarily-fine polygonal-model interface under a boundary-respecting
+continuous map into the plane. -/
+theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_maps_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (f : X → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hboundary' : IsometricCircleBoundary boundary')
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary' x) ∂volume ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  exact
+    finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+      N area f hf hboundaryMap hmodels hboundary' harea
+
 /-- Finite slack-refined planar certificate when the boundary is identified
 with a compact source carrying the quotient-friendly directed abstract
 arbitrarily-fine polygonal-model interface. -/
@@ -3750,6 +3912,58 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_odd_boundary_degree_o
   intro N
   exact finite_universal_ennreal_of_metric_complex_planar_map_of_odd_boundary_degree_obstruction
     N area boundary hobstruction hboundary (hbudget N)
+
+/-- The complete finite planar certificate for the actual metric Fourier
+family when the boundary is the image of a compact source carrying the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface under a boundary-respecting continuous map into the plane. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (N : ℕ) (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (f : X → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hboundary' : IsometricCircleBoundary boundary')
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary' N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  apply finite_universal_ennreal_of_givens_coverage_budget N area
+    (fun j ↦ ∫⁻ x, ENNReal.ofReal
+      |(fderiv ℝ (givensMetricFourierMap boundary' N j) x).det| ∂volume)
+  · exact fun j ↦
+      givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+        j f hf hboundaryMap hmodels hboundary'
+  · exact hbudget
+
+/-- Infinite-mode planar conclusion for the actual metric Fourier family when
+the boundary is the image of a compact source carrying the quotient-friendly
+directed abstract arbitrarily-fine polygonal-model interface under a
+boundary-respecting continuous map into the plane. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (f : X → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hboundary' : IsometricCircleBoundary boundary')
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary' N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact
+    finite_universal_ennreal_of_metric_complex_planar_map_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+      N area f hf hboundaryMap hmodels hboundary' (hbudget N)
 
 /-- The complete finite planar certificate for the actual metric Fourier
 family when the boundary is identified with a compact source carrying the
@@ -4240,6 +4454,61 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_o
   exact
     finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_odd_boundary_degree_obstruction
       N area boundary hobstruction hboundary (hbudget N) harea
+
+/-- The finite planar certificate with coordinate-energy budget when the
+boundary is the image of a compact source carrying the quotient-friendly
+directed abstract arbitrarily-fine polygonal-model interface under a
+boundary-respecting continuous map into the plane. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (N : ℕ) (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (f : X → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hboundary' : IsometricCircleBoundary boundary')
+    (hbudget :
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary' (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  have hbudget' :
+      ∀ᵐ x ∂volume.restrict (Set.univ : Set ℂ),
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary' (oddMode k)) x)) ≤ 2 :=
+    ae_restrict_of_ae hbudget
+  refine (finite_universal_ennreal_of_metric_complex_planar_map_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    N (volume (Set.univ : Set ℂ)) f hf hboundaryMap hmodels hboundary' ?_).trans harea
+  simpa only [Measure.restrict_univ] using
+    sum_lintegral_givensMetricFourierMap_le_volume_of_coordinateEnergy
+      boundary' hboundary' N Set.univ MeasurableSet.univ hbudget'
+
+/-- Infinite-mode planar certificate with coordinate-energy budget when the
+boundary is the image of a compact source carrying the quotient-friendly
+directed abstract arbitrarily-fine polygonal-model interface under a
+boundary-respecting continuous map into the plane. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (f : X → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hboundary' : IsometricCircleBoundary boundary')
+    (hbudget : ∀ N : ℕ,
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary' (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact
+    finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+      N area f hf hboundaryMap hmodels hboundary' (hbudget N) harea
 
 /-- The finite planar certificate with coordinate-energy budget when the
 boundary is identified with a compact source carrying the quotient-friendly
