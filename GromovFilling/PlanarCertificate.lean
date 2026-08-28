@@ -666,6 +666,52 @@ theorem ComplexSourceChartSystem.universal_ennreal_of_homeomorph_arbitrarilyFine
     (hasOddBoundaryDegreeObstruction_of_homeomorph_arbitrarilyFine
       e hboundaryHomeomorph hmodels)
 
+/-- The same source-chart certificate also transfers from a compact source
+through any boundary-respecting continuous map once the source carries the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+        hmodels))
+
+/-- The same continuous-map transfer route works from the stronger directed
+abstract arbitrarily-fine polygonal-model interface. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_compact_continuous_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+        hmodels))
+
+/-- The same continuous-map transfer route also works from the ordinary
+arbitrarily-fine polygonal-model interface. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_compact_continuous_arbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_arbitrarilyFinePolygonalModels hmodels))
+
 /-- A nullhomotopy of the source boundary loop likewise supplies the odd
 boundary-degree obstruction needed by a generic source-chart system. -/
 theorem ComplexSourceChartSystem.universal_ennreal_of_nullhomotopy
@@ -860,6 +906,58 @@ theorem ComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_arbitrarily
   S.universal_ennreal_add_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_homeomorph_arbitrarilyFine
       e hboundaryHomeomorph hmodels)
+    hbudget
+
+/-- The additive-defect generic source-chart certificate also transfers from a
+compact source through any boundary-respecting continuous map once the source
+carries the quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+        hmodels))
+    hbudget
+
+/-- The same additive-defect continuous-map transfer route works from the
+stronger directed abstract arbitrarily-fine polygonal-model interface. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_compact_continuous_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+        hmodels))
+    hbudget
+
+/-- The same additive-defect continuous-map transfer route also works from the
+ordinary arbitrarily-fine polygonal-model interface. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_compact_continuous_arbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_arbitrarilyFinePolygonalModels hmodels))
     hbudget
 
 /-- A nullhomotopy of the source boundary loop likewise supplies the odd
@@ -1236,6 +1334,52 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_of_homeomorph_arbitrari
     (hasOddBoundaryDegreeObstruction_of_homeomorph_arbitrarilyFine
       e hboundaryHomeomorph hmodels)
 
+/-- The metric source-chart certificate also transfers from a compact source
+through any boundary-respecting continuous map once the source carries the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+        hmodels))
+
+/-- The same continuous-map transfer route works from the stronger directed
+abstract arbitrarily-fine polygonal-model interface. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_compact_continuous_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+        hmodels))
+
+/-- The same continuous-map transfer route also works from the ordinary
+arbitrarily-fine polygonal-model interface. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_compact_continuous_arbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_arbitrarilyFinePolygonalModels hmodels))
+
 /-- A nullhomotopy of the source boundary loop likewise supplies the odd
 boundary-degree obstruction needed by a metric source-chart system. -/
 theorem MetricComplexSourceChartSystem.universal_ennreal_of_nullhomotopy
@@ -1430,6 +1574,58 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_arbit
   S.universal_ennreal_add_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_homeomorph_arbitrarilyFine
       e hboundaryHomeomorph hmodels)
+    hbudget
+
+/-- The additive-defect metric source-chart certificate also transfers from a
+compact source through any boundary-respecting continuous map once the source
+carries the quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+        hmodels))
+    hbudget
+
+/-- The same additive-defect continuous-map transfer route works from the
+stronger directed abstract arbitrarily-fine polygonal-model interface. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_compact_continuous_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+        hmodels))
+    hbudget
+
+/-- The same additive-defect continuous-map transfer route also works from the
+ordinary arbitrarily-fine polygonal-model interface. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_compact_continuous_arbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_arbitrarilyFinePolygonalModels hmodels))
     hbudget
 
 /-- A nullhomotopy of the source boundary loop likewise supplies the odd
