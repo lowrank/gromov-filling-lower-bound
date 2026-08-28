@@ -905,6 +905,85 @@ theorem no_odd_degree_of_polygonal_circle_extension_with_boundary_degree_variabl
       hturn degree hdegree
   · exact hodd.neg
 
+/-- A boundary-degree obstruction theorem that uses only the mod-two face-evenness
+condition directly.  This is the form suited to quotient cell structures where
+face vertices may repeat after gluing. -/
+theorem no_odd_degree_of_polygonal_circle_extension_with_boundary_degree_of_faceEven
+    {X V E F : Type*} [TopologicalSpace X]
+    [Fintype V] [Fintype E] [Fintype F]
+    [DecidableEq V] [DecidableEq E]
+    (edgeEnds : E → V × V) (faceEdges : F → Finset E)
+    (boundaryEdges : Finset E)
+    (hcount : ∀ e : E,
+      (Finset.univ.filter fun f ↦ e ∈ faceEdges f).card =
+        if e ∈ boundaryEdges then 1 else 2)
+    (hfaceEven : ∀ (f : F) (v : V),
+      (∑ e ∈ faceEdges f,
+        ((if v = (edgeEnds e).1 then (1 : ZMod 2) else 0) +
+          if v = (edgeEnds e).2 then (1 : ZMod 2) else 0)) = 0)
+    {boundarySize : ℕ} (boundaryEdge : Fin (boundarySize + 1) → E)
+    (hboundaryEdge : Function.Injective boundaryEdge)
+    (boundaryVertex : Fin (boundarySize + 1) → V)
+    (hboundaryEnds : ∀ k, edgeEnds (boundaryEdge k) =
+      (boundaryVertex k, boundaryVertex (cyclicSucc k)))
+    (hboundary : boundaryEdges = Finset.univ.image boundaryEdge)
+    (vertexPoint : V → X)
+    (EdgePoint : E → Type*)
+    [∀ e, TopologicalSpace (EdgePoint e)]
+    [∀ e, PreconnectedSpace (EdgePoint e)]
+    (edgeStart edgeFinish : ∀ e, EdgePoint e)
+    (edgeToX : ∀ e, EdgePoint e → X)
+    (hedgeToX : ∀ e, Continuous (edgeToX e))
+    (hedgeStart : ∀ e, edgeToX e (edgeStart e) =
+      vertexPoint (edgeEnds e).1)
+    (hedgeFinish : ∀ e, edgeToX e (edgeFinish e) =
+      vertexPoint (edgeEnds e).2)
+    (H : X → UnitAddCircle) (hH : Continuous H)
+    (cut : F → ℝ)
+    (hcut : ∀ (f : F) (e : E), e ∈ faceEdges f →
+      ∀ x, H (edgeToX e x) ≠ (cut f : UnitAddCircle))
+    (vertexLift : V → ℝ)
+    (hvertexLift : ∀ v,
+      (vertexLift v : UnitAddCircle) = H (vertexPoint v))
+    (edgeLift : ∀ e, EdgePoint e → ℝ)
+    (hedgeLift : ∀ e, Continuous (edgeLift e))
+    (hedgeLiftProjects : ∀ e x,
+      (edgeLift e x : UnitAddCircle) = H (edgeToX e x))
+    (turn : E → ℤ)
+    (hturn : ∀ e : E, (turn e : ℝ) =
+      (edgeLift e (edgeStart e) - vertexLift (edgeEnds e).1) -
+        (edgeLift e (edgeFinish e) - vertexLift (edgeEnds e).2))
+    (boundaryMap : UnitAddCircle → X)
+    (boundaryParameter : ∀ k,
+      EdgePoint (boundaryEdge k) → ℝ)
+    (hboundaryParameter : ∀ k, Continuous (boundaryParameter k))
+    (hboundaryParameterStart : ∀ k,
+      boundaryParameter k (edgeStart (boundaryEdge k)) =
+        cyclicVertexParameter k)
+    (hboundaryParameterFinish : ∀ k,
+      boundaryParameter k (edgeFinish (boundaryEdge k)) =
+        cyclicEdgeFinishParameter k)
+    (hboundaryPath : ∀ k x,
+      edgeToX (boundaryEdge k) x =
+        boundaryMap ((boundaryParameter k x : ℝ) : UnitAddCircle))
+    (degree : ℤ) (hdegree : HasCircleDegree (H ∘ boundaryMap) degree)
+    (hodd : Odd degree) : False := by
+  apply no_odd_degree_of_triangulated_circle_map_with_face_cuts
+    edgeEnds faceEdges boundaryEdges
+    (modTwo_incidence_of_face_count faceEdges boundaryEdges hcount)
+    hfaceEven
+    vertexPoint EdgePoint edgeStart edgeFinish edgeToX hedgeToX
+    hedgeStart hedgeFinish H hH cut hcut vertexLift hvertexLift edgeLift
+    hedgeLift hedgeLiftProjects turn hturn (-degree)
+  · rw [hboundary]
+    exact boundary_edge_turn_sum_eq_neg_degree edgeEnds boundaryEdge
+      hboundaryEdge boundaryVertex hboundaryEnds EdgePoint edgeStart
+      edgeFinish edgeToX H boundaryMap boundaryParameter
+      hboundaryParameter hboundaryParameterStart hboundaryParameterFinish
+      hboundaryPath vertexLift edgeLift hedgeLift hedgeLiftProjects turn
+      hturn degree hdegree
+  · exact hodd.neg
+
 /-- Variable-face-size version of
 `no_odd_degree_of_polygonal_circle_extension_of_small_mesh`, allowing
 face-local edge directions. -/
