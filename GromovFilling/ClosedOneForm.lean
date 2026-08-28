@@ -495,6 +495,61 @@ theorem curveIntegral_eq_zero_of_closedUnitSquareBoundaryExtension_of_diffContOn
   exact curveIntegral_eq_zero_of_closedUnitSquareMap_of_diffContOnCl
     (F := F) ht hω hdω_symm hcontdiff
 
+/-- The same vanishing statement transports across a boundary-respecting
+homeomorphism from the closed unit square. -/
+theorem curveIntegral_eq_zero_of_closedUnitSquareHomeomorphMap_of_diffContOnCl
+    {𝕜 E G Y : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+    [NormedSpace ℝ E] [NormedAddCommGroup G] [NormedSpace 𝕜 G] [NormedSpace ℝ G]
+    [TopologicalSpace Y]
+    {t : Set E} {ω : E → E →L[𝕜] G}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (F : C(Y, E))
+    (ht : ∀ a ∈ Ioo (0 : I) 1, ∀ b ∈ Ioo (0 : I) 1,
+      F (e (closedUnitSquareRadial (a, unitIntervalToUnitAddCircle b))) ∈ t)
+    (hω : DiffContOnCl ℝ ω t)
+    (hdω_symm : ∀ x ∈ t, ∀ u ∈ tangentConeAt ℝ t x, ∀ v ∈ tangentConeAt ℝ t x,
+      fderivWithin ℝ ω t x u v = fderivWithin ℝ ω t x v u)
+    (hcontdiff : ContDiffOn ℝ 2
+      (fun xy : ℝ × ℝ ↦
+        Set.IccExtend zero_le_one
+          ((circleHomotopyToUnitAddCirclePath
+            (ContinuousMap.closedUnitSquareBoundaryNullhomotopy
+              (F.comp ⟨e, e.continuous_toFun⟩))).extend xy.1) xy.2)
+      (Icc 0 1)) :
+    ∫ᶜ x in unitAddCirclePath
+      (ContinuousMap.compClosedUnitSquareBoundary (F.comp ⟨e, e.continuous_toFun⟩)), ω x = 0 := by
+  exact curveIntegral_eq_zero_of_closedUnitSquareMap_of_diffContOnCl
+    (F := F.comp ⟨e, e.continuous_toFun⟩) ht hω hdω_symm hcontdiff
+
+/-- Boundary-map form of the closed-square-homeomorphism vanishing statement. -/
+theorem curveIntegral_eq_zero_of_closedUnitSquareHomeomorphBoundaryExtension_of_diffContOnCl
+    {𝕜 E G Y : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+    [NormedSpace ℝ E] [NormedAddCommGroup G] [NormedSpace 𝕜 G] [NormedSpace ℝ G]
+    [TopologicalSpace Y]
+    {t : Set E} {ω : E → E →L[𝕜] G}
+    {boundary : C(UnitAddCircle, Y)}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundary : boundary = (⟨e, e.continuous_toFun⟩ : C(ClosedUnitSquare, Y)).comp
+      closedUnitSquareBoundaryContinuousMap)
+    (F : C(Y, E))
+    (ht : ∀ a ∈ Ioo (0 : I) 1, ∀ b ∈ Ioo (0 : I) 1,
+      F (e (closedUnitSquareRadial (a, unitIntervalToUnitAddCircle b))) ∈ t)
+    (hω : DiffContOnCl ℝ ω t)
+    (hdω_symm : ∀ x ∈ t, ∀ u ∈ tangentConeAt ℝ t x, ∀ v ∈ tangentConeAt ℝ t x,
+      fderivWithin ℝ ω t x u v = fderivWithin ℝ ω t x v u)
+    (hcontdiff : ContDiffOn ℝ 2
+      (fun xy : ℝ × ℝ ↦
+        Set.IccExtend zero_le_one
+          ((circleHomotopyToUnitAddCirclePath
+            (ContinuousMap.closedUnitSquareBoundaryNullhomotopy
+              (F.comp ⟨e, e.continuous_toFun⟩))).extend xy.1) xy.2)
+      (Icc 0 1)) :
+    ∫ᶜ x in unitAddCirclePath (F.comp boundary), ω x = 0 := by
+  subst hboundary
+  simpa [ContinuousMap.comp_assoc, ContinuousMap.compClosedUnitSquareBoundary] using
+    (curveIntegral_eq_zero_of_closedUnitSquareHomeomorphMap_of_diffContOnCl
+      (e := e) (F := F) (ht := ht) hω hdω_symm hcontdiff)
+
 end CircleHomotopyOnUnitAddCircle
 
 section FreePathHomotopy
