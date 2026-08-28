@@ -129,9 +129,11 @@ runs both checks on every push and pull request.
   integrals, together with the free-loop equal-side cancellation criterion
   for square homotopies, the induced `UnitAddCircle` loop and circle
   nullhomotopy wrappers, the direct closed-disk extension and
-  closed-disk-homeomorphism vanishing theorems, and the resulting
-  nullhomotopic-loop vanishing statement, packaged at a reusable Euclidean
-  chart-level interface for the future oriented Stokes/comass argument;
+  closed-disk-homeomorphism vanishing theorems, the direct closed-disk Stokes
+  norm bound and resulting disk / disk-homeomorphism oriented certificate
+  wrappers, and the resulting nullhomotopic-loop vanishing statement,
+  packaged at a reusable Euclidean chart-level interface for the future
+  oriented Stokes/comass argument;
 - the explicit square-center directed polygonal-model construction on the
   closed square and closed disk boundaries, together with transfer of that
   directed arbitrarily-fine interface to every compact metric boundary

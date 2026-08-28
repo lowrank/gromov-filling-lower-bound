@@ -1227,6 +1227,63 @@ theorem curveIntegral_eq_setIntegral_fderiv_skew_of_closedUnitDiskMap_of_contDif
     curveIntegral_eq_setIntegral_fderiv_skew_of_unitAddCircleHomotopy_of_contDiff
       (H := ContinuousMap.closedUnitDiskBoundaryNullhomotopy Fmap) hω hcontdiff
 
+theorem norm_closedUnitDiskBoundaryIntegral_le_of_integrand_bound
+    {ω : E → E →L[ℝ] F} (Fmap : C(ClosedUnitDisk, E))
+    {B area : ℝ} {J : ℝ × ℝ → ℝ}
+    (hstokes : ClosedUnitDiskMapStokesProp Fmap ω)
+    (hB : 0 ≤ B)
+    (hintegrand : MeasureTheory.Integrable
+      (fun x ↦ closedUnitDiskMapSkewIntegrand Fmap ω x)
+      (MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    (hJ : MeasureTheory.Integrable J
+      (MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    (hbound : ∀ x ∈ Icc (0 : ℝ × ℝ) 1,
+      ‖closedUnitDiskMapSkewIntegrand Fmap ω x‖ ≤ B * J x)
+    (harea : ∫ x in Icc (0 : ℝ × ℝ) 1, J x ≤ area) :
+    ‖closedUnitDiskBoundaryIntegral Fmap ω‖ ≤ B * area := by
+  unfold ClosedUnitDiskMapStokesProp closedUnitDiskSquareIntegral at hstokes
+  rw [hstokes]
+  calc
+    ‖∫ x in Icc (0 : ℝ × ℝ) 1, closedUnitDiskMapSkewIntegrand Fmap ω x‖ ≤
+        ∫ x in Icc (0 : ℝ × ℝ) 1, ‖closedUnitDiskMapSkewIntegrand Fmap ω x‖ := by
+      simpa using
+        (MeasureTheory.norm_integral_le_integral_norm
+          (μ := MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1))
+          (f := fun x ↦ closedUnitDiskMapSkewIntegrand Fmap ω x))
+    _ ≤ ∫ x in Icc (0 : ℝ × ℝ) 1, B * J x := by
+      have hbound_ae :
+          ∀ᵐ x ∂ MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1),
+            ‖closedUnitDiskMapSkewIntegrand Fmap ω x‖ ≤ B * J x := by
+        rw [MeasureTheory.ae_restrict_iff' measurableSet_Icc]
+        exact Filter.Eventually.of_forall hbound
+      exact MeasureTheory.integral_mono_ae hintegrand.norm (hJ.const_mul B) hbound_ae
+    _ = B * ∫ x in Icc (0 : ℝ × ℝ) 1, J x := by
+      simpa [smul_eq_mul] using
+        (MeasureTheory.integral_const_mul B (fun x : ℝ × ℝ ↦ J x)
+          (μ := MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    _ ≤ B * area := by
+      gcongr
+
+theorem norm_closedUnitDiskBoundaryIntegral_le_of_contDiff
+    {ω : E → E →L[ℝ] F} (Fmap : C(ClosedUnitDisk, E))
+    {B area : ℝ} {J : ℝ × ℝ → ℝ}
+    (hω : closedOneFormContDiffProp ω)
+    (hcontdiff : closedUnitDiskMapSquareContDiffProp Fmap)
+    (hB : 0 ≤ B)
+    (hintegrand : MeasureTheory.Integrable
+      (fun x ↦ closedUnitDiskMapSkewIntegrand Fmap ω x)
+      (MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    (hJ : MeasureTheory.Integrable J
+      (MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    (hbound : ∀ x ∈ Icc (0 : ℝ × ℝ) 1,
+      ‖closedUnitDiskMapSkewIntegrand Fmap ω x‖ ≤ B * J x)
+    (harea : ∫ x in Icc (0 : ℝ × ℝ) 1, J x ≤ area) :
+    ‖closedUnitDiskBoundaryIntegral Fmap ω‖ ≤ B * area := by
+  exact norm_closedUnitDiskBoundaryIntegral_le_of_integrand_bound Fmap
+    (curveIntegral_eq_setIntegral_fderiv_skew_of_closedUnitDiskMap_of_contDiff
+      (Fmap := Fmap) hω hcontdiff)
+    hB hintegrand hJ hbound harea
+
 /-- The same Stokes package when the boundary loop comes from a continuous map
 on the closed unit square. -/
 def closedUnitSquareMapSquare (Fmap : C(ClosedUnitSquare, E)) : ℝ × ℝ → E :=
