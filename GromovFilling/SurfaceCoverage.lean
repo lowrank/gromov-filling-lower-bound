@@ -463,9 +463,9 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_homeomorph_abstractVar
       (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
     (hzero : 0 ∈ region₁) :
     region₁ ⊆ Set.range G :=
-  givensBoundaryCurve_jordan_region_subset_range_of_abstractVariableDirectedArbitrarilyFine
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
     j boundary'
-    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_homeomorph
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedArbitrarilyFine
       e hboundaryHomeomorph hmodels)
     G hG hboundary hpartition hzero
 
@@ -551,9 +551,9 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorph_abs
       IsOpen region ∧ IsConnected region ∧
       Bornology.IsBounded region ∧ 0 ∈ region ∧
       region ⊆ Set.range G :=
-  exists_givensBoundaryCurve_bounded_region_subset_range_of_abstractVariableDirectedArbitrarilyFine
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
     j boundary'
-    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_homeomorph
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedArbitrarilyFine
       e hboundaryHomeomorph hmodels)
     G hG hboundary
 

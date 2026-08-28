@@ -2561,6 +2561,37 @@ theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_homeomorph
   hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_compact_continuous
     e e.continuous_toFun hboundary hmodels
 
+/-- A boundary-respecting homeomorphism from a compact source carrying
+directed variable-face-size abstract arbitrarily fine polygonal models
+transfers the corresponding map-dependent directed fine interface to the
+target boundary. -/
+theorem hasAbstractVariableDirectedFinePolygonalModels_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundary : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractVariableDirectedFinePolygonalModels boundary' :=
+  hasAbstractVariableDirectedFinePolygonalModels_of_abstractVariableDirectedArbitrarilyFine
+    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_homeomorph
+      e hboundary hmodels)
+
+/-- A boundary-respecting homeomorphism from a compact source carrying the
+directed abstract arbitrarily-fine polygonal-model interface transfers the odd
+boundary-degree obstruction to the target boundary. -/
+theorem hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundary : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary) :
+    HasOddBoundaryDegreeObstruction boundary' :=
+  hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedFinePolygonalModels
+    (hasAbstractVariableDirectedFinePolygonalModels_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+      e hboundary hmodels)
+
 /-- Directed variable-face-size abstract closed-square models transfer to the
 closed-disk boundary through the radial square-to-disk map. -/
 theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitSquare
@@ -5765,9 +5796,9 @@ theorem hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_abstractVar
     (e : ClosedUnitDisk ≃ₜ Y)
     (hboundary : boundary = e ∘ closedUnitDiskBoundary) :
     HasOddBoundaryDegreeObstruction boundary :=
-  hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
-    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitDisk_homeomorph
-      e hboundary)
+  hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+    e hboundary
+    hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitDiskBoundary
 
 
 /-- Every concrete `Fin`-indexed model is an abstract finite-index model. -/
