@@ -339,6 +339,33 @@ theorem givens_jordan_region_volume_le_complex_jacobian_of_homeomorph_cylinderSt
 
 /-- The same Jacobian bound also transfers from any compact source carrying
 the quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface through a boundary-respecting continuous map into the plane. -/
+theorem givens_jordan_region_volume_le_complex_jacobian_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (f : X → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    volume region₁ ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  exact givens_jordan_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+      f hf hboundaryMap hmodels)
+    G hG hboundary hpartition hzero hGLipschitz
+
+/-- The same Jacobian bound also transfers from any compact source carrying
+the quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface once a boundary-respecting homeomorphism identifies that source
 with the plane. -/
 theorem givens_jordan_region_volume_le_complex_jacobian_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
@@ -574,6 +601,31 @@ theorem givens_mixedBoundaryArea_le_complex_jacobian_of_homeomorph_cylinderStrip
   rw [← volume_givensBoundaryCurve_jordan_region j hpartition hzero]
   exact givens_jordan_region_volume_le_complex_jacobian_of_homeomorph_cylinderStripGlued_data
     j e hboundaryHomeomorph hmodels G hG hboundary hpartition hzero hGLipschitz
+
+/-- The same planar Lemma 5.4 inequality also transfers from any compact
+source carrying the quotient-friendly directed abstract arbitrarily-fine
+polygonal-model interface through a boundary-respecting continuous map into
+the plane. -/
+theorem givens_mixedBoundaryArea_le_complex_jacobian_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (f : X → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
+    exists_givensBoundaryCurve_jordanPartition_at_origin j
+  rw [← volume_givensBoundaryCurve_jordan_region j hpartition hzero]
+  exact
+    givens_jordan_region_volume_le_complex_jacobian_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+      j f hf hboundaryMap hmodels G hG hboundary hpartition hzero hGLipschitz
 
 /-- The same planar Lemma 5.4 inequality also transfers from any compact
 source carrying the quotient-friendly directed abstract arbitrarily-fine
@@ -851,6 +903,33 @@ theorem exists_givens_bounded_region_volume_le_complex_jacobian_of_homeomorph_cy
       e e.continuous_toFun hboundaryHomeomorph
       (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
         hmodels))
+    G hG hboundary hGLipschitz
+
+/-- The same bounded-region conclusion also transfers from any compact source
+carrying the quotient-friendly directed abstract arbitrarily-fine
+polygonal-model interface through a boundary-respecting continuous map into
+the plane. -/
+theorem exists_givens_bounded_region_volume_le_complex_jacobian_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (f : X → ℂ)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  exact exists_givens_bounded_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+      f hf hboundaryMap hmodels)
     G hG hboundary hGLipschitz
 
 /-- The same bounded-region conclusion also transfers from any compact source
