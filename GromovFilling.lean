@@ -9,6 +9,7 @@ import GromovFilling.ClosedOneForm
 import GromovFilling.ComplexAreaFormula
 import GromovFilling.ComplexJacobianBudget
 import GromovFilling.Constants
+import GromovFilling.DeSitterProfile
 import GromovFilling.DistanceProfile
 import GromovFilling.DominantHarmonic
 import GromovFilling.DominantHarmonicDegree
