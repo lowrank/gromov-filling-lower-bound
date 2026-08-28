@@ -22,6 +22,7 @@ import GromovFilling.CircleDegree
 import GromovFilling.BoundarySubdivisionDegree
 import GromovFilling.PolygonalSurfaceObstruction
 import GromovFilling.FinePolygonalModel
+import GromovFilling.GeneralSurfaceObstruction
 import GromovFilling.SurfaceCoverage
 import GromovFilling.EuclideanAreaFormula
 import GromovFilling.ComplexAreaFormula
