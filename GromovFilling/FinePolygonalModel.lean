@@ -2826,6 +2826,106 @@ def cylinderStripFreeBoundaryEdges {n m : ℕ} : Finset (CylinderStripEdge n m) 
   cylinderStripLowerBoundaryEdges (n := n) (m := m) ∪
     cylinderStripBoundaryEdges (n := n) (m := m)
 
+/-- Whether a lower boundary edge is identified with its partner in the same
+or the opposite direction.  This is the discrete gluing datum needed for
+future quotient constructions of one-boundary surfaces from the strip. -/
+inductive CylinderStripLowerBoundaryOrientation
+  | preserving
+  | reversing
+  deriving DecidableEq, Repr
+
+/-- Pairing data for the lower boundary circle of the cylinder strip.  Each
+lower angular edge is paired with a distinct partner, and the orientation flag
+records whether the identification preserves or reverses the boundary
+parameter direction. -/
+structure CylinderStripLowerBoundaryPairing (m : ℕ) where
+  edgePair : Fin (m + 1) → Fin (m + 1)
+  orientation : Fin (m + 1) → CylinderStripLowerBoundaryOrientation
+  edgePair_involutive : Function.Involutive edgePair
+  edgePair_noFixed : ∀ j, edgePair j ≠ j
+  orientation_pair : ∀ j, orientation (edgePair j) = orientation j
+
+@[simp] theorem CylinderStripLowerBoundaryPairing.edgePair_edgePair {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    P.edgePair (P.edgePair j) = j :=
+  P.edgePair_involutive j
+
+/-- The lower-circle vertex paired with the initial vertex of edge `j`. -/
+def CylinderStripLowerBoundaryPairing.pairedStart {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    Fin (m + 1) :=
+  match P.orientation j with
+  | .preserving => P.edgePair j
+  | .reversing => cyclicSucc (P.edgePair j)
+
+/-- The lower-circle vertex paired with the terminal vertex of edge `j`. -/
+def CylinderStripLowerBoundaryPairing.pairedFinish {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    Fin (m + 1) :=
+  match P.orientation j with
+  | .preserving => cyclicSucc (P.edgePair j)
+  | .reversing => P.edgePair j
+
+@[simp] theorem CylinderStripLowerBoundaryPairing.pairedStart_preserving {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) {j : Fin (m + 1)}
+    (h : P.orientation j = .preserving) :
+    P.pairedStart j = P.edgePair j := by
+  simp [CylinderStripLowerBoundaryPairing.pairedStart, h]
+
+@[simp] theorem CylinderStripLowerBoundaryPairing.pairedFinish_preserving {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) {j : Fin (m + 1)}
+    (h : P.orientation j = .preserving) :
+    P.pairedFinish j = cyclicSucc (P.edgePair j) := by
+  simp [CylinderStripLowerBoundaryPairing.pairedFinish, h]
+
+@[simp] theorem CylinderStripLowerBoundaryPairing.pairedStart_reversing {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) {j : Fin (m + 1)}
+    (h : P.orientation j = .reversing) :
+    P.pairedStart j = cyclicSucc (P.edgePair j) := by
+  simp [CylinderStripLowerBoundaryPairing.pairedStart, h]
+
+@[simp] theorem CylinderStripLowerBoundaryPairing.pairedFinish_reversing {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) {j : Fin (m + 1)}
+    (h : P.orientation j = .reversing) :
+    P.pairedFinish j = P.edgePair j := by
+  simp [CylinderStripLowerBoundaryPairing.pairedFinish, h]
+
+theorem CylinderStripLowerBoundaryPairing.pairedStart_edgePair {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    P.pairedStart (P.edgePair j) =
+      match P.orientation j with
+      | .preserving => j
+      | .reversing => cyclicSucc j := by
+  have horient := P.orientation_pair j
+  rcases h : P.orientation j with _ | _
+  · simp [CylinderStripLowerBoundaryPairing.pairedStart, h, horient,
+      CylinderStripLowerBoundaryPairing.edgePair_edgePair]
+  · simp [CylinderStripLowerBoundaryPairing.pairedStart, h, horient,
+      CylinderStripLowerBoundaryPairing.edgePair_edgePair]
+
+theorem CylinderStripLowerBoundaryPairing.pairedFinish_edgePair {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    P.pairedFinish (P.edgePair j) =
+      match P.orientation j with
+      | .preserving => cyclicSucc j
+      | .reversing => j := by
+  have horient := P.orientation_pair j
+  rcases h : P.orientation j with _ | _
+  · simp [CylinderStripLowerBoundaryPairing.pairedFinish, h, horient,
+      CylinderStripLowerBoundaryPairing.edgePair_edgePair]
+  · simp [CylinderStripLowerBoundaryPairing.pairedFinish, h, horient,
+      CylinderStripLowerBoundaryPairing.edgePair_edgePair]
+
+@[simp] theorem CylinderStripLowerBoundaryPairing.edgePair_ne_self {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    P.edgePair j ≠ j :=
+  P.edgePair_noFixed j
+
+@[simp] theorem CylinderStripLowerBoundaryPairing.self_ne_edgePair {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    j ≠ P.edgePair j := by
+  exact (P.edgePair_noFixed j).symm
+
 @[simp] theorem radialSubdivisionLower_injective {n : ℕ} :
     Function.Injective (@radialSubdivisionLower n) := by
   intro a b h
