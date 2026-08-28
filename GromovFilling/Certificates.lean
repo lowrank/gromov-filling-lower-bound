@@ -105,6 +105,13 @@ theorem universal_area_gt_53567723441 {area : ℝ}
     (53567723441 / 10000000000 : ℝ) < area :=
   universalConstant_gt_53567723441.trans_le hcertificate
 
+/-- `ENNReal` form of the rigorous universal headline decimal. -/
+theorem universal_ennreal_ge_53567723441 {area : ℝ≥0∞}
+    (hcertificate : ENNReal.ofReal universalConstant ≤ area) :
+    ENNReal.ofReal (53567723441 / 10000000000 : ℝ) ≤ area :=
+  (ENNReal.ofReal_le_ofReal (le_of_lt universalConstant_gt_53567723441)).trans
+    hcertificate
+
 /-- `ENNReal` form of the infinite Givens certificate, suited to
 measure-theoretic area budgets. -/
 theorem universal_ennreal_of_givens_coverage_budget
