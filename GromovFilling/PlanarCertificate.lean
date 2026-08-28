@@ -145,6 +145,28 @@ theorem finite_universal_ennreal_of_complex_planar_maps
       j boundary hfine (G j) (hG j) (hboundary j) (hGLipschitz j)
   · exact hbudget
 
+/-- Infinite orientation-free Fourier certificate for complex-plane
+domains, with every rowwise area inequality discharged internally at each
+finite truncation. -/
+theorem universal_ennreal_of_complex_planar_maps
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (hfine : HasFinePolygonalModels boundary)
+    (hfinite : ∀ N : ℕ,
+      ∃ G : Fin N → ℂ → ℂ,
+        (∀ j, Continuous (G j)) ∧
+        (∀ j t, G j (boundary t) = givensBoundaryCurveAddCircle j t) ∧
+        ∃ K : Fin N → ℝ≥0,
+          (∀ j, LipschitzWith (K j) (G j)) ∧
+          (∑ j : Fin N,
+            ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  rcases hfinite N with ⟨G, hG, hboundary, K, hGLipschitz, hbudget⟩
+  exact finite_universal_ennreal_of_complex_planar_maps
+    N area boundary hfine G hG hboundary K hGLipschitz hbudget
+
 /-- A finite orientation-free certificate from chartwise local planar maps.
 For each row, it is enough to cover a witnessing region for the mixed boundary
 area by finitely many local open pieces and sum the corresponding local
