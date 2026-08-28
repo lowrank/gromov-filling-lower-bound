@@ -3498,6 +3498,55 @@ def cylinderStripGluedPointLift {m : ℕ}
       f (closedUnitIntervalFinish, t) :=
   rfl
 
+theorem closedUnitSquareRadial_respects_cylinderStripGluing {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    CylinderStripPointMapRespectsGluing P closedUnitSquareRadial := by
+  intro j x
+  rw [closedUnitSquareRadial_start, closedUnitSquareRadial_start]
+
+/-- The radial square filling descends to every glued-strip point quotient. -/
+def cylinderStripGluedPointToClosedUnitSquare {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    CylinderStripGluedPointSpace P → ClosedUnitSquare :=
+  cylinderStripGluedPointLift P closedUnitSquareRadial
+    (closedUnitSquareRadial_respects_cylinderStripGluing P)
+
+@[continuity] theorem continuous_cylinderStripGluedPointToClosedUnitSquare {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    Continuous (cylinderStripGluedPointToClosedUnitSquare P) :=
+  continuous_cylinderStripGluedPointLift P continuous_closedUnitSquareRadial
+    (closedUnitSquareRadial_respects_cylinderStripGluing P)
+
+theorem closedUnitSquareBoundary_eq_cylinderStripGluedPointToClosedUnitSquare_comp_boundary {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    closedUnitSquareBoundary =
+      cylinderStripGluedPointToClosedUnitSquare P ∘ cylinderStripGluedPointBoundary P := by
+  funext t
+  rw [Function.comp_apply, cylinderStripGluedPointToClosedUnitSquare,
+    cylinderStripGluedPointLift_boundary_apply, closedUnitSquareRadial_finish]
+
+/-- The square-to-disk map composed with the descended square filling gives a
+continuous quotient-to-disk extension of the standard disk boundary. -/
+def cylinderStripGluedPointToClosedUnitDisk {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    CylinderStripGluedPointSpace P → ClosedUnitDisk :=
+  closedUnitSquareToDisk ∘ cylinderStripGluedPointToClosedUnitSquare P
+
+@[continuity] theorem continuous_cylinderStripGluedPointToClosedUnitDisk {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    Continuous (cylinderStripGluedPointToClosedUnitDisk P) :=
+  continuous_closedUnitSquareToDisk.comp
+    (continuous_cylinderStripGluedPointToClosedUnitSquare P)
+
+theorem closedUnitDiskBoundary_eq_cylinderStripGluedPointToClosedUnitDisk_comp_boundary {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    closedUnitDiskBoundary =
+      cylinderStripGluedPointToClosedUnitDisk P ∘ cylinderStripGluedPointBoundary P := by
+  funext t
+  rw [Function.comp_apply, cylinderStripGluedPointToClosedUnitDisk, Function.comp_apply,
+    cylinderStripGluedPointToClosedUnitSquare, cylinderStripGluedPointLift_boundary_apply,
+    closedUnitSquareRadial_finish, closedUnitSquareToDisk_boundary]
+
 /-- On an odd cyclic subdivision, pair each lower edge with its adjacent
 neighbor: even edges with their successor and odd edges with their predecessor.
 All identifications preserve the boundary direction. -/
