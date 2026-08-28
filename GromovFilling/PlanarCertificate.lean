@@ -1363,6 +1363,23 @@ theorem ComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of
     (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData
       hmodels) N j
 
+/-- If the boundary is identified by homeomorphism with the free upper loop of
+a glued-strip point quotient whose glued lower loop already has the odd-degree
+obstruction, then a generic source-chart system satisfies the universal
+certificate. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_homeomorph_cylinderStripGluedPointBoundary
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary area)
+    (e : CylinderStripGluedPointSpace P ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ cylinderStripGluedPointBoundary P)
+    (hobstruction : HasOddBoundaryDegreeObstruction (cylinderStripGluedPointLowerBoundary P)) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
+      P e hboundaryHomeomorph hobstruction)
+
 /-- The quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface supplies the odd boundary-degree obstruction needed by a generic
 source-chart system. -/
@@ -1441,6 +1458,27 @@ theorem ComplexSourceChartSystem.universal_ennreal_of_cylinderStripGlued_data
     ENNReal.ofReal universalConstant ≤ area :=
   S.universal_ennreal_of_cylinderStripGluedArbitrarilyFineData
     (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
+
+/-- The same generic source-chart certificate also transfers from a boundary
+identified by homeomorphism with the free upper loop of a glued-strip point
+quotient, provided the glued lower loop already has the odd-degree
+obstruction. -/
+theorem ComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of_homeomorph_cylinderStripGluedPointBoundary
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary area)
+    (e : CylinderStripGluedPointSpace P ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ cylinderStripGluedPointBoundary P)
+    (hobstruction : HasOddBoundaryDegreeObstruction (cylinderStripGluedPointLowerBoundary P))
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ (S.data N).jacobianMass j :=
+  S.exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
+      P e hboundaryHomeomorph hobstruction) N j
 
 /-- The bundled homeomorphism-plus-glued-strip interface supplies the generic
 source-chart certificate through the homeomorphism-transfer route. -/
@@ -1886,6 +1924,25 @@ theorem ComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_cylinderStr
   S.universal_ennreal_add_of_homeomorph_cylinderStripGluedArbitrarilyFineData
     (homeomorphCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data
       e hboundaryHomeomorph hmodels)
+    hbudget
+
+/-- If the boundary is identified by homeomorphism with the free upper loop of
+a glued-strip point quotient whose glued lower loop already has the odd-degree
+obstruction, then the additive-defect generic source-chart certificate also
+holds. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_cylinderStripGluedPointBoundary
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary area)
+    (e : CylinderStripGluedPointSpace P ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ cylinderStripGluedPointBoundary P)
+    (hobstruction : HasOddBoundaryDegreeObstruction (cylinderStripGluedPointLowerBoundary P))
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
+      P e hboundaryHomeomorph hobstruction)
     hbudget
 
 /-- The additive-defect generic source-chart certificate also transfers from a
@@ -2924,6 +2981,23 @@ theorem MetricComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianM
     (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData
       hmodels) N j
 
+/-- If the boundary is identified by homeomorphism with the free upper loop of
+a glued-strip point quotient whose glued lower loop already has the odd-degree
+obstruction, then a metric source-chart system satisfies the universal
+certificate. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_homeomorph_cylinderStripGluedPointBoundary
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {Y : Type*} [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary area)
+    (e : CylinderStripGluedPointSpace P ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ cylinderStripGluedPointBoundary P)
+    (hobstruction : HasOddBoundaryDegreeObstruction (cylinderStripGluedPointLowerBoundary P)) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
+      P e hboundaryHomeomorph hobstruction)
+
 /-- The quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface supplies the odd boundary-degree obstruction needed by a metric
 source-chart system. -/
@@ -3002,6 +3076,27 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_of_cylinderStripGlued_d
     ENNReal.ofReal universalConstant ≤ area :=
   S.universal_ennreal_of_cylinderStripGluedArbitrarilyFineData
     (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
+
+/-- The same metric source-chart certificate also transfers from a boundary
+identified by homeomorphism with the free upper loop of a glued-strip point
+quotient, provided the glued lower loop already has the odd-degree
+obstruction. -/
+theorem MetricComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of_homeomorph_cylinderStripGluedPointBoundary
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {Y : Type*} [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary area)
+    (e : CylinderStripGluedPointSpace P ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ cylinderStripGluedPointBoundary P)
+    (hobstruction : HasOddBoundaryDegreeObstruction (cylinderStripGluedPointLowerBoundary P))
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ (S.data N).jacobianMass j :=
+  S.exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
+      P e hboundaryHomeomorph hobstruction) N j
 
 /-- The bundled homeomorphism-plus-glued-strip interface supplies the metric
 source-chart certificate through the homeomorphism-transfer route. -/
@@ -3444,6 +3539,25 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_cylin
   S.universal_ennreal_add_of_homeomorph_cylinderStripGluedArbitrarilyFineData
     (homeomorphCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data
       e hboundaryHomeomorph hmodels)
+    hbudget
+
+/-- If the boundary is identified by homeomorphism with the free upper loop of
+a glued-strip point quotient whose glued lower loop already has the odd-degree
+obstruction, then the additive-defect metric source-chart certificate also
+holds. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_cylinderStripGluedPointBoundary
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {Y : Type*} [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary area)
+    (e : CylinderStripGluedPointSpace P ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ cylinderStripGluedPointBoundary P)
+    (hobstruction : HasOddBoundaryDegreeObstruction (cylinderStripGluedPointLowerBoundary P))
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
+      P e hboundaryHomeomorph hobstruction)
     hbudget
 
 /-- The additive-defect metric source-chart certificate also transfers from a

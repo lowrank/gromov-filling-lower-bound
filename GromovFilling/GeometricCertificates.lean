@@ -14,6 +14,68 @@ namespace GromovFilling
 
 noncomputable section
 
+/-- Exact orientation-free geometric endpoint at the generic source-chart
+system layer for a boundary identified with the free upper loop of a glued-
+strip point quotient, assuming the glued lower loop already carries the odd-
+degree obstruction. -/
+theorem universal_ennreal_of_chartSystem_homeomorph_cylinderStripGluedPointBoundary
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : CylinderStripGluedPointSpace P ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ cylinderStripGluedPointBoundary P)
+    (hobstruction : HasOddBoundaryDegreeObstruction (cylinderStripGluedPointLowerBoundary P)) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_homeomorph_cylinderStripGluedPointBoundary
+    P e hboundaryMap hobstruction
+
+/-- The same generic chart-system endpoint also yields the slack-refined
+orientation-free conclusion. -/
+theorem universal_ennreal_add_of_chartSystem_homeomorph_cylinderStripGluedPointBoundary
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : CylinderStripGluedPointSpace P ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ cylinderStripGluedPointBoundary P)
+    (hobstruction : HasOddBoundaryDegreeObstruction (cylinderStripGluedPointLowerBoundary P))
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_homeomorph_cylinderStripGluedPointBoundary
+    P e hboundaryMap hobstruction hbudget
+
+/-- Exact orientation-free geometric endpoint at the metric source-chart
+system layer for a boundary identified with the free upper loop of a glued-
+strip point quotient, assuming the glued lower loop already carries the odd-
+degree obstruction. -/
+theorem universal_ennreal_of_metric_chartSystem_homeomorph_cylinderStripGluedPointBoundary
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (e : CylinderStripGluedPointSpace P ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ cylinderStripGluedPointBoundary P)
+    (hobstruction : HasOddBoundaryDegreeObstruction (cylinderStripGluedPointLowerBoundary P)) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_homeomorph_cylinderStripGluedPointBoundary
+    P e hboundaryMap hobstruction
+
+/-- The same metric chart-system endpoint also yields the slack-refined
+orientation-free conclusion. -/
+theorem universal_ennreal_add_of_metric_chartSystem_homeomorph_cylinderStripGluedPointBoundary
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (e : CylinderStripGluedPointSpace P ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ cylinderStripGluedPointBoundary P)
+    (hobstruction : HasOddBoundaryDegreeObstruction (cylinderStripGluedPointLowerBoundary P))
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_homeomorph_cylinderStripGluedPointBoundary
+    P e hboundaryMap hobstruction hbudget
+
 /-- Current exact orientation-free geometric endpoint for the square
 homeomorphism plus glued-strip route at the final certificate layer, stated
 for the generic source-chart system interface. -/
