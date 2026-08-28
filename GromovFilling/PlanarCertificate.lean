@@ -55,6 +55,20 @@ theorem FiniteComplexLocalCertificateData.finite_universal_ennreal
     (complex_volume_le_sum_lintegral_abs_det_fderiv_of_isOpen_of_subset_iUnion_image
       D.pieces (D.G j) (D.omega j) D.open_pieces (D.lipschitz j) (D.cover j))
 
+
+/-- A bundled finite chartwise local certificate also carries any common
+additive defect term unchanged. -/
+theorem FiniteComplexLocalCertificateData.finite_universal_ennreal_add
+    {N : ℕ} (D : FiniteComplexLocalCertificateData N)
+    (area defect : ℝ≥0∞)
+    (hbudget : (∑ j : Fin N, D.jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) + defect ≤ area := by
+  refine finite_universal_ennreal_of_givens_coverage_budget_add
+    N area defect D.jacobianMass ?_ hbudget
+  intro j
+  exact (D.witness j).trans
+    (complex_volume_le_sum_lintegral_abs_det_fderiv_of_isOpen_of_subset_iUnion_image
+      D.pieces (D.G j) (D.omega j) D.open_pieces (D.lipschitz j) (D.cover j))
 /-- Bundled chartwise local planar certificates for every finite truncation at a
 common area budget.  Constructing this object is exactly the remaining
 certificate-level surface-chart globalization task on the orientation-free side. -/
@@ -175,6 +189,57 @@ theorem universal_ennreal_of_complex_local_planar_maps
   exact finite_universal_ennreal_of_complex_local_planar_maps
     N m area omega homega pieces hpieces G K hGLipschitz hcoverage hbudget
 
+
+/-- Finite orientation-free certificate from chartwise local planar maps,
+carrying an explicit additive defect term through the same local Jacobian
+budget. -/
+theorem finite_universal_ennreal_add_of_complex_local_planar_maps
+    (N m : ℕ) (area defect : ℝ≥0∞)
+    (omega : Fin N → Set ℂ)
+    (homega : ∀ j : Fin N,
+      ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤ volume (omega j))
+    (pieces : Fin m → Set ℂ)
+    (hpieces : ∀ i, IsOpen (pieces i))
+    (G : Fin N → Fin m → ℂ → ℂ)
+    (K : Fin N → Fin m → ℝ≥0)
+    (hGLipschitz : ∀ j i, LipschitzOnWith (K j i) (G j i) (pieces i))
+    (hcoverage : ∀ j : Fin N, omega j ⊆ ⋃ i, G j i '' pieces i)
+    (hbudget :
+      (∑ j : Fin N, ∑ i : Fin m,
+        ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ (G j i) x).det| ∂volume) + defect ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) + defect ≤ area := by
+  refine finite_universal_ennreal_of_givens_coverage_budget_add N area defect
+    (fun j ↦ ∑ i : Fin m,
+      ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ (G j i) x).det| ∂volume) ?_ hbudget
+  intro j
+  exact (homega j).trans
+    (complex_volume_le_sum_lintegral_abs_det_fderiv_of_isOpen_of_subset_iUnion_image
+      pieces (G j) (omega j) hpieces (hGLipschitz j) (hcoverage j))
+
+/-- Infinite orientation-free certificate from chartwise local planar maps,
+with a common additive defect term carried unchanged through every finite
+truncation. -/
+theorem universal_ennreal_add_of_complex_local_planar_maps
+    (area defect : ℝ≥0∞)
+    (hfinite : ∀ N : ℕ,
+      ∃ m : ℕ,
+      ∃ omega : Fin N → Set ℂ,
+      ∃ pieces : Fin m → Set ℂ,
+      ∃ G : Fin N → Fin m → ℂ → ℂ,
+      ∃ K : Fin N → Fin m → ℝ≥0,
+        (∀ j : Fin N,
+          ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤ volume (omega j)) ∧
+        (∀ i, IsOpen (pieces i)) ∧
+        (∀ j i, LipschitzOnWith (K j i) (G j i) (pieces i)) ∧
+        (∀ j : Fin N, omega j ⊆ ⋃ i, G j i '' pieces i) ∧
+        ((∑ j : Fin N, ∑ i : Fin m,
+          ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ (G j i) x).det| ∂volume) + defect ≤ area)) :
+    ENNReal.ofReal universalConstant + defect ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  rcases hfinite N with ⟨m, omega, pieces, G, K, homega, hpieces, hGLipschitz, hcoverage, hbudget⟩
+  exact finite_universal_ennreal_add_of_complex_local_planar_maps
+    N m area defect omega homega pieces hpieces G K hGLipschitz hcoverage hbudget
 /-- Bundled source-side finite chart data sufficient to produce one local
 planar certificate.  The source pieces cover the whole source, each local chart
 lands in an open planar piece, and the row maps agree there with planar local
@@ -230,6 +295,16 @@ theorem FiniteComplexSourceChartCertificateData.finite_universal_ennreal
     ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
   (D.toFiniteComplexLocalCertificateData).finite_universal_ennreal area hbudget
 
+
+/-- A bundled source-side finite chart certificate also carries any common
+additive defect term unchanged. -/
+theorem FiniteComplexSourceChartCertificateData.finite_universal_ennreal_add
+    {N : ℕ} {X : Type*} (D : FiniteComplexSourceChartCertificateData N X)
+    (area defect : ℝ≥0∞)
+    (hbudget :
+      (∑ j : Fin N, (D.toFiniteComplexLocalCertificateData).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) + defect ≤ area :=
+  (D.toFiniteComplexLocalCertificateData).finite_universal_ennreal_add area defect hbudget
 /-- Bundled source-side chart data for every finite truncation at a common area
 budget.  Constructing this object is the next concrete surface-side obligation
 for the orientation-free argument. -/
@@ -341,6 +416,18 @@ theorem FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_univer
     ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
   (D.toFiniteComplexSourceChartCertificateData).finite_universal_ennreal area hbudget
 
+
+/-- An obstruction-level bundled source-side finite chart certificate also
+carries any common additive defect term unchanged. -/
+theorem FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_universal_ennreal_add
+    {N : ℕ} {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary)
+    (area defect : ℝ≥0∞)
+    (hbudget :
+      (∑ j : Fin N,
+        (D.toFiniteComplexSourceChartCertificateData.toFiniteComplexLocalCertificateData).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) + defect ≤ area :=
+  (D.toFiniteComplexSourceChartCertificateData).finite_universal_ennreal_add area defect hbudget
 /-- Obstruction-level source-side chart data for every finite truncation at a
 common area budget.  Constructing this object is the exact remaining
 orientation-free chart-globalization task once the odd-degree obstruction is
@@ -425,6 +512,18 @@ theorem FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_
     ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
   (D.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction hboundary).finite_universal_ennreal area hbudget
 
+
+/-- A finite metric source-chart certificate also carries any common additive
+defect term unchanged. -/
+theorem FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_universal_ennreal_add
+    {N : ℕ} {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (area defect : ℝ≥0∞)
+    (hbudget : (∑ j : Fin N, D.jacobianMass hboundary j) + defect ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) + defect ≤ area :=
+  (D.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction hboundary).finite_universal_ennreal_add area defect hbudget
+
 /-- Bundled source-side chart data for the genuine mixed metric Fourier maps,
 for every finite truncation at a common area budget.  This is the direct
 chart-globalization interface now left on the orientation-free side once the
@@ -483,6 +582,23 @@ theorem FiniteMetricComplexSourceChartData.finite_universal_ennreal_of_odd_bound
       (D.toFiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction hobstruction).finite_universal_ennreal
         hboundary area hbudget
 
+
+/-- A finite metric source-chart certificate carries any common additive
+defect term once the odd-degree obstruction is supplied separately. -/
+theorem FiniteMetricComplexSourceChartData.finite_universal_ennreal_add_of_odd_boundary_degree_obstruction
+    {N : ℕ} {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteMetricComplexSourceChartData N X boundary)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (area defect : ℝ≥0∞)
+    (hbudget : (∑ j : Fin N, D.jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) + defect ≤ area := by
+  simpa [FiniteMetricComplexSourceChartData.jacobianMass,
+    FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.jacobianMass,
+    FiniteMetricComplexSourceChartData.toFiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction]
+    using
+      (D.toFiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction hobstruction).finite_universal_ennreal_add
+        hboundary area defect hbudget
 /-- Bundled source-side chart data for the genuine mixed metric Fourier maps,
 separated from the topological input that forces coverage of the Jordan witness
 regions. -/
@@ -533,6 +649,52 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_of_nullhomotopy
   S.universal_ennreal_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_nullhomotopy center F hF0 hF1)
 
+
+/-- A bundled metric source-chart system implies the full orientation-free
+universal bound with a common additive defect term once the odd
+boundary-degree obstruction is available on the source. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  exact (S.data N).finite_universal_ennreal_add_of_odd_boundary_degree_obstruction
+    hobstruction S.hboundary area defect (hbudget N)
+
+/-- The quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface also supplies the odd boundary-degree obstruction needed for the
+additive-defect metric source-chart certificate. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+      hmodels)
+    hbudget
+
+/-- A nullhomotopy of the source boundary loop likewise supplies the odd
+boundary-degree obstruction needed for the additive-defect metric source-chart
+certificate. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_nullhomotopy
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (center : X)
+    (F : C(I × UnitAddCircle, X))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_nullhomotopy center F hF0 hF1)
+    hbudget
 /-- The finite orientation-free Fourier certificate for complex-plane
 domains under the exact topological interface: an odd boundary-degree
 obstruction and the global Jacobian budget. -/
