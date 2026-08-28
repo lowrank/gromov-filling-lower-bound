@@ -951,6 +951,19 @@ theorem ComplexSourceChartSystem.universal_ennreal_of_closedUnitSquare_homeomorp
     (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
       e hboundaryMap)
 
+/-- The same closed-square homeomorphism also feeds the generic source-chart
+certificate through the bundled explicit glued-strip quotient interface. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitSquare ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitSquareBoundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_cylinderStripGlued
+      e hboundaryMap)
+
 /-- A bundled generic source-chart system implies the full orientation-free
 universal bound with a common additive defect term once the odd
 boundary-degree obstruction is available on the source. -/
@@ -1905,6 +1918,19 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_of_closedUnitSquare_hom
     ENNReal.ofReal universalConstant ≤ area :=
   S.universal_ennreal_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+      e hboundaryMap)
+
+/-- The same closed-square homeomorphism also feeds the metric source-chart
+certificate through the bundled explicit glued-strip quotient interface. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitSquare ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitSquareBoundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_cylinderStripGlued
       e hboundaryMap)
 
 /-- A bundled metric source-chart system implies the full orientation-free
