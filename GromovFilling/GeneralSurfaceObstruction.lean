@@ -435,6 +435,69 @@ theorem hasOddBoundaryDegreeObstruction_cylinderStripGluedPointBoundary
   hasOddBoundaryDegreeObstruction_of_cylinderStripGluedPointLowerBoundary
     P (hasOddBoundaryDegreeObstruction_cylinderStripGluedPointLowerBoundary P)
 
+/-- Package an arbitrary glued-strip pairing and a boundary-respecting
+continuous map into the existing obstruction-data interface.  The lower
+obstruction is now derived, not supplied by the caller. -/
+def continuousCylinderStripGluedPointBoundaryObstructionData_of_pairing
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (f : CylinderStripGluedPointSpace P → X)
+    (hf : Continuous f)
+    (hboundary : boundary = f ∘ cylinderStripGluedPointBoundary P) :
+    ContinuousCylinderStripGluedPointBoundaryObstructionData boundary where
+  m := m
+  pairing := P
+  map := f
+  continuous_map := hf
+  boundaryMap := hboundary
+  lowerObstruction :=
+    hasOddBoundaryDegreeObstruction_cylinderStripGluedPointLowerBoundary P
+
+/-- Package an arbitrary glued-strip pairing and a boundary-respecting
+homeomorphism into the existing obstruction-data interface.  The lower
+obstruction is now a theorem for every pairing. -/
+def homeomorphCylinderStripGluedPointBoundaryObstructionData_of_pairing
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (e : CylinderStripGluedPointSpace P ≃ₜ X)
+    (hboundary : boundary = e ∘ cylinderStripGluedPointBoundary P) :
+    HomeomorphCylinderStripGluedPointBoundaryObstructionData boundary where
+  m := m
+  pairing := P
+  homeomorph := e
+  boundaryHomeomorph := hboundary
+  lowerObstruction :=
+    hasOddBoundaryDegreeObstruction_cylinderStripGluedPointLowerBoundary P
+
+/-- A boundary obtained from the free loop of any glued polygon schema by a
+continuous map has the odd-degree obstruction. -/
+theorem hasOddBoundaryDegreeObstruction_of_comp_continuous_cylinderStripGluedPointBoundary_pairing
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (f : CylinderStripGluedPointSpace P → X)
+    (hf : Continuous f)
+    (hboundary : boundary = f ∘ cylinderStripGluedPointBoundary P) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_continuousCylinderStripGluedPointBoundaryObstructionData
+    (continuousCylinderStripGluedPointBoundaryObstructionData_of_pairing
+      P f hf hboundary)
+
+/-- A boundary identified with the free loop of any glued polygon schema by a
+homeomorphism has the odd-degree obstruction. -/
+theorem hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary_pairing
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (e : CylinderStripGluedPointSpace P ≃ₜ X)
+    (hboundary : boundary = e ∘ cylinderStripGluedPointBoundary P) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
+    (homeomorphCylinderStripGluedPointBoundaryObstructionData_of_pairing
+      P e hboundary)
+
 end
 
 end GromovFilling
