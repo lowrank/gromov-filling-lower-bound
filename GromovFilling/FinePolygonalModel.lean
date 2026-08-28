@@ -3309,7 +3309,6 @@ def cylinderStripGluedEdgeEndpointClasses {n m : ℕ}
     have hs := mk_cylinderStripGluedVertex_finish (n := n) P j
     rw [CylinderStripLowerBoundaryPairing.pairedFinish_reversing (P := P) (j := j) h] at hs
     exact hs
-
 @[simp] theorem mk_cylinderStripGluedEdge_pair {n m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
     Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
@@ -3384,6 +3383,29 @@ def cylinderStripGluedLowerBoundaryEdgeTag (n : ℕ) {m : ℕ}
     · rfl
     · rw [hpair]
       exact mk_cylinderStripGluedEdge_pair P j
+
+
+theorem cylinderStripGluedLowerEdgeEndpointClasses_eq_or_swap {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j k : Fin (m + 1))
+    (h : Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+        (CylinderStripEdge.angular (0 : Fin (n + 2)) j) =
+      Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+        (CylinderStripEdge.angular (0 : Fin (n + 2)) k)) :
+    cylinderStripGluedEdgeEndpointClasses P
+        (CylinderStripEdge.angular (0 : Fin (n + 2)) j) =
+          cylinderStripGluedEdgeEndpointClasses P
+            (CylinderStripEdge.angular (0 : Fin (n + 2)) k) ∨
+      cylinderStripGluedEdgeEndpointClasses P
+        (CylinderStripEdge.angular (0 : Fin (n + 2)) j) =
+          Prod.swap
+            (cylinderStripGluedEdgeEndpointClasses P
+              (CylinderStripEdge.angular (0 : Fin (n + 2)) k)) := by
+  rcases (mk_cylinderStripGluedLowerEdge_eq_iff P j k).1 h with rfl | hk
+  · exact Or.inl rfl
+  · subst k
+    rcases horient : P.orientation j with _ | _
+    · exact Or.inl (cylinderStripGluedEdgeEndpointClasses_pair_preserving P j horient)
+    · exact Or.inr (cylinderStripGluedEdgeEndpointClasses_pair_reversing P j horient)
 
 @[simp] theorem cylinderStripGluedLowerBoundaryEdgeTag_mk_lower {n m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
