@@ -3238,6 +3238,78 @@ theorem mk_cylinderStripGluedVertex_eq_of_nonlower_iff {n m : ℕ}
   · intro h
     rw [h]
 
+@[simp] theorem mk_cylinderStripGluedVertex_start {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+      ((0 : Fin (n + 2)), j) =
+      Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        ((0 : Fin (n + 2)), P.pairedStart j) := by
+  apply Quotient.sound
+  exact Relation.EqvGen.rel _ _ (Or.inl ⟨j, rfl, rfl⟩)
+
+@[simp] theorem mk_cylinderStripGluedVertex_finish {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+      ((0 : Fin (n + 2)), cyclicSucc j) =
+      Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        ((0 : Fin (n + 2)), P.pairedFinish j) := by
+  apply Quotient.sound
+  exact Relation.EqvGen.rel _ _ (Or.inr ⟨j, rfl, rfl⟩)
+
+def cylinderStripGluedEdgeEndpointClasses {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (e : CylinderStripEdge n m) :
+    CylinderStripGluedVertex n P × CylinderStripGluedVertex n P :=
+  let ends := cylinderStripEdgeEnds e
+  ( Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P) ends.1
+  , Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P) ends.2 )
+
+@[simp] theorem cylinderStripGluedEdgeEndpointClasses_pair_preserving {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1))
+    (h : P.orientation j = .preserving) :
+    cylinderStripGluedEdgeEndpointClasses P
+      (CylinderStripEdge.angular (0 : Fin (n + 2)) j) =
+      cylinderStripGluedEdgeEndpointClasses P
+        (CylinderStripEdge.angular (0 : Fin (n + 2)) (P.edgePair j)) := by
+  ext
+  · change Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        ((0 : Fin (n + 2)), j) =
+      Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        ((0 : Fin (n + 2)), P.edgePair j)
+    have hs := mk_cylinderStripGluedVertex_start (n := n) P j
+    rw [CylinderStripLowerBoundaryPairing.pairedStart_preserving (P := P) (j := j) h] at hs
+    exact hs
+  · change Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        ((0 : Fin (n + 2)), cyclicSucc j) =
+      Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        ((0 : Fin (n + 2)), cyclicSucc (P.edgePair j))
+    have hs := mk_cylinderStripGluedVertex_finish (n := n) P j
+    rw [CylinderStripLowerBoundaryPairing.pairedFinish_preserving (P := P) (j := j) h] at hs
+    exact hs
+
+@[simp] theorem cylinderStripGluedEdgeEndpointClasses_pair_reversing {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1))
+    (h : P.orientation j = .reversing) :
+    cylinderStripGluedEdgeEndpointClasses P
+      (CylinderStripEdge.angular (0 : Fin (n + 2)) j) =
+      Prod.swap
+        (cylinderStripGluedEdgeEndpointClasses P
+          (CylinderStripEdge.angular (0 : Fin (n + 2)) (P.edgePair j))) := by
+  ext
+  · change Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        ((0 : Fin (n + 2)), j) =
+      Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        ((0 : Fin (n + 2)), cyclicSucc (P.edgePair j))
+    have hs := mk_cylinderStripGluedVertex_start (n := n) P j
+    rw [CylinderStripLowerBoundaryPairing.pairedStart_reversing (P := P) (j := j) h] at hs
+    exact hs
+  · change Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        ((0 : Fin (n + 2)), cyclicSucc j) =
+      Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        ((0 : Fin (n + 2)), P.edgePair j)
+    have hs := mk_cylinderStripGluedVertex_finish (n := n) P j
+    rw [CylinderStripLowerBoundaryPairing.pairedFinish_reversing (P := P) (j := j) h] at hs
+    exact hs
+
 @[simp] theorem mk_cylinderStripGluedEdge_pair {n m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
     Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
