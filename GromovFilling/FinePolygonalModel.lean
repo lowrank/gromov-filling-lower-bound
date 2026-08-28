@@ -5272,12 +5272,76 @@ def CylinderStripGluedMeshData.toAbstractVariableDirectedQuotientGeometricPolygo
     D.pairing D.hm D.vertexPoint D.edgeToX D.hedgeToX D.hedgeStart
     D.hedgeFinish D.faceCenter D.mesh D.boundaryPath
 
+/-- Push explicit glued-strip quotient mesh data forward along a continuous map
+whose restriction to the boundary agrees with a new parametrization. -/
+def CylinderStripGluedMeshData.map
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    {δ ε : ℝ} (D : CylinderStripGluedMeshData boundary δ)
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmesh : ∀ (face : CylinderStripFace D.n D.m)
+      (e : CylinderStripGluedEdge D.n D.pairing),
+      e ∈ cylinderStripGluedFaceEdges D.n D.pairing face → ∀ x : ClosedUnitInterval,
+        dist (f (D.faceCenter face)) (f (D.edgeToX e x)) < ε) :
+    CylinderStripGluedMeshData boundary' ε where
+  n := D.n
+  m := D.m
+  pairing := D.pairing
+  hm := D.hm
+  vertexPoint := fun v ↦ f (D.vertexPoint v)
+  edgeToX := fun e x ↦ f (D.edgeToX e x)
+  hedgeToX := fun e ↦ hf.comp (D.hedgeToX e)
+  hedgeStart := by
+    intro e
+    rw [D.hedgeStart]
+  hedgeFinish := by
+    intro e
+    rw [D.hedgeFinish]
+  faceCenter := fun face ↦ f (D.faceCenter face)
+  mesh := hmesh
+  boundaryPath := by
+    intro k x
+    rw [hboundary]
+    simpa using congrArg f (D.boundaryPath k x)
+
 /-- Explicit glued-strip quotient mesh data exist at every positive mesh
 scale. -/
 def HasCylinderStripGluedArbitrarilyFineData
     {X : Type*} [PseudoMetricSpace X]
     (boundary : UnitAddCircle → X) : Prop :=
   ∀ ε : ℝ, 0 < ε → Nonempty (CylinderStripGluedMeshData boundary ε)
+
+/-- Bundled explicit glued-strip quotient mesh data transport across continuous
+maps from a compact source by uniform continuity. -/
+theorem hasCylinderStripGluedArbitrarilyFineData_of_compact_continuous
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary) :
+    HasCylinderStripGluedArbitrarilyFineData boundary' := by
+  intro ε hε
+  have hUniform : UniformContinuous f :=
+    CompactSpace.uniformContinuous_of_continuous hf
+  obtain ⟨δ, hδ, hδf⟩ :=
+    Metric.uniformContinuous_iff.mp hUniform ε hε
+  obtain ⟨D⟩ := hmodels δ hδ
+  refine ⟨D.map f hf hboundary ?_⟩
+  intro face e he x
+  exact hδf (D.mesh face e he x)
+
+/-- Homeomorphic compact images inherit bundled explicit glued-strip quotient
+mesh data. -/
+theorem hasCylinderStripGluedArbitrarilyFineData_of_homeomorph
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundary : boundary' = e ∘ boundary)
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary) :
+    HasCylinderStripGluedArbitrarilyFineData boundary' :=
+  hasCylinderStripGluedArbitrarilyFineData_of_compact_continuous
+    e e.continuous_toFun hboundary hmodels
 
 /-- Repackage the unbundled explicit glued-strip hypothesis as the bundled
 mesh-data interface. -/
