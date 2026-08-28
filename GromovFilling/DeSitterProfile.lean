@@ -73,6 +73,7 @@ theorem lorentzInner_deSitterProfileVelocity_self
           du ^ 2 := by ring
     _ = Real.sin u ^ 2 + Real.cos u ^ 2 * du ^ 2 - du ^ 2 := by
       rw [Real.sin_sq_add_cos_sq α]
+      ring
     _ = Real.sin u ^ 2 * (1 - du ^ 2) := by
       rw [hcosu]
       ring
