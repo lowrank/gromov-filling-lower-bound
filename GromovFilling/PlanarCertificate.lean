@@ -2363,6 +2363,241 @@ theorem finite_universal_ennreal_of_complex_planar_maps_of_nullhomotopy
       j boundary center F hF0 hF1 (G j) (hG j) (hboundary j) (hGLipschitz j)
   · exact hbudget
 
+/-- Infinite orientation-free Fourier certificate for complex-plane domains
+under the exact topological interface: an odd boundary-degree obstruction and
+uniform global Jacobian budgets over all finite truncations. -/
+theorem universal_ennreal_of_complex_planar_maps_of_odd_boundary_degree_obstruction
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (hfinite : ∀ N : ℕ,
+      ∃ G : Fin N → ℂ → ℂ,
+        (∀ j, Continuous (G j)) ∧
+        (∀ j t, G j (boundary t) = givensBoundaryCurveAddCircle j t) ∧
+        ∃ K : Fin N → ℝ≥0,
+          (∀ j, LipschitzWith (K j) (G j)) ∧
+          (∑ j : Fin N,
+            ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  rcases hfinite N with ⟨G, hG, hboundary, K, hGLipschitz, hbudget⟩
+  exact finite_universal_ennreal_of_complex_planar_maps_of_odd_boundary_degree_obstruction
+    N area boundary hobstruction G hG hboundary K hGLipschitz hbudget
+
+/-- Infinite orientation-free Fourier certificate for complex-plane domains
+whose boundary is identified with a compact source carrying the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem universal_ennreal_of_complex_planar_maps_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (e : X ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hfinite : ∀ N : ℕ,
+      ∃ G : Fin N → ℂ → ℂ,
+        (∀ j, Continuous (G j)) ∧
+        (∀ j t, G j (boundary' t) = givensBoundaryCurveAddCircle j t) ∧
+        ∃ K : Fin N → ℝ≥0,
+          (∀ j, LipschitzWith (K j) (G j)) ∧
+          (∑ j : Fin N,
+            ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  rcases hfinite N with ⟨G, hG, hboundary, K, hGLipschitz, hbudget⟩
+  exact finite_universal_ennreal_of_complex_planar_maps_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    N area e hboundaryHomeomorph hmodels G hG hboundary K hGLipschitz hbudget
+
+/-- Infinite orientation-free Fourier certificate for complex-plane domains
+whose boundary is identified with a compact source carrying the bundled
+homeomorphism-plus-glued-strip interface. -/
+theorem universal_ennreal_of_complex_planar_maps_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (hfinite : ∀ N : ℕ,
+      ∃ G : Fin N → ℂ → ℂ,
+        (∀ j, Continuous (G j)) ∧
+        (∀ j t, G j (boundary' t) = givensBoundaryCurveAddCircle j t) ∧
+        ∃ K : Fin N → ℝ≥0,
+          (∀ j, LipschitzWith (K j) (G j)) ∧
+          (∑ j : Fin N,
+            ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  rcases hfinite N with ⟨G, hG, hboundary, K, hGLipschitz, hbudget⟩
+  exact finite_universal_ennreal_of_complex_planar_maps_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    N area D G hG hboundary K hGLipschitz hbudget
+
+theorem universal_ennreal_of_complex_planar_maps_of_homeomorph_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (e : X ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ _hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ _hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ _hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ _hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (hfinite : ∀ N : ℕ,
+      ∃ G : Fin N → ℂ → ℂ,
+        (∀ j, Continuous (G j)) ∧
+        (∀ j t, G j (boundary' t) = givensBoundaryCurveAddCircle j t) ∧
+        ∃ K : Fin N → ℝ≥0,
+          (∀ j, LipschitzWith (K j) (G j)) ∧
+          (∑ j : Fin N,
+            ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  rcases hfinite N with ⟨G, hG, hboundary, K, hGLipschitz, hbudget⟩
+  exact finite_universal_ennreal_of_complex_planar_maps_of_homeomorph_cylinderStripGlued_data
+    N area e hboundaryHomeomorph hmodels G hG hboundary K hGLipschitz hbudget
+
+/-- Infinite orientation-free Fourier certificate for complex-plane domains
+whose boundary extends continuously across the standard closed disk. -/
+theorem universal_ennreal_of_complex_planar_maps_of_closedUnitDisk_extension
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitDisk → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (hfinite : ∀ N : ℕ,
+      ∃ G : Fin N → ℂ → ℂ,
+        (∀ j, Continuous (G j)) ∧
+        (∀ j t, G j (boundary t) = givensBoundaryCurveAddCircle j t) ∧
+        ∃ K : Fin N → ℝ≥0,
+          (∀ j, LipschitzWith (K j) (G j)) ∧
+          (∑ j : Fin N,
+            ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  rcases hfinite N with ⟨G, hG, hboundary, K, hGLipschitz, hbudget⟩
+  exact finite_universal_ennreal_of_complex_planar_maps_of_closedUnitDisk_extension
+    N area boundary F hF hboundaryExtension G hG hboundary K hGLipschitz hbudget
+
+/-- Infinite orientation-free Fourier certificate for complex-plane domains
+whose boundary is identified with the standard closed-disk boundary by a
+homeomorphism and explicit checkerboard cylinder-strip data. -/
+theorem universal_ennreal_of_complex_planar_maps_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitDisk ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (edge : CylinderStripEdge n m),
+        edge ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match edge with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε)
+    (hfinite : ∀ N : ℕ,
+      ∃ G : Fin N → ℂ → ℂ,
+        (∀ j, Continuous (G j)) ∧
+        (∀ j t, G j (boundary t) = givensBoundaryCurveAddCircle j t) ∧
+        ∃ K : Fin N → ℝ≥0,
+          (∀ j, LipschitzWith (K j) (G j)) ∧
+          (∑ j : Fin N,
+            ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  rcases hfinite N with ⟨G, hG, hboundary, K, hGLipschitz, hbudget⟩
+  exact finite_universal_ennreal_of_complex_planar_maps_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    N area boundary e hboundaryHomeomorph hmodels G hG hboundary K hGLipschitz hbudget
+
+/-- Infinite orientation-free Fourier certificate for complex-plane domains
+whose boundary is identified with the standard closed-disk boundary by a
+homeomorphism. -/
+theorem universal_ennreal_of_complex_planar_maps_of_closedUnitDisk_homeomorph
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitDisk ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (hfinite : ∀ N : ℕ,
+      ∃ G : Fin N → ℂ → ℂ,
+        (∀ j, Continuous (G j)) ∧
+        (∀ j t, G j (boundary t) = givensBoundaryCurveAddCircle j t) ∧
+        ∃ K : Fin N → ℝ≥0,
+          (∀ j, LipschitzWith (K j) (G j)) ∧
+          (∑ j : Fin N,
+            ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  rcases hfinite N with ⟨G, hG, hboundary, K, hGLipschitz, hbudget⟩
+  exact finite_universal_ennreal_of_complex_planar_maps_of_closedUnitDisk_homeomorph
+    N area boundary e hboundaryHomeomorph G hG hboundary K hGLipschitz hbudget
+
+/-- Infinite orientation-free Fourier certificate for complex-plane domains
+whose boundary is identified with the standard closed-disk boundary by a
+homeomorphism. This is the direct-extension route. -/
+theorem universal_ennreal_of_complex_planar_maps_of_closedUnitDisk_homeomorph_direct
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitDisk ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (hfinite : ∀ N : ℕ,
+      ∃ G : Fin N → ℂ → ℂ,
+        (∀ j, Continuous (G j)) ∧
+        (∀ j t, G j (boundary t) = givensBoundaryCurveAddCircle j t) ∧
+        ∃ K : Fin N → ℝ≥0,
+          (∀ j, LipschitzWith (K j) (G j)) ∧
+          (∑ j : Fin N,
+            ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  rcases hfinite N with ⟨G, hG, hboundary, K, hGLipschitz, hbudget⟩
+  exact finite_universal_ennreal_of_complex_planar_maps_of_closedUnitDisk_homeomorph_direct
+    N area boundary e hboundaryHomeomorph G hG hboundary K hGLipschitz hbudget
+
+/-- Infinite orientation-free Fourier certificate for complex-plane domains
+whose boundary loop is nullhomotopic. -/
+theorem universal_ennreal_of_complex_planar_maps_of_nullhomotopy
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (center : ℂ)
+    (F : C(I × UnitAddCircle, ℂ))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (hfinite : ∀ N : ℕ,
+      ∃ G : Fin N → ℂ → ℂ,
+        (∀ j, Continuous (G j)) ∧
+        (∀ j t, G j (boundary t) = givensBoundaryCurveAddCircle j t) ∧
+        ∃ K : Fin N → ℝ≥0,
+          (∀ j, LipschitzWith (K j) (G j)) ∧
+          (∑ j : Fin N,
+            ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  rcases hfinite N with ⟨G, hG, hboundary, K, hGLipschitz, hbudget⟩
+  exact finite_universal_ennreal_of_complex_planar_maps_of_nullhomotopy
+    N area boundary center F hF0 hF1 G hG hboundary K hGLipschitz hbudget
+
 /-- Planar Lemma 5.4 for the genuine metric distance-profile map.  All
 boundary, continuity, and Lipschitz inputs are discharged internally. -/
 theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian
@@ -4276,6 +4511,51 @@ theorem finite_universal_ennreal_of_complex_planar_maps_of_closedUnitSquare_home
     exact givens_mixedBoundaryArea_le_complex_jacobian_of_closedUnitSquare_homeomorph_direct
       j boundary e hboundaryHomeomorph (G j) (hG j) (hboundary j) (hGLipschitz j)
   · exact hbudget
+
+/-- Infinite orientation-free Fourier certificate for complex-plane domains
+whose boundary extends continuously across the standard closed square. -/
+theorem universal_ennreal_of_complex_planar_maps_of_closedUnitSquare_extension
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitSquare → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitSquareBoundary)
+    (hfinite : ∀ N : ℕ,
+      ∃ G : Fin N → ℂ → ℂ,
+        (∀ j, Continuous (G j)) ∧
+        (∀ j t, G j (boundary t) = givensBoundaryCurveAddCircle j t) ∧
+        ∃ K : Fin N → ℝ≥0,
+          (∀ j, LipschitzWith (K j) (G j)) ∧
+          (∑ j : Fin N,
+            ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  rcases hfinite N with ⟨G, hG, hboundary, K, hGLipschitz, hbudget⟩
+  exact finite_universal_ennreal_of_complex_planar_maps_of_closedUnitSquare_extension
+    N area boundary F hF hboundaryExtension G hG hboundary K hGLipschitz hbudget
+
+/-- Infinite orientation-free Fourier certificate for complex-plane domains
+whose boundary is identified with the standard closed-square boundary by a
+homeomorphism. This is the direct-extension route. -/
+theorem universal_ennreal_of_complex_planar_maps_of_closedUnitSquare_homeomorph_direct
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hfinite : ∀ N : ℕ,
+      ∃ G : Fin N → ℂ → ℂ,
+        (∀ j, Continuous (G j)) ∧
+        (∀ j t, G j (boundary t) = givensBoundaryCurveAddCircle j t) ∧
+        ∃ K : Fin N → ℝ≥0,
+          (∀ j, LipschitzWith (K j) (G j)) ∧
+          (∑ j : Fin N,
+            ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  rcases hfinite N with ⟨G, hG, hboundary, K, hGLipschitz, hbudget⟩
+  exact finite_universal_ennreal_of_complex_planar_maps_of_closedUnitSquare_homeomorph_direct
+    N area boundary e hboundaryHomeomorph G hG hboundary K hGLipschitz hbudget
 
 /-- Planar Lemma 5.4 for the genuine metric distance-profile map when the
 boundary extends continuously across the standard closed square. -/
