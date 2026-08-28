@@ -3225,6 +3225,30 @@ theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitDisk
   hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitSquare
     hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
 
+/-- Any compact metric boundary identified with the standard closed-disk
+boundary inherits the directed variable-face-size abstract arbitrarily fine
+polygonal-model interface from the explicit square-center disk construction. -/
+theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitDisk_homeomorph
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitDiskBoundary) :
+    HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary :=
+  hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_homeomorph e hboundary
+    hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitDiskBoundary
+
+/-- The same disk-homeomorphic hypothesis also yields the map-dependent directed
+fine polygonal-model interface after the compact uniform-continuity step. -/
+theorem hasAbstractVariableDirectedFinePolygonalModels_of_closedUnitDisk_homeomorph
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitDiskBoundary) :
+    HasAbstractVariableDirectedFinePolygonalModels boundary :=
+  hasAbstractVariableDirectedFinePolygonalModels_of_abstractVariableDirectedArbitrarilyFine
+    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitDisk_homeomorph
+      e hboundary)
+
 
 /-- Every concrete `Fin`-indexed model is an abstract finite-index model. -/
 def FinePolygonalModel.toAbstractFinePolygonalModel

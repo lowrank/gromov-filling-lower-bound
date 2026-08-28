@@ -95,7 +95,11 @@ runs both checks on every push and pull request.
   exact region area, and the Jacobian budget for both abstract planar maps
   and the genuine metric Fourier maps;
 - the algebraic/numerical conclusions of the orientation-free and oriented
-  certificates at their stated geometric interfaces.
+  certificates at their stated geometric interfaces;
+- the explicit square-center directed polygonal-model construction on the
+  closed square and closed disk boundaries, together with transfer of that
+  directed arbitrarily-fine interface to every compact metric boundary
+  homeomorphic to the closed disk and the resulting direct coverage wrappers.
 
 ## Not yet end-to-end
 
@@ -111,8 +115,9 @@ needs:
    fine finite triangulations/cell structures with compatible cyclic
    boundary subdivisions (the compact uniform-continuity passage from this
    geometric statement to `HasFinePolygonalModels`, together with compact
-   continuous/homeomorphic transport from model domains, is now formalized,
-   and the disk-homeomorphic case is already discharged directly);
+   continuous/homeomorphic transport from model domains, is now formalized;
+   the disk-homeomorphic case is discharged directly and also at the
+   directed abstract polygonal-model interface);
 2. the weak differentiation-under-the-boundary-parameter-integral theorem
    for the metric Fourier coordinates and its Bessel estimate in the full
    surface setting.  The downstream planar Fourier/Jacobian/certificate
