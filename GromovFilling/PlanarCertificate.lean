@@ -572,6 +572,53 @@ def FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.toFiniteComplexSo
   local_lipschitz := D.local_lipschitz
   local_agree := D.local_agree
 
+/-- A compact source with an arbitrary open chart cover and an odd
+boundary-degree obstruction can be converted directly to the finite
+obstruction-level source-chart data used by the witness-region theorems. -/
+noncomputable def FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+    {N : ℕ} {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : Type*}
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (rowMap : Fin N → X → ℂ)
+    (rowMap_cont : ∀ j, Continuous (rowMap j))
+    (rowMap_boundary : ∀ j t, rowMap j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (sourcePiece : ι → Set X)
+    (sourcePiece_open : ∀ i, IsOpen (sourcePiece i))
+    (sourcePiece_cover : Set.univ ⊆ ⋃ i, sourcePiece i)
+    (targetPiece : ι → Set ℂ)
+    (chart : ∀ i, sourcePiece i → targetPiece i)
+    (targetPiece_open : ∀ i, IsOpen (targetPiece i))
+    (localMap : Fin N → ι → ℂ → ℂ)
+    (K : Fin N → ι → ℝ≥0)
+    (local_lipschitz : ∀ j i, LipschitzOnWith (K j i) (localMap j i) (targetPiece i))
+    (local_agree : ∀ j i (x : sourcePiece i),
+      rowMap j x = localMap j i (chart i x)) :
+    FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary := by
+  classical
+  let hsub :=
+    exists_fin_cover_subfamily_of_compact sourcePiece sourcePiece_open sourcePiece_cover
+  let m : ℕ := Classical.choose hsub
+  let hsub' : ∃ e : Fin m → ι, Set.univ ⊆ ⋃ i, sourcePiece (e i) :=
+    Classical.choose_spec hsub
+  let e : Fin m → ι := Classical.choose hsub'
+  let he_cover : Set.univ ⊆ ⋃ i, sourcePiece (e i) :=
+    Classical.choose_spec hsub'
+  exact
+    { hobstruction := hobstruction
+      rowMap := rowMap
+      rowMap_cont := rowMap_cont
+      rowMap_boundary := rowMap_boundary
+      m := m
+      sourcePiece := fun i ↦ sourcePiece (e i)
+      sourcePiece_cover := he_cover
+      targetPiece := fun i ↦ targetPiece (e i)
+      chart := fun i ↦ chart (e i)
+      targetPiece_open := fun i ↦ targetPiece_open (e i)
+      localMap := fun j i ↦ localMap j (e i)
+      K := fun j i ↦ K j (e i)
+      local_lipschitz := fun j i ↦ local_lipschitz j (e i)
+      local_agree := fun j i x ↦ local_agree j (e i) x }
+
 /-- An obstruction-level bundled source-side finite chart certificate implies
 the `N`-mode orientation-free lower bound once its total Jacobian budget is
 available. -/
@@ -1802,6 +1849,47 @@ def FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.toFiniteCom
   K := D.K
   local_lipschitz := D.local_lipschitz
   local_agree := D.local_agree
+
+/-- A compact source with an arbitrary open chart cover and an odd
+boundary-degree obstruction can be converted directly to the finite metric
+obstruction-level source-chart data used by the witness-region theorems. -/
+noncomputable def FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+    {N : ℕ} {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : Type*}
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (sourcePiece : ι → Set X)
+    (sourcePiece_open : ∀ i, IsOpen (sourcePiece i))
+    (sourcePiece_cover : Set.univ ⊆ ⋃ i, sourcePiece i)
+    (targetPiece : ι → Set ℂ)
+    (chart : ∀ i, sourcePiece i → targetPiece i)
+    (targetPiece_open : ∀ i, IsOpen (targetPiece i))
+    (localMap : Fin N → ι → ℂ → ℂ)
+    (K : Fin N → ι → ℝ≥0)
+    (local_lipschitz : ∀ j i, LipschitzOnWith (K j i) (localMap j i) (targetPiece i))
+    (local_agree : ∀ j i (x : sourcePiece i),
+      givensMetricFourierMap boundary N j x = localMap j i (chart i x)) :
+    FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary := by
+  classical
+  let hsub :=
+    exists_fin_cover_subfamily_of_compact sourcePiece sourcePiece_open sourcePiece_cover
+  let m : ℕ := Classical.choose hsub
+  let hsub' : ∃ e : Fin m → ι, Set.univ ⊆ ⋃ i, sourcePiece (e i) :=
+    Classical.choose_spec hsub
+  let e : Fin m → ι := Classical.choose hsub'
+  let he_cover : Set.univ ⊆ ⋃ i, sourcePiece (e i) :=
+    Classical.choose_spec hsub'
+  exact
+    { hobstruction := hobstruction
+      m := m
+      sourcePiece := fun i ↦ sourcePiece (e i)
+      sourcePiece_cover := he_cover
+      targetPiece := fun i ↦ targetPiece (e i)
+      chart := fun i ↦ chart (e i)
+      targetPiece_open := fun i ↦ targetPiece_open (e i)
+      localMap := fun j i ↦ localMap j (e i)
+      K := fun j i ↦ K j (e i)
+      local_lipschitz := fun j i ↦ local_lipschitz j (e i)
+      local_agree := fun j i x ↦ local_agree j (e i) x }
 
 /-- The total planar Jacobian mass extracted from one finite metric
 source-chart certificate. -/
