@@ -62,7 +62,7 @@ runs both checks on every push and pull request.
   arbitrarily-fine, compact-map, and homeomorphism transport theorems, the
   resulting odd boundary-degree obstruction, a bundled explicit
   `HasCylinderStripGluedArbitrarilyFineData` mesh-data interface for the
-  glued-strip quotient input, and downstream coverage wrappers from that
+  glued-strip quotient input, and downstream coverage and certificate wrappers from that
   bundled interface;
 - the resulting coverage implication: an odd radial boundary degree forces
   the puncture into the extension image, hence every point in the bounded
@@ -156,7 +156,7 @@ needs:
    gluing, it already transports across compact continuous maps and
    homeomorphisms, and it now also has a bundled explicit
    `HasCylinderStripGluedArbitrarilyFineData` source interface whose
-   coverage-level wrappers are formalized. Its homeomorphism-level wrappers
+   coverage- and certificate-level wrappers are formalized. Its homeomorphism-level wrappers
    now reach the planar coverage, Jacobian, slack-defect, and certificate
    statements.  The stronger directed interface
    `HasAbstractVariableDirectedArbitrarilyFinePolygonalModels` and the

@@ -621,6 +621,19 @@ theorem ComplexSourceChartSystem.universal_ennreal_of_abstractVariableDirectedAr
       hmodels)
 
 
+/-- The bundled explicit glued-strip quotient mesh-data interface already
+supplies the quotient-friendly abstract polygonal-model input needed by a
+generic source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData
+      hmodels)
+
 /-- Explicit glued-strip quotient data already supplies the quotient-friendly
 abstract polygonal-model interface needed by a generic source-chart system. -/
 theorem ComplexSourceChartSystem.universal_ennreal_of_cylinderStripGlued_data
@@ -645,9 +658,8 @@ theorem ComplexSourceChartSystem.universal_ennreal_of_cylinderStripGlued_data
           edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
             boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle))) :
     ENNReal.ofReal universalConstant ≤ area :=
-  S.universal_ennreal_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
-    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
-      hmodels)
+  S.universal_ennreal_of_cylinderStripGluedArbitrarilyFineData
+    (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
 
 /-- Coverage also transfers from a compact source carrying the quotient-friendly
  directed abstract arbitrarily-fine polygonal-model interface once a
@@ -889,6 +901,21 @@ theorem ComplexSourceChartSystem.universal_ennreal_add_of_abstractVariableDirect
     hbudget
 
 
+/-- The bundled explicit glued-strip quotient mesh-data interface already
+supplies the additive-defect quotient-friendly abstract polygonal-model input
+needed by a generic source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData
+      hmodels)
+    hbudget
+
 /-- Explicit glued-strip quotient data already supplies the additive-defect
 quotient-friendly abstract polygonal-model interface needed by a generic
 source-chart system. -/
@@ -915,9 +942,8 @@ theorem ComplexSourceChartSystem.universal_ennreal_add_of_cylinderStripGlued_dat
             boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
     (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
     ENNReal.ofReal universalConstant + defect ≤ area :=
-  S.universal_ennreal_add_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
-    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
-      hmodels)
+  S.universal_ennreal_add_of_cylinderStripGluedArbitrarilyFineData
+    (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
     hbudget
 
 /-- The additive-defect generic source-chart certificate also transfers from a
@@ -1352,6 +1378,19 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_of_abstractVariableDire
       hmodels)
 
 
+/-- The bundled explicit glued-strip quotient mesh-data interface already
+supplies the quotient-friendly abstract polygonal-model input needed by a
+metric source-chart system. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData
+      hmodels)
+
 /-- Explicit glued-strip quotient data already supplies the quotient-friendly
 abstract polygonal-model interface needed by a metric source-chart system. -/
 theorem MetricComplexSourceChartSystem.universal_ennreal_of_cylinderStripGlued_data
@@ -1376,9 +1415,8 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_of_cylinderStripGlued_d
           edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
             boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle))) :
     ENNReal.ofReal universalConstant ≤ area :=
-  S.universal_ennreal_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
-    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
-      hmodels)
+  S.universal_ennreal_of_cylinderStripGluedArbitrarilyFineData
+    (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
 
 /-- The metric source-chart certificate also transfers from a compact source
  carrying the quotient-friendly directed abstract arbitrarily-fine polygonal-
@@ -1618,6 +1656,21 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_abstractVariable
     hbudget
 
 
+/-- The bundled explicit glued-strip quotient mesh-data interface already
+supplies the additive-defect quotient-friendly abstract polygonal-model input
+needed by a metric source-chart system. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData
+      hmodels)
+    hbudget
+
 /-- Explicit glued-strip quotient data already supplies the additive-defect
 quotient-friendly abstract polygonal-model interface needed by a metric
 source-chart system. -/
@@ -1644,9 +1697,8 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_cylinderStripGlu
             boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
     (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
     ENNReal.ofReal universalConstant + defect ≤ area :=
-  S.universal_ennreal_add_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
-    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
-      hmodels)
+  S.universal_ennreal_add_of_cylinderStripGluedArbitrarilyFineData
+    (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
     hbudget
 
 /-- The additive-defect metric source-chart certificate also transfers from a
