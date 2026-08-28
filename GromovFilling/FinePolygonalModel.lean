@@ -682,6 +682,7 @@ theorem complexSupNorm_ofReal_mul (r : ℝ) (z : ℂ) :
     complexSupNorm (Complex.ofReal r * z) = |r| * complexSupNorm z := by
   simpa [smul_eq_mul] using complexSupNorm_real_smul r z
 
+
 /-- The center point of the closed unit square. -/
 def closedUnitSquareCenter : ClosedUnitSquare := ⟨0, by simp [complexSupNorm]⟩
 
@@ -2580,6 +2581,321 @@ theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitS
     closedUnitSquareRadial continuous_closedUnitSquareRadial
     closedUnitSquareRadial_comp_cylinderBoundary hcyl
 
+/-- Core grid vertices for the undirected checkerboard cylinder strip. -/
+abbrev CylinderStripVertex (n m : ℕ) := CylinderCoreVertex n m
+
+/-- Undirected radial and angular grid segments for the checkerboard cylinder strip. -/
+inductive CylinderStripEdge (n m : ℕ) : Type
+  | radial : Fin (n + 1) → Fin (m + 1) → CylinderStripEdge n m
+  | angular : Fin (n + 2) → Fin (m + 1) → CylinderStripEdge n m
+  deriving DecidableEq, Fintype
+
+/-- Faces of the undirected checkerboard cylinder strip. -/
+abbrev CylinderStripFace (n m : ℕ) := CylinderCoreFace n m
+
+abbrev cylinderStripFaceEven {n m : ℕ} (f : CylinderStripFace n m) : Prop :=
+  cylinderCoreFaceEven f
+
+abbrev cylinderStripFaceParity {n m : ℕ} (f : CylinderStripFace n m) : Bool :=
+  cylinderCoreFaceParity f
+
+abbrev cylinderStripLL {n m : ℕ} (f : CylinderStripFace n m) : CylinderStripVertex n m :=
+  cylinderCoreLL f
+
+abbrev cylinderStripUL {n m : ℕ} (f : CylinderStripFace n m) : CylinderStripVertex n m :=
+  cylinderCoreUL f
+
+abbrev cylinderStripLR {n m : ℕ} (f : CylinderStripFace n m) : CylinderStripVertex n m :=
+  cylinderCoreLR f
+
+abbrev cylinderStripUR {n m : ℕ} (f : CylinderStripFace n m) : CylinderStripVertex n m :=
+  cylinderCoreUR f
+
+def cylinderStripEdgeEnds {n m : ℕ} :
+    CylinderStripEdge n m → CylinderStripVertex n m × CylinderStripVertex n m
+  | .radial i j => ((radialSubdivisionLower i, j), (radialSubdivisionUpper i, j))
+  | .angular i j => ((i, j), (i, cyclicSucc j))
+
+def cylinderStripFaceVertex {n m : ℕ} (f : CylinderStripFace n m) :
+    Fin (3 + 1) → CylinderStripVertex n m :=
+  cylinderCoreFaceVertex f
+
+def cylinderStripFaceEdge {n m : ℕ} (f : CylinderStripFace n m) :
+    Fin (3 + 1) → CylinderStripEdge n m :=
+  if cylinderStripFaceParity f then
+    fun k =>
+      match k.1 with
+      | 0 => .radial f.1 f.2
+      | 1 => .angular (radialSubdivisionUpper f.1) f.2
+      | 2 => .radial f.1 (cyclicSucc f.2)
+      | _ => .angular (radialSubdivisionLower f.1) f.2
+  else
+    fun k =>
+      match k.1 with
+      | 0 => .radial f.1 f.2
+      | 1 => .angular (radialSubdivisionLower f.1) f.2
+      | 2 => .radial f.1 (cyclicSucc f.2)
+      | _ => .angular (radialSubdivisionUpper f.1) f.2
+
+def cylinderStripFaceEdgeForward {n m : ℕ} (f : CylinderStripFace n m) :
+    Fin (3 + 1) → Bool :=
+  if cylinderStripFaceParity f then
+    fun k =>
+      match k.1 with
+      | 0 => true
+      | 1 => true
+      | 2 => false
+      | _ => false
+  else
+    fun k =>
+      match k.1 with
+      | 0 => false
+      | 1 => true
+      | 2 => true
+      | _ => false
+
+@[simp] theorem cylinderStripFaceEdge_zero {n m : ℕ} (f : CylinderStripFace n m) :
+    cylinderStripFaceEdge f 0 = CylinderStripEdge.radial f.1 f.2 := by
+  by_cases h : cylinderStripFaceParity f <;> simp [cylinderStripFaceEdge, h]
+
+@[simp] theorem cylinderStripFaceEdge_one {n m : ℕ} (f : CylinderStripFace n m) :
+    cylinderStripFaceEdge f 1 =
+      if cylinderStripFaceEven f then
+        CylinderStripEdge.angular (radialSubdivisionUpper f.1) f.2
+      else
+        CylinderStripEdge.angular (radialSubdivisionLower f.1) f.2 := by
+  by_cases h : cylinderStripFaceEven f
+  · have hp : cylinderStripFaceParity f = true :=
+      (cylinderCoreFaceParity_eq_true_iff f).2 h
+    simp [cylinderStripFaceEdge, hp, h, cylinderStripFaceEven]
+  · have hp : cylinderStripFaceParity f = false :=
+      (cylinderCoreFaceParity_eq_false_iff f).2 h
+    simp [cylinderStripFaceEdge, hp, h, cylinderStripFaceEven]
+
+@[simp] theorem cylinderStripFaceEdge_two {n m : ℕ} (f : CylinderStripFace n m) :
+    cylinderStripFaceEdge f 2 = CylinderStripEdge.radial f.1 (cyclicSucc f.2) := by
+  by_cases h : cylinderStripFaceParity f <;> simp [cylinderStripFaceEdge, h]
+
+@[simp] theorem cylinderStripFaceEdge_three {n m : ℕ} (f : CylinderStripFace n m) :
+    cylinderStripFaceEdge f 3 =
+      if cylinderStripFaceEven f then
+        CylinderStripEdge.angular (radialSubdivisionLower f.1) f.2
+      else
+        CylinderStripEdge.angular (radialSubdivisionUpper f.1) f.2 := by
+  by_cases h : cylinderStripFaceEven f
+  · have hp : cylinderStripFaceParity f = true :=
+      (cylinderCoreFaceParity_eq_true_iff f).2 h
+    simp [cylinderStripFaceEdge, hp, h, cylinderStripFaceEven]
+  · have hp : cylinderStripFaceParity f = false :=
+      (cylinderCoreFaceParity_eq_false_iff f).2 h
+    simp [cylinderStripFaceEdge, hp, h, cylinderStripFaceEven]
+
+@[simp] theorem cylinderStripFaceEdgeForward_zero {n m : ℕ} (f : CylinderStripFace n m) :
+    cylinderStripFaceEdgeForward f 0 = cylinderStripFaceEven f := by
+  by_cases h : cylinderStripFaceEven f
+  · have hp : cylinderStripFaceParity f = true :=
+      (cylinderCoreFaceParity_eq_true_iff f).2 h
+    simp [cylinderStripFaceEdgeForward, hp, h, cylinderStripFaceEven]
+  · have hp : cylinderStripFaceParity f = false :=
+      (cylinderCoreFaceParity_eq_false_iff f).2 h
+    simp [cylinderStripFaceEdgeForward, hp, h, cylinderStripFaceEven]
+
+@[simp] theorem cylinderStripFaceEdgeForward_one {n m : ℕ} (f : CylinderStripFace n m) :
+    cylinderStripFaceEdgeForward f 1 = true := by
+  by_cases h : cylinderStripFaceParity f <;> simp [cylinderStripFaceEdgeForward, h]
+
+@[simp] theorem cylinderStripFaceEdgeForward_two {n m : ℕ} (f : CylinderStripFace n m) :
+    cylinderStripFaceEdgeForward f 2 = ¬ cylinderStripFaceEven f := by
+  by_cases h : cylinderStripFaceEven f
+  · have hp : cylinderStripFaceParity f = true :=
+      (cylinderCoreFaceParity_eq_true_iff f).2 h
+    simp [cylinderStripFaceEdgeForward, hp, h, cylinderStripFaceEven]
+  · have hp : cylinderStripFaceParity f = false :=
+      (cylinderCoreFaceParity_eq_false_iff f).2 h
+    simp [cylinderStripFaceEdgeForward, hp, h, cylinderStripFaceEven]
+
+@[simp] theorem cylinderStripFaceEdgeForward_three {n m : ℕ} (f : CylinderStripFace n m) :
+    cylinderStripFaceEdgeForward f 3 = false := by
+  by_cases h : cylinderStripFaceParity f <;> simp [cylinderStripFaceEdgeForward, h]
+
+def cylinderStripFaceEdges {n m : ℕ} (f : CylinderStripFace n m) :
+    Finset (CylinderStripEdge n m) :=
+  Finset.univ.image (cylinderStripFaceEdge f)
+
+theorem cylinderStripFaceEdges_eq {n m : ℕ} (f : CylinderStripFace n m) :
+    cylinderStripFaceEdges f = Finset.univ.image (cylinderStripFaceEdge f) := rfl
+
+theorem cylinderStripFaceVertex_injective_of_pos {n m : ℕ} (hm : 0 < m)
+    (f : CylinderStripFace n m) :
+    Function.Injective (cylinderStripFaceVertex f) := by
+  simpa [cylinderStripFaceVertex] using cylinderCoreFaceVertex_injective_of_pos hm f
+
+theorem cylinderStripFaceEdge_injective_of_pos {n m : ℕ} (hm : 0 < m)
+    (f : CylinderStripFace n m) :
+    Function.Injective (cylinderStripFaceEdge f) := by
+  have hlu : radialSubdivisionLower f.1 ≠ radialSubdivisionUpper f.1 :=
+    radialSubdivisionLower_ne_upper f.1
+  have hul : radialSubdivisionUpper f.1 ≠ radialSubdivisionLower f.1 :=
+    radialSubdivisionUpper_ne_lower f.1
+  have hsu : cyclicSucc f.2 ≠ f.2 := cyclicSucc_ne_self_of_pos hm f.2
+  have hus : f.2 ≠ cyclicSucc f.2 := self_ne_cyclicSucc_of_pos hm f.2
+  intro a b h
+  by_cases hpar : cylinderStripFaceEven f
+  · have hp : cylinderStripFaceParity f = true :=
+      (cylinderCoreFaceParity_eq_true_iff f).2 hpar
+    fin_cases a <;> fin_cases b <;>
+      simp [cylinderStripFaceEdge, hp, hlu, hul, hsu, hus] at h ⊢
+  · have hp : cylinderStripFaceParity f = false :=
+      (cylinderCoreFaceParity_eq_false_iff f).2 hpar
+    fin_cases a <;> fin_cases b <;>
+      simp [cylinderStripFaceEdge, hp, hlu, hul, hsu, hus] at h ⊢
+
+theorem cylinderStripFaceEdge_ends {n m : ℕ} (f : CylinderStripFace n m)
+    (k : Fin (3 + 1)) :
+    cylinderStripEdgeEnds (cylinderStripFaceEdge f k) =
+      if cylinderStripFaceEdgeForward f k then
+        (cylinderStripFaceVertex f k,
+          cylinderStripFaceVertex f (cyclicSucc k))
+      else
+        (cylinderStripFaceVertex f (cyclicSucc k),
+          cylinderStripFaceVertex f k) := by
+  by_cases h : cylinderStripFaceEven f
+  · have hp : cylinderStripFaceParity f = true :=
+      (cylinderCoreFaceParity_eq_true_iff f).2 h
+    fin_cases k <;>
+      simp [cylinderStripEdgeEnds, cylinderStripFaceEdge, cylinderStripFaceEdgeForward,
+        cylinderStripFaceVertex, cylinderCoreLL, cylinderCoreUL, cylinderCoreUR,
+        cylinderCoreLR, hp, h, cyclicSucc]
+  · have hp : cylinderStripFaceParity f = false :=
+      (cylinderCoreFaceParity_eq_false_iff f).2 h
+    fin_cases k <;>
+      simp [cylinderStripEdgeEnds, cylinderStripFaceEdge, cylinderStripFaceEdgeForward,
+        cylinderStripFaceVertex, cylinderCoreLL, cylinderCoreUL, cylinderCoreUR,
+        cylinderCoreLR, hp, h, cyclicSucc]
+
+def cylinderStripBoundaryVertex {n m : ℕ} (j : Fin (m + 1)) : CylinderStripVertex n m :=
+  (Fin.last (n + 1), j)
+
+def cylinderStripBoundaryEdge {n m : ℕ} (j : Fin (m + 1)) : CylinderStripEdge n m :=
+  .angular (Fin.last (n + 1)) j
+
+@[simp] theorem cylinderStripBoundaryEdge_injective {n m : ℕ} :
+    Function.Injective (cylinderStripBoundaryEdge (n := n) (m := m)) := by
+  intro a b h
+  simpa [cylinderStripBoundaryEdge] using h
+
+def cylinderStripBoundaryEdges {n m : ℕ} : Finset (CylinderStripEdge n m) :=
+  Finset.univ.image (cylinderStripBoundaryEdge (n := n) (m := m))
+
+theorem cylinderStripBoundaryEdges_eq {n m : ℕ} :
+    cylinderStripBoundaryEdges (n := n) (m := m) =
+      Finset.univ.image (cylinderStripBoundaryEdge (n := n) (m := m)) := rfl
+
+@[simp] theorem cylinderStripBoundaryEdge_ends {n m : ℕ} (j : Fin (m + 1)) :
+    cylinderStripEdgeEnds (cylinderStripBoundaryEdge (n := n) (m := m) j) =
+      (cylinderStripBoundaryVertex (n := n) (m := m) j,
+        cylinderStripBoundaryVertex (n := n) (m := m) (cyclicSucc j)) := by
+  simp [cylinderStripBoundaryEdge, cylinderStripBoundaryVertex, cylinderStripEdgeEnds]
+
+/-- Bundle explicit checkerboard-cylinder strip data into the directed abstract
+variable-face-size geometric polygonal-model interface on the square-cylinder
+boundary. -/
+def cylinderStripAbstractVariableDirectedGeometricModel_of_mesh
+    {ε : ℝ} (n m : ℕ) (hm : 0 < m)
+    (hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+      (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+        if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2)
+    (faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle)
+    (hmesh : ∀ (f : CylinderStripFace n m) (e : CylinderStripEdge n m),
+      e ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+        dist (faceCenter f)
+          (match e with
+            | .radial i j => cylinderRadialEdgePath n m i j x
+            | .angular i j => cylinderAngularEdgePath n m i j x) < ε) :
+    AbstractVariableDirectedGeometricPolygonalModel closedUnitSquareCylinderBoundary ε where
+  model :=
+    { Vertex := CylinderStripVertex n m
+      Edge := CylinderStripEdge n m
+      Face := CylinderStripFace n m
+      faceSize := fun _ => 3
+      boundarySize := m
+      edgeEnds := cylinderStripEdgeEnds
+      faceEdges := cylinderStripFaceEdges
+      boundaryEdges := cylinderStripBoundaryEdges (n := n) (m := m)
+      edgeFaceCount := hedgeFaceCount
+      faceVertex := cylinderStripFaceVertex
+      faceEdge := cylinderStripFaceEdge
+      faceEdgeForward := cylinderStripFaceEdgeForward
+      faceVertex_injective := cylinderStripFaceVertex_injective_of_pos hm
+      faceEdge_injective := cylinderStripFaceEdge_injective_of_pos hm
+      faceEdges_eq := cylinderStripFaceEdges_eq
+      faceEdge_ends := cylinderStripFaceEdge_ends
+      boundaryEdge := cylinderStripBoundaryEdge (n := n) (m := m)
+      boundaryEdge_injective := cylinderStripBoundaryEdge_injective (n := n) (m := m)
+      boundaryVertex := cylinderStripBoundaryVertex (n := n) (m := m)
+      boundaryEdge_ends := cylinderStripBoundaryEdge_ends (n := n) (m := m)
+      boundaryEdges_eq := cylinderStripBoundaryEdges_eq (n := n) (m := m)
+      vertexPoint := fun v ↦ cylinderSubdivisionPoint n m v.1 v.2
+      edgeToX := fun e x =>
+        match e with
+        | .radial i j => cylinderRadialEdgePath n m i j x
+        | .angular i j => cylinderAngularEdgePath n m i j x
+      edgeToX_continuous := by
+        intro e
+        cases e with
+        | radial i j => simpa using continuous_cylinderRadialEdgePath n m i j
+        | angular i j => simpa using continuous_cylinderAngularEdgePath n m i j
+      edgeToX_start := by
+        intro e
+        cases e with
+        | radial i j => simp [cylinderStripEdgeEnds, cylinderSubdivisionPoint, cylinderRadialEdgePath_start]
+        | angular i j => simp [cylinderStripEdgeEnds, cylinderSubdivisionPoint, cylinderAngularEdgePath_start]
+      edgeToX_finish := by
+        intro e
+        cases e with
+        | radial i j => simp [cylinderStripEdgeEnds, cylinderSubdivisionPoint, cylinderRadialEdgePath_finish]
+        | angular i j => simp [cylinderStripEdgeEnds, cylinderSubdivisionPoint, cylinderAngularEdgePath_finish]
+      faceCenter := faceCenter
+      halfTurn_mesh := by
+        intro f e he x
+        simp
+      boundaryParameter := fun k ↦ angularSubdivisionParameter m k
+      boundaryParameter_continuous := continuous_angularSubdivisionParameter m
+      boundaryParameter_start := by
+        intro k
+        simp [angularSubdivisionParameter, cyclicVertexParameter, closedUnitIntervalStart]
+      boundaryParameter_finish := by
+        intro k
+        simp [angularSubdivisionParameter, cyclicEdgeFinishParameter, closedUnitIntervalFinish, add_comm]
+      boundaryPath := by
+        intro k x
+        simpa [angularSubdivisionParameter] using
+          cylinderAngularEdgePath_on_closedUnitSquareCylinderBoundary n m k x }
+  mesh := by
+    intro f e he x
+    simpa using hmesh f e he x
+
+/-- A source-level wrapper reducing the directed abstract square-cylinder
+existence theorem to explicit checkerboard-cylinder strip data. -/
+theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_cylinderStrip_data
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ hm : 0 < m,
+      ∃ hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (e : CylinderStripEdge n m),
+        e ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match e with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε) :
+    HasAbstractVariableDirectedArbitrarilyFinePolygonalModels
+      closedUnitSquareCylinderBoundary := by
+  intro ε hε
+  obtain ⟨n, m, hm, hedgeFaceCount, faceCenter, hmesh⟩ := hmodels ε hε
+  exact ⟨cylinderStripAbstractVariableDirectedGeometricModel_of_mesh
+    n m hm hedgeFaceCount faceCenter hmesh⟩
+
 /-- Vertices of the disk-like model with one central polygon and a quadrilateral annulus. -/
 abbrev SquareCenterPolygonVertex (n m : ℕ) := Fin (n + 1) × Fin (m + 1)
 
@@ -4210,7 +4526,7 @@ theorem hasOddBoundaryDegreeObstruction_of_homeomorph_arbitrarilyFine
   hasOddBoundaryDegreeObstruction_of_finePolygonalModels
     (hasFinePolygonalModels_of_homeomorph_arbitrarilyFine e hboundary hmodels)
 
-/-- Once the closed unit disk is shown to admit arbitrarily fine polygonal
+/-- Once the closed unit disk is proved to have arbitrarily fine polygonal
 models, every compact target homeomorphic to it inherits the same
 map-independent interface through its boundary identification. -/
 theorem hasArbitrarilyFinePolygonalModels_of_closedUnitDisk_homeomorph
