@@ -141,8 +141,10 @@ runs both checks on every push and pull request.
   closed square and closed disk boundaries, the corresponding bundled
   glued-strip mesh-data interface on the closed disk boundary, transfer of
   that directed arbitrarily-fine interface to every compact metric boundary
-  homeomorphic to the closed disk, and the resulting direct and bundled
-  disk-homeomorphism certificate wrappers.
+  homeomorphic to the closed disk, the resulting direct and bundled
+  disk-homeomorphism certificate wrappers, and the matching oriented
+  closed-form / certificate wrappers for the bundled and direct
+  disk-homeomorphism glued-strip interface.
 
 ## Not yet end-to-end
 

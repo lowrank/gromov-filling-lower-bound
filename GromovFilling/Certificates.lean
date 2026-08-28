@@ -367,6 +367,168 @@ theorem oriented_area_gt_point_zero_three_of_closedUnitDisk_extension_boundaryIn
       hboundaryAction hω hcontdiff hintegrand hJ hbound harea
   exact nonlinearCertificate_point_zero_three_gt.trans_le hcertificate
 
+/-- Certificate-level oriented conclusion from the bundled disk-homeomorphism
+plus glued-strip calibrated Stokes bound. This packages every ingredient
+except the final identification of `boundaryAction` with the chosen boundary
+integral. -/
+theorem oriented_area_ge_nonlinearCertificate_of_closedUnitDisk_homeomorph_cylinderStripGluedArbitrarilyFineData_boundaryIntegral
+    {E F Y : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
+    [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData closedUnitDiskBoundary boundary)
+    (Fmap : C(Y, E))
+    {ω : E → E →L[ℝ] F}
+    {lam area : ℝ} {J : ℝ × ℝ → ℝ}
+    (_hlam_nonneg : 0 ≤ lam)
+    (hlam : lam < Real.pi ^ 2 / 32)
+    (hboundaryAction :
+      boundaryAction lam ≤ ‖closedUnitDiskBoundaryIntegral
+        (Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩) ω‖)
+    (hω : closedOneFormContDiffProp ω)
+    (hcontdiff : closedUnitDiskMapSquareContDiffProp
+      (Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩))
+    (hintegrand : MeasureTheory.Integrable
+      (fun x ↦ closedUnitDiskMapSkewIntegrand
+        (Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩) ω x)
+      (MeasureTheory.volume.restrict (Set.Icc (0 : ℝ × ℝ) 1)))
+    (hJ : MeasureTheory.Integrable J
+      (MeasureTheory.volume.restrict (Set.Icc (0 : ℝ × ℝ) 1)))
+    (hbound : ∀ x ∈ Set.Icc (0 : ℝ × ℝ) 1,
+      ‖closedUnitDiskMapSkewIntegrand
+          (Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩) ω x‖ ≤
+        comassBound lam * J x)
+    (harea : ∫ x in Set.Icc (0 : ℝ × ℝ) 1, J x ≤ area) :
+    nonlinearCertificate lam ≤ area := by
+  have hden : 0 < 1 - Dstar * lam :=
+    comass_denominator_pos_of_admissible hlam
+  have hcomass : 0 < comassBound lam :=
+    comassBound_pos_of_denominator hden
+  have hcalibration : boundaryAction lam ≤ comassBound lam * area :=
+    hboundaryAction.trans
+      (norm_curveIntegral_le_of_closedUnitDisk_homeomorph_cylinderStripGluedArbitrarilyFineData_of_contDiff
+        (D := D) (Fmap := Fmap) hω hcontdiff hcomass.le hintegrand hJ hbound harea)
+  exact oriented_area_ge_nonlinearCertificate (lam := lam) (area := area)
+    (by assumption) hlam hcalibration
+
+/-- Certificate-level oriented conclusion from the direct disk-homeomorphism
+calibrated Stokes bound at the glued-strip interface. This packages every
+ingredient except the final identification of `boundaryAction` with the chosen
+boundary integral. -/
+theorem oriented_area_ge_nonlinearCertificate_of_closedUnitDisk_homeomorph_cylinderStripGlued_boundaryIntegral
+    {E F Y : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
+    [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary)
+    (Fmap : C(Y, E))
+    {ω : E → E →L[ℝ] F}
+    {lam area : ℝ} {J : ℝ × ℝ → ℝ}
+    (_hlam_nonneg : 0 ≤ lam)
+    (hlam : lam < Real.pi ^ 2 / 32)
+    (hboundaryAction :
+      boundaryAction lam ≤ ‖closedUnitDiskBoundaryIntegral
+        (Fmap.comp ⟨e, e.continuous_toFun⟩) ω‖)
+    (hω : closedOneFormContDiffProp ω)
+    (hcontdiff : closedUnitDiskMapSquareContDiffProp
+      (Fmap.comp ⟨e, e.continuous_toFun⟩))
+    (hintegrand : MeasureTheory.Integrable
+      (fun x ↦ closedUnitDiskMapSkewIntegrand
+        (Fmap.comp ⟨e, e.continuous_toFun⟩) ω x)
+      (MeasureTheory.volume.restrict (Set.Icc (0 : ℝ × ℝ) 1)))
+    (hJ : MeasureTheory.Integrable J
+      (MeasureTheory.volume.restrict (Set.Icc (0 : ℝ × ℝ) 1)))
+    (hbound : ∀ x ∈ Set.Icc (0 : ℝ × ℝ) 1,
+      ‖closedUnitDiskMapSkewIntegrand
+          (Fmap.comp ⟨e, e.continuous_toFun⟩) ω x‖ ≤
+        comassBound lam * J x)
+    (harea : ∫ x in Set.Icc (0 : ℝ × ℝ) 1, J x ≤ area) :
+    nonlinearCertificate lam ≤ area := by
+  let D : HomeomorphCylinderStripGluedArbitrarilyFineData closedUnitDiskBoundary boundary :=
+    { homeomorph := e
+      boundaryHomeomorph := hboundaryMap
+      models := hasCylinderStripGluedArbitrarilyFineData_closedUnitDiskBoundary }
+  simpa [D] using
+    (oriented_area_ge_nonlinearCertificate_of_closedUnitDisk_homeomorph_cylinderStripGluedArbitrarilyFineData_boundaryIntegral
+      (D := D) (Fmap := Fmap) (lam := lam) (J := J)
+      (by assumption) hlam hboundaryAction hω hcontdiff hintegrand hJ hbound harea)
+
+/-- The point-`0.03` oriented decimal lower bound from the bundled disk-
+homeomorphism-plus-glued-strip calibrated Stokes bound. -/
+theorem oriented_area_gt_point_zero_three_of_closedUnitDisk_homeomorph_cylinderStripGluedArbitrarilyFineData_boundaryIntegral
+    {E F Y : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
+    [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData closedUnitDiskBoundary boundary)
+    (Fmap : C(Y, E))
+    {ω : E → E →L[ℝ] F}
+    {area : ℝ} {J : ℝ × ℝ → ℝ}
+    (hboundaryAction :
+      boundaryAction (3 / 100) ≤ ‖closedUnitDiskBoundaryIntegral
+        (Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩) ω‖)
+    (hω : closedOneFormContDiffProp ω)
+    (hcontdiff : closedUnitDiskMapSquareContDiffProp
+      (Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩))
+    (hintegrand : MeasureTheory.Integrable
+      (fun x ↦ closedUnitDiskMapSkewIntegrand
+        (Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩) ω x)
+      (MeasureTheory.volume.restrict (Set.Icc (0 : ℝ × ℝ) 1)))
+    (hJ : MeasureTheory.Integrable J
+      (MeasureTheory.volume.restrict (Set.Icc (0 : ℝ × ℝ) 1)))
+    (hbound : ∀ x ∈ Set.Icc (0 : ℝ × ℝ) 1,
+      ‖closedUnitDiskMapSkewIntegrand
+          (Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩) ω x‖ ≤
+        comassBound (3 / 100) * J x)
+    (harea : ∫ x in Set.Icc (0 : ℝ × ℝ) 1, J x ≤ area) :
+    (538982446 / 100000000 : ℝ) < area := by
+  have hcertificate : nonlinearCertificate (3 / 100) ≤ area := by
+    exact
+      oriented_area_ge_nonlinearCertificate_of_closedUnitDisk_homeomorph_cylinderStripGluedArbitrarilyFineData_boundaryIntegral
+        (D := D) (Fmap := Fmap) (lam := 3 / 100) (J := J)
+        (by norm_num) lambda_point_zero_three_admissible
+        hboundaryAction hω hcontdiff hintegrand hJ hbound harea
+  exact nonlinearCertificate_point_zero_three_gt.trans_le hcertificate
+
+/-- The point-`0.03` oriented decimal lower bound from the direct disk-homeomorphism
+calibrated Stokes bound at the glued-strip interface. -/
+theorem oriented_area_gt_point_zero_three_of_closedUnitDisk_homeomorph_cylinderStripGlued_boundaryIntegral
+    {E F Y : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
+    [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary)
+    (Fmap : C(Y, E))
+    {ω : E → E →L[ℝ] F}
+    {area : ℝ} {J : ℝ × ℝ → ℝ}
+    (hboundaryAction :
+      boundaryAction (3 / 100) ≤ ‖closedUnitDiskBoundaryIntegral
+        (Fmap.comp ⟨e, e.continuous_toFun⟩) ω‖)
+    (hω : closedOneFormContDiffProp ω)
+    (hcontdiff : closedUnitDiskMapSquareContDiffProp
+      (Fmap.comp ⟨e, e.continuous_toFun⟩))
+    (hintegrand : MeasureTheory.Integrable
+      (fun x ↦ closedUnitDiskMapSkewIntegrand
+        (Fmap.comp ⟨e, e.continuous_toFun⟩) ω x)
+      (MeasureTheory.volume.restrict (Set.Icc (0 : ℝ × ℝ) 1)))
+    (hJ : MeasureTheory.Integrable J
+      (MeasureTheory.volume.restrict (Set.Icc (0 : ℝ × ℝ) 1)))
+    (hbound : ∀ x ∈ Set.Icc (0 : ℝ × ℝ) 1,
+      ‖closedUnitDiskMapSkewIntegrand
+          (Fmap.comp ⟨e, e.continuous_toFun⟩) ω x‖ ≤
+        comassBound (3 / 100) * J x)
+    (harea : ∫ x in Set.Icc (0 : ℝ × ℝ) 1, J x ≤ area) :
+    (538982446 / 100000000 : ℝ) < area := by
+  have hcertificate : nonlinearCertificate (3 / 100) ≤ area := by
+    exact
+      oriented_area_ge_nonlinearCertificate_of_closedUnitDisk_homeomorph_cylinderStripGlued_boundaryIntegral
+        (e := e) (hboundaryMap := hboundaryMap) (Fmap := Fmap)
+        (lam := 3 / 100) (J := J) (by norm_num) lambda_point_zero_three_admissible
+        hboundaryAction hω hcontdiff hintegrand hJ hbound harea
+  exact nonlinearCertificate_point_zero_three_gt.trans_le hcertificate
+
 /-- Certificate-level oriented conclusion from the direct closed-square
 calibrated Stokes bound. -/
 theorem oriented_area_ge_nonlinearCertificate_of_closedUnitSquare_boundaryIntegral
