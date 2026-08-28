@@ -97,6 +97,38 @@ theorem universal_of_givens_coverage_budget
   exact finite_universal_of_givens_coverage_budget N area jacobianMass
     hcoverage hbudget
 
+/-- `ENNReal` form of the infinite Givens certificate, suited to
+measure-theoretic area budgets. -/
+theorem universal_ennreal_of_givens_coverage_budget
+    (area : ℝ≥0∞)
+    (hfinite : ∀ N : ℕ, ∃ jacobianMass : Fin N → ℝ≥0∞,
+      (∀ j : Fin N,
+        ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+          jacobianMass j) ∧
+      (∑ j : Fin N, jacobianMass j) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  obtain ⟨jacobianMass, hcoverage, hbudget⟩ := hfinite N
+  exact finite_universal_ennreal_of_givens_coverage_budget
+    N area jacobianMass hcoverage hbudget
+
+/-- Infinite `ENNReal` Givens certificate with a common additive defect
+carried through unchanged. -/
+theorem universal_ennreal_of_givens_coverage_budget_add
+    (area defect : ℝ≥0∞)
+    (hfinite : ∀ N : ℕ, ∃ jacobianMass : Fin N → ℝ≥0∞,
+      (∀ j : Fin N,
+        ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+          jacobianMass j) ∧
+      (∑ j : Fin N, jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  obtain ⟨jacobianMass, hcoverage, hbudget⟩ := hfinite N
+  exact finite_universal_ennreal_of_givens_coverage_budget_add
+    N area defect jacobianMass hcoverage hbudget
+
 lemma Qstar_nonneg : 0 ≤ Qstar := by
   unfold Qstar
   positivity
