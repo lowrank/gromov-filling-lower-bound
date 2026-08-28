@@ -6551,6 +6551,54 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_closedUnitSquare_home
     finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
       N area boundary e hboundaryHomeomorph hboundary (hbudget N)
 
+/-- The complete finite planar certificate for the actual metric Fourier
+family when the boundary is identified with the standard closed-square boundary
+by a homeomorphism and the odd boundary-degree obstruction is supplied through
+the bundled explicit glued-strip square route. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  let _ : CompactSpace ℂ := Homeomorph.compactSpace e
+  exact
+    finite_universal_ennreal_of_metric_complex_planar_map_of_odd_boundary_degree_obstruction
+      N area boundary
+      (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_cylinderStripGlued
+        e hboundaryHomeomorph)
+      hboundary hbudget
+
+/-- Infinite-mode planar conclusion for the actual metric Fourier family when
+the boundary is identified with the standard closed-square boundary by a
+homeomorphism and the odd boundary-degree obstruction is supplied through the
+bundled explicit glued-strip square route. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  let _ : CompactSpace ℂ := Homeomorph.compactSpace e
+  exact
+    universal_ennreal_of_metric_complex_planar_maps_of_odd_boundary_degree_obstruction
+      area boundary
+      (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_cylinderStripGlued
+        e hboundaryHomeomorph)
+      hboundary hbudget
+
 /-- The finite planar certificate with coordinate-energy budget when the
 boundary extends continuously across the standard closed square. -/
 theorem finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_closedUnitSquare_extension
@@ -6685,6 +6733,54 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_c
   exact
     finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
       N area boundary e hboundaryHomeomorph hboundary (hbudget N) harea
+
+/-- The finite planar certificate with coordinate-energy budget when the
+boundary is identified with the standard closed-square boundary by a
+homeomorphism and the odd boundary-degree obstruction is supplied through the
+bundled explicit glued-strip square route. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget :
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  let _ : CompactSpace ℂ := Homeomorph.compactSpace e
+  exact
+    finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_odd_boundary_degree_obstruction
+      N area boundary
+      (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_cylinderStripGlued
+        e hboundaryHomeomorph)
+      hboundary hbudget harea
+
+/-- Infinite-mode planar certificate with coordinate-energy budget when the
+boundary is identified with the standard closed-square boundary by a
+homeomorphism and the odd boundary-degree obstruction is supplied through the
+bundled explicit glued-strip square route. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget : ∀ N : ℕ,
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  let _ : CompactSpace ℂ := Homeomorph.compactSpace e
+  exact
+    universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_odd_boundary_degree_obstruction
+      area boundary
+      (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_cylinderStripGlued
+        e hboundaryHomeomorph)
+      hboundary hbudget harea
 
 end
 
