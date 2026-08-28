@@ -84,7 +84,8 @@ runs both checks on every push and pull request.
   coverage theorem to bound the covered region by the Jacobian integral,
   the same local inequality now glues across finitely many open planar
   pieces both for one global map and for families of chartwise local maps,
-  and the resulting local-map certificate interface is formalized;
+  and the resulting finite and infinite local-map certificate interfaces
+  are formalized;
 - the exact identification of mathlib's real determinant on `ℂ` with the
   elementary planar Jacobian, its finite-sum integrated `ENNReal` form,
   and the passage from a Hilbert--Schmidt derivative-energy bound to a
