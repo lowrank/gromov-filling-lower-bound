@@ -5656,6 +5656,119 @@ theorem cylinderStripEdgePathOnClosedUnitSquare_finish {n m : ℕ}
     cylinderAngularEdgePath_on_closedUnitSquareCylinderBoundary,
     closedUnitSquareRadial_comp_cylinderBoundary]
 
+theorem eqvGen_cylinderStripVertexGluing_preserves_closedUnitSquarePoint {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {v w : CylinderStripVertex n m}
+    (h : Relation.EqvGen
+      (fun a b : CylinderStripVertex n m ↦
+        (∃ j : Fin (m + 1),
+          a = ((0 : Fin (n + 2)), j) ∧
+          b = ((0 : Fin (n + 2)), P.pairedStart j)) ∨
+        (∃ j : Fin (m + 1),
+          a = ((0 : Fin (n + 2)), cyclicSucc j) ∧
+          b = ((0 : Fin (n + 2)), P.pairedFinish j)))
+      v w) :
+    cylinderStripVertexPointOnClosedUnitSquare n m v =
+      cylinderStripVertexPointOnClosedUnitSquare n m w := by
+  induction h with
+  | rel _ _ hstep =>
+      rcases hstep with h | h
+      · rcases h with ⟨j, rfl, rfl⟩
+        simp [cylinderStripVertexPointOnClosedUnitSquare, cylinderSubdivisionPoint,
+          radialSubdivisionPoint_zero, closedUnitSquareRadial_start]
+      · rcases h with ⟨j, rfl, rfl⟩
+        simp [cylinderStripVertexPointOnClosedUnitSquare, cylinderSubdivisionPoint,
+          radialSubdivisionPoint_zero, closedUnitSquareRadial_start]
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+theorem eqvGen_cylinderStripEdgeGluing_preserves_closedUnitSquarePath {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {e₁ e₂ : CylinderStripEdge n m}
+    (h : Relation.EqvGen
+      (fun a b : CylinderStripEdge n m ↦
+        ∃ j : Fin (m + 1),
+          a = CylinderStripEdge.angular (0 : Fin (n + 2)) j ∧
+          b = CylinderStripEdge.angular (0 : Fin (n + 2)) (P.edgePair j))
+      e₁ e₂) :
+    cylinderStripEdgePathOnClosedUnitSquare n m e₁ =
+      cylinderStripEdgePathOnClosedUnitSquare n m e₂ := by
+  induction h with
+  | rel _ _ hstep =>
+      rcases hstep with ⟨j, rfl, rfl⟩
+      exact (cylinderStripEdgePathOnClosedUnitSquare_lower (n := n) (m := m) j).trans
+        (cylinderStripEdgePathOnClosedUnitSquare_lower (n := n) (m := m) (P.edgePair j)).symm
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+/-- The square-radial image of strip vertices descends to the glued vertex
+quotient for any chosen lower-boundary pairing. -/
+def cylinderStripGluedVertexPointOnClosedUnitSquare (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    CylinderStripGluedVertex n P → ClosedUnitSquare :=
+  Quotient.lift
+    (cylinderStripVertexPointOnClosedUnitSquare n m)
+    (by
+      intro a b hab
+      exact eqvGen_cylinderStripVertexGluing_preserves_closedUnitSquarePoint P hab)
+
+/-- The square-radial image of strip edges descends to the glued edge quotient
+for any chosen lower-boundary pairing. -/
+def cylinderStripGluedEdgePathOnClosedUnitSquare (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    CylinderStripGluedEdge n P → ClosedUnitInterval → ClosedUnitSquare :=
+  Quotient.lift
+    (cylinderStripEdgePathOnClosedUnitSquare n m)
+    (by
+      intro a b hab
+      exact eqvGen_cylinderStripEdgeGluing_preserves_closedUnitSquarePath P hab)
+
+theorem continuous_cylinderStripGluedEdgePathOnClosedUnitSquare (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (e : CylinderStripGluedEdge n P) :
+    Continuous (cylinderStripGluedEdgePathOnClosedUnitSquare n P e) := by
+  refine Quotient.inductionOn e ?_
+  intro e
+  simpa [cylinderStripGluedEdgePathOnClosedUnitSquare] using
+    continuous_cylinderStripEdgePathOnClosedUnitSquare n m e
+
+@[simp] theorem cylinderStripGluedVertexPointOnClosedUnitSquare_mk_lower {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    cylinderStripGluedVertexPointOnClosedUnitSquare n P
+      (Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        (cylinderStripLowerBoundaryVertex (n := n) (m := m) j)) =
+      closedUnitSquareCenter := by
+  simp [cylinderStripGluedVertexPointOnClosedUnitSquare,
+    cylinderStripVertexPointOnClosedUnitSquare_lower]
+
+@[simp] theorem cylinderStripGluedEdgePathOnClosedUnitSquare_mk_lower {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    cylinderStripGluedEdgePathOnClosedUnitSquare n P
+      (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+        (cylinderStripLowerBoundaryEdge (n := n) (m := m) j)) =
+      fun _ ↦ closedUnitSquareCenter := by
+  simp [cylinderStripGluedEdgePathOnClosedUnitSquare,
+    cylinderStripEdgePathOnClosedUnitSquare_lower]
+
+@[simp] theorem cylinderStripGluedVertexPointOnClosedUnitSquare_mk_boundary {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    cylinderStripGluedVertexPointOnClosedUnitSquare n P
+      (cylinderStripGluedBoundaryVertex n P j) =
+      closedUnitSquareBoundary (angularSubdivisionPoint m j) := by
+  simp [cylinderStripGluedBoundaryVertex,
+    cylinderStripGluedVertexPointOnClosedUnitSquare,
+    cylinderStripVertexPointOnClosedUnitSquare_boundary]
+
+@[simp] theorem cylinderStripGluedEdgePathOnClosedUnitSquare_boundary {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    cylinderStripGluedEdgePathOnClosedUnitSquare n P
+      (cylinderStripGluedBoundaryEdge n P j) =
+      fun x ↦ closedUnitSquareBoundary (angularSubdivisionArc m j x) := by
+  simp [cylinderStripGluedBoundaryEdge,
+    cylinderStripGluedEdgePathOnClosedUnitSquare,
+    cylinderStripEdgePathOnClosedUnitSquare_boundary]
+
 /-- Bundle explicit checkerboard-cylinder strip data into the directed abstract
 variable-face-size geometric polygonal-model interface on the square-cylinder
 boundary. -/
