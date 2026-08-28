@@ -3721,6 +3721,176 @@ noncomputable def adjacentPreservingCylinderStripLowerBoundaryPairing
     (adjacentPreservingCylinderStripLowerBoundaryPairing hm).edgePair j = cyclicPred j := by
   simp [adjacentPreservingCylinderStripLowerBoundaryPairing, hj]
 
+/-- For the adjacent-preserving odd strip pairing, the glued lower boundary
+loop traverses each quotient edge twice with the same orientation.  Any
+circle-valued map on the quotient therefore has even degree on that loop. -/
+theorem even_circleDegree_cylinderStripGluedPointLowerBoundary_adjacentPreserving
+    {m : ℕ} (hm : Odd m)
+    {degree : ℤ}
+    {H : CylinderStripGluedPointSpace
+      (adjacentPreservingCylinderStripLowerBoundaryPairing hm) → UnitAddCircle}
+    (hdegree :
+      HasCircleDegree
+        (H ∘ cylinderStripGluedPointLowerBoundary
+          (adjacentPreservingCylinderStripLowerBoundaryPairing hm))
+        degree) :
+    Even degree := by
+  obtain ⟨k, rfl⟩ := hm
+  let P : CylinderStripLowerBoundaryPairing (2 * k + 1) :=
+    adjacentPreservingCylinderStripLowerBoundaryPairing (odd_two_mul_add_one k)
+  obtain ⟨lift, hlift, hproj, hperiod⟩ := hdegree
+  have hstep :
+      ∀ r : ℕ, r ≤ k →
+        ∃ c : ℤ,
+          lift (((2 * (r + 1) : ℕ) : ℝ) / ((2 * k + 1) + 1 : ℕ)) =
+            lift (((2 * r : ℕ) : ℝ) / ((2 * k + 1) + 1 : ℕ)) + (2 * c : ℤ) := by
+    intro r hr
+    let j : Fin ((2 * k + 1) + 1) := ⟨2 * r, by omega⟩
+    have hjEven : Even j.1 := by
+      refine ⟨r, ?_⟩
+      change 2 * r = r + r
+      omega
+    have hjNotLast : j ≠ Fin.last (2 * k + 1) := by
+      intro hjLast
+      have hval := congrArg Fin.val hjLast
+      simp [j] at hval
+      omega
+    have hcont_j :
+        Continuous (fun x : ClosedUnitInterval ↦
+          angularSubdivisionParameter (2 * k + 1) j x) := by
+      simpa [angularSubdivisionParameter] using
+        (continuous_subtype_val.add continuous_const).div_const
+          (((2 * k + 1) + 1 : ℕ) : ℝ)
+    have hcont_succ :
+        Continuous (fun x : ClosedUnitInterval ↦
+          angularSubdivisionParameter (2 * k + 1) (cyclicSucc j) x) := by
+      simpa [angularSubdivisionParameter] using
+        (continuous_subtype_val.add continuous_const).div_const
+          (((2 * k + 1) + 1 : ℕ) : ℝ)
+    have hor : P.orientation j = .preserving := by
+      simp [P]
+    have hlower :
+        ∀ x : ClosedUnitInterval,
+          cylinderStripGluedPointLowerBoundary P
+              (angularSubdivisionArc (2 * k + 1) j x) =
+            cylinderStripGluedPointLowerBoundary P
+              (angularSubdivisionArc (2 * k + 1) (cyclicSucc j) x) := by
+      intro x
+      change cylinderStripPointQuotientMap P
+          (closedUnitIntervalStart, angularSubdivisionArc (2 * k + 1) j x) =
+        cylinderStripPointQuotientMap P
+          (closedUnitIntervalStart,
+            angularSubdivisionArc (2 * k + 1) (cyclicSucc j) x)
+      rw [← adjacentPreservingCylinderStripLowerBoundaryPairing_edgePair_of_even
+        (odd_two_mul_add_one k) j hjEven]
+      exact cylinderStripPointQuotientMap_lower_pair_preserving P hor x
+    have hsame :
+        ∀ x : ClosedUnitInterval,
+          (lift (angularSubdivisionParameter (2 * k + 1) j x) : UnitAddCircle) =
+            (lift (angularSubdivisionParameter (2 * k + 1) (cyclicSucc j) x) :
+              UnitAddCircle) := by
+      intro x
+      calc
+        (lift (angularSubdivisionParameter (2 * k + 1) j x) : UnitAddCircle) =
+            H (cylinderStripGluedPointLowerBoundary P
+              (angularSubdivisionArc (2 * k + 1) j x)) := by
+              simpa [P, angularSubdivisionArc] using
+                hproj (angularSubdivisionParameter (2 * k + 1) j x)
+        _ = H (cylinderStripGluedPointLowerBoundary P
+              (angularSubdivisionArc (2 * k + 1) (cyclicSucc j) x)) := by
+              exact congrArg H (hlower x)
+        _ = (lift (angularSubdivisionParameter (2 * k + 1) (cyclicSucc j) x) :
+              UnitAddCircle) := by
+              symm
+              simpa [P, angularSubdivisionArc] using
+                hproj (angularSubdivisionParameter (2 * k + 1) (cyclicSucc j) x)
+    have hconst :=
+      real_circle_lifts_difference_eq
+        (fun x : ClosedUnitInterval ↦
+          lift (angularSubdivisionParameter (2 * k + 1) j x))
+        (fun x : ClosedUnitInterval ↦
+          lift (angularSubdivisionParameter (2 * k + 1) (cyclicSucc j) x))
+        (hlift.comp hcont_j) (hlift.comp hcont_succ) hsame
+        closedUnitIntervalStart closedUnitIntervalFinish
+    obtain ⟨c, hc⟩ :=
+      exists_integer_difference_of_same_unitAddCircle
+        (lift (angularSubdivisionParameter (2 * k + 1) (cyclicSucc j)
+          closedUnitIntervalStart))
+        (lift (angularSubdivisionParameter (2 * k + 1) j closedUnitIntervalStart))
+        ((hsame closedUnitIntervalStart).symm)
+    have hsuccval : (cyclicSucc j).1 = 2 * r + 1 := by
+      rw [cyclicSucc_val_of_ne_last j hjNotLast]
+    have hc' :
+        (c : ℝ) =
+          lift (((2 * r + 1 : ℕ) : ℝ) / ((2 * k + 1) + 1 : ℕ)) -
+            lift (((2 * r : ℕ) : ℝ) / ((2 * k + 1) + 1 : ℕ)) := by
+      simpa [angularSubdivisionParameter, closedUnitIntervalStart, j, hsuccval]
+        using hc
+    have hconst' :
+        lift (((2 * r : ℕ) : ℝ) / ((2 * k + 1) + 1 : ℕ)) -
+            lift (((2 * r + 1 : ℕ) : ℝ) / ((2 * k + 1) + 1 : ℕ)) =
+          lift (((2 * r + 1 : ℕ) : ℝ) / ((2 * k + 1) + 1 : ℕ)) -
+            lift (((2 * (r + 1) : ℕ) : ℝ) / ((2 * k + 1) + 1 : ℕ)) := by
+      have hone : (1 : ℝ) + (2 * r : ℝ) = (2 * r + 1 : ℝ) := by ring
+      have htwo : (1 : ℝ) + (2 * r + 1 : ℝ) = 2 * (r + 1 : ℝ) := by ring
+      simpa [angularSubdivisionParameter, closedUnitIntervalStart,
+        closedUnitIntervalFinish, j, hsuccval, hone, htwo] using hconst
+    have hpairReal :
+        lift (((2 * (r + 1) : ℕ) : ℝ) / ((2 * k + 1) + 1 : ℕ)) =
+          lift (((2 * r : ℕ) : ℝ) / ((2 * k + 1) + 1 : ℕ)) + (2 : ℝ) * c := by
+      linarith
+    have hpair :
+        lift (((2 * (r + 1) : ℕ) : ℝ) / ((2 * k + 1) + 1 : ℕ)) =
+          lift (((2 * r : ℕ) : ℝ) / ((2 * k + 1) + 1 : ℕ)) + (2 * c : ℤ) := by
+      simpa [two_mul, mul_comm, mul_left_comm, mul_assoc] using hpairReal
+    exact ⟨c, hpair⟩
+  have hvertex :
+      ∀ s : ℕ, s ≤ k + 1 →
+        ∃ z : ℤ,
+          lift (((2 * s : ℕ) : ℝ) / ((2 * k + 1) + 1 : ℕ)) =
+            lift 0 + (2 * z : ℤ) := by
+    intro s hs
+    induction s with
+    | zero =>
+        refine ⟨0, ?_⟩
+        simp
+    | succ s ih =>
+        have hs' : s ≤ k := by omega
+        obtain ⟨z, hz⟩ := ih (by omega)
+        obtain ⟨c, hc⟩ := hstep s hs'
+        refine ⟨z + c, ?_⟩
+        rw [hc, hz]
+        push_cast
+        ring
+  obtain ⟨z, hz⟩ := hvertex (k + 1) le_rfl
+  have htop :
+      (((2 * (k + 1) : ℕ) : ℝ) / ((2 * k + 1) + 1 : ℕ)) = 1 := by
+    have hnum : (2 * (k + 1) : ℕ) = (2 * k + 1) + 1 := by omega
+    have hden : ((((2 * k + 1) + 1 : ℕ) : ℝ)) ≠ 0 := by positivity
+    rw [hnum]
+    field_simp [hden]
+  have hperiod0 : lift 1 = lift 0 + (degree : ℝ) := by
+    simpa using hperiod 0
+  have hdegEvenReal : (degree : ℝ) = (2 * z : ℤ) := by
+    rw [htop] at hz
+    linarith
+  have hdegEven : degree = 2 * z := by
+    exact_mod_cast hdegEvenReal
+  exact even_iff_exists_two_mul.mpr ⟨z, hdegEven⟩
+
+/-- The glued lower boundary loop of the adjacent-preserving odd strip pairing
+already carries the odd-degree obstruction. -/
+theorem hasOddBoundaryDegreeObstruction_cylinderStripGluedPointLowerBoundary_adjacentPreserving
+    {m : ℕ} (hm : Odd m) :
+    HasOddBoundaryDegreeObstruction
+      (cylinderStripGluedPointLowerBoundary
+        (adjacentPreservingCylinderStripLowerBoundaryPairing hm)) := by
+  intro H hH degree hdegree hodd
+  have heven :
+      Even degree :=
+    even_circleDegree_cylinderStripGluedPointLowerBoundary_adjacentPreserving hm hdegree
+  exact (Int.not_odd_iff_even.mpr heven) hodd
+
 /-- Generated relation on lower boundary edges coming from the chosen pairing. -/
 inductive CylinderStripLowerBoundaryEdgeStep {m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) :
