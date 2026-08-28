@@ -3088,6 +3088,51 @@ theorem cylinderStripLowerBoundaryEdgeOrbit_equivalence {m : ℕ}
   apply Quotient.sound
   exact Relation.EqvGen.rel _ _ ⟨j, rfl, rfl⟩
 
+def cylinderStripLowerBoundaryEdgeTag {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    CylinderStripEdge n m → Option (CylinderStripLowerBoundaryEdgeClass P)
+  | .radial _ _ => none
+  | .angular i j =>
+      if i = 0 then some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) j) else none
+
+theorem cylinderStripEdgeGluingStep_preserves_lowerBoundaryEdgeTag {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {e₁ e₂ : CylinderStripEdge n m}
+    (h : ∃ j : Fin (m + 1),
+      e₁ = CylinderStripEdge.angular (0 : Fin (n + 2)) j ∧
+      e₂ = CylinderStripEdge.angular (0 : Fin (n + 2)) (P.edgePair j)) :
+    cylinderStripLowerBoundaryEdgeTag P e₁ = cylinderStripLowerBoundaryEdgeTag P e₂ := by
+  rcases h with ⟨j, rfl, rfl⟩
+  change some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) j) =
+    some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) (P.edgePair j))
+  rw [mk_cylinderStripLowerBoundaryEdgeClass_pair]
+
+theorem eqvGen_cylinderStripEdgeGluing_preserves_lowerBoundaryEdgeTag {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {e₁ e₂ : CylinderStripEdge n m}
+    (h : Relation.EqvGen
+      (fun a b : CylinderStripEdge n m ↦
+        ∃ j : Fin (m + 1),
+          a = CylinderStripEdge.angular (0 : Fin (n + 2)) j ∧
+          b = CylinderStripEdge.angular (0 : Fin (n + 2)) (P.edgePair j))
+      e₁ e₂) :
+    cylinderStripLowerBoundaryEdgeTag P e₁ = cylinderStripLowerBoundaryEdgeTag P e₂ := by
+  induction h with
+  | rel _ _ hstep =>
+      exact cylinderStripEdgeGluingStep_preserves_lowerBoundaryEdgeTag P hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+def cylinderStripGluedLowerBoundaryEdgeTag (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    CylinderStripGluedEdge n P → Option (CylinderStripLowerBoundaryEdgeClass P) :=
+  Quotient.lift
+    (cylinderStripLowerBoundaryEdgeTag P)
+    (by
+      intro a b hab
+      exact eqvGen_cylinderStripEdgeGluing_preserves_lowerBoundaryEdgeTag P hab)
+
 @[simp] theorem mk_cylinderStripGluedLowerEdge_eq_iff {n m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) (j k : Fin (m + 1)) :
     Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
@@ -3095,28 +3140,9 @@ theorem cylinderStripLowerBoundaryEdgeOrbit_equivalence {m : ℕ}
       Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
         (CylinderStripEdge.angular (0 : Fin (n + 2)) k) ↔
       k = j ∨ k = P.edgePair j := by
-  let lowerClass : CylinderStripGluedEdge n P → Option (CylinderStripLowerBoundaryEdgeClass P) :=
-    Quotient.lift
-      (fun e : CylinderStripEdge n m =>
-        match e with
-        | .radial _ _ => none
-        | .angular i l => if i = 0 then some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) l) else none)
-      (by
-        intro a b hab
-        induction hab with
-        | rel _ _ hstep =>
-            rcases hstep with ⟨l, ha, hb⟩
-            cases ha
-            cases hb
-            change some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) l) =
-              some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) (P.edgePair l))
-            rw [mk_cylinderStripLowerBoundaryEdgeClass_pair]
-        | refl _ => rfl
-        | symm _ _ _ ih => exact ih.symm
-        | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂)
   constructor
   · intro h
-    have hsome := congrArg lowerClass h
+    have hsome := congrArg (cylinderStripGluedLowerBoundaryEdgeTag n P) h
     change some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) j) =
         some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) k) at hsome
     have hclass : Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) j =
@@ -3128,141 +3154,28 @@ theorem cylinderStripLowerBoundaryEdgeOrbit_equivalence {m : ℕ}
     · rw [hpair]
       exact mk_cylinderStripGluedEdge_pair P j
 
-@[simp] theorem mk_cylinderStripGluedVertex_start {n m : ℕ}
+@[simp] theorem cylinderStripGluedLowerBoundaryEdgeTag_mk_lower {n m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
-    Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
-        (((0 : Fin (n + 2)), j) : CylinderStripVertex n m) =
-      Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
-        (((0 : Fin (n + 2)), P.pairedStart j) : CylinderStripVertex n m) := by
-  apply Quotient.sound
-  exact Relation.EqvGen.rel _ _ <| Or.inl ⟨j, rfl, rfl⟩
+    cylinderStripGluedLowerBoundaryEdgeTag n P
+      (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+        (CylinderStripEdge.angular (0 : Fin (n + 2)) j)) =
+      some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) j) :=
+  rfl
 
-@[simp] theorem mk_cylinderStripGluedVertex_finish {n m : ℕ}
-    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
-    Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
-        (((0 : Fin (n + 2)), cyclicSucc j) : CylinderStripVertex n m) =
-      Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
-        (((0 : Fin (n + 2)), P.pairedFinish j) : CylinderStripVertex n m) := by
-  apply Quotient.sound
-  exact Relation.EqvGen.rel _ _ <| Or.inr ⟨j, rfl, rfl⟩
+@[simp] theorem cylinderStripGluedLowerBoundaryEdgeTag_mk_radial {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    cylinderStripGluedLowerBoundaryEdgeTag n P
+      (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+        (CylinderStripEdge.radial i j)) = none :=
+  rfl
 
-def cylinderStripGluedBoundaryEdge (n : ℕ) {m : ℕ}
-    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
-    CylinderStripGluedEdge n P :=
-  Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
-    (cylinderStripBoundaryEdge (n := n) (m := m) j)
-
-def cylinderStripGluedBoundaryVertex (n : ℕ) {m : ℕ}
-    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
-    CylinderStripGluedVertex n P :=
-  Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
-    (cylinderStripBoundaryVertex (n := n) (m := m) j)
-
-def cylinderStripUpperBoundaryEdgeTag {n m : ℕ} :
-    CylinderStripEdge n m → Option (Fin (m + 1))
-  | .radial _ _ => none
-  | .angular i j => if i = Fin.last (n + 1) then some j else none
-
-def cylinderStripUpperBoundaryVertexTag {n m : ℕ} :
-    CylinderStripVertex n m → Option (Fin (m + 1))
-  | (i, j) => if i = Fin.last (n + 1) then some j else none
-
-theorem cylinderStripEdgeGluingStep_preserves_upperBoundaryEdgeTag {n m : ℕ}
-    (P : CylinderStripLowerBoundaryPairing m)
-    {e₁ e₂ : CylinderStripEdge n m}
-    (h : ∃ j : Fin (m + 1),
-      e₁ = CylinderStripEdge.angular (0 : Fin (n + 2)) j ∧
-      e₂ = CylinderStripEdge.angular (0 : Fin (n + 2)) (P.edgePair j)) :
-    cylinderStripUpperBoundaryEdgeTag e₁ = cylinderStripUpperBoundaryEdgeTag e₂ := by
-  rcases h with ⟨j, rfl, rfl⟩
-  simp [cylinderStripUpperBoundaryEdgeTag]
-
-theorem cylinderStripVertexGluingStep_preserves_upperBoundaryVertexTag {n m : ℕ}
-    (P : CylinderStripLowerBoundaryPairing m)
-    {v w : CylinderStripVertex n m}
-    (h :
-      (∃ j : Fin (m + 1),
-        v = ((0 : Fin (n + 2)), j) ∧
-        w = ((0 : Fin (n + 2)), P.pairedStart j)) ∨
-      (∃ j : Fin (m + 1),
-        v = ((0 : Fin (n + 2)), cyclicSucc j) ∧
-        w = ((0 : Fin (n + 2)), P.pairedFinish j))) :
-    cylinderStripUpperBoundaryVertexTag v = cylinderStripUpperBoundaryVertexTag w := by
-  rcases h with h | h
-  · rcases h with ⟨j, rfl, rfl⟩
-    simp [cylinderStripUpperBoundaryVertexTag]
-  · rcases h with ⟨j, rfl, rfl⟩
-    simp [cylinderStripUpperBoundaryVertexTag]
-
-theorem eqvGen_cylinderStripEdgeGluing_preserves_upperBoundaryEdgeTag {n m : ℕ}
-    (P : CylinderStripLowerBoundaryPairing m)
-    {e₁ e₂ : CylinderStripEdge n m}
-    (h : Relation.EqvGen
-      (fun a b : CylinderStripEdge n m ↦
-        ∃ j : Fin (m + 1),
-          a = CylinderStripEdge.angular (0 : Fin (n + 2)) j ∧
-          b = CylinderStripEdge.angular (0 : Fin (n + 2)) (P.edgePair j))
-      e₁ e₂) :
-    cylinderStripUpperBoundaryEdgeTag e₁ = cylinderStripUpperBoundaryEdgeTag e₂ := by
-  induction h with
-  | rel _ _ hstep =>
-      exact cylinderStripEdgeGluingStep_preserves_upperBoundaryEdgeTag P hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
-
-theorem eqvGen_cylinderStripVertexGluing_preserves_upperBoundaryVertexTag {n m : ℕ}
-    (P : CylinderStripLowerBoundaryPairing m)
-    {v w : CylinderStripVertex n m}
-    (h : Relation.EqvGen
-      (fun v w : CylinderStripVertex n m ↦
-        (∃ j : Fin (m + 1),
-          v = ((0 : Fin (n + 2)), j) ∧
-          w = ((0 : Fin (n + 2)), P.pairedStart j)) ∨
-        (∃ j : Fin (m + 1),
-          v = ((0 : Fin (n + 2)), cyclicSucc j) ∧
-          w = ((0 : Fin (n + 2)), P.pairedFinish j)))
-      v w) :
-    cylinderStripUpperBoundaryVertexTag v = cylinderStripUpperBoundaryVertexTag w := by
-  induction h with
-  | rel _ _ hstep =>
-      exact cylinderStripVertexGluingStep_preserves_upperBoundaryVertexTag P hstep
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
-
-@[simp] theorem cylinderStripGluedBoundaryEdge_injective {n m : ℕ}
-    (P : CylinderStripLowerBoundaryPairing m) :
-    Function.Injective (cylinderStripGluedBoundaryEdge (n := n) P) := by
-  intro j k h
-  have hrel : Relation.EqvGen
-      (fun a b : CylinderStripEdge n m ↦
-        ∃ l : Fin (m + 1),
-          a = CylinderStripEdge.angular (0 : Fin (n + 2)) l ∧
-          b = CylinderStripEdge.angular (0 : Fin (n + 2)) (P.edgePair l))
-      (cylinderStripBoundaryEdge (n := n) (m := m) j)
-      (cylinderStripBoundaryEdge (n := n) (m := m) k) := by
-    simpa [cylinderStripGluedBoundaryEdge, cylinderStripEdgeGluingSetoid] using Quotient.exact h
-  have htag := eqvGen_cylinderStripEdgeGluing_preserves_upperBoundaryEdgeTag P hrel
-  simpa [cylinderStripUpperBoundaryEdgeTag, cylinderStripBoundaryEdge] using htag
-
-@[simp] theorem cylinderStripGluedBoundaryVertex_injective {n m : ℕ}
-    (P : CylinderStripLowerBoundaryPairing m) :
-    Function.Injective (cylinderStripGluedBoundaryVertex (n := n) P) := by
-  intro j k h
-  have hrel : Relation.EqvGen
-      (fun v w : CylinderStripVertex n m ↦
-        (∃ l : Fin (m + 1),
-          v = ((0 : Fin (n + 2)), l) ∧
-          w = ((0 : Fin (n + 2)), P.pairedStart l)) ∨
-        (∃ l : Fin (m + 1),
-          v = ((0 : Fin (n + 2)), cyclicSucc l) ∧
-          w = ((0 : Fin (n + 2)), P.pairedFinish l)))
-      (cylinderStripBoundaryVertex (n := n) (m := m) j)
-      (cylinderStripBoundaryVertex (n := n) (m := m) k) := by
-    simpa [cylinderStripGluedBoundaryVertex, cylinderStripVertexGluingSetoid] using Quotient.exact h
-  have htag := eqvGen_cylinderStripVertexGluing_preserves_upperBoundaryVertexTag P hrel
-  simpa [cylinderStripUpperBoundaryVertexTag, cylinderStripBoundaryVertex] using htag
+@[simp] theorem cylinderStripGluedLowerBoundaryEdgeTag_mk_angular_ne_zero {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (i : Fin (n + 2)) (j : Fin (m + 1))
+    (hi0 : i ≠ 0) :
+    cylinderStripGluedLowerBoundaryEdgeTag n P
+      (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+        (CylinderStripEdge.angular i j)) = none := by
+  simp [cylinderStripGluedLowerBoundaryEdgeTag, cylinderStripLowerBoundaryEdgeTag, hi0]
 
 @[simp] theorem radialSubdivisionLower_injective {n : ℕ} :
     Function.Injective (@radialSubdivisionLower n) := by
@@ -3465,6 +3378,97 @@ theorem mem_cylinderStripFaceEdges_angular_iff {n m : ℕ}
           simpa [hpar, hu] using (cylinderStripFaceEdge_one (f := (i', j)))⟩
       · exact Finset.mem_image.mpr ⟨3, Finset.mem_univ _, by
           simpa [hpar, hu] using (cylinderStripFaceEdge_three (f := (i', j)))⟩
+
+
+
+theorem exists_mem_cylinderStripFaceEdges_eq_gluedLowerEdge_iff {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    (i : Fin (n + 1)) (k j : Fin (m + 1)) :
+    (∃ e ∈ cylinderStripFaceEdges (i, k),
+      Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e =
+        Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+          (CylinderStripEdge.angular (0 : Fin (n + 2)) j)) ↔
+      i = 0 ∧ (k = j ∨ k = P.edgePair j) := by
+  constructor
+  · rintro ⟨e, he, hq⟩
+    have htag := congrArg (cylinderStripGluedLowerBoundaryEdgeTag n P) hq
+    cases e with
+    | radial i' l =>
+        rw [cylinderStripGluedLowerBoundaryEdgeTag_mk_radial,
+          cylinderStripGluedLowerBoundaryEdgeTag_mk_lower] at htag
+        cases htag
+    | angular i' l =>
+        by_cases hi0 : i' = 0
+        · subst hi0
+          rw [cylinderStripGluedLowerBoundaryEdgeTag_mk_lower,
+            cylinderStripGluedLowerBoundaryEdgeTag_mk_lower] at htag
+          have hclass : Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) l =
+              Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) j := Option.some.inj htag
+          have hlj : l = j ∨ l = P.edgePair j :=
+            (mk_cylinderStripLowerBoundaryEdgeClass_eq_iff P j l).1 hclass.symm
+          have hemem : CylinderStripEdge.angular (0 : Fin (n + 2)) l ∈ cylinderStripFaceEdges (i, k) := by
+            simpa using he
+          rcases (mem_cylinderStripFaceEdges_angular_iff (0 : Fin (n + 2)) i l k).1 hemem with ⟨hk, hlevel⟩
+          subst k
+          rcases hlevel with hl | hu
+          · have hi : i = 0 := by
+              apply radialSubdivisionLower_injective
+              simpa using hl
+            exact ⟨hi, hlj⟩
+          · exact False.elim (radialSubdivisionUpper_ne_zero i hu)
+        · rw [cylinderStripGluedLowerBoundaryEdgeTag_mk_angular_ne_zero P i' l hi0,
+            cylinderStripGluedLowerBoundaryEdgeTag_mk_lower] at htag
+          cases htag
+  · rintro ⟨hi, hk⟩
+    subst i
+    rcases hk with rfl | hk
+    · refine ⟨CylinderStripEdge.angular (0 : Fin (n + 2)) k, ?_, rfl⟩
+      exact (mem_cylinderStripFaceEdges_angular_iff (0 : Fin (n + 2)) (0 : Fin (n + 1)) k k).2
+        ⟨rfl, Or.inl rfl⟩
+    · subst k
+      refine ⟨CylinderStripEdge.angular (0 : Fin (n + 2)) (P.edgePair j), ?_, (mk_cylinderStripGluedEdge_pair P j).symm⟩
+      exact (mem_cylinderStripFaceEdges_angular_iff (0 : Fin (n + 2)) (0 : Fin (n + 1))
+        (P.edgePair j) (P.edgePair j)).2 ⟨rfl, Or.inl rfl⟩
+
+theorem cylinderStripGluedLowerEdge_faceCount {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    by
+      classical
+      exact (Finset.univ.filter fun f : CylinderStripFace n m ↦
+        ∃ e ∈ cylinderStripFaceEdges f,
+          Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e =
+            Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+              (CylinderStripEdge.angular (0 : Fin (n + 2)) j)).card = 2 := by
+  classical
+  have hfilter :
+      (Finset.univ.filter fun f : CylinderStripFace n m ↦
+        ∃ e ∈ cylinderStripFaceEdges f,
+          Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e =
+            Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+              (CylinderStripEdge.angular (0 : Fin (n + 2)) j)) =
+        ({((0 : Fin (n + 1)), j), ((0 : Fin (n + 1)), P.edgePair j)} : Finset (CylinderStripFace n m)) := by
+    ext f
+    rcases f with ⟨i, k⟩
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert, Finset.mem_singleton]
+    constructor
+    · intro hf
+      rcases (exists_mem_cylinderStripFaceEdges_eq_gluedLowerEdge_iff P i k j).1 hf with ⟨hi, hk⟩
+      subst i
+      rcases hk with rfl | hk
+      · exact Or.inl rfl
+      · exact Or.inr (by cases hk; rfl)
+    · intro hf
+      rcases hf with hf | hf
+      · cases hf
+        exact (exists_mem_cylinderStripFaceEdges_eq_gluedLowerEdge_iff P 0 j j).2 ⟨rfl, Or.inl rfl⟩
+      · cases hf
+        exact (exists_mem_cylinderStripFaceEdges_eq_gluedLowerEdge_iff P 0 (P.edgePair j) j).2 ⟨rfl, Or.inr rfl⟩
+  rw [hfilter]
+  apply Finset.card_pair
+  intro h
+  have hj : j = P.edgePair j := by
+    simpa using congrArg Prod.snd h
+  exact P.self_ne_edgePair j hj
 
 theorem cylinderStripRadial_faceCount_of_pos {n m : ℕ} (hm : 0 < m)
     (i : Fin (n + 1)) (j : Fin (m + 1)) :
