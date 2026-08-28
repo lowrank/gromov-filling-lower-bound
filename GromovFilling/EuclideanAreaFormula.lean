@@ -120,6 +120,33 @@ theorem volume_le_lintegral_abs_det_fderiv_of_isOpen_of_subset_range
   (measure_mono hcoverage).trans
     (volume_image_le_lintegral_abs_det_fderiv_of_isOpen f s hs hf)
 
+/-- Finite chartwise gluing for local planar Jacobian bounds.  If a region
+is covered by the images of finitely many open pieces under possibly different
+local maps, its measure is bounded by the sum of the corresponding Jacobian
+integrals. -/
+theorem volume_le_sum_lintegral_abs_det_fderiv_of_isOpen_of_subset_iUnion_image
+    {n : ℕ} (pieces : Fin n → Set EuclideanPlane)
+    (f : Fin n → EuclideanPlane → EuclideanPlane)
+    (omega : Set EuclideanPlane)
+    (hpieces : ∀ i, IsOpen (pieces i))
+    {K : Fin n → ℝ≥0} (hf : ∀ i, LipschitzOnWith (K i) (f i) (pieces i))
+    (hcoverage : omega ⊆ ⋃ i, f i '' pieces i) :
+    volume omega ≤
+      ∑ i, ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ (f i) x).det| ∂volume := by
+  calc
+    volume omega ≤ volume (⋃ i, f i '' pieces i) := measure_mono hcoverage
+    _ ≤ ∑' i, volume (f i '' pieces i) := measure_iUnion_le (fun i => f i '' pieces i)
+    _ ≤ ∑' i, ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ (f i) x).det| ∂volume := by
+      refine ENNReal.tsum_le_tsum ?_
+      intro i
+      exact volume_image_le_lintegral_abs_det_fderiv_of_isOpen
+        (f i) (pieces i) (hpieces i) (hf i)
+    _ = ∑ i, ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ (f i) x).det| ∂volume := by
+      simpa using
+        (tsum_fintype
+          (f := fun i : Fin n =>
+            ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ (f i) x).det| ∂volume))
+
 /-- Finite-open-cover gluing for the local planar Jacobian bound.  If a region
 is covered by the images of finitely many open pieces on which the same map is
 Lipschitz, its measure is bounded by the sum of the corresponding Jacobian

@@ -44,6 +44,34 @@ theorem finite_universal_ennreal_of_complex_planar_maps
       j boundary hfine (G j) (hG j) (hboundary j) (hGLipschitz j)
   · exact hbudget
 
+/-- A finite orientation-free certificate from chartwise local planar maps.
+For each row, it is enough to cover a witnessing region for the mixed boundary
+area by finitely many local open pieces and sum the corresponding local
+Jacobian masses.  This is the certificate-level interface needed for future
+surface-chart globalization. -/
+theorem finite_universal_ennreal_of_complex_local_planar_maps
+    (N m : ℕ) (area : ℝ≥0∞)
+    (omega : Fin N → Set ℂ)
+    (homega : ∀ j : Fin N,
+      ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤ volume (omega j))
+    (pieces : Fin m → Set ℂ)
+    (hpieces : ∀ i, IsOpen (pieces i))
+    (G : Fin N → Fin m → ℂ → ℂ)
+    (K : Fin N → Fin m → ℝ≥0)
+    (hGLipschitz : ∀ j i, LipschitzOnWith (K j i) (G j i) (pieces i))
+    (hcoverage : ∀ j : Fin N, omega j ⊆ ⋃ i, G j i '' pieces i)
+    (hbudget :
+      (∑ j : Fin N, ∑ i : Fin m,
+        ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ (G j i) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  refine finite_universal_ennreal_of_givens_coverage_budget N area
+    (fun j ↦ ∑ i : Fin m,
+      ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ (G j i) x).det| ∂volume) ?_ hbudget
+  intro j
+  exact (homega j).trans
+    (complex_volume_le_sum_lintegral_abs_det_fderiv_of_isOpen_of_subset_iUnion_image
+      pieces (G j) (omega j) hpieces (hGLipschitz j) (hcoverage j))
+
 /-- The finite orientation-free Fourier certificate for complex-plane
 domains under the exact topological interface: an odd boundary-degree
 obstruction and the global Jacobian budget. -/

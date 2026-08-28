@@ -138,6 +138,31 @@ theorem complex_volume_le_lintegral_abs_det_fderiv_of_isOpen_of_subset_range
   (measure_mono hcoverage).trans
     (complex_volume_image_le_lintegral_abs_det_fderiv_of_isOpen f s hs hf)
 
+/-- Finite chartwise gluing for local complex Jacobian bounds.  If a region
+is covered by finitely many open pieces under possibly different local maps,
+its area is bounded by the sum of the corresponding Jacobian integrals. -/
+theorem complex_volume_le_sum_lintegral_abs_det_fderiv_of_isOpen_of_subset_iUnion_image
+    {n : ℕ} (pieces : Fin n → Set ℂ)
+    (f : Fin n → ℂ → ℂ) (omega : Set ℂ)
+    (hpieces : ∀ i, IsOpen (pieces i))
+    {K : Fin n → ℝ≥0} (hf : ∀ i, LipschitzOnWith (K i) (f i) (pieces i))
+    (hcoverage : omega ⊆ ⋃ i, f i '' pieces i) :
+    volume omega ≤
+      ∑ i, ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ (f i) x).det| ∂volume := by
+  calc
+    volume omega ≤ volume (⋃ i, f i '' pieces i) := measure_mono hcoverage
+    _ ≤ ∑' i, volume (f i '' pieces i) := measure_iUnion_le (fun i => f i '' pieces i)
+    _ ≤ ∑' i, ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ (f i) x).det| ∂volume := by
+      refine ENNReal.tsum_le_tsum ?_
+      intro i
+      exact complex_volume_image_le_lintegral_abs_det_fderiv_of_isOpen
+        (f i) (pieces i) (hpieces i) (hf i)
+    _ = ∑ i, ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ (f i) x).det| ∂volume := by
+      simpa using
+        (tsum_fintype
+          (f := fun i : Fin n =>
+            ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ (f i) x).det| ∂volume))
+
 /-- Finite-open-cover gluing for the local complex Jacobian bound.  If a region
 is covered by finitely many chart pieces, the total covered area is bounded by
 the sum of the Jacobian integrals on those pieces. -/
