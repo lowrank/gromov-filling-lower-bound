@@ -1355,6 +1355,22 @@ theorem ComplexSourceChartSystem.universal_ennreal_add_of_closedUnitSquare_homeo
       e hboundaryMap)
     hbudget
 
+/-- The same closed-square homeomorphism also supplies the odd boundary-degree
+obstruction for the additive-defect generic source-chart certificate through
+the bundled explicit glued-strip quotient interface. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitSquare ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitSquareBoundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_cylinderStripGlued
+      e hboundaryMap)
+    hbudget
+
 /-- Source-side finite chart data for the actual metric Fourier family, with
 the topological witness again generated internally from an odd boundary-degree
 obstruction.  This is the direct chart-globalization interface for the genuine
@@ -2320,6 +2336,22 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_closedUnitSquare
     ENNReal.ofReal universalConstant + defect ≤ area :=
   S.universal_ennreal_add_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_abstractVariableDirectedQuotient
+      e hboundaryMap)
+    hbudget
+
+/-- The same closed-square homeomorphism also supplies the odd boundary-degree
+obstruction for the additive-defect metric source-chart certificate through
+the bundled explicit glued-strip quotient interface. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitSquare ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitSquareBoundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_cylinderStripGlued
       e hboundaryMap)
     hbudget
 
