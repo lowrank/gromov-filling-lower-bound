@@ -3492,6 +3492,21 @@ theorem hasOddBoundaryDegreeObstruction_of_cylinderStripGluedPointLowerBoundary
     (cylinderStripGluedPointBoundaryHomotopy_one P)
     hobstruction
 
+/-- A boundary obtained by a boundary-respecting continuous map from the free
+upper boundary loop of a glued-strip point quotient inherits the odd-degree
+obstruction as soon as the glued lower loop carries one. -/
+theorem hasOddBoundaryDegreeObstruction_of_comp_continuous_cylinderStripGluedPointBoundary
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (f : CylinderStripGluedPointSpace P → Y)
+    (hf : Continuous f)
+    (hboundary : boundary = f ∘ cylinderStripGluedPointBoundary P)
+    (hobstruction : HasOddBoundaryDegreeObstruction (cylinderStripGluedPointLowerBoundary P)) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundary
+    (hasOddBoundaryDegreeObstruction_of_cylinderStripGluedPointLowerBoundary P hobstruction)
+
 /-- A boundary identified by homeomorphism with the free upper boundary loop of
 a glued-strip point quotient inherits the odd-degree obstruction as soon as the
 glued lower loop carries one.  This packages the quotient homotopy and the
@@ -3909,6 +3924,25 @@ def homeomorphCylinderStripGluedPointBoundaryObstructionData_of_adjacentPreservi
   boundaryHomeomorph := hboundary
   lowerObstruction :=
     hasOddBoundaryDegreeObstruction_cylinderStripGluedPointLowerBoundary_adjacentPreserving hm
+
+/-- Any boundary obtained by a boundary-respecting continuous map from the
+free upper loop of the odd adjacent-preserving strip quotient inherits the odd
+boundary-degree obstruction. -/
+theorem hasOddBoundaryDegreeObstruction_of_comp_continuous_adjacentPreservingCylinderStripGluedPointBoundary
+    {m : ℕ} (hm : Odd m)
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (f : CylinderStripGluedPointSpace
+      (adjacentPreservingCylinderStripLowerBoundaryPairing hm) → X)
+    (hf : Continuous f)
+    (hboundary : boundary =
+      f ∘ cylinderStripGluedPointBoundary
+        (adjacentPreservingCylinderStripLowerBoundaryPairing hm)) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_comp_continuous_cylinderStripGluedPointBoundary
+    (adjacentPreservingCylinderStripLowerBoundaryPairing hm)
+    f hf hboundary
+    (hasOddBoundaryDegreeObstruction_cylinderStripGluedPointLowerBoundary_adjacentPreserving hm)
 
 /-- Any boundary homeomorphic to the free upper loop of the odd adjacent-
 preserving strip quotient inherits the odd boundary-degree obstruction. -/
