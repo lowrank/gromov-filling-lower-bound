@@ -1067,6 +1067,170 @@ end ContinuousMap.Homotopy
 
 end SquareStokes
 
+section GeometricStokes
+
+variable {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+  [NormedAddCommGroup F] [NormedSpace ℝ F]
+
+/-- The square map induced by a nullhomotopy on `UnitAddCircle`. -/
+def unitAddCircleHomotopySquare
+    {center : E} {boundary : C(UnitAddCircle, E)}
+    (H : (ContinuousMap.const UnitAddCircle center).Homotopy boundary) :
+    ℝ × ℝ → E :=
+  fun xy : ℝ × ℝ ↦
+    Set.IccExtend zero_le_one ((circleHomotopyToUnitAddCirclePath H).extend xy.1) xy.2
+
+/-- Its derivative within the closed unit square. -/
+def unitAddCircleHomotopySquareDeriv
+    {center : E} {boundary : C(UnitAddCircle, E)}
+    (H : (ContinuousMap.const UnitAddCircle center).Homotopy boundary) :
+    ℝ × ℝ → ℝ × ℝ →L[ℝ] E :=
+  fderivWithin ℝ (unitAddCircleHomotopySquare H) (Icc 0 1)
+
+set_option maxHeartbeats 800000
+
+def unitAddCircleHomotopySkewIntegrand
+    {center : E} {boundary : C(UnitAddCircle, E)}
+    (H : (ContinuousMap.const UnitAddCircle center).Homotopy boundary)
+    (ω : E → E →L[ℝ] F) : ℝ × ℝ → F :=
+  fun x ↦
+    fderiv ℝ ω (unitAddCircleHomotopySquare H x)
+        (unitAddCircleHomotopySquareDeriv H x (1, 0))
+        (unitAddCircleHomotopySquareDeriv H x (0, 1)) -
+      fderiv ℝ ω (unitAddCircleHomotopySquare H x)
+        (unitAddCircleHomotopySquareDeriv H x (0, 1))
+        (unitAddCircleHomotopySquareDeriv H x (1, 0))
+
+def unitAddCircleBoundaryIntegral
+    (boundary : C(UnitAddCircle, E))
+    (ω : E → E →L[ℝ] F) : F :=
+  ∫ᶜ x in unitAddCirclePath boundary, ω x
+
+def unitAddCircleSquareIntegral
+    {center : E} {boundary : C(UnitAddCircle, E)}
+    (H : (ContinuousMap.const UnitAddCircle center).Homotopy boundary)
+    (ω : E → E →L[ℝ] F) : F :=
+  ∫ x in (Icc (0 : ℝ × ℝ) 1), unitAddCircleHomotopySkewIntegrand H ω x
+
+def closedOneFormContDiffProp
+    (ω : E → E →L[ℝ] F) : Prop :=
+  ContDiff ℝ 1 ω
+
+def unitAddCircleHomotopySquareContDiffProp
+    {center : E} {boundary : C(UnitAddCircle, E)}
+    (H : (ContinuousMap.const UnitAddCircle center).Homotopy boundary) : Prop :=
+  ContDiffOn ℝ 2 (unitAddCircleHomotopySquare H) (Icc 0 1)
+
+/-- The concrete Stokes identity for a `UnitAddCircle` nullhomotopy, packaged
+as a named proposition to keep later wrapper theorems light. -/
+def UnitAddCircleHomotopyStokesProp
+    {center : E} {boundary : C(UnitAddCircle, E)}
+    (H : (ContinuousMap.const UnitAddCircle center).Homotopy boundary)
+    (ω : E → E →L[ℝ] F) : Prop :=
+  unitAddCircleBoundaryIntegral boundary ω = unitAddCircleSquareIntegral H ω
+
+/-- Stokes formula for the loop on `UnitAddCircle` induced by a nullhomotopy.
+The boundary integral is the square integral of the antisymmetrized derivative
+of the pulled-back `1`-form. -/
+theorem curveIntegral_eq_setIntegral_fderiv_skew_of_unitAddCircleHomotopy_of_contDiff
+    {center : E} {boundary : C(UnitAddCircle, E)}
+    {ω : E → E →L[ℝ] F}
+    (H : (ContinuousMap.const UnitAddCircle center).Homotopy boundary)
+    (hω : closedOneFormContDiffProp ω)
+    (hcontdiff : unitAddCircleHomotopySquareContDiffProp H) :
+    UnitAddCircleHomotopyStokesProp H ω := by
+  unfold closedOneFormContDiffProp at hω
+  unfold unitAddCircleHomotopySquareContDiffProp at hcontdiff
+  unfold UnitAddCircleHomotopyStokesProp unitAddCircleBoundaryIntegral
+  have hraw :=
+    ContinuousMap.Homotopy.curveIntegral_add_curveIntegral_sub_eq_setIntegral_fderiv_skew_of_contDiff
+      (φ := circleHomotopyToUnitAddCirclePath H) (ω := ω) hω hcontdiff
+  have h :
+      (∫ᶜ x in unitAddCirclePath boundary, ω x +
+          ∫ᶜ x in (circleHomotopyToUnitAddCirclePath H).evalAt (0 : I), ω x) -
+        (∫ᶜ x in Path.refl center, ω x +
+          ∫ᶜ x in (circleHomotopyToUnitAddCirclePath H).evalAt (1 : I), ω x) =
+      unitAddCircleSquareIntegral H ω := by
+    simpa [unitAddCircleSquareIntegral, unitAddCircleHomotopySquare,
+      unitAddCircleHomotopySquareDeriv, unitAddCircleHomotopySkewIntegrand] using hraw
+  have hside := circleHomotopyToUnitAddCirclePath_evalAt_one_eq_evalAt_zero H
+  have hsideInt :
+      ∫ᶜ x in (circleHomotopyToUnitAddCirclePath H).evalAt (1 : I), ω x =
+        ∫ᶜ x in (circleHomotopyToUnitAddCirclePath H).evalAt (0 : I), ω x := by
+    simpa [hside]
+  have hrefl : ∫ᶜ x in Path.refl center, ω x = 0 := by
+    simp
+  have hsum :
+      ∫ᶜ x in unitAddCirclePath boundary, ω x +
+          ∫ᶜ x in (circleHomotopyToUnitAddCirclePath H).evalAt (0 : I), ω x =
+        unitAddCircleSquareIntegral H ω +
+          ∫ᶜ x in (circleHomotopyToUnitAddCirclePath H).evalAt (0 : I), ω x := by
+    calc
+      ∫ᶜ x in unitAddCirclePath boundary, ω x +
+          ∫ᶜ x in (circleHomotopyToUnitAddCirclePath H).evalAt (0 : I), ω x =
+        unitAddCircleSquareIntegral H ω +
+          (∫ᶜ x in Path.refl center, ω x +
+            ∫ᶜ x in (circleHomotopyToUnitAddCirclePath H).evalAt (1 : I), ω x) := by
+          exact sub_eq_iff_eq_add.mp h
+      _ = unitAddCircleSquareIntegral H ω +
+          ∫ᶜ x in (circleHomotopyToUnitAddCirclePath H).evalAt (0 : I), ω x := by
+          rw [hrefl, zero_add, hsideInt]
+  exact add_right_cancel hsum
+
+/-- The same Stokes package when the boundary loop comes from a continuous map
+on the closed unit disk. -/
+def closedUnitDiskMapSquare (Fmap : C(ClosedUnitDisk, E)) : ℝ × ℝ → E :=
+  unitAddCircleHomotopySquare (ContinuousMap.closedUnitDiskBoundaryNullhomotopy Fmap)
+
+def closedUnitDiskMapSquareDeriv (Fmap : C(ClosedUnitDisk, E)) :
+    ℝ × ℝ → ℝ × ℝ →L[ℝ] E :=
+  unitAddCircleHomotopySquareDeriv (ContinuousMap.closedUnitDiskBoundaryNullhomotopy Fmap)
+
+def closedUnitDiskMapSkewIntegrand
+    (Fmap : C(ClosedUnitDisk, E)) (ω : E → E →L[ℝ] F) : ℝ × ℝ → F :=
+  fun x ↦
+    fderiv ℝ ω (closedUnitDiskMapSquare Fmap x)
+        (closedUnitDiskMapSquareDeriv Fmap x (1, 0))
+        (closedUnitDiskMapSquareDeriv Fmap x (0, 1)) -
+      fderiv ℝ ω (closedUnitDiskMapSquare Fmap x)
+        (closedUnitDiskMapSquareDeriv Fmap x (0, 1))
+        (closedUnitDiskMapSquareDeriv Fmap x (1, 0))
+
+def closedUnitDiskBoundaryIntegral
+    (Fmap : C(ClosedUnitDisk, E))
+    (ω : E → E →L[ℝ] F) : F :=
+  ∫ᶜ x in unitAddCirclePath (ContinuousMap.compClosedUnitDiskBoundary Fmap), ω x
+
+def closedUnitDiskSquareIntegral
+    (Fmap : C(ClosedUnitDisk, E))
+    (ω : E → E →L[ℝ] F) : F :=
+  ∫ x in (Icc (0 : ℝ × ℝ) 1), closedUnitDiskMapSkewIntegrand Fmap ω x
+
+def closedUnitDiskMapSquareContDiffProp
+    (Fmap : C(ClosedUnitDisk, E)) : Prop :=
+  ContDiffOn ℝ 2 (closedUnitDiskMapSquare Fmap) (Icc 0 1)
+
+def ClosedUnitDiskMapStokesProp
+    (Fmap : C(ClosedUnitDisk, E)) (ω : E → E →L[ℝ] F) : Prop :=
+  closedUnitDiskBoundaryIntegral Fmap ω = closedUnitDiskSquareIntegral Fmap ω
+
+theorem curveIntegral_eq_setIntegral_fderiv_skew_of_closedUnitDiskMap_of_contDiff
+    {ω : E → E →L[ℝ] F}
+    (Fmap : C(ClosedUnitDisk, E))
+    (hω : closedOneFormContDiffProp ω)
+    (hcontdiff : closedUnitDiskMapSquareContDiffProp Fmap) :
+    ClosedUnitDiskMapStokesProp Fmap ω := by
+  unfold closedUnitDiskMapSquareContDiffProp at hcontdiff
+  unfold ClosedUnitDiskMapStokesProp closedUnitDiskBoundaryIntegral closedUnitDiskSquareIntegral
+  simpa [closedUnitDiskMapSquare, closedUnitDiskMapSquareDeriv,
+    closedUnitDiskMapSkewIntegrand] using
+    curveIntegral_eq_setIntegral_fderiv_skew_of_unitAddCircleHomotopy_of_contDiff
+      (H := ContinuousMap.closedUnitDiskBoundaryNullhomotopy Fmap) hω hcontdiff
+
+set_option maxHeartbeats 200000
+
+end GeometricStokes
+
 end FreePathHomotopy
 
 end
