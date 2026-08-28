@@ -7051,6 +7051,109 @@ theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitSqua
                   (dist_angularSubdivisionArc_point_le m hm j x).trans_lt hmδ
             simpa [faceCenter, squareCenterPolygonEdgePath] using hδradial hsrc
 
+/-- The explicit strip square construction also realizes the bundled
+glued-strip quotient interface on the standard square boundary. -/
+theorem hasCylinderStripGluedArbitrarilyFineData_closedUnitSquareBoundary :
+    HasCylinderStripGluedArbitrarilyFineData closedUnitSquareBoundary := by
+  apply hasCylinderStripGluedArbitrarilyFineData_of_closedUnitSquare_cylinderStrip_data
+  intro ε hε
+  have hUniform : UniformContinuous closedUnitSquareRadial :=
+    CompactSpace.uniformContinuous_of_continuous continuous_closedUnitSquareRadial
+  obtain ⟨δ, hδ, hδradial⟩ :=
+    Metric.uniformContinuous_iff.mp hUniform ε hε
+  have hminpos : 0 < min δ (1 / 2 : ℝ) := by
+    exact lt_min hδ (by norm_num)
+  obtain ⟨k, hk⟩ := exists_nat_one_div_lt hminpos
+  let n : ℕ := k
+  let m : ℕ := 2 * k + 1
+  have hmOdd : Odd m := by
+    dsimp [m]
+    exact odd_two_mul_add_one k
+  let P : CylinderStripLowerBoundaryPairing m :=
+    adjacentPreservingCylinderStripLowerBoundaryPairing hmOdd
+  have hnδ : 1 / (n + 1 : ℝ) < δ := by
+    exact lt_of_lt_of_le hk (min_le_left _ _)
+  have hm : 0 < m := by
+    dsimp [m]
+    omega
+  have hmle : 1 / (m + 1 : ℝ) ≤ 1 / (k + 1 : ℝ) := by
+    have hk1pos : (0 : ℝ) < k + 1 := by positivity
+    have hden : (k + 1 : ℝ) ≤ m + 1 := by
+      dsimp [m]
+      norm_num
+      nlinarith
+    exact one_div_le_one_div_of_le hk1pos hden
+  have hmδ : 1 / (m + 1 : ℝ) < δ := by
+    exact lt_of_le_of_lt hmle (lt_of_lt_of_le hk (min_le_left _ _))
+  let faceCenter : CylinderStripFace n m → ClosedUnitSquare
+    | (i, j) =>
+        closedUnitSquareRadial
+          (cylinderSubdivisionPoint n m (radialSubdivisionLower i) j)
+  refine ⟨n, m, P, hm, faceCenter, ?_⟩
+  intro f e he x
+  rcases f with ⟨i, j⟩
+  cases e with
+  | radial i' j' =>
+      rcases (mem_cylinderStripFaceEdges_radial_iff i' i j' j).1 he with ⟨hi', hj'⟩
+      subst i'
+      rcases hj' with rfl | hsucc
+      · have hsrc :
+            dist
+              (cylinderSubdivisionPoint n m (radialSubdivisionLower i) j)
+              (cylinderRadialEdgePath n m i j x) < δ := by
+          rw [cylinderSubdivisionPoint, cylinderRadialEdgePath, Prod.dist_eq]
+          refine max_lt_iff.2 ?_
+          constructor
+          · simpa [cylinderSubdivisionPoint, cylinderRadialEdgePath, dist_comm] using
+              (dist_radialSubdivisionArc_start_le n i x).trans_lt hnδ
+          · simpa [cylinderSubdivisionPoint, cylinderRadialEdgePath]
+        simpa [faceCenter, cylinderStripEdgePathOnClosedUnitSquare] using hδradial hsrc
+      · subst j'
+        have hang :
+            dist (angularSubdivisionPoint m j)
+              (angularSubdivisionPoint m (cyclicSucc j)) < δ := by
+          exact (dist_angularSubdivisionPoint_cyclicSucc_le m hm j).trans_lt hmδ
+        have hsrc :
+            dist
+              (cylinderSubdivisionPoint n m (radialSubdivisionLower i) j)
+              (cylinderRadialEdgePath n m i (cyclicSucc j) x) < δ := by
+          rw [cylinderSubdivisionPoint, cylinderRadialEdgePath, Prod.dist_eq]
+          refine max_lt_iff.2 ?_
+          constructor
+          · simpa [cylinderSubdivisionPoint, cylinderRadialEdgePath, dist_comm] using
+              (dist_radialSubdivisionArc_start_le n i x).trans_lt hnδ
+          · simpa [cylinderSubdivisionPoint, cylinderRadialEdgePath, dist_comm] using hang
+        simpa [faceCenter, cylinderStripEdgePathOnClosedUnitSquare] using hδradial hsrc
+  | angular i' j' =>
+      rcases (mem_cylinderStripFaceEdges_angular_iff i' i j' j).1 he with ⟨hj', hlevel⟩
+      subst j'
+      rcases hlevel with hl | hu
+      · subst i'
+        have hsrc :
+            dist
+              (cylinderSubdivisionPoint n m (radialSubdivisionLower i) j)
+              (cylinderAngularEdgePath n m (radialSubdivisionLower i) j x) < δ := by
+          rw [cylinderSubdivisionPoint, cylinderAngularEdgePath, Prod.dist_eq]
+          refine max_lt_iff.2 ?_
+          constructor
+          · simpa [cylinderSubdivisionPoint, cylinderAngularEdgePath] using hδ
+          · simpa [cylinderSubdivisionPoint, cylinderAngularEdgePath, dist_comm] using
+              (dist_angularSubdivisionArc_point_le m hm j x).trans_lt hmδ
+        simpa [faceCenter, cylinderStripEdgePathOnClosedUnitSquare] using hδradial hsrc
+      · subst i'
+        have hsrc :
+            dist
+              (cylinderSubdivisionPoint n m (radialSubdivisionLower i) j)
+              (cylinderAngularEdgePath n m (radialSubdivisionUpper i) j x) < δ := by
+          rw [cylinderSubdivisionPoint, cylinderAngularEdgePath, Prod.dist_eq]
+          refine max_lt_iff.2 ?_
+          constructor
+          · simpa [cylinderSubdivisionPoint, cylinderAngularEdgePath, dist_comm] using
+              (dist_radialSubdivision_upper_lower_le n i).trans_lt hnδ
+          · simpa [cylinderSubdivisionPoint, cylinderAngularEdgePath, dist_comm] using
+              (dist_angularSubdivisionArc_point_le m hm j x).trans_lt hmδ
+        simpa [faceCenter, cylinderStripEdgePathOnClosedUnitSquare] using hδradial hsrc
+
 /-- The explicit square-center construction immediately yields the directed
 closed-disk boundary model family via the radial square-to-disk map. -/
 theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitDiskBoundary :
@@ -8135,6 +8238,20 @@ theorem hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_abstractV
   hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedArbitrarilyFine
     e hboundary
     hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
+
+/-- The same square-homeomorphic hypothesis also discharges the odd
+boundary-degree obstruction through the bundled glued-strip quotient
+interface furnished by the explicit strip square construction. -/
+theorem hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitSquareBoundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedArbitrarilyFineData
+    { homeomorph := e
+      boundaryHomeomorph := hboundary
+      models := hasCylinderStripGluedArbitrarilyFineData_closedUnitSquareBoundary }
 
 end
 
