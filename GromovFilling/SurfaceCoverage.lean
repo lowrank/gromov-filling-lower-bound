@@ -814,6 +814,96 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorph_arb
       e hboundaryHomeomorph hmodels)
     G hG hboundary
 
+
+/-- If the boundary extends continuously across the standard closed square, the
+Jordan region containing the origin is covered directly from the closed-square
+odd-degree obstruction, with no polygonal-model hypothesis. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_closedUnitSquare_extension
+    {Y : Type*} [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (F : ClosedUnitSquare → Y) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitSquareBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_extension
+      F hF hboundaryExtension)
+    G hG hboundary hpartition hzero
+
+/-- If the boundary extends continuously across the standard closed square, the
+separation-free coverage conclusion follows directly from the closed-square
+odd-degree obstruction. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitSquare_extension
+    {Y : Type*} [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (F : ClosedUnitSquare → Y) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitSquareBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_extension
+      F hF hboundaryExtension)
+    G hG hboundary
+
+/-- If the boundary is identified with the standard closed-square boundary by a
+homeomorphism, the Jordan region at the origin is covered directly from that
+square model, with no polygonal-model hypothesis. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_closedUnitSquare_homeomorph_direct
+    {Y : Type*} [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_direct
+      e hboundaryHomeomorph)
+    G hG hboundary hpartition hzero
+
+/-- The separation-free square-homeomorphic coverage conclusion likewise
+follows directly from the square model domain. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitSquare_homeomorph_direct
+    {Y : Type*} [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_direct
+      e hboundaryHomeomorph)
+    G hG hboundary
+
 end
 
 end GromovFilling

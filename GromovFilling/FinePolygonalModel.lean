@@ -7196,6 +7196,31 @@ theorem hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph
     HasOddBoundaryDegreeObstruction boundary :=
   hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_direct e hboundary
 
+
+/-- Any boundary obtained from the closed square boundary by a continuous
+extension map inherits the odd boundary-degree obstruction directly from the
+square model domain. -/
+theorem hasOddBoundaryDegreeObstruction_of_closedUnitSquare_extension
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (F : ClosedUnitSquare → Y) (hF : Continuous F)
+    (hboundary : boundary = F ∘ closedUnitSquareBoundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_comp_continuous
+    F hF hboundary hasOddBoundaryDegreeObstruction_closedUnitSquareBoundary
+
+/-- Any boundary obtained from the closed square boundary by a homeomorphism
+inherits the odd boundary-degree obstruction directly from the square model
+domain. -/
+theorem hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_direct
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitSquareBoundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_closedUnitSquare_extension
+    e e.continuous_toFun hboundary
+
 end
 
 end GromovFilling
