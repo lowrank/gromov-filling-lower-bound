@@ -3332,6 +3332,53 @@ theorem CylinderStripLowerBoundaryPairing.pairedFinish_edgePair {m : ℕ}
     j ≠ P.edgePair j := by
   exact (P.edgePair_noFixed j).symm
 
+/-- On an odd cyclic subdivision, pair each lower edge with its adjacent
+neighbor: even edges with their successor and odd edges with their predecessor.
+All identifications preserve the boundary direction. -/
+noncomputable def adjacentPreservingCylinderStripLowerBoundaryPairing
+    {m : ℕ} (hm : Odd m) : CylinderStripLowerBoundaryPairing m where
+  edgePair := fun j ↦ if Even j.1 then cyclicSucc j else cyclicPred j
+  orientation := fun _ ↦ .preserving
+  edgePair_involutive := by
+    intro j
+    by_cases hEven : Even j.1
+    · have hSuccNotEven : ¬ Even (cyclicSucc j).1 := by
+        rw [cyclicSucc_even_iff_not_even_of_odd hm j]
+        simpa [hEven]
+      simp [hEven, hSuccNotEven]
+    · have hPredEven : Even (cyclicPred j).1 := by
+        rw [← cyclicSucc_not_even_iff_even_of_odd hm (cyclicPred j)]
+        simpa using hEven
+      simp [hEven, hPredEven]
+  edgePair_noFixed := by
+    intro j
+    by_cases hEven : Even j.1
+    · simpa [hEven] using cyclicSucc_ne_self_of_pos hm.pos j
+    · have hPredNe : cyclicPred j ≠ j := by
+        intro hPred
+        have hEq : j = cyclicSucc j := by
+          simpa using congrArg cyclicSucc hPred
+        exact (self_ne_cyclicSucc_of_pos hm.pos j) hEq
+      simpa [hEven] using hPredNe
+  orientation_pair := by
+    intro j
+    rfl
+
+@[simp] theorem adjacentPreservingCylinderStripLowerBoundaryPairing_orientation
+    {m : ℕ} (hm : Odd m) (j : Fin (m + 1)) :
+    (adjacentPreservingCylinderStripLowerBoundaryPairing hm).orientation j = .preserving :=
+  rfl
+
+@[simp] theorem adjacentPreservingCylinderStripLowerBoundaryPairing_edgePair_of_even
+    {m : ℕ} (hm : Odd m) (j : Fin (m + 1)) (hj : Even j.1) :
+    (adjacentPreservingCylinderStripLowerBoundaryPairing hm).edgePair j = cyclicSucc j := by
+  simp [adjacentPreservingCylinderStripLowerBoundaryPairing, hj]
+
+@[simp] theorem adjacentPreservingCylinderStripLowerBoundaryPairing_edgePair_of_not_even
+    {m : ℕ} (hm : Odd m) (j : Fin (m + 1)) (hj : ¬ Even j.1) :
+    (adjacentPreservingCylinderStripLowerBoundaryPairing hm).edgePair j = cyclicPred j := by
+  simp [adjacentPreservingCylinderStripLowerBoundaryPairing, hj]
+
 /-- Generated relation on lower boundary edges coming from the chosen pairing. -/
 inductive CylinderStripLowerBoundaryEdgeStep {m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) :
