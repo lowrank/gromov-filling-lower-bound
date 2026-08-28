@@ -321,6 +321,75 @@ theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_closedUnitD
     (continuous_givensMetricFourierMap hboundary N j)
     (givensMetricFourierMap_on_boundary hboundary j)
 
+/-- Explicit glued-strip quotient data already supplies the needed
+odd-degree obstruction, so the genuine metric Fourier map covers the Jordan
+region at the origin without any extra topological hypothesis. -/
+theorem givensMetricFourierMap_jordan_region_subset_range_of_cylinderStripGlued_data
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → Y,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → Y,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → Y,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact givensBoundaryCurve_jordan_region_subset_range_of_cylinderStripGlued_data
+    j hmodels (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    hpartition hzero
+
+/-- Separation-free compact-domain coverage for the genuine metric Fourier map
+also follows from explicit glued-strip quotient data. -/
+theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_cylinderStripGlued_data
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → Y,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → Y,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → Y,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact exists_givensBoundaryCurve_bounded_region_subset_range_of_cylinderStripGlued_data
+    j hmodels (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+
 /-- If the boundary is identified with the standard closed-disk boundary by a
 homeomorphism, explicit checkerboard cylinder-strip data already supplies the
 needed odd-degree obstruction, so the genuine metric Fourier map covers the

@@ -397,6 +397,78 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitDisk
       e hboundaryHomeomorph)
     G hG hboundary
 
+/-- Explicit glued-strip quotient data already supplies the odd
+boundary-degree obstruction, so the Jordan region at the origin is covered
+without any extra topological hypothesis on the target boundary. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_cylinderStripGlued_data
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → Y,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → Y,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → Y,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_cylinderStripGlued_data hmodels)
+    G hG hboundary hpartition hzero
+
+/-- The separation-free coverage conclusion also follows from explicit
+ glued-strip quotient data. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_cylinderStripGlued_data
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → Y,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → Y,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → Y,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_cylinderStripGlued_data hmodels)
+    G hG hboundary
+
 /-- If the boundary is identified with the standard closed-disk boundary by a
 homeomorphism, explicit checkerboard cylinder-strip data already supplies the
 odd boundary-degree obstruction, so the Jordan region at the origin is covered

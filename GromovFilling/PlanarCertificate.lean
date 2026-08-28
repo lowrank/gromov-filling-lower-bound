@@ -96,6 +96,42 @@ theorem finite_universal_ennreal_of_complex_planar_maps_of_closedUnitDisk_extens
 
 /-- The finite orientation-free Fourier certificate for complex-plane
 domains whose boundary is identified with the standard closed-disk boundary by
+a homeomorphism and explicit checkerboard cylinder-strip data. -/
+theorem finite_universal_ennreal_of_complex_planar_maps_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitDisk ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (edge : CylinderStripEdge n m),
+        edge ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match edge with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε)
+    (G : Fin N → ℂ → ℂ)
+    (hG : ∀ j, Continuous (G j))
+    (hboundary : ∀ j t,
+      G j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (K : Fin N → ℝ≥0)
+    (hGLipschitz : ∀ j, LipschitzWith (K j) (G j))
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  let _ : CompactSpace ℂ := Homeomorph.compactSpace e
+  exact finite_universal_ennreal_of_complex_planar_maps_of_odd_boundary_degree_obstruction
+    N area boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_cylinderStrip_data
+      e hboundaryHomeomorph hmodels)
+    G hG hboundary K hGLipschitz hbudget
+
+/-- The finite orientation-free Fourier certificate for complex-plane
+domains whose boundary is identified with the standard closed-disk boundary by
 a homeomorphism. -/
 theorem finite_universal_ennreal_of_complex_planar_maps_of_closedUnitDisk_homeomorph
     (N : ℕ) (area : ℝ≥0∞)
@@ -239,6 +275,77 @@ theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_closedUn
         |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
   exact givens_mixedBoundaryArea_le_complex_jacobian_of_closedUnitDisk_extension
     j boundary F hF hboundaryExtension (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    (givensMetricFourierMap_lipschitzWith hboundary N j)
+
+/-- Planar Lemma 5.4 for the genuine metric distance-profile map when the
+boundary is identified with the standard closed-disk boundary by a
+homeomorphism and the odd boundary-degree obstruction is supplied by explicit
+checkerboard cylinder-strip data. -/
+theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitDisk ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (edge : CylinderStripEdge n m),
+        edge ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match edge with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε)
+    (hboundary : IsometricCircleBoundary boundary) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
+  let _ : CompactSpace ℂ := Homeomorph.compactSpace e
+  exact givens_mixedBoundaryArea_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_cylinderStrip_data
+      e hboundaryHomeomorph hmodels)
+    (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    (givensMetricFourierMap_lipschitzWith hboundary N j)
+
+/-- Bounded-region form of planar Lemma 5.4 for the genuine metric Fourier
+map when the boundary is identified with the standard closed-disk boundary by
+a homeomorphism and the odd boundary-degree obstruction is supplied by
+explicit checkerboard cylinder-strip data. -/
+theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitDisk ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (edge : CylinderStripEdge n m),
+        edge ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match edge with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε)
+    (hboundary : IsometricCircleBoundary boundary) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
+  let _ : CompactSpace ℂ := Homeomorph.compactSpace e
+  exact exists_givens_bounded_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_cylinderStrip_data
+      e hboundaryHomeomorph hmodels)
+    (givensMetricFourierMap boundary N j)
     (continuous_givensMetricFourierMap hboundary N j)
     (givensMetricFourierMap_on_boundary hboundary j)
     (givensMetricFourierMap_lipschitzWith hboundary N j)
@@ -844,6 +951,73 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_closedUnitDisk_extens
   intro N
   exact finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitDisk_extension
     N area boundary F hF hboundaryExtension hboundary (hbudget N)
+
+/-- The complete finite planar certificate for the actual metric Fourier
+family when the boundary is identified with the standard closed-disk boundary
+by a homeomorphism and the odd boundary-degree obstruction is supplied by
+explicit checkerboard cylinder-strip data. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitDisk ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (edge : CylinderStripEdge n m),
+        edge ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match edge with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  apply finite_universal_ennreal_of_givens_coverage_budget N area
+    (fun j ↦ ∫⁻ x, ENNReal.ofReal
+      |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume)
+  · exact fun j ↦
+      givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_closedUnitDisk_homeomorph_cylinderStrip_data
+        j boundary e hboundaryHomeomorph hmodels hboundary
+  · exact hbudget
+
+/-- Infinite-mode planar conclusion for the actual metric Fourier family when
+the boundary is identified with the standard closed-disk boundary by a
+homeomorphism and the odd boundary-degree obstruction is supplied by explicit
+checkerboard cylinder-strip data. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitDisk ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (edge : CylinderStripEdge n m),
+        edge ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match edge with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    N area boundary e hboundaryHomeomorph hmodels hboundary (hbudget N)
 
 /-- The complete finite planar certificate for the actual metric Fourier
 family when the boundary is identified with the standard closed-disk boundary
