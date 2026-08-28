@@ -243,6 +243,766 @@ theorem exists_bounded_jordan_region_subset_range_of_arbitrarily_fine_models
     (hasFinePolygonalModels_of_arbitrarilyFine hmodels)
     G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
 
+/-- The generic Jordan-region coverage theorem also follows from a
+nullhomotopy of the boundary loop. -/
+theorem jordan_region_subset_range_of_nullhomotopy
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (center : X)
+    (F : C(I × UnitAddCircle, X))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (G : X → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary
+    (hasOddBoundaryDegreeObstruction_of_nullhomotopy center F hF0 hF1)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free generic Jordan coverage also follows directly from a
+nullhomotopy of the boundary loop. -/
+theorem exists_bounded_jordan_region_subset_range_of_nullhomotopy
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (center : X)
+    (F : C(I × UnitAddCircle, X))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = center)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary t)
+    (G : X → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary (hasOddBoundaryDegreeObstruction_of_nullhomotopy center F hF0 hF1)
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- The generic Jordan-region coverage theorem follows directly from the
+variable-face-size directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem jordan_region_subset_range_of_abstractVariableDirectedArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (boundary : UnitAddCircle → X)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+      hmodels)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free generic Jordan coverage also follows directly from the
+variable-face-size directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem exists_bounded_jordan_region_subset_range_of_abstractVariableDirectedArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (boundary : UnitAddCircle → X)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+      hmodels)
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- The generic Jordan-region coverage theorem follows directly from the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem jordan_region_subset_range_of_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (boundary : UnitAddCircle → X)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+      hmodels)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free generic Jordan coverage also follows directly from the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem exists_bounded_jordan_region_subset_range_of_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (boundary : UnitAddCircle → X)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+      hmodels)
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- The generic Jordan-region coverage theorem transfers across a
+boundary-respecting continuous map from a compact source carrying the
+variable-face-size directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem jordan_region_subset_range_of_compact_continuous_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary' t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary'
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+        hmodels))
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free generic Jordan coverage also transfers across a
+boundary-respecting continuous map from a compact source carrying the
+variable-face-size directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem exists_bounded_jordan_region_subset_range_of_compact_continuous_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary' t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary'
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+        hmodels))
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- The generic Jordan-region coverage theorem transfers across a
+boundary-respecting continuous map from a compact source carrying the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem jordan_region_subset_range_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary' t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary'
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+        hmodels))
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free generic Jordan coverage also transfers across a
+boundary-respecting continuous map from a compact source carrying the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem exists_bounded_jordan_region_subset_range_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary' t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary'
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+        hmodels))
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- The generic Jordan-region coverage theorem transfers across a
+boundary-respecting homeomorphism from a compact source carrying the
+variable-face-size directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem jordan_region_subset_range_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary' t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary'
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free generic Jordan coverage also transfers across a
+boundary-respecting homeomorphism from a compact source carrying the
+variable-face-size directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem exists_bounded_jordan_region_subset_range_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary' t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary'
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- The generic Jordan-region coverage theorem transfers across a
+boundary-respecting homeomorphism from a compact source carrying the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem jordan_region_subset_range_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary' t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary'
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free generic Jordan coverage also transfers across a
+boundary-respecting homeomorphism from a compact source carrying the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem exists_bounded_jordan_region_subset_range_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary' t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary'
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- The generic Jordan-region coverage theorem transfers across a
+boundary-respecting continuous map from a compact source with arbitrarily
+fine polygonal models. -/
+theorem jordan_region_subset_range_of_compact_continuous_arbitrarily_fine_models
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary' t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary'
+    (hasOddBoundaryDegreeObstruction_of_compact_continuous_arbitrarilyFine
+      f hf hboundaryMap hmodels)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free generic Jordan coverage also transfers across a
+boundary-respecting continuous map from a compact source with arbitrarily
+fine polygonal models. -/
+theorem exists_bounded_jordan_region_subset_range_of_compact_continuous_arbitrarily_fine_models
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary' t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary'
+    (hasOddBoundaryDegreeObstruction_of_compact_continuous_arbitrarilyFine
+      f hf hboundaryMap hmodels)
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- The generic Jordan-region coverage theorem transfers across a
+boundary-respecting homeomorphism from a compact source with arbitrarily
+fine polygonal models. -/
+theorem jordan_region_subset_range_of_homeomorph_arbitrarily_fine_models
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary' t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary'
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_arbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free generic Jordan coverage also transfers across a
+boundary-respecting homeomorphism from a compact source with arbitrarily
+fine polygonal models. -/
+theorem exists_bounded_jordan_region_subset_range_of_homeomorph_arbitrarily_fine_models
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary' t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary'
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_arbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- If the boundary extends continuously across the standard closed disk, the
+generic Jordan-region coverage conclusion follows directly. -/
+theorem jordan_region_subset_range_of_closedUnitDisk_extension
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (F : ClosedUnitDisk → Y) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_extension
+      F hF hboundaryExtension)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free generic Jordan coverage also follows from a closed-disk
+extension of the boundary. -/
+theorem exists_bounded_jordan_region_subset_range_of_closedUnitDisk_extension
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (F : ClosedUnitDisk → Y) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitDiskBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_extension
+      F hF hboundaryExtension)
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- If the boundary is identified with the standard closed-disk boundary by a
+homeomorphism, the generic Jordan-region coverage conclusion follows directly
+from the explicit directed disk polygonal-model interface. -/
+theorem jordan_region_subset_range_of_closedUnitDisk_homeomorph
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_abstractVariableDirected
+      e hboundaryHomeomorph)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free generic Jordan coverage also follows from a
+boundary-respecting closed-disk homeomorphism. -/
+theorem exists_bounded_jordan_region_subset_range_of_closedUnitDisk_homeomorph
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_abstractVariableDirected
+      e hboundaryHomeomorph)
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- If the boundary is identified with the standard closed-disk boundary by a
+homeomorphism, the generic Jordan-region coverage conclusion also follows
+directly from the direct odd-degree obstruction on the disk model. -/
+theorem jordan_region_subset_range_of_closedUnitDisk_homeomorph_direct
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_direct
+      e hboundaryHomeomorph)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free generic Jordan coverage also follows from the direct
+closed-disk-homeomorphic odd-degree obstruction. -/
+theorem exists_bounded_jordan_region_subset_range_of_closedUnitDisk_homeomorph_direct
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_direct
+      e hboundaryHomeomorph)
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- If the boundary extends continuously across the standard closed square, the
+generic Jordan-region coverage conclusion follows directly. -/
+theorem jordan_region_subset_range_of_closedUnitSquare_extension
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (F : ClosedUnitSquare → Y) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitSquareBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_extension
+      F hF hboundaryExtension)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free generic Jordan coverage also follows from a closed-square
+extension of the boundary. -/
+theorem exists_bounded_jordan_region_subset_range_of_closedUnitSquare_extension
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (F : ClosedUnitSquare → Y) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitSquareBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_extension
+      F hF hboundaryExtension)
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- If the boundary is identified with the standard closed-square boundary by a
+homeomorphism, the generic Jordan-region coverage conclusion follows directly
+from the direct odd-degree obstruction on the square model. -/
+theorem jordan_region_subset_range_of_closedUnitSquare_homeomorph_direct
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_direct
+      e hboundaryHomeomorph)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
+/-- Separation-free generic Jordan coverage also follows from the direct
+closed-square-homeomorphic odd-degree obstruction. -/
+theorem exists_bounded_jordan_region_subset_range_of_closedUnitSquare_homeomorph_direct
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_direct
+      e hboundaryHomeomorph)
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
 /-- For a mixed Givens boundary curve, every point in the origin
 component of the complement lies in the image of any continuous extension
 on a domain with the odd boundary-degree obstruction. -/
