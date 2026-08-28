@@ -105,7 +105,8 @@ runs both checks on every push and pull request.
 - fixed-endpoint path-homotopy invariance of closed `1`-form curve
   integrals, together with the free-loop equal-side cancellation criterion
   for square homotopies, the induced `UnitAddCircle` loop and circle
-  nullhomotopy wrappers, and the resulting nullhomotopic-loop vanishing
+  nullhomotopy wrappers, the direct closed-disk boundary-extension
+  vanishing theorem, and the resulting nullhomotopic-loop vanishing
   statement, packaged at a reusable Euclidean chart-level interface for the
   future oriented Stokes/comass argument;
 - the explicit square-center directed polygonal-model construction on the

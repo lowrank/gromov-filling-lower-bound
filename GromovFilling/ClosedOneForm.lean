@@ -1,6 +1,7 @@
 import Mathlib.MeasureTheory.Integral.CurveIntegral.Poincare
 import Mathlib.Topology.Homotopy.Path
 import Mathlib.Topology.Instances.AddCircle.Defs
+import GromovFilling.FinePolygonalModel
 
 /-!
 # Closed one-forms and path homotopy
@@ -244,6 +245,117 @@ theorem curveIntegral_eq_zero_of_circleNullhomotopy_of_diffContOnCl
     ∫ᶜ x in unitAddCirclePath boundary, ω x = 0 := by
   exact curveIntegral_eq_zero_of_unitAddCircleHomotopy_of_diffContOnCl
     (H := circleNullhomotopy hom h0 h1) ht hω hdω_symm hcontdiff
+
+/-- The closed unit disk boundary as a bundled continuous map. -/
+def closedUnitDiskBoundaryContinuousMap : C(UnitAddCircle, ClosedUnitDisk) :=
+  ⟨closedUnitDiskBoundary, continuous_closedUnitDiskBoundary⟩
+
+/-- Radial contraction of the standard circle into the closed unit disk. -/
+def radialClosedUnitDiskPoint (r : I) (u : UnitAddCircle) : ClosedUnitDisk := by
+  refine ⟨((r : ℝ) : ℂ) * (unitAddCircleEquivComplexUnitCircle u : ℂ), ?_⟩
+  show dist (((r : ℝ) : ℂ) * (unitAddCircleEquivComplexUnitCircle u : ℂ)) 0 ≤ 1
+  rw [dist_eq_norm, sub_zero, norm_mul]
+  have hu : ‖(unitAddCircleEquivComplexUnitCircle u : ℂ)‖ = 1 := by
+    simpa using (unitAddCircleEquivComplexUnitCircle u).property
+  rw [hu, mul_one]
+  have hr : 0 ≤ (r : ℝ) := r.2.1
+  simpa [RCLike.norm_ofReal, Real.norm_eq_abs, abs_of_nonneg hr] using r.2.2
+
+@[simp] lemma radialClosedUnitDiskPoint_zero (u : UnitAddCircle) :
+    radialClosedUnitDiskPoint 0 u = 0 := by
+  ext
+  simp [radialClosedUnitDiskPoint]
+
+@[simp] lemma radialClosedUnitDiskPoint_one (u : UnitAddCircle) :
+    radialClosedUnitDiskPoint 1 u = closedUnitDiskBoundary u := by
+  ext
+  simp [radialClosedUnitDiskPoint, closedUnitDiskBoundary_coe]
+
+/-- The standard disk nullhomotopy of the boundary circle. -/
+def radialClosedUnitDiskMap : C(I × UnitAddCircle, ClosedUnitDisk) where
+  toFun p := radialClosedUnitDiskPoint p.1 p.2
+  continuous_toFun := by
+    refine Continuous.subtype_mk ?_ ?_
+    have hr : Continuous fun p : I × UnitAddCircle => ((p.1 : ℝ) : ℂ) :=
+      Complex.continuous_ofReal.comp (continuous_subtype_val.comp continuous_fst)
+    have hu : Continuous fun p : I × UnitAddCircle =>
+        (unitAddCircleEquivComplexUnitCircle p.2 : ℂ) :=
+      continuous_subtype_val.comp
+        (unitAddCircleEquivComplexUnitCircle.continuous.comp continuous_snd)
+    simpa using hr.mul hu
+
+@[simp] lemma radialClosedUnitDiskMap_zero (u : UnitAddCircle) :
+    radialClosedUnitDiskMap (0, u) = 0 :=
+  radialClosedUnitDiskPoint_zero u
+
+@[simp] lemma radialClosedUnitDiskMap_one (u : UnitAddCircle) :
+    radialClosedUnitDiskMap (1, u) = closedUnitDiskBoundary u :=
+  radialClosedUnitDiskPoint_one u
+
+/-- Restrict a continuous disk map to the standard boundary circle. -/
+def ContinuousMap.compClosedUnitDiskBoundary
+    {E : Type*} [TopologicalSpace E] (F : C(ClosedUnitDisk, E)) :
+    C(UnitAddCircle, E) :=
+  F.comp closedUnitDiskBoundaryContinuousMap
+
+/-- Every continuous disk map canonically gives a nullhomotopy of its boundary loop. -/
+def ContinuousMap.closedUnitDiskBoundaryNullhomotopy
+    {E : Type*} [TopologicalSpace E] (F : C(ClosedUnitDisk, E)) :
+    (ContinuousMap.const UnitAddCircle (F 0)).Homotopy (ContinuousMap.compClosedUnitDiskBoundary F) :=
+  circleNullhomotopy (F.comp radialClosedUnitDiskMap)
+    (by intro u; simp)
+    (by
+      intro u
+      change F (radialClosedUnitDiskMap (1, u)) = F (closedUnitDiskBoundary u)
+      rw [radialClosedUnitDiskMap_one])
+
+/-- A closed `1`-form has zero integral along the boundary loop of a continuous
+map from the closed unit disk, provided the induced square homotopy satisfies
+the required `C²` hypothesis. -/
+theorem curveIntegral_eq_zero_of_closedUnitDiskMap_of_diffContOnCl
+    {𝕜 E G : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+    [NormedSpace ℝ E] [NormedAddCommGroup G] [NormedSpace 𝕜 G] [NormedSpace ℝ G]
+    {t : Set E} {ω : E → E →L[𝕜] G}
+    (F : C(ClosedUnitDisk, E))
+    (ht : ∀ a ∈ Ioo (0 : I) 1, ∀ b ∈ Ioo (0 : I) 1,
+      F (radialClosedUnitDiskPoint a (unitIntervalToUnitAddCircle b)) ∈ t)
+    (hω : DiffContOnCl ℝ ω t)
+    (hdω_symm : ∀ x ∈ t, ∀ u ∈ tangentConeAt ℝ t x, ∀ v ∈ tangentConeAt ℝ t x,
+      fderivWithin ℝ ω t x u v = fderivWithin ℝ ω t x v u)
+    (hcontdiff : ContDiffOn ℝ 2
+      (fun xy : ℝ × ℝ ↦
+        Set.IccExtend zero_le_one
+          ((circleHomotopyToUnitAddCirclePath
+            (ContinuousMap.closedUnitDiskBoundaryNullhomotopy F)).extend xy.1) xy.2)
+      (Icc 0 1)) :
+    ∫ᶜ x in unitAddCirclePath (ContinuousMap.compClosedUnitDiskBoundary F), ω x = 0 := by
+  exact curveIntegral_eq_zero_of_unitAddCircleHomotopy_of_diffContOnCl
+    (H := ContinuousMap.closedUnitDiskBoundaryNullhomotopy F) ht hω hdω_symm hcontdiff
+
+/-- The same boundary-vanishing statement when the boundary circle map is given
+separately together with a continuous closed-disk extension. -/
+theorem curveIntegral_eq_zero_of_closedUnitDiskBoundaryExtension_of_diffContOnCl
+    {𝕜 E G : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+    [NormedSpace ℝ E] [NormedAddCommGroup G] [NormedSpace 𝕜 G] [NormedSpace ℝ G]
+    {t : Set E} {ω : E → E →L[𝕜] G}
+    {boundary : C(UnitAddCircle, E)}
+    (F : C(ClosedUnitDisk, E))
+    (hboundary : boundary = ContinuousMap.compClosedUnitDiskBoundary F)
+    (ht : ∀ a ∈ Ioo (0 : I) 1, ∀ b ∈ Ioo (0 : I) 1,
+      F (radialClosedUnitDiskPoint a (unitIntervalToUnitAddCircle b)) ∈ t)
+    (hω : DiffContOnCl ℝ ω t)
+    (hdω_symm : ∀ x ∈ t, ∀ u ∈ tangentConeAt ℝ t x, ∀ v ∈ tangentConeAt ℝ t x,
+      fderivWithin ℝ ω t x u v = fderivWithin ℝ ω t x v u)
+    (hcontdiff : ContDiffOn ℝ 2
+      (fun xy : ℝ × ℝ ↦
+        Set.IccExtend zero_le_one
+          ((circleHomotopyToUnitAddCirclePath
+            (ContinuousMap.closedUnitDiskBoundaryNullhomotopy F)).extend xy.1) xy.2)
+      (Icc 0 1)) :
+    ∫ᶜ x in unitAddCirclePath boundary, ω x = 0 := by
+  subst hboundary
+  exact curveIntegral_eq_zero_of_closedUnitDiskMap_of_diffContOnCl
+    (F := F) ht hω hdω_symm hcontdiff
 
 end CircleHomotopyOnUnitAddCircle
 
