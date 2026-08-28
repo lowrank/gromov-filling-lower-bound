@@ -760,7 +760,6 @@ theorem no_odd_degree_of_polygonal_circle_extension_with_face_cuts_variable_with
     (faceVertex : ∀ f, Fin (faceSize f + 1) → V)
     (faceEdge : ∀ f, Fin (faceSize f + 1) → E)
     (faceEdgeForward : ∀ f, Fin (faceSize f + 1) → Bool)
-    (hfaceVertex : ∀ f, Function.Injective (faceVertex f))
     (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
     (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
     (hends : ∀ f k, edgeEnds (faceEdge f k) =
@@ -806,7 +805,7 @@ theorem no_odd_degree_of_polygonal_circle_extension_with_face_cuts_variable_with
     (modTwo_incidence_of_face_count faceEdges boundaryEdges hcount)
     (faceEven_of_variable_cyclic_face_data_with_edge_directions
       edgeEnds faceEdges faceSize faceVertex faceEdge faceEdgeForward
-      hfaceVertex hfaceEdge hfaceEdges hends)
+      hfaceEdge hfaceEdges hends)
     vertexPoint EdgePoint edgeStart edgeFinish edgeToX hedgeToX
     hedgeStart hedgeFinish H hH cut hcut vertexLift hvertexLift
     edgeLift hedgeLift hedgeLiftProjects turn hturn (-degree)
@@ -832,7 +831,6 @@ theorem no_odd_degree_of_polygonal_circle_extension_with_boundary_degree_variabl
     (faceVertex : ∀ f, Fin (faceSize f + 1) → V)
     (faceEdge : ∀ f, Fin (faceSize f + 1) → E)
     (faceEdgeForward : ∀ f, Fin (faceSize f + 1) → Bool)
-    (hfaceVertex : ∀ f, Function.Injective (faceVertex f))
     (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
     (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
     (hends : ∀ f k, edgeEnds (faceEdge f k) =
@@ -892,7 +890,7 @@ theorem no_odd_degree_of_polygonal_circle_extension_with_boundary_degree_variabl
     (modTwo_incidence_of_face_count faceEdges boundaryEdges hcount)
     (faceEven_of_variable_cyclic_face_data_with_edge_directions
       edgeEnds faceEdges faceSize faceVertex faceEdge faceEdgeForward
-      hfaceVertex hfaceEdge hfaceEdges hends)
+      hfaceEdge hfaceEdges hends)
     vertexPoint EdgePoint edgeStart edgeFinish edgeToX hedgeToX
     hedgeStart hedgeFinish H hH cut hcut vertexLift hvertexLift edgeLift
     hedgeLift hedgeLiftProjects turn hturn (-degree)
@@ -1000,7 +998,6 @@ theorem no_odd_degree_of_polygonal_circle_extension_of_small_mesh_variable_with_
     (faceVertex : ∀ f, Fin (faceSize f + 1) → V)
     (faceEdge : ∀ f, Fin (faceSize f + 1) → E)
     (faceEdgeForward : ∀ f, Fin (faceSize f + 1) → Bool)
-    (hfaceVertex : ∀ f, Function.Injective (faceVertex f))
     (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
     (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
     (hends : ∀ f k, edgeEnds (faceEdge f k) =
@@ -1046,7 +1043,7 @@ theorem no_odd_degree_of_polygonal_circle_extension_of_small_mesh_variable_with_
     faceEdges EdgePoint edgeToX H faceCenter hsmall
   exact no_odd_degree_of_polygonal_circle_extension_with_face_cuts_variable_with_edge_directions
     edgeEnds faceEdges boundaryEdges hcount faceSize faceVertex faceEdge
-    faceEdgeForward hfaceVertex hfaceEdge hfaceEdges hends boundaryEdge
+    faceEdgeForward hfaceEdge hfaceEdges hends boundaryEdge
     hboundaryEdge hboundary vertexPoint EdgePoint edgeStart edgeFinish
     edgeToX hedgeToX hedgeStart hedgeFinish H hH cut hcut vertexLift
     hvertexLift edgeLift hedgeLift hedgeLiftProjects turn hturn degree
@@ -1068,7 +1065,6 @@ theorem no_odd_degree_of_fine_polygonal_circle_extension_variable_with_edge_dire
     (faceVertex : ∀ f, Fin (faceSize f + 1) → V)
     (faceEdge : ∀ f, Fin (faceSize f + 1) → E)
     (faceEdgeForward : ∀ f, Fin (faceSize f + 1) → Bool)
-    (hfaceVertex : ∀ f, Function.Injective (faceVertex f))
     (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
     (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
     (hends : ∀ f k, edgeEnds (faceEdge f k) =
@@ -1159,7 +1155,7 @@ theorem no_odd_degree_of_fine_polygonal_circle_extension_variable_with_edge_dire
     rw [Int.cast_sub, hstartOffset, hfinishOffset]
   exact no_odd_degree_of_polygonal_circle_extension_with_boundary_degree_variable_with_edge_directions
     edgeEnds faceEdges boundaryEdges hcount faceSize faceVertex faceEdge
-    faceEdgeForward hfaceVertex hfaceEdge hfaceEdges hends boundaryEdge
+    faceEdgeForward hfaceEdge hfaceEdges hends boundaryEdge
     hboundaryEdge boundaryVertex hboundaryEnds hboundary vertexPoint
     EdgePoint edgeStart edgeFinish edgeToX hedgeToX hedgeStart
     hedgeFinish H hH cut hcut vertexLift hvertexLift edgeLift hedgeLift

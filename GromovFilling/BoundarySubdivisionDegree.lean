@@ -443,7 +443,6 @@ theorem faceEven_of_variable_cyclic_face_data_with_edge_directions
     (faceVertex : ∀ f, Fin (faceSize f + 1) → V)
     (faceEdge : ∀ f, Fin (faceSize f + 1) → E)
     (faceEdgeForward : ∀ f, Fin (faceSize f + 1) → Bool)
-    (_hfaceVertex : ∀ f, Function.Injective (faceVertex f))
     (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
     (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
     (hends : ∀ f k, edgeEnds (faceEdge f k) =
@@ -523,7 +522,6 @@ theorem no_odd_integer_degree_of_polygonal_surface_local_lifts_variable_with_edg
     (faceVertex : ∀ f, Fin (faceSize f + 1) → V)
     (faceEdge : ∀ f, Fin (faceSize f + 1) → E)
     (faceEdgeForward : ∀ f, Fin (faceSize f + 1) → Bool)
-    (hfaceVertex : ∀ f, Function.Injective (faceVertex f))
     (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
     (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
     (hends : ∀ f k, edgeEnds (faceEdge f k) =
@@ -551,7 +549,7 @@ theorem no_odd_integer_degree_of_polygonal_surface_local_lifts_variable_with_edg
     apply locally_lifted_edge_cochain_closed edgeEnds faceEdges
       (faceEven_of_variable_cyclic_face_data_with_edge_directions
         edgeEnds faceEdges faceSize faceVertex faceEdge faceEdgeForward
-        hfaceVertex hfaceEdge hfaceEdges hends)
+        hfaceEdge hfaceEdges hends)
       (fun f v ↦ (transition f v : ZMod 2))
       (integerEdgeParity turn)
     intro f e he
