@@ -3325,6 +3325,21 @@ def cylinderStripLowerBoundaryEdgeTag {n m : ℕ}
   | .angular i j =>
       if i = 0 then some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) j) else none
 
+theorem cylinderStripLowerBoundaryEdge_eq_of_tag_some {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {e : CylinderStripEdge n m}
+    {c : CylinderStripLowerBoundaryEdgeClass P}
+    (h : cylinderStripLowerBoundaryEdgeTag P e = some c) :
+    ∃ j : Fin (m + 1), e = CylinderStripEdge.angular (0 : Fin (n + 2)) j := by
+  cases e with
+  | radial i j =>
+      simp [cylinderStripLowerBoundaryEdgeTag] at h
+  | angular i j =>
+      by_cases hi0 : i = 0
+      · subst hi0
+        exact ⟨j, rfl⟩
+      · simp [cylinderStripLowerBoundaryEdgeTag, hi0] at h
+
 theorem cylinderStripEdgeGluingStep_preserves_lowerBoundaryEdgeTag {n m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m)
     {e₁ e₂ : CylinderStripEdge n m}
@@ -3406,6 +3421,12 @@ theorem cylinderStripGluedLowerEdgeEndpointClasses_eq_or_swap {n m : ℕ}
     rcases horient : P.orientation j with _ | _
     · exact Or.inl (cylinderStripGluedEdgeEndpointClasses_pair_preserving P j horient)
     · exact Or.inr (cylinderStripGluedEdgeEndpointClasses_pair_reversing P j horient)
+
+def cylinderStripGluedEdgeChosenEnds (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    CylinderStripGluedEdge n P →
+      CylinderStripGluedVertex n P × CylinderStripGluedVertex n P :=
+  fun q ↦ cylinderStripGluedEdgeEndpointClasses P q.out
 
 @[simp] theorem cylinderStripGluedLowerBoundaryEdgeTag_mk_lower {n m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
@@ -3543,6 +3564,84 @@ theorem mk_cylinderStripGluedEdge_eq_angular_of_ne_zero_iff {n m : ℕ}
           exact Option.some.inj htag
   · intro h
     rw [h]
+
+theorem cylinderStripGluedEdgeEndpointClasses_eq_or_swap_chosen {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (e : CylinderStripEdge n m) :
+    cylinderStripGluedEdgeEndpointClasses P e =
+        cylinderStripGluedEdgeChosenEnds n P
+          (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e) ∨
+      cylinderStripGluedEdgeEndpointClasses P e =
+        Prod.swap
+          (cylinderStripGluedEdgeChosenEnds n P
+            (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e)) := by
+  cases e with
+  | radial i j =>
+      let q : CylinderStripGluedEdge n P :=
+        Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+          (CylinderStripEdge.radial i j)
+      have hq : Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) q.out =
+          Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+            (CylinderStripEdge.radial i j) := by
+        simpa [q] using (Quotient.out_eq q)
+      have hout : q.out = CylinderStripEdge.radial i j :=
+        (mk_cylinderStripGluedEdge_eq_radial_iff P q.out i j).1 hq
+      have hchosen : cylinderStripGluedEdgeChosenEnds n P q =
+          cylinderStripGluedEdgeEndpointClasses P (CylinderStripEdge.radial i j) := by
+        unfold cylinderStripGluedEdgeChosenEnds
+        rw [hout]
+      exact Or.inl hchosen.symm
+  | angular i j =>
+      by_cases hi0 : i = 0
+      · subst hi0
+        let q : CylinderStripGluedEdge n P :=
+          Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+            (CylinderStripEdge.angular (0 : Fin (n + 2)) j)
+        have hqtag := congrArg (cylinderStripGluedLowerBoundaryEdgeTag n P) (Quotient.out_eq q)
+        change cylinderStripLowerBoundaryEdgeTag P q.out =
+            some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) j) at hqtag
+        obtain ⟨k, hk⟩ := cylinderStripLowerBoundaryEdge_eq_of_tag_some P hqtag
+        have hq :
+            Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+              (CylinderStripEdge.angular (0 : Fin (n + 2)) j) =
+            Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+              (CylinderStripEdge.angular (0 : Fin (n + 2)) k) := by
+          have houtq : Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) q.out =
+              Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+                (CylinderStripEdge.angular (0 : Fin (n + 2)) j) := by
+            change Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) q.out = q
+            exact Quotient.out_eq q
+          rw [hk] at houtq
+          exact houtq.symm
+        have hchosen : cylinderStripGluedEdgeChosenEnds n P q =
+            cylinderStripGluedEdgeEndpointClasses P
+              (CylinderStripEdge.angular (0 : Fin (n + 2)) k) := by
+          unfold cylinderStripGluedEdgeChosenEnds
+          rw [hk]
+        rcases cylinderStripGluedLowerEdgeEndpointClasses_eq_or_swap P j k hq with h | h
+        · exact Or.inl (h.trans hchosen.symm)
+        · exact Or.inr <| by
+            calc
+              cylinderStripGluedEdgeEndpointClasses P
+                  (CylinderStripEdge.angular (0 : Fin (n + 2)) j) =
+                Prod.swap
+                  (cylinderStripGluedEdgeEndpointClasses P
+                    (CylinderStripEdge.angular (0 : Fin (n + 2)) k)) := h
+              _ = Prod.swap (cylinderStripGluedEdgeChosenEnds n P q) := by
+                rw [hchosen]
+      · let q : CylinderStripGluedEdge n P :=
+          Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+            (CylinderStripEdge.angular i j)
+        have hq : Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) q.out =
+            Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+              (CylinderStripEdge.angular i j) := by
+          simpa [q] using (Quotient.out_eq q)
+        have hout : q.out = CylinderStripEdge.angular i j :=
+          (mk_cylinderStripGluedEdge_eq_angular_of_ne_zero_iff P q.out i j hi0).1 hq
+        have hchosen : cylinderStripGluedEdgeChosenEnds n P q =
+            cylinderStripGluedEdgeEndpointClasses P (CylinderStripEdge.angular i j) := by
+          unfold cylinderStripGluedEdgeChosenEnds
+          rw [hout]
+        exact Or.inl hchosen.symm
 
 @[simp] theorem radialSubdivisionLower_injective {n : ℕ} :
     Function.Injective (@radialSubdivisionLower n) := by
