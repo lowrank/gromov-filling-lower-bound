@@ -5569,6 +5569,93 @@ theorem hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedArbitrari
     (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData
       D.models)
 
+/-- Geometric location of a cylinder-strip vertex after pushing the whole strip
+into the closed square by the radial square-cylinder map. -/
+def cylinderStripVertexPointOnClosedUnitSquare (n m : ℕ) :
+    CylinderStripVertex n m → ClosedUnitSquare
+  | (i, j) => closedUnitSquareRadial (cylinderSubdivisionPoint n m i j)
+
+/-- Geometric path of a cylinder-strip edge after pushing the whole strip into
+the closed square by the radial square-cylinder map. -/
+def cylinderStripEdgePathOnClosedUnitSquare (n m : ℕ) :
+    CylinderStripEdge n m → ClosedUnitInterval → ClosedUnitSquare
+  | .radial i j =>
+      fun x ↦ closedUnitSquareRadial (cylinderRadialEdgePath n m i j x)
+  | .angular i j =>
+      fun x ↦ closedUnitSquareRadial (cylinderAngularEdgePath n m i j x)
+
+theorem continuous_cylinderStripEdgePathOnClosedUnitSquare (n m : ℕ)
+    (e : CylinderStripEdge n m) :
+    Continuous (cylinderStripEdgePathOnClosedUnitSquare n m e) := by
+  cases e with
+  | radial i j =>
+      exact continuous_closedUnitSquareRadial.comp <|
+        continuous_cylinderRadialEdgePath n m i j
+  | angular i j =>
+      exact continuous_closedUnitSquareRadial.comp <|
+        continuous_cylinderAngularEdgePath n m i j
+
+theorem cylinderStripEdgePathOnClosedUnitSquare_start {n m : ℕ}
+    (e : CylinderStripEdge n m) :
+    cylinderStripEdgePathOnClosedUnitSquare n m e closedUnitIntervalStart =
+      cylinderStripVertexPointOnClosedUnitSquare n m (cylinderStripEdgeEnds e).1 := by
+  cases e with
+  | radial i j =>
+      simp [cylinderStripEdgePathOnClosedUnitSquare, cylinderStripVertexPointOnClosedUnitSquare,
+        cylinderStripEdgeEnds, cylinderRadialEdgePath_start, cylinderSubdivisionPoint]
+  | angular i j =>
+      simp [cylinderStripEdgePathOnClosedUnitSquare, cylinderStripVertexPointOnClosedUnitSquare,
+        cylinderStripEdgeEnds, cylinderAngularEdgePath_start, cylinderSubdivisionPoint]
+
+theorem cylinderStripEdgePathOnClosedUnitSquare_finish {n m : ℕ}
+    (e : CylinderStripEdge n m) :
+    cylinderStripEdgePathOnClosedUnitSquare n m e closedUnitIntervalFinish =
+      cylinderStripVertexPointOnClosedUnitSquare n m (cylinderStripEdgeEnds e).2 := by
+  cases e with
+  | radial i j =>
+      simp [cylinderStripEdgePathOnClosedUnitSquare, cylinderStripVertexPointOnClosedUnitSquare,
+        cylinderStripEdgeEnds, cylinderRadialEdgePath_finish, cylinderSubdivisionPoint]
+  | angular i j =>
+      simp [cylinderStripEdgePathOnClosedUnitSquare, cylinderStripVertexPointOnClosedUnitSquare,
+        cylinderStripEdgeEnds, cylinderAngularEdgePath_finish, cylinderSubdivisionPoint]
+
+@[simp] theorem cylinderStripVertexPointOnClosedUnitSquare_lower {n m : ℕ}
+    (j : Fin (m + 1)) :
+    cylinderStripVertexPointOnClosedUnitSquare n m
+      (cylinderStripLowerBoundaryVertex (n := n) (m := m) j) = closedUnitSquareCenter := by
+  rw [cylinderStripVertexPointOnClosedUnitSquare, cylinderStripLowerBoundaryVertex,
+    cylinderSubdivisionPoint, radialSubdivisionPoint_zero]
+  exact closedUnitSquareRadial_start _
+
+@[simp] theorem cylinderStripEdgePathOnClosedUnitSquare_lower {n m : ℕ}
+    (j : Fin (m + 1)) :
+    cylinderStripEdgePathOnClosedUnitSquare n m
+      (cylinderStripLowerBoundaryEdge (n := n) (m := m) j) =
+        fun _ ↦ closedUnitSquareCenter := by
+  funext x
+  simp [cylinderStripEdgePathOnClosedUnitSquare, cylinderStripLowerBoundaryEdge,
+    cylinderAngularEdgePath, radialSubdivisionPoint_zero]
+  exact closedUnitSquareRadial_start _
+
+@[simp] theorem cylinderStripVertexPointOnClosedUnitSquare_boundary {n m : ℕ}
+    (j : Fin (m + 1)) :
+    cylinderStripVertexPointOnClosedUnitSquare n m
+      (cylinderStripBoundaryVertex (n := n) (m := m) j) =
+        closedUnitSquareBoundary (angularSubdivisionPoint m j) := by
+  rw [cylinderStripVertexPointOnClosedUnitSquare, cylinderStripBoundaryVertex,
+    cylinderSubdivisionPoint, radialSubdivisionPoint_last]
+  exact closedUnitSquareRadial_finish _
+
+@[simp] theorem cylinderStripEdgePathOnClosedUnitSquare_boundary {n m : ℕ}
+    (j : Fin (m + 1)) :
+    cylinderStripEdgePathOnClosedUnitSquare n m
+      (cylinderStripBoundaryEdge (n := n) (m := m) j) =
+        fun x ↦ closedUnitSquareBoundary (angularSubdivisionArc m j x) := by
+  funext x
+  simp [cylinderStripEdgePathOnClosedUnitSquare, cylinderStripBoundaryEdge,
+    cylinderAngularEdgePath_on_closedUnitSquareCylinderBoundary,
+    closedUnitSquareRadial_comp_cylinderBoundary]
+
 /-- Bundle explicit checkerboard-cylinder strip data into the directed abstract
 variable-face-size geometric polygonal-model interface on the square-cylinder
 boundary. -/
