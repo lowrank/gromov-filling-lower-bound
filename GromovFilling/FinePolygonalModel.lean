@@ -3643,6 +3643,43 @@ theorem cylinderStripGluedEdgeEndpointClasses_eq_or_swap_chosen {n m : ℕ}
           rw [hout]
         exact Or.inl hchosen.symm
 
+noncomputable def cylinderStripGluedEdgeAgreesWithChosenEnds (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (e : CylinderStripEdge n m) : Bool := by
+  classical
+  exact decide <|
+    cylinderStripGluedEdgeEndpointClasses P e =
+      cylinderStripGluedEdgeChosenEnds n P
+        (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e)
+
+theorem cylinderStripGluedEdgeEndpointClasses_eq_chosen_or_swapped {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (e : CylinderStripEdge n m) :
+    cylinderStripGluedEdgeEndpointClasses P e =
+      if cylinderStripGluedEdgeAgreesWithChosenEnds n P e then
+        cylinderStripGluedEdgeChosenEnds n P
+          (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e)
+      else
+        Prod.swap
+          (cylinderStripGluedEdgeChosenEnds n P
+            (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e)) := by
+  classical
+  by_cases hagree :
+      cylinderStripGluedEdgeEndpointClasses P e =
+        cylinderStripGluedEdgeChosenEnds n P
+          (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e)
+  · have hdec : cylinderStripGluedEdgeAgreesWithChosenEnds n P e = true := by
+      unfold cylinderStripGluedEdgeAgreesWithChosenEnds
+      simp [hagree]
+    rw [hdec]
+    exact hagree
+  · have hswap := cylinderStripGluedEdgeEndpointClasses_eq_or_swap_chosen P e
+    rcases hswap with hEq | hSwap
+    · exact False.elim (hagree hEq)
+    · have hdec : cylinderStripGluedEdgeAgreesWithChosenEnds n P e = false := by
+        unfold cylinderStripGluedEdgeAgreesWithChosenEnds
+        simp [hagree]
+      rw [hdec]
+      exact hSwap
+
 @[simp] theorem radialSubdivisionLower_injective {n : ℕ} :
     Function.Injective (@radialSubdivisionLower n) := by
   intro a b h
