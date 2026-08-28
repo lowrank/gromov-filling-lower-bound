@@ -620,6 +620,35 @@ theorem ComplexSourceChartSystem.universal_ennreal_of_abstractVariableDirectedAr
     (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
       hmodels)
 
+
+/-- Explicit glued-strip quotient data already supplies the quotient-friendly
+abstract polygonal-model interface needed by a generic source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ _hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ _hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ _hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ _hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle))) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
+      hmodels)
+
 /-- Coverage also transfers from a compact source carrying the quotient-friendly
  directed abstract arbitrarily-fine polygonal-model interface once a
  boundary-respecting homeomorphism identifies that source with the target of a
@@ -856,6 +885,38 @@ theorem ComplexSourceChartSystem.universal_ennreal_add_of_abstractVariableDirect
     ENNReal.ofReal universalConstant + defect ≤ area :=
   S.universal_ennreal_add_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+      hmodels)
+    hbudget
+
+
+/-- Explicit glued-strip quotient data already supplies the additive-defect
+quotient-friendly abstract polygonal-model interface needed by a generic
+source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ _hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ _hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ _hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ _hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
       hmodels)
     hbudget
 
@@ -1290,6 +1351,35 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_of_abstractVariableDire
     (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
       hmodels)
 
+
+/-- Explicit glued-strip quotient data already supplies the quotient-friendly
+abstract polygonal-model interface needed by a metric source-chart system. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ _hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ _hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ _hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ _hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle))) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
+      hmodels)
+
 /-- The metric source-chart certificate also transfers from a compact source
  carrying the quotient-friendly directed abstract arbitrarily-fine polygonal-
  model interface through a boundary-respecting homeomorphism. -/
@@ -1524,6 +1614,38 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_abstractVariable
     ENNReal.ofReal universalConstant + defect ≤ area :=
   S.universal_ennreal_add_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+      hmodels)
+    hbudget
+
+
+/-- Explicit glued-strip quotient data already supplies the additive-defect
+quotient-friendly abstract polygonal-model interface needed by a metric
+source-chart system. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ _hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ _hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ _hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ _hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
       hmodels)
     hbudget
 
@@ -1803,6 +1925,49 @@ theorem finite_universal_ennreal_of_complex_planar_maps_of_homeomorph_abstractVa
       e hboundaryHomeomorph hmodels)
     G hG hboundary K hGLipschitz hbudget
 
+
+/-- The finite orientation-free Fourier certificate for complex-plane domains
+whose boundary is identified with a compact source carrying explicit glued-strip
+quotient data. -/
+theorem finite_universal_ennreal_of_complex_planar_maps_of_homeomorph_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (N : ℕ) (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (e : X ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ _hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ _hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ _hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ _hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (G : Fin N → ℂ → ℂ)
+    (hG : ∀ j, Continuous (G j))
+    (hboundary : ∀ j t,
+      G j (boundary' t) = givensBoundaryCurveAddCircle j t)
+    (K : Fin N → ℝ≥0)
+    (hGLipschitz : ∀ j, LipschitzWith (K j) (G j))
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
+  finite_universal_ennreal_of_complex_planar_maps_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    N area e hboundaryHomeomorph
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
+      hmodels)
+    G hG hboundary K hGLipschitz hbudget
+
 /-- The finite orientation-free Fourier certificate for complex-plane
 domains whose boundary extends continuously across the standard closed disk. -/
 theorem finite_universal_ennreal_of_complex_planar_maps_of_closedUnitDisk_extension
@@ -2047,6 +2212,82 @@ theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_
     (continuous_givensMetricFourierMap hboundary' N j)
     (givensMetricFourierMap_on_boundary hboundary' j)
     (givensMetricFourierMap_lipschitzWith hboundary' N j)
+
+
+/-- Planar Lemma 5.4 for the genuine metric distance-profile map when the
+boundary is identified with a compact source carrying explicit glued-strip
+quotient data. -/
+theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_homeomorph_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (e : X ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ _hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ _hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ _hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ _hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (hboundary' : IsometricCircleBoundary boundary') :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary' N j) x).det| ∂volume :=
+  givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    j e hboundaryHomeomorph
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
+      hmodels)
+    hboundary'
+
+/-- Bounded-region form of planar Lemma 5.4 for the genuine metric Fourier
+map when the boundary is identified with a compact source carrying explicit
+ glued-strip quotient data. -/
+theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_of_homeomorph_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (e : X ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ _hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ _hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ _hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ _hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (hboundary' : IsometricCircleBoundary boundary') :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary' N j) x).det| ∂volume :=
+  exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    j e hboundaryHomeomorph
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
+      hmodels)
+    hboundary'
 
 /-- Planar Lemma 5.4 for the genuine metric distance-profile map when the
 boundary extends continuously across the standard closed disk. -/
@@ -2520,6 +2761,77 @@ theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_m
     finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
       N area e hboundaryHomeomorph hmodels hboundary' harea
 
+
+/-- Finite slack-refined planar certificate when the boundary is identified
+with a compact source carrying explicit glued-strip quotient data. -/
+theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_homeomorph_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (N : ℕ) (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (e : X ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ _hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ _hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ _hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ _hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (hboundary' : IsometricCircleBoundary boundary')
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary' x) ∂volume ≤ area :=
+  finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    N area e hboundaryHomeomorph
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
+      hmodels)
+    hboundary' harea
+
+/-- Infinite slack-refined planar certificate when the boundary is identified
+with a compact source carrying explicit glued-strip quotient data. -/
+theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_maps_of_homeomorph_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (e : X ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ _hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ _hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ _hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ _hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (hboundary' : IsometricCircleBoundary boundary')
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary' x) ∂volume ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  exact
+    finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_homeomorph_cylinderStripGlued_data
+      N area e hboundaryHomeomorph hmodels hboundary' harea
+
 /-- Finite slack-refined planar certificate when the boundary extends across
 the standard closed disk. -/
 theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_closedUnitDisk_extension
@@ -2794,6 +3106,85 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_homeomorph_abstractVa
   intro N
   exact finite_universal_ennreal_of_metric_complex_planar_map_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
     N area e hboundaryHomeomorph hmodels hboundary' (hbudget N)
+
+
+/-- The complete finite planar certificate for the actual metric Fourier family
+when the boundary is identified with a compact source carrying explicit
+ glued-strip quotient data. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_homeomorph_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (N : ℕ) (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (e : X ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ _hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ _hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ _hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ _hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (hboundary' : IsometricCircleBoundary boundary')
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary' N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
+  finite_universal_ennreal_of_metric_complex_planar_map_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    N area e hboundaryHomeomorph
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
+      hmodels)
+    hboundary' hbudget
+
+/-- Infinite-mode planar conclusion for the actual metric Fourier family when
+the boundary is identified with a compact source carrying explicit glued-strip
+quotient data. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_homeomorph_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (e : X ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ _hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ _hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ _hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ _hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (hboundary' : IsometricCircleBoundary boundary')
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary' N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact
+    finite_universal_ennreal_of_metric_complex_planar_map_of_homeomorph_cylinderStripGlued_data
+      N area e hboundaryHomeomorph hmodels hboundary' (hbudget N)
 
 /-- The complete finite planar certificate for the actual metric Fourier
 family when the boundary extends continuously across the standard closed
@@ -3172,6 +3563,85 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_h
   intro N
   exact
     finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+      N area e hboundaryHomeomorph hmodels hboundary' (hbudget N) harea
+
+
+/-- The finite planar certificate with coordinate-energy budget when the
+boundary is identified with a compact source carrying explicit glued-strip
+quotient data. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_homeomorph_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (N : ℕ) (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (e : X ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ _hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ _hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ _hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ _hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (hboundary' : IsometricCircleBoundary boundary')
+    (hbudget :
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary' (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
+  finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    N area e hboundaryHomeomorph
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
+      hmodels)
+    hboundary' hbudget harea
+
+/-- Infinite-mode planar certificate with coordinate-energy budget when the
+boundary is identified with a compact source carrying explicit glued-strip
+quotient data. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_homeomorph_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (e : X ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ _hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ _hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ _hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ _hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (hboundary' : IsometricCircleBoundary boundary')
+    (hbudget : ∀ N : ℕ,
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary' (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact
+    finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_homeomorph_cylinderStripGlued_data
       N area e hboundaryHomeomorph hmodels hboundary' (hbudget N) harea
 
 /-- The finite planar certificate with coordinate-energy budget when the
