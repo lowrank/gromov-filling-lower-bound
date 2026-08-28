@@ -146,6 +146,30 @@ theorem faceEven_of_cyclic_face_data
   exact mapped_cyclic_face_vertex_incidence_even
     (faceVertex f) (hfaceVertex f) v
 
+/-- The same cyclic-face incidence discharge, but allowing each face to
+have its own cyclic size. -/
+theorem faceEven_of_variable_cyclic_face_data
+    {V E F : Type*} [DecidableEq V] [DecidableEq E]
+    (edgeEnds : E → V × V) (faceEdges : F → Finset E)
+    (faceSize : F → ℕ)
+    (faceVertex : ∀ f, Fin (faceSize f + 1) → V)
+    (faceEdge : ∀ f, Fin (faceSize f + 1) → E)
+    (hfaceVertex : ∀ f, Function.Injective (faceVertex f))
+    (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
+    (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
+    (hends : ∀ f k, edgeEnds (faceEdge f k) =
+      (faceVertex f k, faceVertex f (cyclicSucc k))) :
+    ∀ (f : F) (v : V),
+      (∑ e ∈ faceEdges f,
+        ((if v = (edgeEnds e).1 then (1 : ZMod 2) else 0) +
+          if v = (edgeEnds e).2 then (1 : ZMod 2) else 0)) = 0 := by
+  intro f v
+  rw [hfaceEdges f, Finset.sum_image
+    (fun x _hx y _hy hxy ↦ hfaceEdge f hxy)]
+  simp_rw [hends]
+  exact mapped_cyclic_face_vertex_incidence_even
+    (faceVertex f) (hfaceVertex f) v
+
 /-- The usual surface incidence rule—one incident face for a boundary
 edge and two for an interior edge—implies the mod-2 incidence identity
 used by combinatorial Stokes. -/
@@ -359,6 +383,45 @@ theorem no_odd_integer_degree_of_polygonal_surface_local_lifts
     (modTwo_incidence_of_face_count faceEdges boundaryEdges hcount)
     (faceEven_of_cyclic_face_data edgeEnds faceEdges faceVertex faceEdge
       hfaceVertex hfaceEdge hfaceEdges hends)
+    transition turn hlocal (-degree)
+  · rw [hboundary, Finset.sum_image
+      (fun x _hx y _hy hxy ↦ hboundaryEdge hxy)]
+    simp_rw [hturn]
+    exact sum_cyclicDegreeTurn degree
+  · exact hodd.neg
+
+/-- Variable-face-size version of
+`no_odd_integer_degree_of_polygonal_surface_local_lifts`. -/
+theorem no_odd_integer_degree_of_polygonal_surface_local_lifts_variable
+    {V E F : Type*} [Fintype V] [Fintype E] [Fintype F]
+    [DecidableEq V] [DecidableEq E]
+    (edgeEnds : E → V × V) (faceEdges : F → Finset E)
+    (boundaryEdges : Finset E)
+    (hcount : ∀ e : E,
+      (Finset.univ.filter fun f ↦ e ∈ faceEdges f).card =
+        if e ∈ boundaryEdges then 1 else 2)
+    (faceSize : F → ℕ)
+    (faceVertex : ∀ f, Fin (faceSize f + 1) → V)
+    (faceEdge : ∀ f, Fin (faceSize f + 1) → E)
+    (hfaceVertex : ∀ f, Function.Injective (faceVertex f))
+    (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
+    (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
+    (hends : ∀ f k, edgeEnds (faceEdge f k) =
+      (faceVertex f k, faceVertex f (cyclicSucc k)))
+    (transition : F → V → ℤ) (turn : E → ℤ)
+    (hlocal : ∀ (f : F) (e : E), e ∈ faceEdges f →
+      turn e = transition f (edgeEnds e).1 -
+        transition f (edgeEnds e).2)
+    {boundarySize : ℕ} (boundaryEdge : Fin (boundarySize + 1) → E)
+    (hboundaryEdge : Function.Injective boundaryEdge)
+    (hboundary : boundaryEdges = Finset.univ.image boundaryEdge)
+    (degree : ℤ)
+    (hturn : ∀ k, turn (boundaryEdge k) = cyclicDegreeTurn degree k)
+    (hodd : Odd degree) : False := by
+  apply no_odd_integer_degree_of_local_lifts edgeEnds faceEdges boundaryEdges
+    (modTwo_incidence_of_face_count faceEdges boundaryEdges hcount)
+    (faceEven_of_variable_cyclic_face_data edgeEnds faceEdges faceSize
+      faceVertex faceEdge hfaceVertex hfaceEdge hfaceEdges hends)
     transition turn hlocal (-degree)
   · rw [hboundary, Finset.sum_image
       (fun x _hx y _hy hxy ↦ hboundaryEdge hxy)]
