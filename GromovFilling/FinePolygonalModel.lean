@@ -791,11 +791,6 @@ def upperSquareRingLevel {n : ℕ} (i : Fin n) : Fin (n + 1) :=
   simp [radialSubdivisionLower, radialSubdivisionUpper,
     lowerSquareRingLevel, upperSquareRingLevel]
 
-@[simp] theorem radialSubdivisionUpper_last {n : ℕ} :
-    radialSubdivisionUpper (Fin.last n) = Fin.last (n + 1) := by
-  apply Fin.ext
-  simp [radialSubdivisionUpper]
-
 /-- Vertices of the disk-like radial mesh in the closed unit square. -/
 inductive SquareDiskVertex (n m : ℕ)
   | center
@@ -1228,7 +1223,10 @@ theorem squareDiskBoundaryEdges_eq {n m : ℕ} :
       fun x ↦ closedUnitSquareRadial
         (cylinderAngularEdgePath n m (Fin.last (n + 1)) j x) := by
   funext x
-  simp [squareDiskBoundaryEdge, squareDiskEdgePath]
+  rw [squareDiskBoundaryEdge, squareDiskEdgePath]
+  exact congrArg (fun i => closedUnitSquareRadial (cylinderAngularEdgePath n m i j x)) <| by
+    apply Fin.ext
+    simp [radialSubdivisionUpper]
 
 theorem cyclicSucc_even_iff_not_even_of_odd {m : ℕ} (hm : Odd m)
     (j : Fin (m + 1)) :
@@ -2796,6 +2794,419 @@ theorem cylinderStripBoundaryEdges_eq {n m : ℕ} :
       (cylinderStripBoundaryVertex (n := n) (m := m) j,
         cylinderStripBoundaryVertex (n := n) (m := m) (cyclicSucc j)) := by
   simp [cylinderStripBoundaryEdge, cylinderStripBoundaryVertex, cylinderStripEdgeEnds]
+
+def cylinderStripLowerBoundaryVertex {n m : ℕ} (j : Fin (m + 1)) : CylinderStripVertex n m :=
+  (0, j)
+
+def cylinderStripLowerBoundaryEdge {n m : ℕ} (j : Fin (m + 1)) : CylinderStripEdge n m :=
+  .angular 0 j
+
+@[simp] theorem cylinderStripLowerBoundaryEdge_injective {n m : ℕ} :
+    Function.Injective (cylinderStripLowerBoundaryEdge (n := n) (m := m)) := by
+  intro a b h
+  simpa [cylinderStripLowerBoundaryEdge] using h
+
+def cylinderStripLowerBoundaryEdges {n m : ℕ} : Finset (CylinderStripEdge n m) :=
+  Finset.univ.image (cylinderStripLowerBoundaryEdge (n := n) (m := m))
+
+theorem cylinderStripLowerBoundaryEdges_eq {n m : ℕ} :
+    cylinderStripLowerBoundaryEdges (n := n) (m := m) =
+      Finset.univ.image (cylinderStripLowerBoundaryEdge (n := n) (m := m)) := rfl
+
+@[simp] theorem cylinderStripLowerBoundaryEdge_ends {n m : ℕ} (j : Fin (m + 1)) :
+    cylinderStripEdgeEnds (cylinderStripLowerBoundaryEdge (n := n) (m := m) j) =
+      (cylinderStripLowerBoundaryVertex (n := n) (m := m) j,
+        cylinderStripLowerBoundaryVertex (n := n) (m := m) (cyclicSucc j)) := by
+  simp [cylinderStripLowerBoundaryEdge, cylinderStripLowerBoundaryVertex, cylinderStripEdgeEnds]
+
+/-- The full free boundary of the cylinder strip consists of its lower and upper
+angular circles.  Later quotient constructions will pair part or all of the
+lower circle while preserving the top circle as the actual boundary. -/
+def cylinderStripFreeBoundaryEdges {n m : ℕ} : Finset (CylinderStripEdge n m) :=
+  cylinderStripLowerBoundaryEdges (n := n) (m := m) ∪
+    cylinderStripBoundaryEdges (n := n) (m := m)
+
+@[simp] theorem radialSubdivisionLower_injective {n : ℕ} :
+    Function.Injective (@radialSubdivisionLower n) := by
+  intro a b h
+  apply Fin.ext
+  simpa [radialSubdivisionLower] using congrArg Fin.val h
+
+@[simp] theorem radialSubdivisionUpper_injective {n : ℕ} :
+    Function.Injective (@radialSubdivisionUpper n) := by
+  intro a b h
+  apply Fin.ext
+  simpa [radialSubdivisionUpper] using congrArg Fin.val h
+
+@[simp] theorem radialSubdivisionUpper_last {n : ℕ} :
+    radialSubdivisionUpper (Fin.last n) = Fin.last (n + 1) := by
+  apply Fin.ext
+  simp [radialSubdivisionUpper]
+
+theorem radialSubdivisionUpper_ne_zero {n : ℕ} (i : Fin (n + 1)) :
+    radialSubdivisionUpper i ≠ 0 := by
+  intro h
+  have hval := congrArg Fin.val h
+  simp [radialSubdivisionUpper] at hval
+
+theorem radialSubdivisionLower_ne_last {n : ℕ} (i : Fin (n + 1)) :
+    radialSubdivisionLower i ≠ Fin.last (n + 1) := by
+  intro h
+  have hval := congrArg Fin.val h
+  simp [radialSubdivisionLower] at hval
+  omega
+
+@[simp] theorem radialSubdivisionLower_castPred {n : ℕ} (i : Fin (n + 2))
+    (hi : i ≠ Fin.last (n + 1)) :
+    radialSubdivisionLower (i.castPred hi) = i := by
+  apply Fin.ext
+  simp [radialSubdivisionLower]
+
+@[simp] theorem radialSubdivisionUpper_pred {n : ℕ} (i : Fin (n + 2)) (hi : i ≠ 0) :
+    radialSubdivisionUpper (i.pred hi) = i := by
+  apply Fin.ext
+  have hpos : 0 < (i : ℕ) := Fin.pos_iff_ne_zero.mpr hi
+  change ((i.pred hi : Fin (n + 1)).1 + 1) = i.1
+  rw [Fin.val_pred]
+  omega
+
+@[simp] theorem mem_cylinderStripLowerBoundaryEdges_radial_iff {n m : ℕ}
+    (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    CylinderStripEdge.radial i j ∈
+      cylinderStripLowerBoundaryEdges (n := n) (m := m) ↔ False := by
+  constructor
+  · intro h
+    rcases Finset.mem_image.mp h with ⟨k, _hk, hk⟩
+    simp [cylinderStripLowerBoundaryEdge] at hk
+  · intro h
+    exact False.elim h
+
+theorem mem_cylinderStripLowerBoundaryEdges_angular_iff {n m : ℕ}
+    (i : Fin (n + 2)) (j : Fin (m + 1)) :
+    CylinderStripEdge.angular i j ∈ cylinderStripLowerBoundaryEdges (n := n) (m := m) ↔ i = 0 := by
+  constructor
+  · intro h
+    rcases Finset.mem_image.mp h with ⟨k, _hk, hk⟩
+    have hk' : CylinderStripEdge.angular 0 k = CylinderStripEdge.angular i j := by
+      simpa [cylinderStripLowerBoundaryEdge] using hk
+    have hi' : (0 : Fin (n + 2)) = i := by
+      simpa using congrArg (fun e => match e with
+        | .angular i _ => i
+        | .radial _ _ => 0) hk'
+    exact hi'.symm
+  · intro hi
+    subst hi
+    exact Finset.mem_image.mpr ⟨j, Finset.mem_univ _, rfl⟩
+
+@[simp] theorem mem_cylinderStripBoundaryEdges_radial_iff {n m : ℕ}
+    (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    CylinderStripEdge.radial i j ∈
+      cylinderStripBoundaryEdges (n := n) (m := m) ↔ False := by
+  constructor
+  · intro h
+    rcases Finset.mem_image.mp h with ⟨k, _hk, hk⟩
+    simp [cylinderStripBoundaryEdge] at hk
+  · intro h
+    exact False.elim h
+
+theorem mem_cylinderStripBoundaryEdges_angular_iff {n m : ℕ}
+    (i : Fin (n + 2)) (j : Fin (m + 1)) :
+    CylinderStripEdge.angular i j ∈ cylinderStripBoundaryEdges (n := n) (m := m) ↔
+      i = Fin.last (n + 1) := by
+  constructor
+  · intro h
+    rcases Finset.mem_image.mp h with ⟨k, _hk, hk⟩
+    have hk' : CylinderStripEdge.angular (Fin.last (n + 1)) k = CylinderStripEdge.angular i j := by
+      simpa [cylinderStripBoundaryEdge] using hk
+    have hi' : Fin.last (n + 1) = i := by
+      simpa using congrArg (fun e => match e with
+        | .angular i _ => i
+        | .radial _ _ => 0) hk'
+    exact hi'.symm
+  · intro hi
+    subst hi
+    exact Finset.mem_image.mpr ⟨j, Finset.mem_univ _, rfl⟩
+
+@[simp] theorem mem_cylinderStripFreeBoundaryEdges_radial_iff {n m : ℕ}
+    (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    CylinderStripEdge.radial i j ∈
+      cylinderStripFreeBoundaryEdges (n := n) (m := m) ↔ False := by
+  rw [cylinderStripFreeBoundaryEdges, Finset.mem_union]
+  simp [mem_cylinderStripLowerBoundaryEdges_radial_iff,
+    mem_cylinderStripBoundaryEdges_radial_iff]
+
+theorem mem_cylinderStripFreeBoundaryEdges_angular_iff {n m : ℕ}
+    (i : Fin (n + 2)) (j : Fin (m + 1)) :
+    CylinderStripEdge.angular i j ∈ cylinderStripFreeBoundaryEdges (n := n) (m := m) ↔
+      i = 0 ∨ i = Fin.last (n + 1) := by
+  rw [cylinderStripFreeBoundaryEdges, Finset.mem_union]
+  rw [mem_cylinderStripLowerBoundaryEdges_angular_iff,
+    mem_cylinderStripBoundaryEdges_angular_iff]
+
+@[simp] theorem mem_cylinderStripFaceEdges_radial_iff {n m : ℕ}
+    (i i' : Fin (n + 1)) (j k : Fin (m + 1)) :
+    CylinderStripEdge.radial i j ∈ cylinderStripFaceEdges (i', k) ↔
+      i' = i ∧ (k = j ∨ cyclicSucc k = j) := by
+  constructor
+  · intro hk
+    rcases Finset.mem_image.mp hk with ⟨a, _ha, ha⟩
+    by_cases hpar : cylinderStripFaceEven (i', k)
+    · have hp : cylinderStripFaceParity (i', k) = true :=
+        (cylinderCoreFaceParity_eq_true_iff (i', k)).2 hpar
+      fin_cases a
+      · have h0 : i' = i ∧ k = j := by
+          simpa [cylinderStripFaceEdge, hp] using ha
+        exact ⟨h0.1, Or.inl h0.2⟩
+      · simp [cylinderStripFaceEdge, hp] at ha
+      · have h2 : i' = i ∧ cyclicSucc k = j := by
+          simpa [cylinderStripFaceEdge, hp] using ha
+        exact ⟨h2.1, Or.inr h2.2⟩
+      · simp [cylinderStripFaceEdge, hp] at ha
+    · have hp : cylinderStripFaceParity (i', k) = false :=
+        (cylinderCoreFaceParity_eq_false_iff (i', k)).2 hpar
+      fin_cases a
+      · have h0 : i' = i ∧ k = j := by
+          simpa [cylinderStripFaceEdge, hp] using ha
+        exact ⟨h0.1, Or.inl h0.2⟩
+      · simp [cylinderStripFaceEdge, hp] at ha
+      · have h2 : i' = i ∧ cyclicSucc k = j := by
+          simpa [cylinderStripFaceEdge, hp] using ha
+        exact ⟨h2.1, Or.inr h2.2⟩
+      · simp [cylinderStripFaceEdge, hp] at ha
+  · intro hk
+    rcases hk with ⟨hi, hk⟩
+    subst i'
+    rcases hk with hk | hk
+    · subst k
+      exact Finset.mem_image.mpr ⟨0, Finset.mem_univ _, by
+        simpa using (cylinderStripFaceEdge_zero (f := (i, j)))⟩
+    · exact Finset.mem_image.mpr ⟨2, Finset.mem_univ _, by
+        simpa [hk] using (cylinderStripFaceEdge_two (f := (i, k)))⟩
+
+theorem mem_cylinderStripFaceEdges_angular_iff {n m : ℕ}
+    (i : Fin (n + 2)) (i' : Fin (n + 1)) (j k : Fin (m + 1)) :
+    CylinderStripEdge.angular i j ∈ cylinderStripFaceEdges (i', k) ↔
+      k = j ∧ (radialSubdivisionLower i' = i ∨ radialSubdivisionUpper i' = i) := by
+  constructor
+  · intro hk
+    rcases Finset.mem_image.mp hk with ⟨a, _ha, ha⟩
+    by_cases hpar : cylinderStripFaceEven (i', k)
+    · have hp : cylinderStripFaceParity (i', k) = true :=
+        (cylinderCoreFaceParity_eq_true_iff (i', k)).2 hpar
+      fin_cases a
+      · simp [cylinderStripFaceEdge, hp] at ha
+      · have h1 : radialSubdivisionUpper i' = i ∧ k = j := by
+          simpa [cylinderStripFaceEdge, hp] using ha
+        exact ⟨h1.2, Or.inr h1.1⟩
+      · simp [cylinderStripFaceEdge, hp] at ha
+      · have h3 : radialSubdivisionLower i' = i ∧ k = j := by
+          simpa [cylinderStripFaceEdge, hp] using ha
+        exact ⟨h3.2, Or.inl h3.1⟩
+    · have hp : cylinderStripFaceParity (i', k) = false :=
+        (cylinderCoreFaceParity_eq_false_iff (i', k)).2 hpar
+      fin_cases a
+      · simp [cylinderStripFaceEdge, hp] at ha
+      · have h1 : radialSubdivisionLower i' = i ∧ k = j := by
+          simpa [cylinderStripFaceEdge, hp] using ha
+        exact ⟨h1.2, Or.inl h1.1⟩
+      · simp [cylinderStripFaceEdge, hp] at ha
+      · have h3 : radialSubdivisionUpper i' = i ∧ k = j := by
+          simpa [cylinderStripFaceEdge, hp] using ha
+        exact ⟨h3.2, Or.inr h3.1⟩
+  · intro hk
+    rcases hk with ⟨hkj, hlevel⟩
+    subst k
+    rcases hlevel with hl | hu
+    · by_cases hpar : cylinderStripFaceEven (i', j)
+      · exact Finset.mem_image.mpr ⟨3, Finset.mem_univ _, by
+          simpa [hpar, hl] using (cylinderStripFaceEdge_three (f := (i', j)))⟩
+      · exact Finset.mem_image.mpr ⟨1, Finset.mem_univ _, by
+          simpa [hpar, hl] using (cylinderStripFaceEdge_one (f := (i', j)))⟩
+    · by_cases hpar : cylinderStripFaceEven (i', j)
+      · exact Finset.mem_image.mpr ⟨1, Finset.mem_univ _, by
+          simpa [hpar, hu] using (cylinderStripFaceEdge_one (f := (i', j)))⟩
+      · exact Finset.mem_image.mpr ⟨3, Finset.mem_univ _, by
+          simpa [hpar, hu] using (cylinderStripFaceEdge_three (f := (i', j)))⟩
+
+theorem cylinderStripRadial_faceCount_of_pos {n m : ℕ} (hm : 0 < m)
+    (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    (Finset.univ.filter fun f : CylinderStripFace n m ↦
+      CylinderStripEdge.radial i j ∈ cylinderStripFaceEdges f).card = 2 := by
+  have hneq : cyclicPred j ≠ j := by
+    intro h
+    have hsucc : cyclicSucc j = j := by
+      simpa [h] using (show cyclicSucc (cyclicPred j) = j by simp)
+    exact (cyclicSucc_ne_self_of_pos hm j) hsucc
+  have hfilter :
+      (Finset.univ.filter fun f : CylinderStripFace n m ↦
+        CylinderStripEdge.radial i j ∈ cylinderStripFaceEdges f) =
+          ({(i, j), (i, cyclicPred j)} : Finset (CylinderStripFace n m)) := by
+    ext f
+    rcases f with ⟨i', k⟩
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert,
+      Finset.mem_singleton]
+    constructor
+    · intro hk
+      rcases (mem_cylinderStripFaceEdges_radial_iff i i' j k).1 hk with ⟨hi, hk⟩
+      rcases hk with hkj | hsucc
+      · simp [hi, hkj]
+      · have hk' : k = cyclicPred j := by
+          simpa using congrArg cyclicPred hsucc
+        simp [hi, hk']
+    · intro hk
+      rcases hk with hk | hk
+      · rw [Prod.mk_inj] at hk
+        rcases hk with ⟨hi, hk'⟩
+        subst i'
+        subst k
+        exact (mem_cylinderStripFaceEdges_radial_iff i i j j).2 ⟨rfl, Or.inl rfl⟩
+      · rw [Prod.mk_inj] at hk
+        rcases hk with ⟨hi, hk'⟩
+        subst i'
+        subst k
+        have hsucc : cyclicSucc (cyclicPred j) = j := by simp
+        exact (mem_cylinderStripFaceEdges_radial_iff i i j (cyclicPred j)).2
+          ⟨rfl, Or.inr hsucc⟩
+  rw [hfilter]
+  exact Finset.card_pair <| by
+    intro h
+    have hk : j = cyclicPred j := by
+      simpa using congrArg Prod.snd h
+    exact hneq hk.symm
+
+theorem cylinderStripAngular_faceCount_of_eq_zero {n m : ℕ}
+    (j : Fin (m + 1)) :
+    (Finset.univ.filter fun f : CylinderStripFace n m ↦
+      CylinderStripEdge.angular 0 j ∈ cylinderStripFaceEdges f).card = 1 := by
+  have hfilter :
+      (Finset.univ.filter fun f : CylinderStripFace n m ↦
+        CylinderStripEdge.angular 0 j ∈ cylinderStripFaceEdges f) =
+          ({((0 : Fin (n + 1)), j)} : Finset (CylinderStripFace n m)) := by
+    ext f
+    rcases f with ⟨i', k⟩
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+    constructor
+    · intro hk
+      rcases (mem_cylinderStripFaceEdges_angular_iff (0 : Fin (n + 2)) i' j k).1 hk with ⟨hkj, hlevel⟩
+      subst k
+      rcases hlevel with hl | hu
+      · have hi' : i' = 0 := by
+          apply radialSubdivisionLower_injective
+          simpa using hl
+        simp [hi']
+      · exact False.elim (radialSubdivisionUpper_ne_zero i' hu)
+    · intro hk
+      rw [Prod.mk_inj] at hk
+      rcases hk with ⟨hi, hk⟩
+      subst i'
+      subst k
+      exact (mem_cylinderStripFaceEdges_angular_iff (0 : Fin (n + 2)) 0 j j).2
+        ⟨rfl, Or.inl rfl⟩
+  rw [hfilter]
+  simp
+
+theorem cylinderStripAngular_faceCount_of_eq_last {n m : ℕ}
+    (j : Fin (m + 1)) :
+    (Finset.univ.filter fun f : CylinderStripFace n m ↦
+      CylinderStripEdge.angular (Fin.last (n + 1)) j ∈ cylinderStripFaceEdges f).card = 1 := by
+  have hfilter :
+      (Finset.univ.filter fun f : CylinderStripFace n m ↦
+        CylinderStripEdge.angular (Fin.last (n + 1)) j ∈ cylinderStripFaceEdges f) =
+          ({((Fin.last n), j)} : Finset (CylinderStripFace n m)) := by
+    ext f
+    rcases f with ⟨i', k⟩
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+    constructor
+    · intro hk
+      rcases (mem_cylinderStripFaceEdges_angular_iff (Fin.last (n + 1)) i' j k).1 hk with ⟨hkj, hlevel⟩
+      subst k
+      rcases hlevel with hl | hu
+      · exact False.elim (radialSubdivisionLower_ne_last i' hl)
+      · have hi' : i' = Fin.last n := by
+          apply radialSubdivisionUpper_injective
+          calc
+            radialSubdivisionUpper i' = Fin.last (n + 1) := hu
+            _ = radialSubdivisionUpper (Fin.last n) := radialSubdivisionUpper_last.symm
+        simp [hi']
+    · intro hk
+      rw [Prod.mk_inj] at hk
+      rcases hk with ⟨hi, hk⟩
+      subst i'
+      subst k
+      exact (mem_cylinderStripFaceEdges_angular_iff (Fin.last (n + 1)) (Fin.last n) j j).2
+        ⟨rfl, Or.inr radialSubdivisionUpper_last⟩
+  rw [hfilter]
+  simp
+
+theorem cylinderStripAngular_faceCount_of_ne_zero_ne_last {n m : ℕ}
+    (i : Fin (n + 2)) (j : Fin (m + 1))
+    (hi0 : i ≠ 0) (hiLast : i ≠ Fin.last (n + 1)) :
+    (Finset.univ.filter fun f : CylinderStripFace n m ↦
+      CylinderStripEdge.angular i j ∈ cylinderStripFaceEdges f).card = 2 := by
+  have hfilter :
+      (Finset.univ.filter fun f : CylinderStripFace n m ↦
+        CylinderStripEdge.angular i j ∈ cylinderStripFaceEdges f) =
+          ({(i.pred hi0, j), (i.castPred hiLast, j)} : Finset (CylinderStripFace n m)) := by
+    ext f
+    rcases f with ⟨i', k⟩
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert,
+      Finset.mem_singleton]
+    constructor
+    · intro hk
+      rcases (mem_cylinderStripFaceEdges_angular_iff i i' j k).1 hk with ⟨hk, hlevel⟩
+      subst hk
+      rcases hlevel with hl | hu
+      · have hi' : i' = i.castPred hiLast := by
+          apply radialSubdivisionLower_injective
+          simpa using hl
+        exact Or.inr (by simpa [hi'])
+      · have hi' : i' = i.pred hi0 := by
+          apply radialSubdivisionUpper_injective
+          simpa using hu
+        exact Or.inl (by simpa [hi'])
+    · intro hk
+      rcases hk with hk | hk
+      · cases hk
+        exact (mem_cylinderStripFaceEdges_angular_iff i (i.pred hi0) j j).2 <|
+          ⟨rfl, Or.inr (radialSubdivisionUpper_pred i hi0)⟩
+      · cases hk
+        exact (mem_cylinderStripFaceEdges_angular_iff i (i.castPred hiLast) j j).2 <|
+          ⟨rfl, Or.inl (radialSubdivisionLower_castPred i hiLast)⟩
+  rw [hfilter]
+  apply Finset.card_pair
+  intro h
+  have hidx : i.pred hi0 = i.castPred hiLast := by
+    simpa using congrArg Prod.fst h
+  have hcontr : radialSubdivisionLower (i.pred hi0) = radialSubdivisionUpper (i.pred hi0) := by
+    calc
+      radialSubdivisionLower (i.pred hi0) = radialSubdivisionLower (i.castPred hiLast) := by simpa [hidx]
+      _ = i := radialSubdivisionLower_castPred i hiLast
+      _ = radialSubdivisionUpper (i.pred hi0) := by symm; exact radialSubdivisionUpper_pred i hi0
+  exact radialSubdivisionLower_ne_upper (i.pred hi0) hcontr
+
+theorem cylinderStripFreeBoundaryEdgeFaceCount_of_pos {n m : ℕ} (hm : 0 < m)
+    (e : CylinderStripEdge n m) :
+    (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+      if e ∈ cylinderStripFreeBoundaryEdges (n := n) (m := m) then 1 else 2 := by
+  cases e with
+  | radial i j =>
+      rw [if_neg]
+      · exact cylinderStripRadial_faceCount_of_pos hm i j
+      · simpa using (mem_cylinderStripFreeBoundaryEdges_radial_iff (n := n) (m := m) i j)
+  | angular i j =>
+      by_cases hi0 : i = 0
+      · rw [if_pos]
+        · subst hi0
+          exact cylinderStripAngular_faceCount_of_eq_zero j
+        · exact (mem_cylinderStripFreeBoundaryEdges_angular_iff (n := n) (m := m) i j).2 (Or.inl hi0)
+      · by_cases hiLast : i = Fin.last (n + 1)
+        · rw [if_pos]
+          · subst hiLast
+            exact cylinderStripAngular_faceCount_of_eq_last j
+          · exact (mem_cylinderStripFreeBoundaryEdges_angular_iff (n := n) (m := m) i j).2 (Or.inr hiLast)
+        · rw [if_neg]
+          · exact cylinderStripAngular_faceCount_of_ne_zero_ne_last i j hi0 hiLast
+          · exact mt (mem_cylinderStripFreeBoundaryEdges_angular_iff (n := n) (m := m) i j).1 (by simp [hi0, hiLast])
 
 /-- Bundle explicit checkerboard-cylinder strip data into the directed abstract
 variable-face-size geometric polygonal-model interface on the square-cylinder
