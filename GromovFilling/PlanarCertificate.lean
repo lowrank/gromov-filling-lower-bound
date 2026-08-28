@@ -362,6 +362,53 @@ structure FiniteComplexSourceChartCertificateData (N : ℕ) (X : Type*) where
   local_agree : ∀ j i (x : sourcePiece i),
     rowMap j x = localMap j i (chart i x)
 
+/-- A compact source with an arbitrary open chart cover can be converted to the
+finite source-chart certificate data used by the certificate layer by
+extracting a finite subcover and reindexing it by `Fin`. -/
+noncomputable def FiniteComplexSourceChartCertificateData.ofCompactOpenCover
+    {N : ℕ} {X : Type*} [TopologicalSpace X] [CompactSpace X] {ι : Type*}
+    (omega : Fin N → Set ℂ)
+    (witness : ∀ j : Fin N,
+      ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤ volume (omega j))
+    (rowMap : Fin N → X → ℂ)
+    (rowMap_covers : ∀ j : Fin N, omega j ⊆ Set.range (rowMap j))
+    (sourcePiece : ι → Set X)
+    (sourcePiece_open : ∀ i, IsOpen (sourcePiece i))
+    (sourcePiece_cover : Set.univ ⊆ ⋃ i, sourcePiece i)
+    (targetPiece : ι → Set ℂ)
+    (chart : ∀ i, sourcePiece i → targetPiece i)
+    (targetPiece_open : ∀ i, IsOpen (targetPiece i))
+    (localMap : Fin N → ι → ℂ → ℂ)
+    (K : Fin N → ι → ℝ≥0)
+    (local_lipschitz : ∀ j i, LipschitzOnWith (K j i) (localMap j i) (targetPiece i))
+    (local_agree : ∀ j i (x : sourcePiece i),
+      rowMap j x = localMap j i (chart i x)) :
+    FiniteComplexSourceChartCertificateData N X := by
+  classical
+  let hsub :=
+    exists_fin_cover_subfamily_of_compact sourcePiece sourcePiece_open sourcePiece_cover
+  let m : ℕ := Classical.choose hsub
+  let hsub' : ∃ e : Fin m → ι, Set.univ ⊆ ⋃ i, sourcePiece (e i) :=
+    Classical.choose_spec hsub
+  let e : Fin m → ι := Classical.choose hsub'
+  let he_cover : Set.univ ⊆ ⋃ i, sourcePiece (e i) :=
+    Classical.choose_spec hsub'
+  exact
+    { m := m
+      omega := omega
+      witness := witness
+      rowMap := rowMap
+      rowMap_covers := rowMap_covers
+      sourcePiece := fun i ↦ sourcePiece (e i)
+      sourcePiece_cover := he_cover
+      targetPiece := fun i ↦ targetPiece (e i)
+      chart := fun i ↦ chart (e i)
+      targetPiece_open := fun i ↦ targetPiece_open (e i)
+      localMap := fun j i ↦ localMap j (e i)
+      K := fun j i ↦ K j (e i)
+      local_lipschitz := fun j i ↦ local_lipschitz j (e i)
+      local_agree := fun j i x ↦ local_agree j (e i) x }
+
 /-- Source-side chart data canonically yields the local planar certificate data
 used by the finite and infinite planar certificate theorems. -/
 def FiniteComplexSourceChartCertificateData.toFiniteComplexLocalCertificateData
