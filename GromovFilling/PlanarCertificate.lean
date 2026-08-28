@@ -1979,8 +1979,28 @@ theorem finite_universal_ennreal_of_complex_planar_maps_of_homeomorph_abstractVa
 
 
 /-- The finite orientation-free Fourier certificate for complex-plane domains
-whose boundary is identified with a compact source carrying explicit glued-strip
-quotient data. -/
+whose boundary is identified with a compact source carrying the bundled
+homeomorphism-plus-glued-strip interface. -/
+theorem finite_universal_ennreal_of_complex_planar_maps_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (N : ℕ) (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (G : Fin N → ℂ → ℂ)
+    (hG : ∀ j, Continuous (G j))
+    (hboundary : ∀ j t,
+      G j (boundary' t) = givensBoundaryCurveAddCircle j t)
+    (K : Fin N → ℝ≥0)
+    (hGLipschitz : ∀ j, LipschitzWith (K j) (G j))
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
+  finite_universal_ennreal_of_complex_planar_maps_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    N area D.homeomorph D.boundaryHomeomorph
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData D.models)
+    G hG hboundary K hGLipschitz hbudget
+
 theorem finite_universal_ennreal_of_complex_planar_maps_of_homeomorph_cylinderStripGlued_data
     {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
     (N : ℕ) (area : ℝ≥0∞)
@@ -2267,8 +2287,22 @@ theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_
 
 
 /-- Planar Lemma 5.4 for the genuine metric distance-profile map when the
-boundary is identified with a compact source carrying explicit glued-strip
-quotient data. -/
+boundary is identified with a compact source carrying the bundled
+homeomorphism-plus-glued-strip interface. -/
+theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (hboundary' : IsometricCircleBoundary boundary') :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary' N j) x).det| ∂volume :=
+  givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    j D.homeomorph D.boundaryHomeomorph
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData D.models)
+    hboundary'
+
 theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_homeomorph_cylinderStripGlued_data
     {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
     {N : ℕ} (j : Fin N)
@@ -2303,8 +2337,25 @@ theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_homeomor
     hboundary'
 
 /-- Bounded-region form of planar Lemma 5.4 for the genuine metric Fourier
-map when the boundary is identified with a compact source carrying explicit
- glued-strip quotient data. -/
+map when the boundary is identified with a compact source carrying the bundled
+homeomorphism-plus-glued-strip interface. -/
+theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (hboundary' : IsometricCircleBoundary boundary') :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary' N j) x).det| ∂volume :=
+  exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    j D.homeomorph D.boundaryHomeomorph
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData D.models)
+    hboundary'
+
 theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_of_homeomorph_cylinderStripGlued_data
     {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
     {N : ℕ} (j : Fin N)
@@ -2815,7 +2866,22 @@ theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_m
 
 
 /-- Finite slack-refined planar certificate when the boundary is identified
-with a compact source carrying explicit glued-strip quotient data. -/
+with a compact source carrying the bundled homeomorphism-plus-glued-strip
+interface. -/
+theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (N : ℕ) (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (hboundary' : IsometricCircleBoundary boundary')
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary' x) ∂volume ≤ area :=
+  finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    N area D.homeomorph D.boundaryHomeomorph
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData D.models)
+    hboundary' harea
+
 theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_homeomorph_cylinderStripGlued_data
     {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
     (N : ℕ) (area : ℝ≥0∞)
@@ -2850,7 +2916,23 @@ theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefe
     hboundary' harea
 
 /-- Infinite slack-refined planar certificate when the boundary is identified
-with a compact source carrying explicit glued-strip quotient data. -/
+with a compact source carrying the bundled homeomorphism-plus-glued-strip
+interface. -/
+theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_maps_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (hboundary' : IsometricCircleBoundary boundary')
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary' x) ∂volume ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  exact
+    finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+      N area D hboundary' harea
+
 theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_maps_of_homeomorph_cylinderStripGlued_data
     {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
     (area : ℝ≥0∞)
@@ -3161,8 +3243,25 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_homeomorph_abstractVa
 
 
 /-- The complete finite planar certificate for the actual metric Fourier family
-when the boundary is identified with a compact source carrying explicit
- glued-strip quotient data. -/
+when the boundary is identified with a compact source carrying the bundled
+homeomorphism-plus-glued-strip interface. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (N : ℕ) (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (hboundary' : IsometricCircleBoundary boundary')
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary' N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
+  finite_universal_ennreal_of_metric_complex_planar_map_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    N area D.homeomorph D.boundaryHomeomorph
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData D.models)
+    hboundary' hbudget
+
 theorem finite_universal_ennreal_of_metric_complex_planar_map_of_homeomorph_cylinderStripGlued_data
     {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
     (N : ℕ) (area : ℝ≥0∞)
@@ -3200,8 +3299,26 @@ theorem finite_universal_ennreal_of_metric_complex_planar_map_of_homeomorph_cyli
     hboundary' hbudget
 
 /-- Infinite-mode planar conclusion for the actual metric Fourier family when
-the boundary is identified with a compact source carrying explicit glued-strip
-quotient data. -/
+the boundary is identified with a compact source carrying the bundled
+homeomorphism-plus-glued-strip interface. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (hboundary' : IsometricCircleBoundary boundary')
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary' N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact
+    finite_universal_ennreal_of_metric_complex_planar_map_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+      N area D hboundary' (hbudget N)
+
 theorem universal_ennreal_of_metric_complex_planar_maps_of_homeomorph_cylinderStripGlued_data
     {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
     (area : ℝ≥0∞)
@@ -3619,8 +3736,31 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_h
 
 
 /-- The finite planar certificate with coordinate-energy budget when the
-boundary is identified with a compact source carrying explicit glued-strip
-quotient data. -/
+boundary is identified with a compact source carrying the bundled
+homeomorphism-plus-glued-strip interface. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (N : ℕ) (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (hboundary' : IsometricCircleBoundary boundary')
+    (hbudget :
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary' (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  have hbudget' :
+      ∀ᵐ x ∂volume.restrict (Set.univ : Set ℂ),
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary' (oddMode k)) x)) ≤ 2 :=
+    ae_restrict_of_ae hbudget
+  refine (finite_universal_ennreal_of_metric_complex_planar_map_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    N (volume (Set.univ : Set ℂ)) D hboundary' ?_).trans harea
+  simpa only [Measure.restrict_univ] using
+    sum_lintegral_givensMetricFourierMap_le_volume_of_coordinateEnergy
+      boundary' hboundary' N Set.univ MeasurableSet.univ hbudget'
+
 theorem finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_homeomorph_cylinderStripGlued_data
     {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
     (N : ℕ) (area : ℝ≥0∞)
@@ -3658,8 +3798,26 @@ theorem finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnerg
     hboundary' hbudget harea
 
 /-- Infinite-mode planar certificate with coordinate-energy budget when the
-boundary is identified with a compact source carrying explicit glued-strip
-quotient data. -/
+boundary is identified with a compact source carrying the bundled
+homeomorphism-plus-glued-strip interface. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    (area : ℝ≥0∞)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → ℂ}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (hboundary' : IsometricCircleBoundary boundary')
+    (hbudget : ∀ N : ℕ,
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary' (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact
+    finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+      N area D hboundary' (hbudget N) harea
+
 theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_homeomorph_cylinderStripGlued_data
     {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
     (area : ℝ≥0∞)

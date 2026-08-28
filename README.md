@@ -156,7 +156,9 @@ needs:
    gluing, it already transports across compact continuous maps and
    homeomorphisms, and it now also has a bundled explicit
    `HasCylinderStripGluedArbitrarilyFineData` source interface whose
-   coverage- and certificate-level wrappers are formalized. Its homeomorphism-level wrappers
+   coverage- and certificate-level wrappers are formalized, and also a bundled
+   `HomeomorphCylinderStripGluedArbitrarilyFineData` interface whose concrete
+   planar certificate entry points are formalized. Its homeomorphism-level wrappers
    now reach the planar coverage, Jacobian, slack-defect, and certificate
    statements.  The stronger directed interface
    `HasAbstractVariableDirectedArbitrarilyFinePolygonalModels` and the

@@ -5392,6 +5392,72 @@ theorem hasOddBoundaryDegreeObstruction_of_cylinderStripGlued_data
   hasOddBoundaryDegreeObstruction_of_cylinderStripGluedArbitrarilyFineData
     (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
 
+/-- Bundled topological input consisting of a boundary-respecting
+homeomorphism from a compact source carrying explicit glued-strip quotient
+mesh data at every positive scale.  This is the stable target for a future
+arbitrary-surface construction theorem. -/
+structure HomeomorphCylinderStripGluedArbitrarilyFineData
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    (boundary : UnitAddCircle → X) (boundary' : UnitAddCircle → Y) where
+  homeomorph : X ≃ₜ Y
+  boundaryHomeomorph : boundary' = homeomorph ∘ boundary
+  models : HasCylinderStripGluedArbitrarilyFineData boundary
+
+/-- Repackage the original unbundled homeomorphism-plus-glued-strip
+hypothesis as the bundled interface. -/
+def homeomorphCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle))) :
+    HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary' :=
+  { homeomorph := e
+    boundaryHomeomorph := hboundaryHomeomorph
+    models := hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels }
+
+/-- The bundled homeomorphism-plus-glued-strip interface already supplies the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model input on
+the target boundary. -/
+theorem hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_homeomorphCylinderStripGluedArbitrarilyFineData
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary') :
+    HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary' :=
+  hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_homeomorph
+    D.homeomorph D.boundaryHomeomorph
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData
+      D.models)
+
+/-- Consequently the bundled homeomorphism-plus-glued-strip interface already
+supplies the odd boundary-degree obstruction on the target boundary. -/
+theorem hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedArbitrarilyFineData
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary') :
+    HasOddBoundaryDegreeObstruction boundary' := by
+  let _ : CompactSpace Y := Homeomorph.compactSpace D.homeomorph
+  exact hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    D.homeomorph D.boundaryHomeomorph
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData
+      D.models)
+
 /-- Bundle explicit checkerboard-cylinder strip data into the directed abstract
 variable-face-size geometric polygonal-model interface on the square-cylinder
 boundary. -/
