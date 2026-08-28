@@ -3079,6 +3079,165 @@ theorem cylinderStripLowerBoundaryEdgeOrbit_equivalence {m : ℕ}
   apply Quotient.sound
   exact Relation.EqvGen.rel _ _ (CylinderStripLowerBoundaryVertexStep.finish j)
 
+def cylinderStripLowerBoundaryVertexTag {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    CylinderStripVertex n m → Option (CylinderStripLowerBoundaryVertexClass P)
+  | (i, j) =>
+      if i = 0 then some (Quotient.mk (cylinderStripLowerBoundaryVertexSetoid P) j) else none
+
+theorem cylinderStripVertexGluingStep_preserves_lowerBoundaryVertexTag {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {v w : CylinderStripVertex n m}
+    (h :
+      (∃ j : Fin (m + 1),
+        v = ((0 : Fin (n + 2)), j) ∧
+        w = ((0 : Fin (n + 2)), P.pairedStart j)) ∨
+      (∃ j : Fin (m + 1),
+        v = ((0 : Fin (n + 2)), cyclicSucc j) ∧
+        w = ((0 : Fin (n + 2)), P.pairedFinish j))) :
+    cylinderStripLowerBoundaryVertexTag P v =
+      cylinderStripLowerBoundaryVertexTag P w := by
+  rcases h with h | h
+  · rcases h with ⟨j, rfl, rfl⟩
+    change some (Quotient.mk (cylinderStripLowerBoundaryVertexSetoid P) j) =
+      some (Quotient.mk (cylinderStripLowerBoundaryVertexSetoid P) (P.pairedStart j))
+    rw [mk_cylinderStripLowerBoundaryVertexClass_start]
+  · rcases h with ⟨j, rfl, rfl⟩
+    change some (Quotient.mk (cylinderStripLowerBoundaryVertexSetoid P) (cyclicSucc j)) =
+      some (Quotient.mk (cylinderStripLowerBoundaryVertexSetoid P) (P.pairedFinish j))
+    rw [mk_cylinderStripLowerBoundaryVertexClass_finish]
+
+theorem eqvGen_cylinderStripVertexGluing_preserves_lowerBoundaryVertexTag {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {v w : CylinderStripVertex n m}
+    (h : Relation.EqvGen
+      (fun a b : CylinderStripVertex n m ↦
+        (∃ j : Fin (m + 1),
+          a = ((0 : Fin (n + 2)), j) ∧
+          b = ((0 : Fin (n + 2)), P.pairedStart j)) ∨
+        (∃ j : Fin (m + 1),
+          a = ((0 : Fin (n + 2)), cyclicSucc j) ∧
+          b = ((0 : Fin (n + 2)), P.pairedFinish j)))
+      v w) :
+    cylinderStripLowerBoundaryVertexTag P v =
+      cylinderStripLowerBoundaryVertexTag P w := by
+  induction h with
+  | rel _ _ hstep =>
+      exact cylinderStripVertexGluingStep_preserves_lowerBoundaryVertexTag P hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+def cylinderStripGluedLowerBoundaryVertexTag (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    CylinderStripGluedVertex n P → Option (CylinderStripLowerBoundaryVertexClass P) :=
+  Quotient.lift
+    (cylinderStripLowerBoundaryVertexTag P)
+    (by
+      intro a b hab
+      exact eqvGen_cylinderStripVertexGluing_preserves_lowerBoundaryVertexTag P hab)
+
+@[simp] theorem cylinderStripGluedLowerBoundaryVertexTag_mk_lower {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    cylinderStripGluedLowerBoundaryVertexTag n P
+      (Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        ((0 : Fin (n + 2)), j)) =
+      some (Quotient.mk (cylinderStripLowerBoundaryVertexSetoid P) j) :=
+  rfl
+
+@[simp] theorem cylinderStripGluedLowerBoundaryVertexTag_mk_nonlower {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (i : Fin (n + 2)) (j : Fin (m + 1))
+    (hi0 : i ≠ 0) :
+    cylinderStripGluedLowerBoundaryVertexTag n P
+      (Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P) (i, j)) = none := by
+  simp [cylinderStripGluedLowerBoundaryVertexTag, cylinderStripLowerBoundaryVertexTag, hi0]
+
+def cylinderStripNonlowerVertexTag {n m : ℕ} :
+    CylinderStripVertex n m → Option (CylinderStripVertex n m)
+  | (i, j) => if i = 0 then none else some (i, j)
+
+theorem cylinderStripVertexGluingStep_preserves_nonlowerVertexTag {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {v w : CylinderStripVertex n m}
+    (h :
+      (∃ j : Fin (m + 1),
+        v = ((0 : Fin (n + 2)), j) ∧
+        w = ((0 : Fin (n + 2)), P.pairedStart j)) ∨
+      (∃ j : Fin (m + 1),
+        v = ((0 : Fin (n + 2)), cyclicSucc j) ∧
+        w = ((0 : Fin (n + 2)), P.pairedFinish j))) :
+    cylinderStripNonlowerVertexTag v = cylinderStripNonlowerVertexTag w := by
+  rcases h with h | h
+  · rcases h with ⟨j, rfl, rfl⟩
+    simp [cylinderStripNonlowerVertexTag]
+  · rcases h with ⟨j, rfl, rfl⟩
+    simp [cylinderStripNonlowerVertexTag]
+
+theorem eqvGen_cylinderStripVertexGluing_preserves_nonlowerVertexTag {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {v w : CylinderStripVertex n m}
+    (h : Relation.EqvGen
+      (fun a b : CylinderStripVertex n m ↦
+        (∃ j : Fin (m + 1),
+          a = ((0 : Fin (n + 2)), j) ∧
+          b = ((0 : Fin (n + 2)), P.pairedStart j)) ∨
+        (∃ j : Fin (m + 1),
+          a = ((0 : Fin (n + 2)), cyclicSucc j) ∧
+          b = ((0 : Fin (n + 2)), P.pairedFinish j)))
+      v w) :
+    cylinderStripNonlowerVertexTag v = cylinderStripNonlowerVertexTag w := by
+  induction h with
+  | rel _ _ hstep =>
+      exact cylinderStripVertexGluingStep_preserves_nonlowerVertexTag P hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+def cylinderStripGluedNonlowerVertexTag (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    CylinderStripGluedVertex n P → Option (CylinderStripVertex n m) :=
+  Quotient.lift
+    cylinderStripNonlowerVertexTag
+    (by
+      intro a b hab
+      exact eqvGen_cylinderStripVertexGluing_preserves_nonlowerVertexTag P hab)
+
+@[simp] theorem cylinderStripGluedNonlowerVertexTag_mk_nonlower {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (i : Fin (n + 2)) (j : Fin (m + 1))
+    (hi0 : i ≠ 0) :
+    cylinderStripGluedNonlowerVertexTag n P
+      (Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P) (i, j)) =
+      some (i, j) := by
+  simp [cylinderStripGluedNonlowerVertexTag, cylinderStripNonlowerVertexTag, hi0]
+
+@[simp] theorem cylinderStripGluedNonlowerVertexTag_mk_lower {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    cylinderStripGluedNonlowerVertexTag n P
+      (Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+        ((0 : Fin (n + 2)), j)) = none :=
+  rfl
+
+theorem mk_cylinderStripGluedVertex_eq_of_nonlower_iff {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    (v : CylinderStripVertex n m) (i : Fin (n + 2)) (j : Fin (m + 1))
+    (hi0 : i ≠ 0) :
+    Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P) v =
+      Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P) (i, j) ↔
+      v = (i, j) := by
+  constructor
+  · intro h
+    have htag := congrArg (cylinderStripGluedNonlowerVertexTag n P) h
+    rw [cylinderStripGluedNonlowerVertexTag_mk_nonlower P i j hi0] at htag
+    rcases v with ⟨i', j'⟩
+    by_cases hi'0 : i' = 0
+    · subst hi'0
+      rw [cylinderStripGluedNonlowerVertexTag_mk_lower] at htag
+      cases htag
+    · rw [cylinderStripGluedNonlowerVertexTag_mk_nonlower P i' j' hi'0] at htag
+      exact Option.some.inj htag
+  · intro h
+    rw [h]
+
 @[simp] theorem mk_cylinderStripGluedEdge_pair {n m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
     Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
