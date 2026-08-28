@@ -1855,6 +1855,251 @@ theorem hasOddBoundaryDegreeObstruction_of_abstractFinePolygonalModels
   obtain ⟨D⟩ := hfine H hH
   exact D.no_odd_boundary_degree hH degree hdegree hodd
 
+/-- Abstract finite-index polygonal models with a face-dependent cyclic size.
+This is the natural bundled interface for polygonal decompositions containing,
+for example, one central polygon together with quadrilateral annulus faces. -/
+structure AbstractVariableFinePolygonalModel
+    {X : Type*} [TopologicalSpace X]
+    (boundary : UnitAddCircle → X) (H : X → UnitAddCircle) where
+  Vertex : Type
+  Edge : Type
+  Face : Type
+  [instVertexFintype : Fintype Vertex]
+  [instEdgeFintype : Fintype Edge]
+  [instFaceFintype : Fintype Face]
+  [instVertexDecidableEq : DecidableEq Vertex]
+  [instEdgeDecidableEq : DecidableEq Edge]
+  [instFaceDecidableEq : DecidableEq Face]
+  faceSize : Face → ℕ
+  boundarySize : ℕ
+  edgeEnds : Edge → Vertex × Vertex
+  faceEdges : Face → Finset Edge
+  boundaryEdges : Finset Edge
+  edgeFaceCount : ∀ e : Edge,
+    (Finset.univ.filter fun f ↦ e ∈ faceEdges f).card =
+      if e ∈ boundaryEdges then 1 else 2
+  faceVertex : ∀ f, Fin (faceSize f + 1) → Vertex
+  faceEdge : ∀ f, Fin (faceSize f + 1) → Edge
+  faceVertex_injective : ∀ f, Function.Injective (faceVertex f)
+  faceEdge_injective : ∀ f, Function.Injective (faceEdge f)
+  faceEdges_eq : ∀ f, faceEdges f = Finset.univ.image (faceEdge f)
+  faceEdge_ends : ∀ f k, edgeEnds (faceEdge f k) =
+    (faceVertex f k, faceVertex f (cyclicSucc k))
+  boundaryEdge : Fin (boundarySize + 1) → Edge
+  boundaryEdge_injective : Function.Injective boundaryEdge
+  boundaryVertex : Fin (boundarySize + 1) → Vertex
+  boundaryEdge_ends : ∀ k, edgeEnds (boundaryEdge k) =
+    (boundaryVertex k, boundaryVertex (cyclicSucc k))
+  boundaryEdges_eq : boundaryEdges = Finset.univ.image boundaryEdge
+  vertexPoint : Vertex → X
+  edgeToX : Edge → ClosedUnitInterval → X
+  edgeToX_continuous : ∀ e, Continuous (edgeToX e)
+  edgeToX_start : ∀ e, edgeToX e closedUnitIntervalStart =
+    vertexPoint (edgeEnds e).1
+  edgeToX_finish : ∀ e, edgeToX e closedUnitIntervalFinish =
+    vertexPoint (edgeEnds e).2
+  faceCenter : Face → X
+  halfTurn_mesh : ∀ (f : Face) (e : Edge),
+    e ∈ faceEdges f → ∀ x : ClosedUnitInterval,
+      dist (H (faceCenter f)) (H (edgeToX e x)) < 1 / 2
+  boundaryParameter : ∀ _k,
+    ClosedUnitInterval → ℝ
+  boundaryParameter_continuous : ∀ k, Continuous (boundaryParameter k)
+  boundaryParameter_start : ∀ k,
+    boundaryParameter k closedUnitIntervalStart = cyclicVertexParameter k
+  boundaryParameter_finish : ∀ k,
+    boundaryParameter k closedUnitIntervalFinish =
+      cyclicEdgeFinishParameter k
+  boundaryPath : ∀ k x,
+    edgeToX (boundaryEdge k) x =
+      boundary ((boundaryParameter k x : ℝ) : UnitAddCircle)
+
+/-- The variable-face-size obstruction theorem applied to a bundled abstract
+finite model. -/
+theorem AbstractVariableFinePolygonalModel.no_odd_boundary_degree
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {H : X → UnitAddCircle}
+    (D : AbstractVariableFinePolygonalModel boundary H) (hH : Continuous H)
+    (degree : ℤ) (hdegree : HasCircleDegree (H ∘ boundary) degree)
+    (hodd : Odd degree) : False := by
+  classical
+  let _ := D.instVertexFintype
+  let _ := D.instEdgeFintype
+  let _ := D.instFaceFintype
+  let _ := D.instVertexDecidableEq
+  let _ := D.instEdgeDecidableEq
+  let _ := D.instFaceDecidableEq
+  exact no_odd_degree_of_fine_polygonal_circle_extension_variable
+    D.edgeEnds D.faceEdges D.boundaryEdges D.edgeFaceCount D.faceSize
+    D.faceVertex D.faceEdge D.faceVertex_injective D.faceEdge_injective
+    D.faceEdges_eq D.faceEdge_ends D.boundaryEdge
+    D.boundaryEdge_injective D.boundaryVertex D.boundaryEdge_ends
+    D.boundaryEdges_eq D.vertexPoint (fun _ ↦ ClosedUnitInterval)
+    (fun _ ↦ closedUnitIntervalStart) (fun _ ↦ closedUnitIntervalFinish)
+    D.edgeToX D.edgeToX_continuous D.edgeToX_start D.edgeToX_finish
+    H hH D.faceCenter D.halfTurn_mesh boundary D.boundaryParameter
+    D.boundaryParameter_continuous D.boundaryParameter_start
+    D.boundaryParameter_finish D.boundaryPath degree hdegree hodd
+
+/-- Map-dependent variable-face-size fine polygonal models with arbitrary
+finite index sets. -/
+def HasAbstractVariableFinePolygonalModels
+    {X : Type*} [TopologicalSpace X]
+    (boundary : UnitAddCircle → X) : Prop :=
+  ∀ (H : X → UnitAddCircle), Continuous H →
+    Nonempty (AbstractVariableFinePolygonalModel boundary H)
+
+/-- Variable-face-size abstract fine polygonal models imply the odd
+boundary-degree obstruction. -/
+theorem hasOddBoundaryDegreeObstruction_of_abstractVariableFinePolygonalModels
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (hfine : HasAbstractVariableFinePolygonalModels boundary) :
+    HasOddBoundaryDegreeObstruction boundary := by
+  intro H hH degree hdegree hodd
+  obtain ⟨D⟩ := hfine H hH
+  exact D.no_odd_boundary_degree hH degree hdegree hodd
+
+/-- An abstract geometric polygonal model with face-dependent cyclic sizes. -/
+structure AbstractVariableGeometricPolygonalModel
+    {X : Type*} [PseudoMetricSpace X]
+    (boundary : UnitAddCircle → X) (ε : ℝ) where
+  model : AbstractVariableFinePolygonalModel boundary (fun _ ↦ (0 : UnitAddCircle))
+  mesh : ∀ (f : model.Face) (e : model.Edge),
+    e ∈ model.faceEdges f → ∀ x : ClosedUnitInterval,
+      dist (model.faceCenter f) (model.edgeToX e x) < ε
+
+/-- Replace the vacuous constant-map half-turn estimate in a variable-face-size
+abstract geometric model by a supplied estimate for a particular circle-valued
+map. -/
+def AbstractVariableGeometricPolygonalModel.toAbstractVariableFinePolygonalModel
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {ε : ℝ}
+    (D : AbstractVariableGeometricPolygonalModel boundary ε)
+    (H : X → UnitAddCircle)
+    (hhalf : ∀ (f : D.model.Face) (e : D.model.Edge),
+      e ∈ D.model.faceEdges f → ∀ x : ClosedUnitInterval,
+        dist (H (D.model.faceCenter f)) (H (D.model.edgeToX e x)) < 1 / 2) :
+    AbstractVariableFinePolygonalModel boundary H :=
+  { D.model with halfTurn_mesh := hhalf }
+
+/-- Push a variable-face-size abstract geometric polygonal model forward along
+ a continuous map whose restriction to the boundary agrees with a new
+parametrization. -/
+def AbstractVariableGeometricPolygonalModel.map
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    {δ ε : ℝ} (D : AbstractVariableGeometricPolygonalModel boundary δ)
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmesh : ∀ (face : D.model.Face) (e : D.model.Edge),
+      e ∈ D.model.faceEdges face → ∀ x : ClosedUnitInterval,
+        dist (f (D.model.faceCenter face)) (f (D.model.edgeToX e x)) < ε) :
+    AbstractVariableGeometricPolygonalModel boundary' ε :=
+  { model :=
+      { D.model with
+        vertexPoint := fun v ↦ f (D.model.vertexPoint v)
+        edgeToX := fun e x ↦ f (D.model.edgeToX e x)
+        edgeToX_continuous := fun e ↦ hf.comp (D.model.edgeToX_continuous e)
+        edgeToX_start := by
+          intro e
+          rw [D.model.edgeToX_start]
+        edgeToX_finish := by
+          intro e
+          rw [D.model.edgeToX_finish]
+        faceCenter := fun face ↦ f (D.model.faceCenter face)
+        halfTurn_mesh := by
+          intro face e he x
+          simp
+        boundaryPath := by
+          intro k x
+          rw [hboundary]
+          simpa using congrArg f (D.model.boundaryPath k x) }
+    mesh := hmesh }
+
+/-- The map-independent variable-face-size surface input: compatible polygonal
+models exist at every positive geometric mesh scale. -/
+def HasAbstractVariableArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X]
+    (boundary : UnitAddCircle → X) : Prop :=
+  ∀ ε : ℝ, 0 < ε → Nonempty (AbstractVariableGeometricPolygonalModel boundary ε)
+
+/-- Variable-face-size abstract arbitrarily fine polygonal models transport
+across continuous maps from a compact source by uniform continuity. -/
+theorem hasAbstractVariableArbitrarilyFinePolygonalModels_of_compact_continuous
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractVariableArbitrarilyFinePolygonalModels boundary' := by
+  intro ε hε
+  have hUniform : UniformContinuous f :=
+    CompactSpace.uniformContinuous_of_continuous hf
+  obtain ⟨δ, hδ, hδf⟩ :=
+    Metric.uniformContinuous_iff.mp hUniform ε hε
+  obtain ⟨D⟩ := hmodels δ hδ
+  refine ⟨D.map f hf hboundary ?_⟩
+  intro face e he x
+  exact hδf (D.mesh face e he x)
+
+/-- Homeomorphic compact images inherit variable-face-size abstract arbitrarily
+fine polygonal models. -/
+theorem hasAbstractVariableArbitrarilyFinePolygonalModels_of_homeomorph
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundary : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractVariableArbitrarilyFinePolygonalModels boundary' :=
+  hasAbstractVariableArbitrarilyFinePolygonalModels_of_compact_continuous
+    e e.continuous_toFun hboundary hmodels
+
+/-- Variable-face-size abstract closed-square models transfer to abstract
+closed-disk models through the radial square-to-disk map. -/
+theorem hasAbstractVariableArbitrarilyFinePolygonalModels_of_closedUnitSquare
+    (hsquare : HasAbstractVariableArbitrarilyFinePolygonalModels closedUnitSquareBoundary) :
+    HasAbstractVariableArbitrarilyFinePolygonalModels closedUnitDiskBoundary :=
+  hasAbstractVariableArbitrarilyFinePolygonalModels_of_compact_continuous
+    closedUnitSquareToDisk continuous_closedUnitSquareToDisk
+    closedUnitSquareToDisk_comp_boundary hsquare
+
+/-- Variable-face-size abstract models on the radial cylinder boundary push
+forward directly to the closed unit square boundary. -/
+theorem hasAbstractVariableArbitrarilyFinePolygonalModels_of_closedUnitSquareCylinderBoundary
+    (hcyl : HasAbstractVariableArbitrarilyFinePolygonalModels closedUnitSquareCylinderBoundary) :
+    HasAbstractVariableArbitrarilyFinePolygonalModels closedUnitSquareBoundary :=
+  hasAbstractVariableArbitrarilyFinePolygonalModels_of_compact_continuous
+    closedUnitSquareRadial continuous_closedUnitSquareRadial
+    closedUnitSquareRadial_comp_cylinderBoundary hcyl
+
+/-- On a compact metric domain, variable-face-size abstract arbitrarily fine
+geometric polygonal models provide the map-dependent abstract fine models
+needed by the mod-two argument. -/
+theorem hasAbstractVariableFinePolygonalModels_of_abstractVariableArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X}
+    (hmodels : HasAbstractVariableArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractVariableFinePolygonalModels boundary := by
+  intro H hH
+  have hUniform : UniformContinuous H :=
+    CompactSpace.uniformContinuous_of_continuous hH
+  obtain ⟨δ, hδ, hδH⟩ :=
+    Metric.uniformContinuous_iff.mp hUniform (1 / 2) (by norm_num)
+  obtain ⟨D⟩ := hmodels δ hδ
+  refine ⟨D.toAbstractVariableFinePolygonalModel H ?_⟩
+  intro f e he x
+  exact hδH (D.mesh f e he x)
+
+/-- Variable-face-size abstract arbitrarily fine compatible geometric models
+imply the odd boundary-degree obstruction. -/
+theorem hasOddBoundaryDegreeObstruction_of_abstractVariableArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X}
+    (hmodels : HasAbstractVariableArbitrarilyFinePolygonalModels boundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_abstractVariableFinePolygonalModels
+    (hasAbstractVariableFinePolygonalModels_of_abstractVariableArbitrarilyFine hmodels)
 
 /-- Every concrete `Fin`-indexed model is an abstract finite-index model. -/
 def FinePolygonalModel.toAbstractFinePolygonalModel
