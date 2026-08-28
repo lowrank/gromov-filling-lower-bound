@@ -3492,6 +3492,21 @@ theorem hasOddBoundaryDegreeObstruction_of_cylinderStripGluedPointLowerBoundary
     (cylinderStripGluedPointBoundaryHomotopy_one P)
     hobstruction
 
+/-- A boundary identified by homeomorphism with the free upper boundary loop of
+a glued-strip point quotient inherits the odd-degree obstruction as soon as the
+glued lower loop carries one.  This packages the quotient homotopy and the
+boundary homeomorphism into a single reusable source-side theorem. -/
+theorem hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    {Y : Type*} [TopologicalSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : CylinderStripGluedPointSpace P ≃ₜ Y)
+    (hboundary : boundary = e ∘ cylinderStripGluedPointBoundary P)
+    (hobstruction : HasOddBoundaryDegreeObstruction (cylinderStripGluedPointLowerBoundary P)) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_homeomorph e hboundary
+    (hasOddBoundaryDegreeObstruction_of_cylinderStripGluedPointLowerBoundary P hobstruction)
+
 @[simp] theorem cylinderStripPointQuotientMap_lower_pair_preserving {m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) {j : Fin (m + 1)}
     (hj : P.orientation j = .preserving) (x : ClosedUnitInterval) :
