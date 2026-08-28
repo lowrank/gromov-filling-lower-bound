@@ -510,6 +510,55 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitDisk
       e hboundaryHomeomorph)
     G hG hboundary
 
+/-- Coverage already follows from the quotient-friendly directed abstract
+arbitrarily-fine polygonal-model interface itself.  This is the exact bundled
+form suited to quotient cell decompositions with repeated face vertices after
+ gluing. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → X)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+      hmodels)
+    G hG hboundary hpartition hzero
+
+/-- Coverage also transfers from any compact source carrying the weaker
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface once a boundary-respecting homeomorphism identifies that source
+with the target domain. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+    G hG hboundary hpartition hzero
+
 /-- Coverage also transfers from any compact source carrying the weaker
 directed abstract arbitrarily-fine polygonal-model interface once a
 boundary-respecting homeomorphism identifies that source with the target
@@ -579,6 +628,50 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_arbitrarily_fi
       region ⊆ Set.range G :=
   exists_givensBoundaryCurve_bounded_region_subset_range_of_fine_models
     j boundary (hasFinePolygonalModels_of_arbitrarilyFine hmodels)
+    G hG hboundary
+
+/-- Separation-free coverage also follows directly from the quotient-friendly
+variable-face-size directed interface. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → X)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+      hmodels)
+    G hG hboundary
+
+/-- Separation-free coverage also transfers from a compact source carrying
+ the quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface through a boundary-respecting homeomorphism. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+      e hboundaryHomeomorph hmodels)
     G hG hboundary
 
 /-- Separation-free coverage also follows directly from the variable-face-size
