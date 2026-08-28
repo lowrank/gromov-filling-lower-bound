@@ -8,13 +8,21 @@ EPFL LARA `JordanCurveTheorem` package at commit `e442525`.
 ## Verification
 
 ```text
-lake build
-rg -n "\b(sorry|admit|axiom|unsafe)\b" --glob '*.lean' \
-  GromovFilling GromovFilling.lean
+./scripts/verify.sh
 ```
 
-The build succeeds. The second command returns no matches. GitHub Actions
-runs both checks on every push and pull request.
+The local verifier checks the canonical umbrella, restores the pinned mathlib
+cache, builds the full project, and rejects source-level proof escapes. GitHub
+Actions additionally audits all declarations in the compiled environment
+against the allowlist `propext`, `Classical.choice`, and `Quot.sound`.
+
+See [`FORMALIZATION.md`](FORMALIZATION.md) for the manuscript-facing statement
+ledger and exact verified, partial, and open claim boundaries.
+
+## License
+
+The Lean source and accompanying project files are released under the
+[MIT License](LICENSE).
 
 ## Formalized
 
