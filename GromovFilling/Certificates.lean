@@ -154,6 +154,29 @@ theorem oriented_area_ge_nonlinearCertificate
   rw [div_le_iff₀ hcomass]
   simpa [mul_comm] using hcalibration
 
+/-- The exact oriented conclusion also accepts the unevaluated odd-mode boundary
+series directly; Proposition 9.1 identifies it with `boundaryAction`. -/
+theorem oriented_area_ge_nonlinearCertificate_of_boundaryActionSeries
+    {area lam : ℝ} (_hlam_nonneg : 0 ≤ lam)
+    (hlam : lam < Real.pi ^ 2 / 32)
+    (hcalibration : boundaryActionSeries lam ≤ comassBound lam * area) :
+    nonlinearCertificate lam ≤ area := by
+  rw [boundaryActionSeries_eq] at hcalibration
+  exact oriented_area_ge_nonlinearCertificate (lam := lam) (area := area)
+    (by assumption) hlam hcalibration
+
+/-- The point-`0.03` oriented decimal lower bound likewise follows directly
+from the unevaluated odd-mode boundary series. -/
+theorem oriented_area_gt_point_zero_three_of_boundaryActionSeries {area : ℝ}
+    (hcalibration :
+      boundaryActionSeries (3 / 100) ≤ comassBound (3 / 100) * area) :
+    (538982446 / 100000000 : ℝ) < area := by
+  rw [boundaryActionSeries_eq] at hcalibration
+  have hcertificate : nonlinearCertificate (3 / 100) ≤ area := by
+    exact oriented_area_ge_nonlinearCertificate (by norm_num)
+      lambda_point_zero_three_admissible hcalibration
+  exact nonlinearCertificate_point_zero_three_gt.trans_le hcertificate
+
 /-- Once the oriented Stokes/comass estimate is available at `λ = 0.03`,
 the exact rational numerical verification yields the advertised strict
 decimal lower bound. -/
