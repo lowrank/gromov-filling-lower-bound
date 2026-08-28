@@ -5756,6 +5756,19 @@ theorem hasAbstractVariableDirectedFinePolygonalModels_of_closedUnitDisk_homeomo
     (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitDisk_homeomorph
       e hboundary)
 
+/-- The same disk-homeomorphic hypothesis also discharges the odd
+boundary-degree obstruction through the directed abstract polygonal-model
+interface furnished by the explicit square-center construction. -/
+theorem hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_abstractVariableDirected
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitDiskBoundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitDisk_homeomorph
+      e hboundary)
+
 
 /-- Every concrete `Fin`-indexed model is an abstract finite-index model. -/
 def FinePolygonalModel.toAbstractFinePolygonalModel
