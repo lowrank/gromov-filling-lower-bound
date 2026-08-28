@@ -4,8 +4,8 @@ import GromovFilling.ClosedOneForm
 # Geometric closed-form boundary endpoints
 
 This file exposes the currently formalized oriented-side boundary-vanishing
-statements at the same square homeomorphism plus glued-strip interfaces used
-elsewhere in the development.
+and Stokes/norm statements at the closed-disk and square-homeomorphism
+interfaces used elsewhere in the development.
 -/
 
 open Set
@@ -87,6 +87,51 @@ theorem curveIntegral_eq_zero_of_closedUnitDisk_homeomorph_of_diffContOnCl
     (curveIntegral_eq_zero_of_closedUnitDiskHomeomorphBoundaryExtension_unbundled_of_diffContOnCl
       (hboundaryCont := hboundaryCont) (e := e) (hboundary := hboundaryMap)
       (F := F) (ht := ht) hω hdω_symm hcontdiff)
+
+/-- Direct closed-disk homeomorphism interface for the Stokes package. -/
+theorem curveIntegral_eq_setIntegral_fderiv_skew_of_closedUnitDisk_homeomorph_of_contDiff
+    {E F Y : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
+    [TopologicalSpace Y]
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (Fmap : C(Y, E))
+    {ω : E → E →L[ℝ] F}
+    (hω : closedOneFormContDiffProp ω)
+    (hcontdiff : closedUnitDiskMapSquareContDiffProp
+      (Fmap.comp ⟨e, e.continuous_toFun⟩)) :
+    ClosedUnitDiskMapStokesProp
+      (Fmap.comp ⟨e, e.continuous_toFun⟩) ω := by
+  simpa using
+    (curveIntegral_eq_setIntegral_fderiv_skew_of_closedUnitDiskMap_of_contDiff
+      (Fmap := Fmap.comp ⟨e, e.continuous_toFun⟩) hω hcontdiff)
+
+/-- Direct closed-disk homeomorphism interface for the calibrated Stokes norm bound. -/
+theorem norm_curveIntegral_le_of_closedUnitDisk_homeomorph_of_contDiff
+    {E F Y : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
+    [TopologicalSpace Y]
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (Fmap : C(Y, E))
+    {ω : E → E →L[ℝ] F}
+    {B area : ℝ} {J : ℝ × ℝ → ℝ}
+    (hω : closedOneFormContDiffProp ω)
+    (hcontdiff : closedUnitDiskMapSquareContDiffProp
+      (Fmap.comp ⟨e, e.continuous_toFun⟩))
+    (hB : 0 ≤ B)
+    (hintegrand : MeasureTheory.Integrable
+      (fun x ↦ closedUnitDiskMapSkewIntegrand
+        (Fmap.comp ⟨e, e.continuous_toFun⟩) ω x)
+      (MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    (hJ : MeasureTheory.Integrable J
+      (MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    (hbound : ∀ x ∈ Icc (0 : ℝ × ℝ) 1,
+      ‖closedUnitDiskMapSkewIntegrand
+          (Fmap.comp ⟨e, e.continuous_toFun⟩) ω x‖ ≤ B * J x)
+    (harea : ∫ x in Icc (0 : ℝ × ℝ) 1, J x ≤ area) :
+    ‖closedUnitDiskBoundaryIntegral (Fmap.comp ⟨e, e.continuous_toFun⟩) ω‖ ≤ B * area := by
+  exact norm_closedUnitDiskBoundaryIntegral_le_of_contDiff
+    (Fmap := Fmap.comp ⟨e, e.continuous_toFun⟩)
+    hω hcontdiff hB hintegrand hJ hbound harea
 
 /-- Oriented boundary vanishing at the bundled square-homeomorphism plus
 glued-strip interface. The boundary continuity is inferred automatically from
