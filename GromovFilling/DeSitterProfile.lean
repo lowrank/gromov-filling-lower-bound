@@ -11,13 +11,14 @@ can later be composed with an almost-everywhere differentiability theorem.
 
 namespace GromovFilling
 
+noncomputable section
+
 /-- Three-dimensional Minkowski space with signature `(2, 1)`, represented
 without adding a global inner-product-space instance of indefinite signature. -/
 structure Lorentz3 where
   x₁ : ℝ
   x₂ : ℝ
   x₃ : ℝ
-  deriving Repr
 
 /-- The Lorentz bilinear form of signature `(2, 1)`. -/
 def lorentzInner (x y : Lorentz3) : ℝ :=
@@ -64,7 +65,18 @@ theorem lorentzInner_deSitterProfileVelocity_self
   unfold lorentzInner deSitterProfileVelocity
   dsimp
   field_simp [hu]
-  nlinarith [Real.sin_sq_add_cos_sq α, Real.sin_sq_add_cos_sq u]
+  have hcosu : Real.cos u ^ 2 = 1 - Real.sin u ^ 2 := by
+    nlinarith [Real.sin_sq_add_cos_sq u]
+  calc
+    _ = (Real.sin α ^ 2 + Real.cos α ^ 2) * Real.sin u ^ 2 +
+          (Real.sin α ^ 2 + Real.cos α ^ 2) * Real.cos u ^ 2 * du ^ 2 -
+          du ^ 2 := by ring
+    _ = Real.sin u ^ 2 + Real.cos u ^ 2 * du ^ 2 - du ^ 2 := by
+      rw [Real.sin_sq_add_cos_sq α]
+      ring
+    _ = Real.sin u ^ 2 * (1 - du ^ 2) := by
+      rw [hcosu]
+      ring
 
 /-- Exact Lorentz inner product of two profile points. -/
 theorem lorentzInner_deSitterProfilePoint
@@ -91,6 +103,13 @@ theorem zustCoefficientKernel_eq_lorentz
   rw [lorentzInner_deSitterProfilePoint α β u v hu hv]
   unfold zustCoefficientKernel
   field_simp [hu, hv, hd]
+  have hsu : Real.sin u ^ 2 = 1 - Real.cos u ^ 2 := by
+    nlinarith [Real.sin_sq_add_cos_sq u]
+  have hsv : Real.sin v ^ 2 = 1 - Real.cos v ^ 2 := by
+    nlinarith [Real.sin_sq_add_cos_sq v]
+  rw [hsu, hsv]
   ring
+
+end
 
 end GromovFilling
