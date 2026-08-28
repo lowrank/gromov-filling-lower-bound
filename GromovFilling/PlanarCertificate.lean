@@ -104,6 +104,26 @@ theorem ComplexLocalCertificateSystem.universal_ennreal_add
   intro N
   exact (S.data N).finite_universal_ennreal_add area defect (hbudget N)
 
+/-- A compact open cover can be reindexed by `Fin n` after passing to a finite
+subcover.  This is the basic compactness bridge from arbitrary atlas-style
+chart families to the finite source-chart certificate interfaces. -/
+theorem exists_fin_cover_subfamily_of_compact
+    {X : Type*} [TopologicalSpace X] [CompactSpace X] {ι : Type*}
+    (U : ι → Set X) (hU_open : ∀ i, IsOpen (U i))
+    (hU_cover : Set.univ ⊆ ⋃ i, U i) :
+    ∃ n : ℕ, ∃ e : Fin n → ι, Set.univ ⊆ ⋃ i, U (e i) := by
+  classical
+  obtain ⟨t, ht⟩ : ∃ t : Finset ι, Set.univ ⊆ ⋃ i ∈ t, U i := by
+    refine isCompact_univ.elim_finite_subcover U hU_open ?_
+    intro x hx
+    exact hU_cover hx
+  refine ⟨t.card, fun j ↦ t.equivFin.symm j, ?_⟩
+  intro x hx
+  obtain ⟨i, hi, hix⟩ := Set.mem_iUnion₂.mp (ht hx)
+  refine Set.mem_iUnion.mpr ?_
+  refine ⟨t.equivFin ⟨i, hi⟩, ?_⟩
+  simpa using hix
+
 /-- Source-side finite chart data for the actual metric Fourier family,
 before any topological witness has been supplied.  This isolates the purely
 chartwise planar input from the odd-degree obstruction that will later force
@@ -129,6 +149,45 @@ def FiniteMetricComplexSourceChartData.jacobianMass
     (D : FiniteMetricComplexSourceChartData N X boundary) (j : Fin N) : ℝ≥0∞ :=
   ∑ i : Fin D.m,
     ∫⁻ x in D.targetPiece i, ENNReal.ofReal |(fderiv ℝ (D.localMap j i) x).det| ∂volume
+
+/-- A compact source with an arbitrary open chart cover can be converted to the
+finite metric source-chart data used by the certificate layer by extracting a
+finite subcover and reindexing it by `Fin`. -/
+noncomputable def FiniteMetricComplexSourceChartData.ofCompactOpenCover
+    {N : ℕ} {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : Type*}
+    (sourcePiece : ι → Set X)
+    (sourcePiece_open : ∀ i, IsOpen (sourcePiece i))
+    (sourcePiece_cover : Set.univ ⊆ ⋃ i, sourcePiece i)
+    (targetPiece : ι → Set ℂ)
+    (chart : ∀ i, sourcePiece i → targetPiece i)
+    (targetPiece_open : ∀ i, IsOpen (targetPiece i))
+    (localMap : Fin N → ι → ℂ → ℂ)
+    (K : Fin N → ι → ℝ≥0)
+    (local_lipschitz : ∀ j i, LipschitzOnWith (K j i) (localMap j i) (targetPiece i))
+    (local_agree : ∀ j i (x : sourcePiece i),
+      givensMetricFourierMap boundary N j x = localMap j i (chart i x)) :
+    FiniteMetricComplexSourceChartData N X boundary := by
+  classical
+  let hsub :=
+    exists_fin_cover_subfamily_of_compact sourcePiece sourcePiece_open sourcePiece_cover
+  let m : ℕ := Classical.choose hsub
+  let hsub' : ∃ e : Fin m → ι, Set.univ ⊆ ⋃ i, sourcePiece (e i) :=
+    Classical.choose_spec hsub
+  let e : Fin m → ι := Classical.choose hsub'
+  let he_cover : Set.univ ⊆ ⋃ i, sourcePiece (e i) :=
+    Classical.choose_spec hsub'
+  exact
+    { m := m
+      sourcePiece := fun i ↦ sourcePiece (e i)
+      sourcePiece_cover := he_cover
+      targetPiece := fun i ↦ targetPiece (e i)
+      chart := fun i ↦ chart (e i)
+      targetPiece_open := fun i ↦ targetPiece_open (e i)
+      localMap := fun j i ↦ localMap j (e i)
+      K := fun j i ↦ K j (e i)
+      local_lipschitz := fun j i ↦ local_lipschitz j (e i)
+      local_agree := fun j i x ↦ local_agree j (e i) x }
 
 /-- The finite orientation-free Fourier certificate for complex-plane
 domains, with every rowwise area inequality discharged internally. -/
@@ -606,6 +665,51 @@ def FiniteComplexSourceChartData.jacobianMass
     (D : FiniteComplexSourceChartData N X boundary) (j : Fin N) : ℝ≥0∞ :=
   ∑ i : Fin D.m,
     ∫⁻ x in D.targetPiece i, ENNReal.ofReal |(fderiv ℝ (D.localMap j i) x).det| ∂volume
+
+/-- A compact source with an arbitrary open chart cover can be converted to the
+finite generic source-chart data used by the certificate layer by extracting a
+finite subcover and reindexing it by `Fin`. -/
+noncomputable def FiniteComplexSourceChartData.ofCompactOpenCover
+    {N : ℕ} {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : Type*}
+    (rowMap : Fin N → X → ℂ)
+    (rowMap_cont : ∀ j, Continuous (rowMap j))
+    (rowMap_boundary : ∀ j t, rowMap j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (sourcePiece : ι → Set X)
+    (sourcePiece_open : ∀ i, IsOpen (sourcePiece i))
+    (sourcePiece_cover : Set.univ ⊆ ⋃ i, sourcePiece i)
+    (targetPiece : ι → Set ℂ)
+    (chart : ∀ i, sourcePiece i → targetPiece i)
+    (targetPiece_open : ∀ i, IsOpen (targetPiece i))
+    (localMap : Fin N → ι → ℂ → ℂ)
+    (K : Fin N → ι → ℝ≥0)
+    (local_lipschitz : ∀ j i, LipschitzOnWith (K j i) (localMap j i) (targetPiece i))
+    (local_agree : ∀ j i (x : sourcePiece i),
+      rowMap j x = localMap j i (chart i x)) :
+    FiniteComplexSourceChartData N X boundary := by
+  classical
+  let hsub :=
+    exists_fin_cover_subfamily_of_compact sourcePiece sourcePiece_open sourcePiece_cover
+  let m : ℕ := Classical.choose hsub
+  let hsub' : ∃ e : Fin m → ι, Set.univ ⊆ ⋃ i, sourcePiece (e i) :=
+    Classical.choose_spec hsub
+  let e : Fin m → ι := Classical.choose hsub'
+  let he_cover : Set.univ ⊆ ⋃ i, sourcePiece (e i) :=
+    Classical.choose_spec hsub'
+  exact
+    { rowMap := rowMap
+      rowMap_cont := rowMap_cont
+      rowMap_boundary := rowMap_boundary
+      m := m
+      sourcePiece := fun i ↦ sourcePiece (e i)
+      sourcePiece_cover := he_cover
+      targetPiece := fun i ↦ targetPiece (e i)
+      chart := fun i ↦ chart (e i)
+      targetPiece_open := fun i ↦ targetPiece_open (e i)
+      localMap := fun j i ↦ localMap j (e i)
+      K := fun j i ↦ K j (e i)
+      local_lipschitz := fun j i ↦ local_lipschitz j (e i)
+      local_agree := fun j i x ↦ local_agree j (e i) x }
 
 /-- A generic source-chart system becomes an obstruction-level one once an odd
 boundary-degree obstruction has been supplied. -/
