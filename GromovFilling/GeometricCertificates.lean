@@ -28,6 +28,102 @@ theorem universal_ennreal_of_chartSystem_closedUnitSquare_homeomorph_cylinderStr
   S.universal_ennreal_of_closedUnitSquare_homeomorph_cylinderStripGlued
     e hboundaryMap
 
+/-- Exact orientation-free geometric endpoint from bundled compact-open-cover
+metric chart data together with the bundled glued-strip polygonal-model
+interface on the same boundary. -/
+theorem universal_ennreal_of_metric_compactOpenCover_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : ℕ → Type*} {area : ℝ≥0∞}
+    (hboundary : IsometricCircleBoundary boundary)
+    (sourcePiece : ∀ N : ℕ, ι N → Set X)
+    (sourcePiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (sourcePiece N i))
+    (sourcePiece_cover : ∀ N : ℕ, Set.univ ⊆ ⋃ i, sourcePiece N i)
+    (targetPiece : ∀ N : ℕ, ι N → Set ℂ)
+    (chart : ∀ N : ℕ, ∀ i : ι N, sourcePiece N i → targetPiece N i)
+    (targetPiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (targetPiece N i))
+    (localMap : ∀ N : ℕ, Fin N → ι N → ℂ → ℂ)
+    (K : ∀ N : ℕ, Fin N → ι N → ℝ≥0)
+    (local_lipschitz : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N,
+      LipschitzOnWith (K N j i) (localMap N j i) (targetPiece N i))
+    (local_agree : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N, ∀ x : sourcePiece N i,
+      givensMetricFourierMap boundary N j x = localMap N j i (chart N i x))
+    (budget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (FiniteMetricComplexSourceChartData.ofCompactOpenCover
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).jacobianMass j) ≤ area)
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  let S :=
+    MetricComplexSourceChartSystem.ofCompactOpenCover area hboundary sourcePiece
+      sourcePiece_open sourcePiece_cover targetPiece chart targetPiece_open
+      localMap K local_lipschitz local_agree budget
+  simpa [S] using
+    (S.universal_ennreal_of_cylinderStripGluedArbitrarilyFineData hmodels)
+
+/-- Exact slack-refined orientation-free geometric endpoint from bundled
+compact-open-cover metric chart data together with the bundled glued-strip
+polygonal-model interface on the same boundary. -/
+theorem universal_ennreal_add_of_metric_compactOpenCover_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : ℕ → Type*} {area defect : ℝ≥0∞}
+    (hboundary : IsometricCircleBoundary boundary)
+    (sourcePiece : ∀ N : ℕ, ι N → Set X)
+    (sourcePiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (sourcePiece N i))
+    (sourcePiece_cover : ∀ N : ℕ, Set.univ ⊆ ⋃ i, sourcePiece N i)
+    (targetPiece : ∀ N : ℕ, ι N → Set ℂ)
+    (chart : ∀ N : ℕ, ∀ i : ι N, sourcePiece N i → targetPiece N i)
+    (targetPiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (targetPiece N i))
+    (localMap : ∀ N : ℕ, Fin N → ι N → ℂ → ℂ)
+    (K : ∀ N : ℕ, Fin N → ι N → ℝ≥0)
+    (local_lipschitz : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N,
+      LipschitzOnWith (K N j i) (localMap N j i) (targetPiece N i))
+    (local_agree : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N, ∀ x : sourcePiece N i,
+      givensMetricFourierMap boundary N j x = localMap N j i (chart N i x))
+    (budget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (FiniteMetricComplexSourceChartData.ofCompactOpenCover
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).jacobianMass j) ≤ area)
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (FiniteMetricComplexSourceChartData.ofCompactOpenCover
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).jacobianMass j) + defect ≤ area)
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary) :
+    ENNReal.ofReal universalConstant + defect ≤ area := by
+  let S :=
+    MetricComplexSourceChartSystem.ofCompactOpenCover area hboundary sourcePiece
+      sourcePiece_open sourcePiece_cover targetPiece chart targetPiece_open
+      localMap K local_lipschitz local_agree budget
+  simpa [S] using
+    (S.universal_ennreal_add_of_cylinderStripGluedArbitrarilyFineData
+      hmodels hbudget)
+
 /-- Exact orientation-free geometric endpoint for the square homeomorphism plus
 bundled compact-open-cover chart data at the generic source-chart-system
 interface, with no need to prepackage the chart family first. -/
