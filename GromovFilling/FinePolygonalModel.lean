@@ -3332,6 +3332,95 @@ theorem CylinderStripLowerBoundaryPairing.pairedFinish_edgePair {m : ℕ}
     j ≠ P.edgePair j := by
   exact (P.edgePair_noFixed j).symm
 
+/-- The lower-boundary gluing step on the radial cylinder. Only points on the
+lower circle are identified, using the chosen edge pairing and either
+preserving or reversing the edge parameter. -/
+def cylinderStripPointGluingStep {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    (ClosedUnitInterval × UnitAddCircle) → (ClosedUnitInterval × UnitAddCircle) → Prop
+  | (r₁, u₁), (r₂, u₂) =>
+      ∃ j : Fin (m + 1), ∃ x : ClosedUnitInterval,
+        r₁ = closedUnitIntervalStart ∧
+        r₂ = closedUnitIntervalStart ∧
+        u₁ = angularSubdivisionArc m j x ∧
+        u₂ =
+          match P.orientation j with
+          | .preserving => angularSubdivisionArc m (P.edgePair j) x
+          | .reversing =>
+              angularSubdivisionArc m (P.edgePair j) (reverseClosedUnitInterval x)
+
+/-- Point-level quotient relation on the radial cylinder determined by the
+chosen lower-boundary edge pairing. -/
+def cylinderStripPointGluingSetoid {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    Setoid (ClosedUnitInterval × UnitAddCircle) :=
+  Relation.EqvGen.setoid (cylinderStripPointGluingStep P)
+
+/-- The point-level glued strip: quotient of the radial cylinder by the chosen
+lower-boundary identifications. This is the natural topological source object
+for future one-boundary-surface statements. -/
+abbrev CylinderStripGluedPointSpace {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :=
+  Quotient (cylinderStripPointGluingSetoid P)
+
+/-- The quotient map from the radial cylinder to the glued-strip point space. -/
+def cylinderStripPointQuotientMap {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    ClosedUnitInterval × UnitAddCircle → CylinderStripGluedPointSpace P :=
+  Quotient.mk _
+
+@[continuity] theorem continuous_cylinderStripPointQuotientMap {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    Continuous (cylinderStripPointQuotientMap P) :=
+  continuous_quotient_mk'
+
+/-- The unglued top boundary circle of the radial cylinder. -/
+def cylinderStripTopBoundary : UnitAddCircle → ClosedUnitInterval × UnitAddCircle :=
+  fun t ↦ (closedUnitIntervalFinish, t)
+
+@[continuity] theorem continuous_cylinderStripTopBoundary :
+    Continuous cylinderStripTopBoundary :=
+  continuous_const.prodMk continuous_id
+
+/-- The actual boundary map of the glued-strip point space: the top circle of
+the strip descends unchanged to the quotient. -/
+def cylinderStripGluedPointBoundary {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    UnitAddCircle → CylinderStripGluedPointSpace P :=
+  cylinderStripPointQuotientMap P ∘ cylinderStripTopBoundary
+
+@[continuity] theorem continuous_cylinderStripGluedPointBoundary {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    Continuous (cylinderStripGluedPointBoundary P) :=
+  (continuous_cylinderStripPointQuotientMap P).comp continuous_cylinderStripTopBoundary
+
+@[simp] theorem cylinderStripGluedPointBoundary_apply {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (t : UnitAddCircle) :
+    cylinderStripGluedPointBoundary P t =
+      Quotient.mk (cylinderStripPointGluingSetoid P) (closedUnitIntervalFinish, t) :=
+  rfl
+
+@[simp] theorem cylinderStripPointQuotientMap_lower_pair_preserving {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) {j : Fin (m + 1)}
+    (hj : P.orientation j = .preserving) (x : ClosedUnitInterval) :
+    cylinderStripPointQuotientMap P
+        (closedUnitIntervalStart, angularSubdivisionArc m j x) =
+      cylinderStripPointQuotientMap P
+        (closedUnitIntervalStart, angularSubdivisionArc m (P.edgePair j) x) := by
+  apply Quotient.sound
+  exact Relation.EqvGen.rel _ _ ⟨j, x, rfl, rfl, rfl, by simpa [hj]⟩
+
+@[simp] theorem cylinderStripPointQuotientMap_lower_pair_reversing {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) {j : Fin (m + 1)}
+    (hj : P.orientation j = .reversing) (x : ClosedUnitInterval) :
+    cylinderStripPointQuotientMap P
+        (closedUnitIntervalStart, angularSubdivisionArc m j x) =
+      cylinderStripPointQuotientMap P
+        (closedUnitIntervalStart,
+          angularSubdivisionArc m (P.edgePair j) (reverseClosedUnitInterval x)) := by
+  apply Quotient.sound
+  exact Relation.EqvGen.rel _ _ ⟨j, x, rfl, rfl, rfl, by simpa [hj]⟩
+
 /-- On an odd cyclic subdivision, pair each lower edge with its adjacent
 neighbor: even edges with their successor and odd edges with their predecessor.
 All identifications preserve the boundary direction. -/

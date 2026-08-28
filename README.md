@@ -139,11 +139,12 @@ runs both checks on every push and pull request.
   argument;
 - the explicit square-center directed polygonal-model construction on the
   closed square and closed disk boundaries, the corresponding bundled
-  glued-strip mesh-data interface on the closed disk boundary, transfer of
-  that directed arbitrarily-fine interface to every compact metric boundary
-  homeomorphic to the closed disk, the resulting direct and bundled
-  disk-homeomorphism certificate wrappers, and the matching oriented
-  closed-form / certificate wrappers for the bundled and direct
+  glued-strip mesh-data interface on the closed disk boundary, the new
+  point-level glued-strip quotient of the radial cylinder with its descended
+  boundary map, transfer of that directed arbitrarily-fine interface to every
+  compact metric boundary homeomorphic to the closed disk, the resulting
+  direct and bundled disk-homeomorphism certificate wrappers, and the matching
+  oriented closed-form / certificate wrappers for the bundled and direct
   disk-homeomorphism glued-strip interface.
 
 ## Not yet end-to-end
