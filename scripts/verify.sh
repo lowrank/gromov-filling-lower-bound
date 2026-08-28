@@ -4,7 +4,7 @@ set -euo pipefail
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_dir"
 
-lake exe mk_all --check
+./scripts/check_umbrella.sh
 lake exe cache get
 lake build
 
