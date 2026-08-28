@@ -488,6 +488,36 @@ theorem FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.mixedBoundary
       (D.toFiniteComplexSourceChartCertificateData.toFiniteComplexLocalCertificateData).jacobianMass j :=
   (D.toFiniteComplexSourceChartCertificateData).mixedBoundaryArea_le_jacobianMass j
 
+/-- Under the odd boundary-degree obstruction, each row of a finite
+source-chart system produces a bounded open connected witness region at the
+origin whose volume is controlled by that row's chartwise Jacobian mass. -/
+theorem FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.exists_bounded_region_volume_le_jacobianMass
+    {N : ℕ} {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        (D.toFiniteComplexSourceChartCertificateData.toFiniteComplexLocalCertificateData).jacobianMass j := by
+  refine ⟨givensBoundaryCurveChosenJordanRegion j,
+    (givensBoundaryCurveChosenJordanPartition j).region₁_open,
+    (givensBoundaryCurveChosenJordanPartition j).region₁_connected,
+    givensBoundaryCurve_jordan_region_at_origin_bounded j
+      (givensBoundaryCurveChosenJordanPartition j)
+      (zero_mem_givensBoundaryCurveChosenJordanRegion j),
+    zero_mem_givensBoundaryCurveChosenJordanRegion j, ?_⟩
+  have hvol : volume (givensBoundaryCurveChosenJordanRegion j) =
+      ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) := by
+    simpa [givensBoundaryCurveChosenJordanRegion] using
+      volume_givensBoundaryCurve_jordan_region j
+        (givensBoundaryCurveChosenJordanPartition j)
+        (zero_mem_givensBoundaryCurveChosenJordanRegion j)
+  calc
+    volume (givensBoundaryCurveChosenJordanRegion j) =
+        ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) := hvol
+    _ ≤ (D.toFiniteComplexSourceChartCertificateData.toFiniteComplexLocalCertificateData).jacobianMass j :=
+      D.mixedBoundaryArea_le_jacobianMass j
+
 
 /-- An obstruction-level bundled source-side finite chart certificate also
 carries any common additive defect term unchanged. -/
@@ -618,6 +648,25 @@ theorem FiniteComplexSourceChartData.mixedBoundaryArea_le_jacobianMass_of_odd_bo
     FiniteComplexSourceChartCertificateData.toFiniteComplexLocalCertificateData,
     FiniteComplexLocalCertificateData.jacobianMass] using
       (D.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction hobstruction).mixedBoundaryArea_le_jacobianMass
+        j
+
+/-- Once the odd boundary-degree obstruction is supplied, each row of a
+finite generic source-chart system produces a bounded open connected witness
+region at the origin whose volume is controlled by that row's Jacobian mass. -/
+theorem FiniteComplexSourceChartData.exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
+    {N : ℕ} {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteComplexSourceChartData N X boundary)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ D.jacobianMass j := by
+  simpa [FiniteComplexSourceChartData.jacobianMass,
+    FiniteComplexSourceChartData.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction,
+    FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.toFiniteComplexSourceChartCertificateData,
+    FiniteComplexSourceChartCertificateData.toFiniteComplexLocalCertificateData,
+    FiniteComplexLocalCertificateData.jacobianMass] using
+      (D.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction hobstruction).exists_bounded_region_volume_le_jacobianMass
         j
 
 /-- A finite generic source-chart certificate carries any common additive
@@ -1534,6 +1583,21 @@ theorem FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.mixedBo
     ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤ D.jacobianMass hboundary j :=
   (D.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction hboundary).mixedBoundaryArea_le_jacobianMass j
 
+/-- Under the odd boundary-degree obstruction, each row of a finite metric
+source-chart system produces a bounded open connected witness region at the
+origin whose volume is controlled by that row's chartwise Jacobian mass. -/
+theorem FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.exists_bounded_region_volume_le_jacobianMass
+    {N : ℕ} {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary)
+    (hboundary : IsometricCircleBoundary boundary) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ D.jacobianMass hboundary j := by
+  exact
+    (D.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction hboundary).exists_bounded_region_volume_le_jacobianMass
+      j
+
 
 /-- A finite metric source-chart certificate also carries any common additive
 defect term unchanged. -/
@@ -1642,6 +1706,24 @@ theorem FiniteMetricComplexSourceChartData.mixedBoundaryArea_le_jacobianMass_of_
     FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.jacobianMass,
     FiniteMetricComplexSourceChartData.toFiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction] using
       (D.toFiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction hobstruction).mixedBoundaryArea_le_jacobianMass
+        hboundary j
+
+/-- Once the odd boundary-degree obstruction is supplied, each row of a
+finite metric source-chart system produces a bounded open connected witness
+region at the origin whose volume is controlled by that row's Jacobian mass. -/
+theorem FiniteMetricComplexSourceChartData.exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
+    {N : ℕ} {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteMetricComplexSourceChartData N X boundary)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (hboundary : IsometricCircleBoundary boundary) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ D.jacobianMass j := by
+  simpa [FiniteMetricComplexSourceChartData.jacobianMass,
+    FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.jacobianMass,
+    FiniteMetricComplexSourceChartData.toFiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction] using
+      (D.toFiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction hobstruction).exists_bounded_region_volume_le_jacobianMass
         hboundary j
 
 
