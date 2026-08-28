@@ -2409,7 +2409,7 @@ theorem AbstractVariableDirectedFinePolygonalModel.no_odd_boundary_degree
   let _ := D.instFaceDecidableEq
   exact no_odd_degree_of_fine_polygonal_circle_extension_variable_with_edge_directions
     D.edgeEnds D.faceEdges D.boundaryEdges D.edgeFaceCount D.faceSize
-    D.faceVertex D.faceEdge D.faceEdgeForward D.faceVertex_injective
+    D.faceVertex D.faceEdge D.faceEdgeForward
     D.faceEdge_injective D.faceEdges_eq D.faceEdge_ends D.boundaryEdge
     D.boundaryEdge_injective D.boundaryVertex D.boundaryEdge_ends
     D.boundaryEdges_eq D.vertexPoint (fun _ ↦ ClosedUnitInterval)
@@ -3013,6 +3013,12 @@ noncomputable instance {n m : ℕ} (P : CylinderStripLowerBoundaryPairing m) :
     Fintype (CylinderStripGluedVertex n P) := by
   let _ : DecidableRel (cylinderStripVertexGluingSetoid (n := n) P).r := Classical.decRel _
   infer_instance
+
+noncomputable instance {n m : ℕ} (P : CylinderStripLowerBoundaryPairing m) :
+    DecidableEq (CylinderStripGluedEdge n P) := Classical.decEq _
+
+noncomputable instance {n m : ℕ} (P : CylinderStripLowerBoundaryPairing m) :
+    DecidableEq (CylinderStripGluedVertex n P) := Classical.decEq _
 
 @[simp] theorem mk_cylinderStripLowerBoundaryEdgeClass_pair {m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
@@ -3679,6 +3685,203 @@ theorem cylinderStripGluedEdgeEndpointClasses_eq_chosen_or_swapped {n m : ℕ}
         simp [hagree]
       rw [hdec]
       exact hSwap
+
+
+@[simp] theorem cylinderStripGluedEdgeChosenEnds_mk_radial {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (i : Fin (n + 1)) (j : Fin (m + 1)) :
+    cylinderStripGluedEdgeChosenEnds n P
+      (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+        (CylinderStripEdge.radial i j)) =
+      cylinderStripGluedEdgeEndpointClasses P (CylinderStripEdge.radial i j) := by
+  let q : CylinderStripGluedEdge n P :=
+    Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+      (CylinderStripEdge.radial i j)
+  have hq : Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) q.out = q :=
+    Quotient.out_eq q
+  have hout : q.out = CylinderStripEdge.radial i j :=
+    (mk_cylinderStripGluedEdge_eq_radial_iff P q.out i j).1 <| by
+      simpa [q] using hq
+  unfold cylinderStripGluedEdgeChosenEnds
+  rw [hout]
+
+@[simp] theorem cylinderStripGluedEdgeChosenEnds_mk_angular_ne_zero {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (i : Fin (n + 2)) (j : Fin (m + 1))
+    (hi0 : i ≠ 0) :
+    cylinderStripGluedEdgeChosenEnds n P
+      (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+        (CylinderStripEdge.angular i j)) =
+      cylinderStripGluedEdgeEndpointClasses P (CylinderStripEdge.angular i j) := by
+  let q : CylinderStripGluedEdge n P :=
+    Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+      (CylinderStripEdge.angular i j)
+  have hq : Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) q.out = q :=
+    Quotient.out_eq q
+  have hout : q.out = CylinderStripEdge.angular i j :=
+    (mk_cylinderStripGluedEdge_eq_angular_of_ne_zero_iff P q.out i j hi0).1 <| by
+      simpa [q] using hq
+  unfold cylinderStripGluedEdgeChosenEnds
+  rw [hout]
+
+def cylinderStripGluedFaceVertex (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (f : CylinderStripFace n m) :
+    Fin (3 + 1) → CylinderStripGluedVertex n P :=
+  fun k =>
+    Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+      (cylinderStripFaceVertex f k)
+
+def cylinderStripGluedFaceEdge (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (f : CylinderStripFace n m) :
+    Fin (3 + 1) → CylinderStripGluedEdge n P :=
+  fun k =>
+    Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+      (cylinderStripFaceEdge f k)
+
+def cylinderStripGluedFaceEdgeForward (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (f : CylinderStripFace n m)
+    (k : Fin (3 + 1)) : Bool :=
+  decide (cylinderStripFaceEdgeForward f k =
+    cylinderStripGluedEdgeAgreesWithChosenEnds n P (cylinderStripFaceEdge f k))
+
+def cylinderStripGluedFaceEdges (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (f : CylinderStripFace n m) :
+    Finset (CylinderStripGluedEdge n P) :=
+  Finset.univ.image (cylinderStripGluedFaceEdge n P f)
+
+theorem cylinderStripGluedFaceEdges_eq (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (f : CylinderStripFace n m) :
+    cylinderStripGluedFaceEdges n P f =
+      Finset.univ.image (cylinderStripGluedFaceEdge n P f) := rfl
+
+def cylinderStripGluedBoundaryVertex (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    CylinderStripGluedVertex n P :=
+  Quotient.mk (cylinderStripVertexGluingSetoid (n := n) P)
+    (cylinderStripBoundaryVertex (n := n) (m := m) j)
+
+def cylinderStripGluedBoundaryEdge (n : ℕ) {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    CylinderStripGluedEdge n P :=
+  Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
+    (cylinderStripBoundaryEdge (n := n) (m := m) j)
+
+@[simp] theorem cylinderStripGluedBoundaryVertex_injective {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    Function.Injective (cylinderStripGluedBoundaryVertex n P) := by
+  intro a b h
+  have hlast0 : (Fin.last (n + 1) : Fin (n + 2)) ≠ 0 := by
+    intro h0
+    have hval := congrArg Fin.val h0
+    simp at hval
+  have hEq : (cylinderStripBoundaryVertex (n := n) (m := m) a) =
+      cylinderStripBoundaryVertex (n := n) (m := m) b := by
+    exact (mk_cylinderStripGluedVertex_eq_of_nonlower_iff P
+      (cylinderStripBoundaryVertex (n := n) (m := m) a)
+      (Fin.last (n + 1)) b hlast0).1 <| by
+        simpa [cylinderStripGluedBoundaryVertex, cylinderStripBoundaryVertex] using h
+  simpa [cylinderStripBoundaryVertex] using hEq
+
+@[simp] theorem cylinderStripGluedBoundaryEdge_injective {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    Function.Injective (cylinderStripGluedBoundaryEdge n P) := by
+  intro a b h
+  have hlast0 : (Fin.last (n + 1) : Fin (n + 2)) ≠ 0 := by
+    intro h0
+    have hval := congrArg Fin.val h0
+    simp at hval
+  have hEq : (cylinderStripBoundaryEdge (n := n) (m := m) a) =
+      cylinderStripBoundaryEdge (n := n) (m := m) b := by
+    exact (mk_cylinderStripGluedEdge_eq_angular_of_ne_zero_iff P
+      (cylinderStripBoundaryEdge (n := n) (m := m) a)
+      (Fin.last (n + 1)) b hlast0).1 <| by
+        simpa [cylinderStripGluedBoundaryEdge, cylinderStripBoundaryEdge] using h
+  simpa [cylinderStripBoundaryEdge] using hEq
+
+@[simp] theorem cylinderStripGluedBoundaryEdge_ends {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (j : Fin (m + 1)) :
+    cylinderStripGluedEdgeChosenEnds n P (cylinderStripGluedBoundaryEdge n P j) =
+      (cylinderStripGluedBoundaryVertex n P j,
+        cylinderStripGluedBoundaryVertex n P (cyclicSucc j)) := by
+  have hlast0 : (Fin.last (n + 1) : Fin (n + 2)) ≠ 0 := by
+    intro h0
+    have hval := congrArg Fin.val h0
+    simp at hval
+  simpa [cylinderStripGluedBoundaryEdge, cylinderStripGluedBoundaryVertex,
+    cylinderStripBoundaryEdge, cylinderStripBoundaryVertex,
+    cylinderStripGluedEdgeEndpointClasses, cylinderStripEdgeEnds] using
+      (cylinderStripGluedEdgeChosenEnds_mk_angular_ne_zero P
+        (Fin.last (n + 1)) j hlast0)
+
+theorem cylinderStripGluedFaceEdge_ends {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (f : CylinderStripFace n m)
+    (k : Fin (3 + 1)) :
+    cylinderStripGluedEdgeChosenEnds n P (cylinderStripGluedFaceEdge n P f k) =
+      if cylinderStripGluedFaceEdgeForward n P f k then
+        (cylinderStripGluedFaceVertex n P f k,
+          cylinderStripGluedFaceVertex n P f (cyclicSucc k))
+      else
+        (cylinderStripGluedFaceVertex n P f (cyclicSucc k),
+          cylinderStripGluedFaceVertex n P f k) := by
+  let vpair :=
+    (cylinderStripGluedFaceVertex n P f k,
+      cylinderStripGluedFaceVertex n P f (cyclicSucc k))
+  have hend : cylinderStripGluedEdgeEndpointClasses P (cylinderStripFaceEdge f k) =
+      if cylinderStripFaceEdgeForward f k then vpair else Prod.swap vpair := by
+    by_cases hdir : cylinderStripFaceEdgeForward f k
+    · simp [cylinderStripGluedEdgeEndpointClasses, cylinderStripGluedFaceVertex,
+        cylinderStripFaceEdge_ends, vpair, hdir]
+    · simp [cylinderStripGluedEdgeEndpointClasses, cylinderStripGluedFaceVertex,
+        cylinderStripFaceEdge_ends, vpair, hdir]
+  have hchosen :=
+    cylinderStripGluedEdgeEndpointClasses_eq_chosen_or_swapped P (cylinderStripFaceEdge f k)
+  by_cases hdir : cylinderStripFaceEdgeForward f k
+  · by_cases hagree :
+      cylinderStripGluedEdgeAgreesWithChosenEnds n P (cylinderStripFaceEdge f k) = true
+    · have hforward : cylinderStripGluedFaceEdgeForward n P f k = true := by
+        simp [cylinderStripGluedFaceEdgeForward, hdir, hagree]
+      rw [hforward]
+      have hchosen' : cylinderStripGluedEdgeEndpointClasses P (cylinderStripFaceEdge f k) =
+          cylinderStripGluedEdgeChosenEnds n P (cylinderStripGluedFaceEdge n P f k) := by
+        simpa [cylinderStripGluedFaceEdge, hagree] using hchosen
+      have hend' : cylinderStripGluedEdgeEndpointClasses P (cylinderStripFaceEdge f k) = vpair := by
+        simpa [hdir] using hend
+      exact hchosen'.symm.trans hend'
+    · have hforward : cylinderStripGluedFaceEdgeForward n P f k = false := by
+        simp [cylinderStripGluedFaceEdgeForward, hdir, hagree]
+      rw [hforward]
+      have hchosen' : cylinderStripGluedEdgeEndpointClasses P (cylinderStripFaceEdge f k) =
+          Prod.swap (cylinderStripGluedEdgeChosenEnds n P (cylinderStripGluedFaceEdge n P f k)) := by
+        simpa [cylinderStripGluedFaceEdge, hagree] using hchosen
+      have hend' : cylinderStripGluedEdgeEndpointClasses P (cylinderStripFaceEdge f k) = vpair := by
+        simpa [hdir] using hend
+      have hs : vpair =
+          Prod.swap (cylinderStripGluedEdgeChosenEnds n P (cylinderStripGluedFaceEdge n P f k)) :=
+        hend'.symm.trans hchosen'
+      simpa [vpair] using (congrArg Prod.swap hs).symm
+  · by_cases hagree :
+      cylinderStripGluedEdgeAgreesWithChosenEnds n P (cylinderStripFaceEdge f k) = true
+    · have hforward : cylinderStripGluedFaceEdgeForward n P f k = false := by
+        simp [cylinderStripGluedFaceEdgeForward, hdir, hagree]
+      rw [hforward]
+      have hchosen' : cylinderStripGluedEdgeEndpointClasses P (cylinderStripFaceEdge f k) =
+          cylinderStripGluedEdgeChosenEnds n P (cylinderStripGluedFaceEdge n P f k) := by
+        simpa [cylinderStripGluedFaceEdge, hagree] using hchosen
+      have hend' : cylinderStripGluedEdgeEndpointClasses P (cylinderStripFaceEdge f k) =
+          Prod.swap vpair := by
+        simpa [hdir] using hend
+      exact hchosen'.symm.trans hend'
+    · have hforward : cylinderStripGluedFaceEdgeForward n P f k = true := by
+        simp [cylinderStripGluedFaceEdgeForward, hdir, hagree]
+      rw [hforward]
+      have hchosen' : cylinderStripGluedEdgeEndpointClasses P (cylinderStripFaceEdge f k) =
+          Prod.swap (cylinderStripGluedEdgeChosenEnds n P (cylinderStripGluedFaceEdge n P f k)) := by
+        simpa [cylinderStripGluedFaceEdge, hagree] using hchosen
+      have hend' : cylinderStripGluedEdgeEndpointClasses P (cylinderStripFaceEdge f k) =
+          Prod.swap vpair := by
+        simpa [hdir] using hend
+      have hs : Prod.swap vpair =
+          Prod.swap (cylinderStripGluedEdgeChosenEnds n P (cylinderStripGluedFaceEdge n P f k)) :=
+        hend'.symm.trans hchosen'
+      simpa [vpair] using (congrArg Prod.swap hs).symm
 
 @[simp] theorem radialSubdivisionLower_injective {n : ℕ} :
     Function.Injective (@radialSubdivisionLower n) := by
