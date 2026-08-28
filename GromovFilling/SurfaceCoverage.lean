@@ -443,6 +443,33 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitDisk
       e hboundaryHomeomorph)
     G hG hboundary
 
+/-- Coverage also transfers from any compact source carrying the weaker
+directed abstract arbitrarily-fine polygonal-model interface once a
+boundary-respecting homeomorphism identifies that source with the target
+domain.  This is the natural topological handoff for future compact-surface
+cell decompositions. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_abstractVariableDirectedArbitrarilyFine
+    j boundary'
+    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_homeomorph
+      e hboundaryHomeomorph hmodels)
+    G hG hboundary hpartition hzero
+
 /-- Coverage also transfers from any compact source with arbitrarily fine
 polygonal models once a boundary-respecting homeomorphism identifies that
 source with the target domain.  This packages the exact downstream use of a
@@ -505,6 +532,30 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_abstractVariab
     j boundary
     (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
       hmodels)
+    G hG hboundary
+
+/-- Separation-free coverage also transfers from a compact source carrying
+the directed abstract arbitrarily-fine polygonal-model interface through a
+boundary-respecting homeomorphism. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_abstractVariableDirectedArbitrarilyFine
+    j boundary'
+    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_homeomorph
+      e hboundaryHomeomorph hmodels)
     G hG hboundary
 
 /-- Separation-free coverage also transfers from a compact source with

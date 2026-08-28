@@ -108,16 +108,21 @@ contradiction is assembled without auxiliary lift or turn assumptions, but
 the passage from an arbitrary compact surface to that finite data still
 needs:
 
-1. a theorem proving the needed topological obstruction or, equivalently,
-   `HasArbitrarilyFinePolygonalModels` for every compact surface with one
-   boundary component beyond the already formalized disk-like case—i.e.
-   furnishing either a direct surface-level degree argument or arbitrarily
-   fine finite triangulations/cell structures with compatible cyclic
-   boundary subdivisions (the compact uniform-continuity passage from this
-   geometric statement to `HasFinePolygonalModels`, together with compact
-   continuous/homeomorphic transport from model domains, is now formalized;
-   the disk-homeomorphic case is discharged directly and also at the
-   directed abstract polygonal-model interface);
+1. a theorem proving the needed topological obstruction for every compact
+   surface with one boundary component beyond the already formalized disk-like
+   case.  The strongest currently packaged route uses either a direct
+   surface-level odd-degree argument, or a theorem furnishing arbitrarily fine
+   finite triangulations/cell structures at some bundled polygonal-model
+   interface.  For future work, the directed abstract variable-face-size
+   interface `HasAbstractVariableDirectedArbitrarilyFinePolygonalModels` is the
+   closest match to general surface cell decompositions and already transports
+   across compact homeomorphisms; the stronger undirected interfaces
+   `HasArbitrarilyFinePolygonalModels` / `HasFinePolygonalModels` are also
+   formalized and still suffice when available.  The compact
+   uniform-continuity passage from these geometric statements to the odd
+   boundary-degree obstruction is formalized, and the disk-homeomorphic case is
+   discharged directly and also at the directed abstract polygonal-model
+   interface;
 2. the weak differentiation-under-the-boundary-parameter-integral theorem
    for the metric Fourier coordinates and its Bessel estimate in the full
    surface setting.  The downstream planar Fourier/Jacobian/certificate
