@@ -1877,6 +1877,26 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_comp_continuous_adjace
       hm f hf hboundaryMap)
     G hG hboundary hpartition hzero
 
+/-- Coverage also transfers from the bundled point-quotient continuous-map-plus-
+obstruction interface. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_continuousCylinderStripGluedPointBoundaryObstructionData
+    {Y : Type*} [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (D : ContinuousCylinderStripGluedPointBoundaryObstructionData boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_continuousCylinderStripGluedPointBoundaryObstructionData D)
+    G hG hboundary hpartition hzero
+
 /-- Coverage also transfers from the bundled point-quotient homeomorphism-plus-
 obstruction interface. -/
 theorem givensBoundaryCurve_jordan_region_subset_range_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
@@ -2221,6 +2241,25 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_comp_continuou
     j boundary
     (hasOddBoundaryDegreeObstruction_of_comp_continuous_adjacentPreservingCylinderStripGluedPointBoundary
       hm f hf hboundaryMap)
+    G hG hboundary
+
+/-- Separation-free coverage also transfers from the bundled point-quotient
+continuous-map-plus-obstruction interface. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_continuousCylinderStripGluedPointBoundaryObstructionData
+    {Y : Type*} [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (D : ContinuousCylinderStripGluedPointBoundaryObstructionData boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_continuousCylinderStripGluedPointBoundaryObstructionData D)
     G hG hboundary
 
 /-- Separation-free coverage also transfers from the bundled point-quotient

@@ -348,6 +348,27 @@ theorem givens_jordan_region_volume_le_complex_jacobian_of_comp_continuous_adjac
     G hG hboundary hpartition hzero hGLipschitz
 
 /-- The same planar Jacobian bound also transfers from the bundled
+point-quotient continuous-map-plus-obstruction interface. -/
+theorem givens_jordan_region_volume_le_complex_jacobian_of_continuousCylinderStripGluedPointBoundaryObstructionData
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → ℂ}
+    (D : ContinuousCylinderStripGluedPointBoundaryObstructionData boundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    volume region₁ ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  exact givens_jordan_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_continuousCylinderStripGluedPointBoundaryObstructionData D)
+    G hG hboundary hpartition hzero hGLipschitz
+
+/-- The same planar Jacobian bound also transfers from the bundled
 point-quotient homeomorphism-plus-obstruction interface. -/
 theorem givens_jordan_region_volume_le_complex_jacobian_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
     {N : ℕ} (j : Fin N)
@@ -707,6 +728,24 @@ theorem givens_mixedBoundaryArea_le_complex_jacobian_of_comp_continuous_adjacent
   rw [← volume_givensBoundaryCurve_jordan_region j hpartition hzero]
   exact givens_jordan_region_volume_le_complex_jacobian_of_comp_continuous_adjacentPreservingCylinderStripGluedPointBoundary
     hm j f hf hboundaryMap G hG hboundary hpartition hzero hGLipschitz
+
+/-- The same planar Lemma 5.4 inequality also transfers from the bundled
+point-quotient continuous-map-plus-obstruction interface. -/
+theorem givens_mixedBoundaryArea_le_complex_jacobian_of_continuousCylinderStripGluedPointBoundaryObstructionData
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → ℂ}
+    (D : ContinuousCylinderStripGluedPointBoundaryObstructionData boundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
+    exists_givensBoundaryCurve_jordanPartition_at_origin j
+  rw [← volume_givensBoundaryCurve_jordan_region j hpartition hzero]
+  exact givens_jordan_region_volume_le_complex_jacobian_of_continuousCylinderStripGluedPointBoundaryObstructionData
+    j D G hG hboundary hpartition hzero hGLipschitz
 
 /-- The same planar Lemma 5.4 inequality also transfers from the bundled
 point-quotient homeomorphism-plus-obstruction interface. -/
@@ -1096,6 +1135,26 @@ theorem exists_givens_bounded_region_volume_le_complex_jacobian_of_comp_continuo
     j boundary
     (hasOddBoundaryDegreeObstruction_of_comp_continuous_adjacentPreservingCylinderStripGluedPointBoundary
       hm f hf hboundaryMap)
+    G hG hboundary hGLipschitz
+
+/-- The same bounded-region conclusion also transfers from the bundled
+point-quotient continuous-map-plus-obstruction interface. -/
+theorem exists_givens_bounded_region_volume_le_complex_jacobian_of_continuousCylinderStripGluedPointBoundaryObstructionData
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → ℂ}
+    (D : ContinuousCylinderStripGluedPointBoundaryObstructionData boundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  exact exists_givens_bounded_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_continuousCylinderStripGluedPointBoundaryObstructionData D)
     G hG hboundary hGLipschitz
 
 /-- The same bounded-region conclusion also transfers from the bundled
