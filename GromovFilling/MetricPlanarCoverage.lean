@@ -170,6 +170,31 @@ theorem givensMetricFourierMap_jordan_region_subset_range_of_abstractVariableDir
     hpartition hzero
 
 /-- Compact-domain coverage for the genuine metric Fourier map also follows
+from a boundary-respecting continuous map from any compact source carrying the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem givensMetricFourierMap_jordan_region_subset_range_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hboundary' : IsometricCircleBoundary boundary')
+    {N : ℕ} (j : Fin N)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range (givensMetricFourierMap boundary' N j) := by
+  exact givensBoundaryCurve_jordan_region_subset_range_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    j f hf hboundaryMap hmodels (givensMetricFourierMap boundary' N j)
+    (continuous_givensMetricFourierMap hboundary' N j)
+    (givensMetricFourierMap_on_boundary hboundary' j)
+    hpartition hzero
+
+/-- Compact-domain coverage for the genuine metric Fourier map also follows
 from a boundary-respecting homeomorphism to any compact source carrying the
 quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface. -/
@@ -189,6 +214,30 @@ theorem givensMetricFourierMap_jordan_region_subset_range_of_homeomorph_abstract
     region₁ ⊆ Set.range (givensMetricFourierMap boundary' N j) := by
   exact givensBoundaryCurve_jordan_region_subset_range_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
     j e hboundaryHomeomorph hmodels (givensMetricFourierMap boundary' N j)
+    (continuous_givensMetricFourierMap hboundary' N j)
+    (givensMetricFourierMap_on_boundary hboundary' j)
+    hpartition hzero
+
+/-- Compact-domain coverage for the genuine metric Fourier map also follows
+from a boundary-respecting continuous map from any compact source carrying the
+weaker directed abstract arbitrarily-fine polygonal-model interface. -/
+theorem givensMetricFourierMap_jordan_region_subset_range_of_compact_continuous_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (hboundary' : IsometricCircleBoundary boundary')
+    {N : ℕ} (j : Fin N)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range (givensMetricFourierMap boundary' N j) := by
+  exact givensBoundaryCurve_jordan_region_subset_range_of_compact_continuous_abstractVariableDirectedArbitrarilyFine
+    j f hf hboundaryMap hmodels (givensMetricFourierMap boundary' N j)
     (continuous_givensMetricFourierMap hboundary' N j)
     (givensMetricFourierMap_on_boundary hboundary' j)
     hpartition hzero
@@ -214,6 +263,30 @@ theorem givensMetricFourierMap_jordan_region_subset_range_of_homeomorph_abstract
     region₁ ⊆ Set.range (givensMetricFourierMap boundary' N j) := by
   exact givensBoundaryCurve_jordan_region_subset_range_of_homeomorph_abstractVariableDirectedArbitrarilyFine
     j e hboundaryHomeomorph hmodels (givensMetricFourierMap boundary' N j)
+    (continuous_givensMetricFourierMap hboundary' N j)
+    (givensMetricFourierMap_on_boundary hboundary' j)
+    hpartition hzero
+
+/-- Compact-domain coverage for the genuine metric Fourier map also follows
+from a boundary-respecting continuous map from any compact source carrying
+arbitrarily fine polygonal models. -/
+theorem givensMetricFourierMap_jordan_region_subset_range_of_compact_continuous_arbitrarily_fine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (hboundary' : IsometricCircleBoundary boundary')
+    {N : ℕ} (j : Fin N)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range (givensMetricFourierMap boundary' N j) := by
+  exact givensBoundaryCurve_jordan_region_subset_range_of_compact_continuous_arbitrarily_fine_models
+    j f hf hboundaryMap hmodels (givensMetricFourierMap boundary' N j)
     (continuous_givensMetricFourierMap hboundary' N j)
     (givensMetricFourierMap_on_boundary hboundary' j)
     hpartition hzero
@@ -532,6 +605,30 @@ theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_abstractVar
       (givensMetricFourierMap_on_boundary hboundary j)
 
 /-- Separation-free compact-domain coverage for the genuine metric Fourier map
+also transfers from a boundary-respecting continuous map from any compact
+source carrying the quotient-friendly directed abstract arbitrarily-fine
+polygonal-model interface. -/
+theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hboundary' : IsometricCircleBoundary boundary')
+    {N : ℕ} (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range (givensMetricFourierMap boundary' N j) := by
+  exact
+    exists_givensBoundaryCurve_bounded_region_subset_range_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+      j f hf hboundaryMap hmodels (givensMetricFourierMap boundary' N j)
+      (continuous_givensMetricFourierMap hboundary' N j)
+      (givensMetricFourierMap_on_boundary hboundary' j)
+
+/-- Separation-free compact-domain coverage for the genuine metric Fourier map
 also transfers from a boundary-respecting homeomorphism to any compact source
 carrying the quotient-friendly directed abstract arbitrarily-fine
 polygonal-model interface. -/
@@ -555,6 +652,30 @@ theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_homeomorph_
       (givensMetricFourierMap_on_boundary hboundary' j)
 
 /-- Separation-free compact-domain coverage for the genuine metric Fourier map
+also transfers from a boundary-respecting continuous map from any compact
+source carrying the directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_compact_continuous_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (hboundary' : IsometricCircleBoundary boundary')
+    {N : ℕ} (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range (givensMetricFourierMap boundary' N j) := by
+  exact
+    exists_givensBoundaryCurve_bounded_region_subset_range_of_compact_continuous_abstractVariableDirectedArbitrarilyFine
+      j f hf hboundaryMap hmodels (givensMetricFourierMap boundary' N j)
+      (continuous_givensMetricFourierMap hboundary' N j)
+      (givensMetricFourierMap_on_boundary hboundary' j)
+
+/-- Separation-free compact-domain coverage for the genuine metric Fourier map
 also transfers from a boundary-respecting homeomorphism to any compact source
 carrying the directed abstract arbitrarily-fine polygonal-model interface. -/
 theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_homeomorph_abstractVariableDirectedArbitrarilyFine
@@ -573,6 +694,29 @@ theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_homeomorph_
   exact
     exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorph_abstractVariableDirectedArbitrarilyFine
       j e hboundaryHomeomorph hmodels (givensMetricFourierMap boundary' N j)
+      (continuous_givensMetricFourierMap hboundary' N j)
+      (givensMetricFourierMap_on_boundary hboundary' j)
+
+/-- Separation-free compact-domain coverage for the genuine metric Fourier map
+also transfers from a boundary-respecting continuous map from any compact
+source with arbitrarily fine polygonal models. -/
+theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_compact_continuous_arbitrarily_fine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (hboundary' : IsometricCircleBoundary boundary')
+    {N : ℕ} (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range (givensMetricFourierMap boundary' N j) := by
+  exact
+    exists_givensBoundaryCurve_bounded_region_subset_range_of_compact_continuous_arbitrarily_fine_models
+      j f hf hboundaryMap hmodels (givensMetricFourierMap boundary' N j)
       (continuous_givensMetricFourierMap hboundary' N j)
       (givensMetricFourierMap_on_boundary hboundary' j)
 

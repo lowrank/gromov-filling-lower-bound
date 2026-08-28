@@ -607,6 +607,33 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_abstractVariableDirect
 
 /-- Coverage also transfers from any compact source carrying the weaker
 quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface through a boundary-respecting continuous map into the target
+domain. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+        hmodels))
+    G hG hboundary hpartition hzero
+
+/-- Coverage also transfers from any compact source carrying the weaker
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface once a boundary-respecting homeomorphism identifies that source
 with the target domain. -/
 theorem givensBoundaryCurve_jordan_region_subset_range_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
@@ -629,6 +656,32 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_homeomorph_abstractVar
     j boundary'
     (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
       e hboundaryHomeomorph hmodels)
+    G hG hboundary hpartition hzero
+
+/-- Coverage also transfers from any compact source carrying the weaker
+directed abstract arbitrarily-fine polygonal-model interface through a
+boundary-respecting continuous map into the target domain. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_compact_continuous_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+        hmodels))
     G hG hboundary hpartition hzero
 
 /-- Coverage also transfers from any compact source carrying the weaker
@@ -656,6 +709,31 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_homeomorph_abstractVar
     j boundary'
     (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedArbitrarilyFine
       e hboundaryHomeomorph hmodels)
+    G hG hboundary hpartition hzero
+
+/-- Coverage also transfers from any compact source with arbitrarily fine
+polygonal models through a boundary-respecting continuous map into the
+target domain. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_compact_continuous_arbitrarily_fine_models
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_arbitrarilyFinePolygonalModels hmodels))
     G hG hboundary hpartition hzero
 
 /-- Coverage also transfers from any compact source with arbitrarily fine
@@ -723,7 +801,33 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_abstractVariab
     G hG hboundary
 
 /-- Separation-free coverage also transfers from a compact source carrying
- the quotient-friendly directed abstract arbitrarily-fine polygonal-model
+the quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface through a boundary-respecting continuous map into the target
+domain. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+        hmodels))
+    G hG hboundary
+
+/-- Separation-free coverage also transfers from a compact source carrying
+the quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface through a boundary-respecting homeomorphism. -/
 theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
     {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
@@ -768,6 +872,31 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_abstractVariab
 
 /-- Separation-free coverage also transfers from a compact source carrying
 the directed abstract arbitrarily-fine polygonal-model interface through a
+boundary-respecting continuous map into the target domain. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_compact_continuous_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+        hmodels))
+    G hG hboundary
+
+/-- Separation-free coverage also transfers from a compact source carrying
+the directed abstract arbitrarily-fine polygonal-model interface through a
 boundary-respecting homeomorphism. -/
 theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorph_abstractVariableDirectedArbitrarilyFine
     {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
@@ -788,6 +917,30 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorph_abs
     j boundary'
     (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedArbitrarilyFine
       e hboundaryHomeomorph hmodels)
+    G hG hboundary
+
+/-- Separation-free coverage also transfers from a compact source with
+arbitrarily fine polygonal models through a boundary-respecting continuous
+map into the target domain. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_compact_continuous_arbitrarily_fine_models
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y)
+    (hf : Continuous f)
+    (hboundaryMap : boundary' = f ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary' t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary'
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundaryMap
+      (hasOddBoundaryDegreeObstruction_of_arbitrarilyFinePolygonalModels hmodels))
     G hG hboundary
 
 /-- Separation-free coverage also transfers from a compact source with
