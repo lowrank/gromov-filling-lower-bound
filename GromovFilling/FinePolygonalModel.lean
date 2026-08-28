@@ -1867,6 +1867,37 @@ theorem hasOddBoundaryDegreeObstruction_of_nullhomotopy
     decide
   exact hnot hodd
 
+/-- The odd boundary-degree obstruction is invariant under homotopy of boundary
+loops inside the ambient space. -/
+theorem hasOddBoundaryDegreeObstruction_of_homotopy
+    {X : Type*} [TopologicalSpace X]
+    {boundary₀ boundary₁ : UnitAddCircle → X}
+    (F : C(I × UnitAddCircle, X))
+    (hF0 : ∀ t : UnitAddCircle, F (0, t) = boundary₀ t)
+    (hF1 : ∀ t : UnitAddCircle, F (1, t) = boundary₁ t)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary₀) :
+    HasOddBoundaryDegreeObstruction boundary₁ := by
+  intro H hH degree hdegree hodd
+  let Frev : C(I × UnitAddCircle, UnitAddCircle) :=
+    ⟨fun p ↦ H (F (reverseClosedUnitInterval p.1, p.2)),
+      hH.comp <| F.continuous.comp <|
+        (continuous_reverseClosedUnitInterval.comp continuous_fst).prodMk continuous_snd⟩
+  have hFrev0 : ∀ t : UnitAddCircle, Frev (0, t) = H (boundary₁ t) := by
+    intro t
+    have hrev : reverseClosedUnitInterval (0 : I) = (1 : I) := by
+      apply Subtype.ext
+      simp [reverseClosedUnitInterval]
+    rw [show Frev (0, t) = H (F (reverseClosedUnitInterval (0 : I), t)) by rfl, hrev, hF1]
+  have hFrev1 : ∀ t : UnitAddCircle, Frev (1, t) = H (boundary₀ t) := by
+    intro t
+    have hrev : reverseClosedUnitInterval (1 : I) = (0 : I) := by
+      apply Subtype.ext
+      simp [reverseClosedUnitInterval]
+    rw [show Frev (1, t) = H (F (reverseClosedUnitInterval (1 : I), t)) by rfl, hrev, hF0]
+  have hdegree₀ : HasCircleDegree (H ∘ boundary₀) degree :=
+    HasCircleDegree.of_homotopy hdegree Frev hFrev0 hFrev1
+  exact hobstruction H hH degree hdegree₀ hodd
+
 /-- The standard boundary of the closed unit square has degree zero against every
 continuous extension to the whole square, by contracting the boundary to the
 center along the radial homotopy. -/
@@ -3386,6 +3417,26 @@ def cylinderStripTopBoundary : UnitAddCircle → ClosedUnitInterval × UnitAddCi
     Continuous cylinderStripTopBoundary :=
   continuous_const.prodMk continuous_id
 
+/-- The lower boundary circle of the radial cylinder before passing to the glued
+quotient source. -/
+def cylinderStripBottomBoundary : UnitAddCircle → ClosedUnitInterval × UnitAddCircle :=
+  fun t ↦ (closedUnitIntervalStart, t)
+
+@[continuity] theorem continuous_cylinderStripBottomBoundary :
+    Continuous cylinderStripBottomBoundary :=
+  continuous_const.prodMk continuous_id
+
+/-- The lower boundary loop of the glued-strip point space. -/
+def cylinderStripGluedPointLowerBoundary {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    UnitAddCircle → CylinderStripGluedPointSpace P :=
+  cylinderStripPointQuotientMap P ∘ cylinderStripBottomBoundary
+
+@[continuity] theorem continuous_cylinderStripGluedPointLowerBoundary {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    Continuous (cylinderStripGluedPointLowerBoundary P) :=
+  (continuous_cylinderStripPointQuotientMap P).comp continuous_cylinderStripBottomBoundary
+
 /-- The actual boundary map of the glued-strip point space: the top circle of
 the strip descends unchanged to the quotient. -/
 def cylinderStripGluedPointBoundary {m : ℕ}
@@ -3398,11 +3449,48 @@ def cylinderStripGluedPointBoundary {m : ℕ}
     Continuous (cylinderStripGluedPointBoundary P) :=
   (continuous_cylinderStripPointQuotientMap P).comp continuous_cylinderStripTopBoundary
 
+@[simp] theorem cylinderStripGluedPointLowerBoundary_apply {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (t : UnitAddCircle) :
+    cylinderStripGluedPointLowerBoundary P t =
+      Quotient.mk (cylinderStripPointGluingSetoid P) (closedUnitIntervalStart, t) :=
+  rfl
+
 @[simp] theorem cylinderStripGluedPointBoundary_apply {m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) (t : UnitAddCircle) :
     cylinderStripGluedPointBoundary P t =
       Quotient.mk (cylinderStripPointGluingSetoid P) (closedUnitIntervalFinish, t) :=
   rfl
+
+/-- The quotient map itself is the canonical homotopy from the glued lower loop
+of the strip to the free upper boundary loop. -/
+def cylinderStripGluedPointBoundaryHomotopy {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) :
+    C(I × UnitAddCircle, CylinderStripGluedPointSpace P) :=
+  ⟨cylinderStripPointQuotientMap P, continuous_cylinderStripPointQuotientMap P⟩
+
+@[simp] theorem cylinderStripGluedPointBoundaryHomotopy_zero {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (t : UnitAddCircle) :
+    cylinderStripGluedPointBoundaryHomotopy P (0, t) =
+      cylinderStripGluedPointLowerBoundary P t :=
+  rfl
+
+@[simp] theorem cylinderStripGluedPointBoundaryHomotopy_one {m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (t : UnitAddCircle) :
+    cylinderStripGluedPointBoundaryHomotopy P (1, t) =
+      cylinderStripGluedPointBoundary P t :=
+  rfl
+
+/-- Any odd-degree obstruction available on the glued lower boundary loop of a
+strip quotient transports directly to its free upper boundary loop. -/
+theorem hasOddBoundaryDegreeObstruction_of_cylinderStripGluedPointLowerBoundary
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    (hobstruction : HasOddBoundaryDegreeObstruction (cylinderStripGluedPointLowerBoundary P)) :
+    HasOddBoundaryDegreeObstruction (cylinderStripGluedPointBoundary P) :=
+  hasOddBoundaryDegreeObstruction_of_homotopy
+    (cylinderStripGluedPointBoundaryHomotopy P)
+    (cylinderStripGluedPointBoundaryHomotopy_zero P)
+    (cylinderStripGluedPointBoundaryHomotopy_one P)
+    hobstruction
 
 @[simp] theorem cylinderStripPointQuotientMap_lower_pair_preserving {m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) {j : Fin (m + 1)}
