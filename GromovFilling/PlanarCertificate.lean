@@ -1657,6 +1657,403 @@ theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_n
     finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_nullhomotopy
       N area boundary center F hF0 hF1 hboundary (hbudget N) harea
 
+
+/-- The finite orientation-free Fourier certificate for complex-plane
+domains whose boundary extends continuously across the standard closed square. -/
+theorem finite_universal_ennreal_of_complex_planar_maps_of_closedUnitSquare_extension
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitSquare → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitSquareBoundary)
+    (G : Fin N → ℂ → ℂ)
+    (hG : ∀ j, Continuous (G j))
+    (hboundary : ∀ j t,
+      G j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (K : Fin N → ℝ≥0)
+    (hGLipschitz : ∀ j, LipschitzWith (K j) (G j))
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  apply finite_universal_ennreal_of_givens_coverage_budget N area
+    (fun j ↦ ∫⁻ x,
+      ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume)
+  · intro j
+    exact givens_mixedBoundaryArea_le_complex_jacobian_of_closedUnitSquare_extension
+      j boundary F hF hboundaryExtension (G j) (hG j) (hboundary j) (hGLipschitz j)
+  · exact hbudget
+
+/-- The finite orientation-free Fourier certificate for complex-plane
+domains whose boundary is identified with the standard closed-square boundary by
+ a homeomorphism.  This is the direct-extension route. -/
+theorem finite_universal_ennreal_of_complex_planar_maps_of_closedUnitSquare_homeomorph_direct
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (G : Fin N → ℂ → ℂ)
+    (hG : ∀ j, Continuous (G j))
+    (hboundary : ∀ j t,
+      G j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (K : Fin N → ℝ≥0)
+    (hGLipschitz : ∀ j, LipschitzWith (K j) (G j))
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  apply finite_universal_ennreal_of_givens_coverage_budget N area
+    (fun j ↦ ∫⁻ x,
+      ENNReal.ofReal |(fderiv ℝ (G j) x).det| ∂volume)
+  · intro j
+    exact givens_mixedBoundaryArea_le_complex_jacobian_of_closedUnitSquare_homeomorph_direct
+      j boundary e hboundaryHomeomorph (G j) (hG j) (hboundary j) (hGLipschitz j)
+  · exact hbudget
+
+/-- Planar Lemma 5.4 for the genuine metric distance-profile map when the
+boundary extends continuously across the standard closed square. -/
+theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_closedUnitSquare_extension
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitSquare → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
+  exact givens_mixedBoundaryArea_le_complex_jacobian_of_closedUnitSquare_extension
+    j boundary F hF hboundaryExtension (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    (givensMetricFourierMap_lipschitzWith hboundary N j)
+
+/-- Planar Lemma 5.4 for the genuine metric distance-profile map when the
+boundary is identified with the standard closed-square boundary by a
+homeomorphism.  This is the direct-extension route. -/
+theorem givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_closedUnitSquare_homeomorph_direct
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
+  exact givens_mixedBoundaryArea_le_complex_jacobian_of_closedUnitSquare_homeomorph_direct
+    j boundary e hboundaryHomeomorph (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    (givensMetricFourierMap_lipschitzWith hboundary N j)
+
+/-- Bounded-region form of planar Lemma 5.4 for the genuine metric Fourier
+map when the boundary extends continuously across the standard closed square. -/
+theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_of_closedUnitSquare_extension
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitSquare → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
+  exact exists_givens_bounded_region_volume_le_complex_jacobian_of_closedUnitSquare_extension
+    j boundary F hF hboundaryExtension (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    (givensMetricFourierMap_lipschitzWith hboundary N j)
+
+/-- Bounded-region form of planar Lemma 5.4 for the genuine metric Fourier
+map when the boundary is identified with the standard closed-square boundary by a
+homeomorphism.  This is the direct-extension route. -/
+theorem exists_givensMetricFourierMap_bounded_region_volume_le_complex_jacobian_of_closedUnitSquare_homeomorph_direct
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume := by
+  exact exists_givens_bounded_region_volume_le_complex_jacobian_of_closedUnitSquare_homeomorph_direct
+    j boundary e hboundaryHomeomorph (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    (givensMetricFourierMap_lipschitzWith hboundary N j)
+
+/-- Finite slack-refined planar certificate when the boundary extends across
+the standard closed square. -/
+theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_closedUnitSquare_extension
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitSquare → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area := by
+  let defectMass : ℝ≥0∞ :=
+    ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume
+  have hbudget :
+      (∑ j : Fin N, ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) +
+          defectMass ≤ volume (Set.univ : Set ℂ) := by
+    simpa [defectMass, Measure.restrict_univ] using
+      sum_lintegral_givensMetricFourierMap_add_lintegral_distanceSlackDerivativeEnergyDefect_le_volume
+        boundary hboundary N Set.univ MeasurableSet.univ
+  refine (finite_universal_ennreal_of_givens_coverage_budget_add N
+    (volume (Set.univ : Set ℂ)) defectMass
+    (fun j ↦ ∫⁻ x, ENNReal.ofReal
+      |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ?_ hbudget).trans harea
+  intro j
+  exact givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_closedUnitSquare_extension
+    j boundary F hF hboundaryExtension hboundary
+
+/-- Infinite slack-refined planar certificate when the boundary extends across
+the standard closed square. -/
+theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_maps_of_closedUnitSquare_extension
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitSquare → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  exact
+    finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_closedUnitSquare_extension
+      N area boundary F hF hboundaryExtension hboundary harea
+
+/-- Finite slack-refined planar certificate when the boundary is identified
+with the standard closed-square boundary by a homeomorphism.  This is the
+direct-extension route. -/
+theorem finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_closedUnitSquare_homeomorph_direct
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area := by
+  let defectMass : ℝ≥0∞ :=
+    ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume
+  have hbudget :
+      (∑ j : Fin N, ∫⁻ x, ENNReal.ofReal
+        |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) +
+          defectMass ≤ volume (Set.univ : Set ℂ) := by
+    simpa [defectMass, Measure.restrict_univ] using
+      sum_lintegral_givensMetricFourierMap_add_lintegral_distanceSlackDerivativeEnergyDefect_le_volume
+        boundary hboundary N Set.univ MeasurableSet.univ
+  refine (finite_universal_ennreal_of_givens_coverage_budget_add N
+    (volume (Set.univ : Set ℂ)) defectMass
+    (fun j ↦ ∫⁻ x, ENNReal.ofReal
+      |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ?_ hbudget).trans harea
+  intro j
+  exact givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_closedUnitSquare_homeomorph_direct
+    j boundary e hboundaryHomeomorph hboundary
+
+/-- Infinite slack-refined planar certificate when the boundary is identified
+with the standard closed-square boundary by a homeomorphism.  This is the
+direct-extension route. -/
+theorem universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_maps_of_closedUnitSquare_homeomorph_direct
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant +
+      ∫⁻ x, ENNReal.ofReal (distanceSlackDerivativeEnergyDefect boundary x) ∂volume ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  exact
+    finite_universal_ennreal_add_lintegral_distanceSlackDerivativeEnergyDefect_of_metric_complex_planar_map_of_closedUnitSquare_homeomorph_direct
+      N area boundary e hboundaryHomeomorph hboundary harea
+
+/-- The complete finite planar certificate for the actual metric Fourier
+family when the boundary extends continuously across the standard closed
+square. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitSquare_extension
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitSquare → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  apply finite_universal_ennreal_of_givens_coverage_budget N area
+    (fun j ↦ ∫⁻ x, ENNReal.ofReal
+      |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume)
+  · exact fun j ↦
+      givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_closedUnitSquare_extension
+        j boundary F hF hboundaryExtension hboundary
+  · exact hbudget
+
+/-- Infinite-mode planar conclusion for the actual metric Fourier family when
+ the boundary extends continuously across the standard closed square. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_closedUnitSquare_extension
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitSquare → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitSquare_extension
+    N area boundary F hF hboundaryExtension hboundary (hbudget N)
+
+/-- The complete finite planar certificate for the actual metric Fourier
+family when the boundary is identified with the standard closed-square boundary
+by a homeomorphism.  This is the direct-extension route. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitSquare_homeomorph_direct
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget :
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  apply finite_universal_ennreal_of_givens_coverage_budget N area
+    (fun j ↦ ∫⁻ x, ENNReal.ofReal
+      |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume)
+  · exact fun j ↦
+      givensMetricFourierMap_mixedBoundaryArea_le_complex_jacobian_of_closedUnitSquare_homeomorph_direct
+        j boundary e hboundaryHomeomorph hboundary
+  · exact hbudget
+
+/-- Infinite-mode planar conclusion for the actual metric Fourier family when
+ the boundary is identified with the standard closed-square boundary by a
+ homeomorphism.  This is the direct-extension route. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_closedUnitSquare_homeomorph_direct
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        ∫⁻ x, ENNReal.ofReal
+          |(fderiv ℝ (givensMetricFourierMap boundary N j) x).det| ∂volume) ≤
+        area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitSquare_homeomorph_direct
+    N area boundary e hboundaryHomeomorph hboundary (hbudget N)
+
+/-- The finite planar certificate with coordinate-energy budget when the
+boundary extends continuously across the standard closed square. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_closedUnitSquare_extension
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitSquare → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget :
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  have hbudget' :
+      ∀ᵐ x ∂volume.restrict (Set.univ : Set ℂ),
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2 :=
+    ae_restrict_of_ae hbudget
+  refine (finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitSquare_extension
+    N (volume (Set.univ : Set ℂ)) boundary F hF hboundaryExtension hboundary ?_).trans harea
+  simpa only [Measure.restrict_univ] using
+    sum_lintegral_givensMetricFourierMap_le_volume_of_coordinateEnergy
+      boundary hboundary N Set.univ MeasurableSet.univ hbudget'
+
+/-- Infinite-mode planar certificate with coordinate-energy budget when the
+boundary extends continuously across the standard closed square. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_closedUnitSquare_extension
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (F : ClosedUnitSquare → ℂ) (hF : Continuous F)
+    (hboundaryExtension : boundary = F ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget : ∀ N : ℕ,
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact
+    finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_closedUnitSquare_extension
+      N area boundary F hF hboundaryExtension hboundary (hbudget N) harea
+
+/-- The finite planar certificate with coordinate-energy budget when the
+boundary is identified with the standard closed-square boundary by a
+homeomorphism.  This is the direct-extension route. -/
+theorem finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_closedUnitSquare_homeomorph_direct
+    (N : ℕ) (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget :
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  have hbudget' :
+      ∀ᵐ x ∂volume.restrict (Set.univ : Set ℂ),
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2 :=
+    ae_restrict_of_ae hbudget
+  refine (finite_universal_ennreal_of_metric_complex_planar_map_of_closedUnitSquare_homeomorph_direct
+    N (volume (Set.univ : Set ℂ)) boundary e hboundaryHomeomorph hboundary ?_).trans harea
+  simpa only [Measure.restrict_univ] using
+    sum_lintegral_givensMetricFourierMap_le_volume_of_coordinateEnergy
+      boundary hboundary N Set.univ MeasurableSet.univ hbudget'
+
+/-- Infinite-mode planar certificate with coordinate-energy budget when the
+boundary is identified with the standard closed-square boundary by a
+homeomorphism.  This is the direct-extension route. -/
+theorem universal_ennreal_of_metric_complex_planar_maps_of_coordinateEnergy_of_closedUnitSquare_homeomorph_direct
+    (area : ℝ≥0∞)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hbudget : ∀ N : ℕ,
+      ∀ᵐ x ∂volume,
+        (∑ k : Fin N, complexDerivativeEnergy
+          (fderiv ℝ (oddProfileFourierMap boundary (oddMode k)) x)) ≤ 2)
+    (harea : volume (Set.univ : Set ℂ) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact
+    finite_universal_ennreal_of_metric_complex_planar_map_of_coordinateEnergy_of_closedUnitSquare_homeomorph_direct
+      N area boundary e hboundaryHomeomorph hboundary (hbudget N) harea
+
 end
 
 end GromovFilling
