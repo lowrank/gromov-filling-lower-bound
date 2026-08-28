@@ -160,7 +160,9 @@ needs:
    `HomeomorphCylinderStripGluedArbitrarilyFineData` interface whose concrete
    planar certificate entry points are formalized. Its homeomorphism-level wrappers
    now reach the planar coverage, Jacobian, slack-defect, and certificate
-   statements.  The stronger directed interface
+   statements, and the generic and metric source-chart systems now also have
+   the corresponding bundled and unbundled homeomorphism-plus-glued-strip
+   entry points.  The stronger directed interface
    `HasAbstractVariableDirectedArbitrarilyFinePolygonalModels` and the
    undirected interfaces `HasArbitrarilyFinePolygonalModels` /
    `HasFinePolygonalModels` are also formalized and still suffice when

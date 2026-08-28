@@ -661,6 +661,50 @@ theorem ComplexSourceChartSystem.universal_ennreal_of_cylinderStripGlued_data
   S.universal_ennreal_of_cylinderStripGluedArbitrarilyFineData
     (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
 
+/-- The bundled homeomorphism-plus-glued-strip interface supplies the generic
+source-chart certificate through the homeomorphism-transfer route. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary') :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedArbitrarilyFineData D)
+
+/-- The original unbundled homeomorphism-plus-glued-strip hypothesis likewise
+feeds the generic source-chart certificate by first repackaging it into the
+bundled interface. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_homeomorph_cylinderStripGlued_data
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle))) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    (homeomorphCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data
+      e hboundaryHomeomorph hmodels)
+
 /-- Coverage also transfers from a compact source carrying the quotient-friendly
  directed abstract arbitrarily-fine polygonal-model interface once a
  boundary-respecting homeomorphism identifies that source with the target of a
@@ -944,6 +988,54 @@ theorem ComplexSourceChartSystem.universal_ennreal_add_of_cylinderStripGlued_dat
     ENNReal.ofReal universalConstant + defect ≤ area :=
   S.universal_ennreal_add_of_cylinderStripGluedArbitrarilyFineData
     (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
+    hbudget
+
+/-- The bundled homeomorphism-plus-glued-strip interface also supplies the
+additive-defect generic source-chart certificate through the homeomorphism
+transfer route. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedArbitrarilyFineData D)
+    hbudget
+
+/-- The original unbundled homeomorphism-plus-glued-strip hypothesis likewise
+feeds the additive-defect generic source-chart certificate after repackaging. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_cylinderStripGlued_data
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    (homeomorphCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data
+      e hboundaryHomeomorph hmodels)
     hbudget
 
 /-- The additive-defect generic source-chart certificate also transfers from a
@@ -1418,6 +1510,49 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_of_cylinderStripGlued_d
   S.universal_ennreal_of_cylinderStripGluedArbitrarilyFineData
     (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
 
+/-- The bundled homeomorphism-plus-glued-strip interface supplies the metric
+source-chart certificate through the homeomorphism-transfer route. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary') :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedArbitrarilyFineData D)
+
+/-- The original unbundled homeomorphism-plus-glued-strip hypothesis likewise
+feeds the metric source-chart certificate after repackaging. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_homeomorph_cylinderStripGlued_data
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle))) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    (homeomorphCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data
+      e hboundaryHomeomorph hmodels)
+
 /-- The metric source-chart certificate also transfers from a compact source
  carrying the quotient-friendly directed abstract arbitrarily-fine polygonal-
  model interface through a boundary-respecting homeomorphism. -/
@@ -1699,6 +1834,54 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_cylinderStripGlu
     ENNReal.ofReal universalConstant + defect ≤ area :=
   S.universal_ennreal_add_of_cylinderStripGluedArbitrarilyFineData
     (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
+    hbudget
+
+/-- The bundled homeomorphism-plus-glued-strip interface also supplies the
+additive-defect metric source-chart certificate through the homeomorphism
+transfer route. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData boundary boundary')
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedArbitrarilyFineData D)
+    hbudget
+
+/-- The original unbundled homeomorphism-plus-glued-strip hypothesis likewise
+feeds the additive-defect metric source-chart certificate after repackaging. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_cylinderStripGlued_data
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)))
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_homeomorph_cylinderStripGluedArbitrarilyFineData
+    (homeomorphCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data
+      e hboundaryHomeomorph hmodels)
     hbudget
 
 /-- The additive-defect metric source-chart certificate also transfers from a
