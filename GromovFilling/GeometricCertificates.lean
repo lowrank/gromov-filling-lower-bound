@@ -5,8 +5,7 @@ import GromovFilling.Certificates
 # Geometric certificate endpoints
 
 This file exposes the currently formalized orientation-free certificate
-statements at the exact geometric interfaces coming from the square
-homeomorphism plus glued-strip route.
+statements at the geometric interfaces currently available in the development.
 -/
 
 open scoped ENNReal NNReal

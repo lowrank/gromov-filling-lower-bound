@@ -124,16 +124,19 @@ runs both checks on every push and pull request.
   exact region area, and the Jacobian budget for both abstract planar maps
   and the genuine metric Fourier maps;
 - the algebraic/numerical conclusions of the orientation-free and oriented
-  certificates at their stated geometric interfaces;
+  certificates at their stated geometric interfaces, including the oriented
+  disk/square extension, disk-homeomorphism, and square-homeomorphism-plus-
+  glued-strip endpoint wrappers;
 - fixed-endpoint path-homotopy invariance of closed `1`-form curve
   integrals, together with the free-loop equal-side cancellation criterion
   for square homotopies, the induced `UnitAddCircle` loop and circle
-  nullhomotopy wrappers, the direct closed-disk extension and
-  closed-disk-homeomorphism vanishing theorems, the direct closed-disk and
-  closed-square Stokes norm bounds, the resulting disk / square direct and
-  extension oriented certificate wrappers, and the resulting nullhomotopic-
-  loop vanishing statement, packaged at a reusable Euclidean chart-level
-  interface for the future oriented Stokes/comass argument;
+  nullhomotopy wrappers, the direct closed-disk and closed-square extension
+  vanishing theorems, the closed-disk extension/homeomorphism and closed-
+  square extension/homeomorphism Stokes norm bounds, the resulting disk /
+  square direct and extension oriented certificate wrappers, and the
+  resulting nullhomotopic-loop vanishing statement, packaged at a reusable
+  Euclidean chart-level interface for the future oriented Stokes/comass
+  argument;
 - the explicit square-center directed polygonal-model construction on the
   closed square and closed disk boundaries, together with transfer of that
   directed arbitrarily-fine interface to every compact metric boundary
