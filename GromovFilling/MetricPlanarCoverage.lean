@@ -278,6 +278,69 @@ theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_closedUnitD
     (givensMetricFourierMap_on_boundary hboundary j)
 
 /-- If the boundary is identified with the standard closed-disk boundary by a
+homeomorphism, explicit checkerboard cylinder-strip data already supplies the
+needed odd-degree obstruction, so the genuine metric Fourier map covers the
+Jordan region at the origin without any extra topological hypothesis. -/
+theorem givensMetricFourierMap_jordan_region_subset_range_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (edge : CylinderStripEdge n m),
+        edge ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match edge with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε)
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact givensBoundaryCurve_jordan_region_subset_range_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    j e hboundaryHomeomorph hmodels (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    hpartition hzero
+
+/-- Separation-free coverage for the genuine metric Fourier map also follows
+from explicit checkerboard cylinder-strip data transported across a
+boundary-respecting closed-disk homeomorphism. -/
+theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (edge : CylinderStripEdge n m),
+        edge ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match edge with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε)
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    j e hboundaryHomeomorph hmodels (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+
+/-- If the boundary is identified with the standard closed-disk boundary by a
 homeomorphism, the genuine metric Fourier map covers the Jordan region at the
 origin directly from the closed-disk obstruction, with no polygonal-model
 hypothesis. -/

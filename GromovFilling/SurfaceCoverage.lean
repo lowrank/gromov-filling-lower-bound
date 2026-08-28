@@ -398,6 +398,74 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitDisk
     G hG hboundary
 
 /-- If the boundary is identified with the standard closed-disk boundary by a
+homeomorphism, explicit checkerboard cylinder-strip data already supplies the
+odd boundary-degree obstruction, so the Jordan region at the origin is covered
+without any extra topological hypothesis on the target boundary. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (edge : CylinderStripEdge n m),
+        edge ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match edge with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_cylinderStrip_data
+      e hboundaryHomeomorph hmodels)
+    G hG hboundary hpartition hzero
+
+/-- The separation-free coverage conclusion also follows from explicit
+checkerboard cylinder-strip data transported across a boundary-respecting
+closed-disk homeomorphism. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitDiskBoundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (edge : CylinderStripEdge n m),
+        edge ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match edge with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_cylinderStrip_data
+      e hboundaryHomeomorph hmodels)
+    G hG hboundary
+
+/-- If the boundary is identified with the standard closed-disk boundary by a
 homeomorphism, the Jordan region containing the origin is covered directly from
 the closed-disk odd-degree obstruction, with no polygonal-model hypothesis. -/
 theorem givensBoundaryCurve_jordan_region_subset_range_of_closedUnitDisk_homeomorph_direct
