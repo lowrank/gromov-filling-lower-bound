@@ -412,6 +412,89 @@ theorem curveIntegral_eq_zero_of_closedUnitDiskHomeomorphBoundaryExtension_of_di
     (curveIntegral_eq_zero_of_closedUnitDiskHomeomorphMap_of_diffContOnCl
       (e := e) (F := F) (ht := ht) hω hdω_symm hcontdiff)
 
+/-- The closed unit square boundary as a bundled continuous map. -/
+def closedUnitSquareBoundaryContinuousMap : C(UnitAddCircle, ClosedUnitSquare) :=
+  ⟨closedUnitSquareBoundary, continuous_closedUnitSquareBoundary⟩
+
+/-- The standard radial nullhomotopy of the closed unit square boundary. -/
+def radialClosedUnitSquareMap : C(I × UnitAddCircle, ClosedUnitSquare) :=
+  ⟨closedUnitSquareRadial, continuous_closedUnitSquareRadial⟩
+
+@[simp] lemma radialClosedUnitSquareMap_zero (u : UnitAddCircle) :
+    radialClosedUnitSquareMap (0, u) = closedUnitSquareCenter :=
+  closedUnitSquareRadial_start u
+
+@[simp] lemma radialClosedUnitSquareMap_one (u : UnitAddCircle) :
+    radialClosedUnitSquareMap (1, u) = closedUnitSquareBoundary u :=
+  closedUnitSquareRadial_finish u
+
+/-- Restrict a continuous closed-square map to the standard boundary circle. -/
+def ContinuousMap.compClosedUnitSquareBoundary
+    {E : Type*} [TopologicalSpace E] (F : C(ClosedUnitSquare, E)) :
+    C(UnitAddCircle, E) :=
+  F.comp closedUnitSquareBoundaryContinuousMap
+
+/-- Every continuous closed-square map canonically gives a nullhomotopy of its
+boundary loop. -/
+def ContinuousMap.closedUnitSquareBoundaryNullhomotopy
+    {E : Type*} [TopologicalSpace E] (F : C(ClosedUnitSquare, E)) :
+    (ContinuousMap.const UnitAddCircle (F closedUnitSquareCenter)).Homotopy
+      (ContinuousMap.compClosedUnitSquareBoundary F) :=
+  circleNullhomotopy (F.comp radialClosedUnitSquareMap)
+    (by intro u; simp)
+    (by
+      intro u
+      change F (radialClosedUnitSquareMap (1, u)) = F (closedUnitSquareBoundary u)
+      rw [radialClosedUnitSquareMap_one])
+
+/-- A closed `1`-form has zero integral along the boundary loop of a continuous
+map from the closed unit square, provided the induced square homotopy satisfies
+the required `C²` hypothesis. -/
+theorem curveIntegral_eq_zero_of_closedUnitSquareMap_of_diffContOnCl
+    {𝕜 E G : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+    [NormedSpace ℝ E] [NormedAddCommGroup G] [NormedSpace 𝕜 G] [NormedSpace ℝ G]
+    {t : Set E} {ω : E → E →L[𝕜] G}
+    (F : C(ClosedUnitSquare, E))
+    (ht : ∀ a ∈ Ioo (0 : I) 1, ∀ b ∈ Ioo (0 : I) 1,
+      F (closedUnitSquareRadial (a, unitIntervalToUnitAddCircle b)) ∈ t)
+    (hω : DiffContOnCl ℝ ω t)
+    (hdω_symm : ∀ x ∈ t, ∀ u ∈ tangentConeAt ℝ t x, ∀ v ∈ tangentConeAt ℝ t x,
+      fderivWithin ℝ ω t x u v = fderivWithin ℝ ω t x v u)
+    (hcontdiff : ContDiffOn ℝ 2
+      (fun xy : ℝ × ℝ ↦
+        Set.IccExtend zero_le_one
+          ((circleHomotopyToUnitAddCirclePath
+            (ContinuousMap.closedUnitSquareBoundaryNullhomotopy F)).extend xy.1) xy.2)
+      (Icc 0 1)) :
+    ∫ᶜ x in unitAddCirclePath (ContinuousMap.compClosedUnitSquareBoundary F), ω x = 0 := by
+  exact curveIntegral_eq_zero_of_unitAddCircleHomotopy_of_diffContOnCl
+    (H := ContinuousMap.closedUnitSquareBoundaryNullhomotopy F) ht hω hdω_symm hcontdiff
+
+/-- The same boundary-vanishing statement when the boundary circle map is given
+separately together with a continuous closed-square extension. -/
+theorem curveIntegral_eq_zero_of_closedUnitSquareBoundaryExtension_of_diffContOnCl
+    {𝕜 E G : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+    [NormedSpace ℝ E] [NormedAddCommGroup G] [NormedSpace 𝕜 G] [NormedSpace ℝ G]
+    {t : Set E} {ω : E → E →L[𝕜] G}
+    {boundary : C(UnitAddCircle, E)}
+    (F : C(ClosedUnitSquare, E))
+    (hboundary : boundary = ContinuousMap.compClosedUnitSquareBoundary F)
+    (ht : ∀ a ∈ Ioo (0 : I) 1, ∀ b ∈ Ioo (0 : I) 1,
+      F (closedUnitSquareRadial (a, unitIntervalToUnitAddCircle b)) ∈ t)
+    (hω : DiffContOnCl ℝ ω t)
+    (hdω_symm : ∀ x ∈ t, ∀ u ∈ tangentConeAt ℝ t x, ∀ v ∈ tangentConeAt ℝ t x,
+      fderivWithin ℝ ω t x u v = fderivWithin ℝ ω t x v u)
+    (hcontdiff : ContDiffOn ℝ 2
+      (fun xy : ℝ × ℝ ↦
+        Set.IccExtend zero_le_one
+          ((circleHomotopyToUnitAddCirclePath
+            (ContinuousMap.closedUnitSquareBoundaryNullhomotopy F)).extend xy.1) xy.2)
+      (Icc 0 1)) :
+    ∫ᶜ x in unitAddCirclePath boundary, ω x = 0 := by
+  subst hboundary
+  exact curveIntegral_eq_zero_of_closedUnitSquareMap_of_diffContOnCl
+    (F := F) ht hω hdω_symm hcontdiff
+
 end CircleHomotopyOnUnitAddCircle
 
 section FreePathHomotopy
