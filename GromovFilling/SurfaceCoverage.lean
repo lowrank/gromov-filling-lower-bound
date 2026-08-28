@@ -1849,6 +1849,34 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_homeomorph_cylinderStr
       P e hboundaryHomeomorph hobstruction)
     G hG hboundary hpartition hzero
 
+/-- Coverage already transfers from any boundary obtained by a
+boundary-respecting continuous map from the free upper loop of the odd
+adjacent-preserving glued-strip quotient. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_comp_continuous_adjacentPreservingCylinderStripGluedPointBoundary
+    {m : ℕ} (hm : Odd m)
+    {Y : Type*} [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (f : CylinderStripGluedPointSpace
+      (adjacentPreservingCylinderStripLowerBoundaryPairing hm) → Y)
+    (hf : Continuous f)
+    (hboundaryMap : boundary =
+      f ∘ cylinderStripGluedPointBoundary
+        (adjacentPreservingCylinderStripLowerBoundaryPairing hm))
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous_adjacentPreservingCylinderStripGluedPointBoundary
+      hm f hf hboundaryMap)
+    G hG hboundary hpartition hzero
+
 /-- Coverage also transfers from the bundled point-quotient homeomorphism-plus-
 obstruction interface. -/
 theorem givensBoundaryCurve_jordan_region_subset_range_of_homeomorphCylinderStripGluedPointBoundaryObstructionData
@@ -2166,6 +2194,33 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_homeomorph_cyl
     j boundary
     (hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary
       P e hboundaryHomeomorph hobstruction)
+    G hG hboundary
+
+/-- Separation-free coverage already transfers from any boundary obtained
+by a boundary-respecting continuous map from the free upper loop of the odd
+adjacent-preserving glued-strip quotient. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_comp_continuous_adjacentPreservingCylinderStripGluedPointBoundary
+    {m : ℕ} (hm : Odd m)
+    {Y : Type*} [TopologicalSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (f : CylinderStripGluedPointSpace
+      (adjacentPreservingCylinderStripLowerBoundaryPairing hm) → Y)
+    (hf : Continuous f)
+    (hboundaryMap : boundary =
+      f ∘ cylinderStripGluedPointBoundary
+        (adjacentPreservingCylinderStripLowerBoundaryPairing hm))
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_comp_continuous_adjacentPreservingCylinderStripGluedPointBoundary
+      hm f hf hboundaryMap)
     G hG hboundary
 
 /-- Separation-free coverage also transfers from the bundled point-quotient
