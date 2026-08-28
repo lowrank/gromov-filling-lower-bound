@@ -429,6 +429,143 @@ theorem no_odd_integer_degree_of_polygonal_surface_local_lifts_variable
     exact sum_cyclicDegreeTurn degree
   · exact hodd.neg
 
+/-- Allowing each face-edge occurrence to follow its global edge either
+forward or backward does not change the mod-two vertex-incidence fact: the
+unordered pair of consecutive face vertices is what matters. -/
+theorem faceEven_of_variable_cyclic_face_data_with_edge_directions
+    {V E F : Type*} [DecidableEq V] [DecidableEq E]
+    (edgeEnds : E → V × V) (faceEdges : F → Finset E)
+    (faceSize : F → ℕ)
+    (faceVertex : ∀ f, Fin (faceSize f + 1) → V)
+    (faceEdge : ∀ f, Fin (faceSize f + 1) → E)
+    (faceEdgeForward : ∀ f, Fin (faceSize f + 1) → Bool)
+    (hfaceVertex : ∀ f, Function.Injective (faceVertex f))
+    (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
+    (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
+    (hends : ∀ f k, edgeEnds (faceEdge f k) =
+      if faceEdgeForward f k then
+        (faceVertex f k, faceVertex f (cyclicSucc k))
+      else
+        (faceVertex f (cyclicSucc k), faceVertex f k)) :
+    ∀ (f : F) (v : V),
+      (∑ e ∈ faceEdges f,
+        ((if v = (edgeEnds e).1 then (1 : ZMod 2) else 0) +
+          if v = (edgeEnds e).2 then (1 : ZMod 2) else 0)) = 0 := by
+  intro f v
+  rw [hfaceEdges f, Finset.sum_image
+    (fun x _hx y _hy hxy ↦ hfaceEdge f hxy)]
+  have hsum :
+      (∑ k : Fin (faceSize f + 1),
+        ((if v = (edgeEnds (faceEdge f k)).1 then (1 : ZMod 2) else 0) +
+          if v = (edgeEnds (faceEdge f k)).2 then (1 : ZMod 2) else 0)) =
+        (∑ k : Fin (faceSize f + 1),
+          ((if v = faceVertex f k then (1 : ZMod 2) else 0) +
+            if v = faceVertex f (cyclicSucc k) then (1 : ZMod 2) else 0)) := by
+    apply Finset.sum_congr rfl
+    intro k _hk
+    by_cases hk : faceEdgeForward f k
+    · simp [hends, hk]
+    · simp [hends, hk, add_comm]
+  rw [hsum]
+  exact mapped_cyclic_face_vertex_incidence_even
+    (faceVertex f) (hfaceVertex f) v
+
+/-- For a face-edge occurrence, the parity of the edge turn depends only on
+its two endpoint transition values, regardless of whether the face traverses
+that global edge forward or backward. -/
+lemma integerEdgeParity_eq_transition_sum_of_face_edge_direction
+    {V E F : Type*} [DecidableEq V] [DecidableEq E]
+    (edgeEnds : E → V × V)
+    (faceSize : F → ℕ)
+    (faceVertex : ∀ f, Fin (faceSize f + 1) → V)
+    (faceEdge : ∀ f, Fin (faceSize f + 1) → E)
+    (faceEdgeForward : ∀ f, Fin (faceSize f + 1) → Bool)
+    (transition : F → V → ℤ) (turn : E → ℤ)
+    (hends : ∀ f k, edgeEnds (faceEdge f k) =
+      if faceEdgeForward f k then
+        (faceVertex f k, faceVertex f (cyclicSucc k))
+      else
+        (faceVertex f (cyclicSucc k), faceVertex f k))
+    (hlocal : ∀ f k,
+      turn (faceEdge f k) =
+        if faceEdgeForward f k then
+          transition f (faceVertex f k) -
+            transition f (faceVertex f (cyclicSucc k))
+        else
+          transition f (faceVertex f (cyclicSucc k)) -
+            transition f (faceVertex f k))
+    (f : F) (k : Fin (faceSize f + 1)) :
+    integerEdgeParity turn (faceEdge f k) =
+      (transition f (edgeEnds (faceEdge f k)).1 : ZMod 2) +
+        (transition f (edgeEnds (faceEdge f k)).2 : ZMod 2) := by
+  by_cases hk : faceEdgeForward f k
+  · simp [integerEdgeParity, hlocal, hends, hk, sub_eq_add_neg,
+      ZMod.neg_eq_self_mod_two]
+  · simp [integerEdgeParity, hlocal, hends, hk, sub_eq_add_neg,
+      ZMod.neg_eq_self_mod_two, add_comm]
+
+/-- Variable-face-size polygonal obstruction allowing each face to traverse a
+shared global edge in either local direction.  This removes the artificial
+need to orient every face boundary by the same global edge orientation. -/
+theorem no_odd_integer_degree_of_polygonal_surface_local_lifts_variable_with_edge_directions
+    {V E F : Type*} [Fintype V] [Fintype E] [Fintype F]
+    [DecidableEq V] [DecidableEq E]
+    (edgeEnds : E → V × V) (faceEdges : F → Finset E)
+    (boundaryEdges : Finset E)
+    (hcount : ∀ e : E,
+      (Finset.univ.filter fun f ↦ e ∈ faceEdges f).card =
+        if e ∈ boundaryEdges then 1 else 2)
+    (faceSize : F → ℕ)
+    (faceVertex : ∀ f, Fin (faceSize f + 1) → V)
+    (faceEdge : ∀ f, Fin (faceSize f + 1) → E)
+    (faceEdgeForward : ∀ f, Fin (faceSize f + 1) → Bool)
+    (hfaceVertex : ∀ f, Function.Injective (faceVertex f))
+    (hfaceEdge : ∀ f, Function.Injective (faceEdge f))
+    (hfaceEdges : ∀ f, faceEdges f = Finset.univ.image (faceEdge f))
+    (hends : ∀ f k, edgeEnds (faceEdge f k) =
+      if faceEdgeForward f k then
+        (faceVertex f k, faceVertex f (cyclicSucc k))
+      else
+        (faceVertex f (cyclicSucc k), faceVertex f k))
+    (transition : F → V → ℤ) (turn : E → ℤ)
+    (hlocal : ∀ f k,
+      turn (faceEdge f k) =
+        if faceEdgeForward f k then
+          transition f (faceVertex f k) -
+            transition f (faceVertex f (cyclicSucc k))
+        else
+          transition f (faceVertex f (cyclicSucc k)) -
+            transition f (faceVertex f k))
+    {boundarySize : ℕ} (boundaryEdge : Fin (boundarySize + 1) → E)
+    (hboundaryEdge : Function.Injective boundaryEdge)
+    (hboundary : boundaryEdges = Finset.univ.image boundaryEdge)
+    (degree : ℤ)
+    (hturn : ∀ k, turn (boundaryEdge k) = cyclicDegreeTurn degree k)
+    (hodd : Odd degree) : False := by
+  have hclosed : ∀ f : F,
+      ∑ e ∈ faceEdges f, integerEdgeParity turn e = 0 := by
+    apply locally_lifted_edge_cochain_closed edgeEnds faceEdges
+      (faceEven_of_variable_cyclic_face_data_with_edge_directions
+        edgeEnds faceEdges faceSize faceVertex faceEdge faceEdgeForward
+        hfaceVertex hfaceEdge hfaceEdges hends)
+      (fun f v ↦ (transition f v : ZMod 2))
+      (integerEdgeParity turn)
+    intro f e he
+    rw [hfaceEdges f] at he
+    rcases Finset.mem_image.mp he with ⟨k, _hk, hke⟩
+    subst e
+    exact integerEdgeParity_eq_transition_sum_of_face_edge_direction
+      edgeEnds faceSize faceVertex faceEdge faceEdgeForward
+      transition turn hends hlocal f k
+  apply no_odd_integer_boundary_degree_extension faceEdges boundaryEdges
+    (modTwo_incidence_of_face_count faceEdges boundaryEdges hcount)
+    turn hclosed (-degree)
+  · rw [hboundary, Finset.sum_image
+      (fun x _hx y _hy hxy ↦ hboundaryEdge hxy)]
+    simp_rw [hturn]
+    exact sum_cyclicDegreeTurn degree
+  · exact hodd.neg
+
 end
 
 end GromovFilling
