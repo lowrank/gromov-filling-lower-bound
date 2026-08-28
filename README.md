@@ -95,7 +95,8 @@ runs both checks on every push and pull request.
   obstruction, with direct wrappers from nullhomotopies and the
   quotient-friendly directed abstract arbitrarily-fine polygonal-model
   interface, and the same local, source-chart, and metric source-chart
-  layers now also carry a common additive defect term unchanged, and
+  layers now also carry a common additive defect term unchanged at
+  both the finite and bundled infinite-system levels, and
   the metric source-chart interface now has the same closed-disk,
   closed-square, and disk-homeomorphism topological wrappers as the
   older whole-plane certificate theorems;

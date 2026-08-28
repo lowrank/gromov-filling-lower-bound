@@ -85,6 +85,16 @@ theorem ComplexLocalCertificateSystem.universal_ennreal
   intro N
   exact (S.data N).finite_universal_ennreal area (S.budget N)
 
+/-- A bundled system of chartwise local planar certificates also carries any
+common additive defect term unchanged through the limit. -/
+theorem ComplexLocalCertificateSystem.universal_ennreal_add
+    {area defect : ℝ≥0∞} (S : ComplexLocalCertificateSystem area)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  exact (S.data N).finite_universal_ennreal_add area defect (hbudget N)
+
 /-- Source-side finite chart data for the actual metric Fourier family,
 before any topological witness has been supplied.  This isolates the purely
 chartwise planar input from the odd-degree obstruction that will later force
@@ -322,6 +332,17 @@ theorem ComplexSourceChartCertificateSystem.universal_ennreal
   intro N
   exact (S.data N).finite_universal_ennreal area (S.budget N)
 
+
+/-- A bundled source-side chart certificate system also carries any common
+additive defect term unchanged through the limit. -/
+theorem ComplexSourceChartCertificateSystem.universal_ennreal_add
+    {X : Type*} {area defect : ℝ≥0∞} (S : ComplexSourceChartCertificateSystem X area)
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N, ((S.data N).toFiniteComplexLocalCertificateData).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  exact (S.data N).finite_universal_ennreal_add area defect (hbudget N)
 /-- A canonical choice of the Jordan region of the mixed `j`th boundary curve
 that contains the origin. -/
 def givensBoundaryCurveChosenJordanRegion {N : ℕ} (j : Fin N) : Set ℂ :=
@@ -451,6 +472,19 @@ theorem ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal
   exact (S.data N).finite_universal_ennreal area (S.budget N)
 
 /-- Source-side finite chart data for the actual metric Fourier family, with
+
+/-- An obstruction-level bundled source-side chart certificate system also
+carries any common additive defect term unchanged through the limit. -/
+theorem ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal_add
+    {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystemOfOddBoundaryDegreeObstruction X boundary area)
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (((S.data N).toFiniteComplexSourceChartCertificateData).toFiniteComplexLocalCertificateData).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  exact (S.data N).finite_universal_ennreal_add area defect (hbudget N)
 the topological witness again generated internally from an odd boundary-degree
 obstruction.  This is the direct chart-globalization interface for the genuine
 mixed metric maps. -/
@@ -544,6 +578,17 @@ theorem MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_e
   apply universal_ennreal_bound_of_finite_certificates
   intro N
   exact (S.data N).finite_universal_ennreal S.hboundary area (S.budget N)
+
+/-- A bundled metric source-chart certificate system at the obstruction level
+also carries any common additive defect term unchanged through the limit. -/
+theorem MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal_add
+    {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction X boundary area)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass S.hboundary j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates_add
+  intro N
+  exact (S.data N).finite_universal_ennreal_add S.hboundary area defect (hbudget N)
 
 /-- A metric source-chart system becomes an obstruction-level one once an odd
 boundary-degree obstruction has been supplied. -/
