@@ -2561,6 +2561,22 @@ theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_homeomorph
   hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_compact_continuous
     e e.continuous_toFun hboundary hmodels
 
+/-- A boundary-respecting continuous map from a compact source carrying
+directed variable-face-size abstract arbitrarily fine polygonal models
+transfers the corresponding map-dependent directed fine interface to a
+compact target boundary. -/
+theorem hasAbstractVariableDirectedFinePolygonalModels_of_compact_continuous_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractVariableDirectedFinePolygonalModels boundary' :=
+  hasAbstractVariableDirectedFinePolygonalModels_of_abstractVariableDirectedArbitrarilyFine
+    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_compact_continuous
+      f hf hboundary hmodels)
+
 /-- A boundary-respecting homeomorphism from a compact source carrying
 directed variable-face-size abstract arbitrarily fine polygonal models
 transfers the corresponding map-dependent directed fine interface to the
@@ -2576,6 +2592,20 @@ theorem hasAbstractVariableDirectedFinePolygonalModels_of_homeomorph_abstractVar
   hasAbstractVariableDirectedFinePolygonalModels_of_abstractVariableDirectedArbitrarilyFine
     (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_homeomorph
       e hboundary hmodels)
+
+/-- A boundary-respecting continuous map from a compact source carrying the
+directed abstract arbitrarily-fine polygonal-model interface transfers the odd
+boundary-degree obstruction to the target boundary. -/
+theorem hasOddBoundaryDegreeObstruction_of_compact_continuous_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary) :
+    HasOddBoundaryDegreeObstruction boundary' :=
+  hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+      hmodels)
 
 /-- A boundary-respecting homeomorphism from a compact source carrying the
 directed abstract arbitrarily-fine polygonal-model interface transfers the odd
@@ -2874,6 +2904,22 @@ theorem hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_hom
   hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_compact_continuous
     e e.continuous_toFun hboundary hmodels
 
+/-- A boundary-respecting continuous map from a compact source carrying
+quotient-friendly directed abstract arbitrarily fine polygonal models
+transfers the corresponding map-dependent quotient-friendly directed fine
+interface to a compact target boundary. -/
+theorem hasAbstractVariableDirectedQuotientFinePolygonalModels_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractVariableDirectedQuotientFinePolygonalModels boundary' :=
+  hasAbstractVariableDirectedQuotientFinePolygonalModels_of_abstractVariableDirectedQuotientArbitrarilyFine
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_compact_continuous
+      f hf hboundary hmodels)
+
 /-- A boundary-respecting homeomorphism from a compact source carrying
 quotient-friendly directed abstract arbitrarily fine polygonal models
 transfers the corresponding map-dependent quotient-friendly directed fine
@@ -2889,6 +2935,21 @@ theorem hasAbstractVariableDirectedQuotientFinePolygonalModels_of_homeomorph_abs
   hasAbstractVariableDirectedQuotientFinePolygonalModels_of_abstractVariableDirectedQuotientArbitrarilyFine
     (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_homeomorph
       e hboundary hmodels)
+
+/-- A boundary-respecting continuous map from a compact source carrying the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface transfers the odd boundary-degree obstruction to the target
+boundary. -/
+theorem hasOddBoundaryDegreeObstruction_of_compact_continuous_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary) :
+    HasOddBoundaryDegreeObstruction boundary' :=
+  hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+      hmodels)
 
 /-- A boundary-respecting homeomorphism from a compact source carrying the
 quotient-friendly directed abstract arbitrarily-fine polygonal-model
@@ -7088,6 +7149,20 @@ theorem hasFinePolygonalModels_of_arbitrarilyFine
   intro f e he x
   exact hδH (D.mesh f e he x)
 
+/-- Continuous compact images inherit the map-dependent fine polygonal-model
+interface after transporting arbitrarily fine geometric models and then using
+uniform continuity. -/
+theorem hasFinePolygonalModels_of_compact_continuous_arbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary) :
+    HasFinePolygonalModels boundary' :=
+  hasFinePolygonalModels_of_arbitrarilyFine
+    (hasArbitrarilyFinePolygonalModels_of_compact_continuous f hf hboundary hmodels)
+
 /-- Homeomorphic compact images inherit the map-dependent fine polygonal-model
 interface after transporting arbitrarily fine geometric models and then using
 uniform continuity. -/
@@ -7143,6 +7218,19 @@ theorem hasOddBoundaryDegreeObstruction_of_arbitrarilyFinePolygonalModels
     HasOddBoundaryDegreeObstruction boundary :=
   hasOddBoundaryDegreeObstruction_of_finePolygonalModels
     (hasFinePolygonalModels_of_arbitrarilyFine hmodels)
+
+/-- A boundary-respecting continuous map from a compact source carrying
+arbitrarily fine polygonal models transfers the odd boundary-degree
+obstruction to the target boundary. -/
+theorem hasOddBoundaryDegreeObstruction_of_compact_continuous_arbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [CompactSpace X] [TopologicalSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary) :
+    HasOddBoundaryDegreeObstruction boundary' :=
+  hasOddBoundaryDegreeObstruction_of_comp_continuous f hf hboundary
+    (hasOddBoundaryDegreeObstruction_of_arbitrarilyFinePolygonalModels hmodels)
 
 /-- A boundary-respecting homeomorphism from a compact source carrying
 arbitrarily fine polygonal models transfers the odd boundary-degree
