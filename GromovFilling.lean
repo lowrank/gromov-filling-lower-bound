@@ -35,6 +35,7 @@ import GromovFilling.Oriented
 import GromovFilling.BoundaryActionSeries
 import GromovFilling.Numerics
 import GromovFilling.Certificates
+import GromovFilling.GeometricCertificates
 
 /-!
 # Fourier certificates for Gromov's filling-area problem
