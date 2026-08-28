@@ -1312,6 +1312,46 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitDisk
       e hboundaryHomeomorph)
     G hG hboundary
 
+/-- Bundled explicit glued-strip quotient mesh data already supplies the odd
+boundary-degree obstruction, so the Jordan region at the origin is covered
+without any extra topological hypothesis on the target boundary. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_cylinderStripGluedArbitrarilyFineData
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_cylinderStripGluedArbitrarilyFineData hmodels)
+    G hG hboundary hpartition hzero
+
+/-- The separation-free coverage conclusion also follows from the bundled
+glued-strip quotient mesh-data interface. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_cylinderStripGluedArbitrarilyFineData
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {N : ℕ} (j : Fin N)
+    {boundary : UnitAddCircle → Y}
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary)
+    (G : Y → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_cylinderStripGluedArbitrarilyFineData hmodels)
+    G hG hboundary
+
 /-- Explicit glued-strip quotient data already supplies the odd
 boundary-degree obstruction, so the Jordan region at the origin is covered
 without any extra topological hypothesis on the target boundary. -/
@@ -1344,9 +1384,8 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_cylinderStripGlued_dat
       (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
     (hzero : 0 ∈ region₁) :
     region₁ ⊆ Set.range G :=
-  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
-    j boundary
-    (hasOddBoundaryDegreeObstruction_of_cylinderStripGlued_data hmodels)
+  givensBoundaryCurve_jordan_region_subset_range_of_cylinderStripGluedArbitrarilyFineData
+    j (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
     G hG hboundary hpartition hzero
 
 /-- The separation-free coverage conclusion also follows from explicit
@@ -1379,9 +1418,8 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_cylinderStripG
       IsOpen region ∧ IsConnected region ∧
       Bornology.IsBounded region ∧ 0 ∈ region ∧
       region ⊆ Set.range G :=
-  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
-    j boundary
-    (hasOddBoundaryDegreeObstruction_of_cylinderStripGlued_data hmodels)
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_cylinderStripGluedArbitrarilyFineData
+    j (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
     G hG hboundary
 
 /-- If the boundary is identified with the standard closed-disk boundary by a

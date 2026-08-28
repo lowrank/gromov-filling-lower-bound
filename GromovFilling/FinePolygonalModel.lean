@@ -5239,6 +5239,97 @@ def cylinderStripGluedAbstractVariableDirectedQuotientGeometricModel_of_mesh
 
 /-- A source-level wrapper reducing the quotient-friendly directed abstract
  existence theorem to explicit glued-strip quotient data. -/
+structure CylinderStripGluedMeshData
+    {X : Type*} [PseudoMetricSpace X]
+    (boundary : UnitAddCircle → X) (ε : ℝ) where
+  n : ℕ
+  m : ℕ
+  pairing : CylinderStripLowerBoundaryPairing m
+  hm : 0 < m
+  vertexPoint : CylinderStripGluedVertex n pairing → X
+  edgeToX : CylinderStripGluedEdge n pairing → ClosedUnitInterval → X
+  hedgeToX : ∀ e, Continuous (edgeToX e)
+  hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+    vertexPoint (cylinderStripGluedEdgeChosenEnds n pairing e).1
+  hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+    vertexPoint (cylinderStripGluedEdgeChosenEnds n pairing e).2
+  faceCenter : CylinderStripFace n m → X
+  mesh : ∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n pairing),
+    e ∈ cylinderStripGluedFaceEdges n pairing f → ∀ x : ClosedUnitInterval,
+      dist (faceCenter f) (edgeToX e x) < ε
+  boundaryPath : ∀ k x,
+    edgeToX (cylinderStripGluedBoundaryEdge n pairing k) x =
+      boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle)
+
+/-- The explicit quotient glued-strip mesh data needed downstream, bundled at
+one mesh scale. -/
+def CylinderStripGluedMeshData.toAbstractVariableDirectedQuotientGeometricPolygonalModel
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {ε : ℝ}
+    (D : CylinderStripGluedMeshData boundary ε) :
+    AbstractVariableDirectedQuotientGeometricPolygonalModel boundary ε :=
+  cylinderStripGluedAbstractVariableDirectedQuotientGeometricModel_of_mesh
+    D.pairing D.hm D.vertexPoint D.edgeToX D.hedgeToX D.hedgeStart
+    D.hedgeFinish D.faceCenter D.mesh D.boundaryPath
+
+/-- Explicit glued-strip quotient mesh data exist at every positive mesh
+scale. -/
+def HasCylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X]
+    (boundary : UnitAddCircle → X) : Prop :=
+  ∀ ε : ℝ, 0 < ε → Nonempty (CylinderStripGluedMeshData boundary ε)
+
+/-- Repackage the unbundled explicit glued-strip hypothesis as the bundled
+mesh-data interface. -/
+theorem hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data
+    {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X}
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
+      ∃ P : CylinderStripLowerBoundaryPairing m,
+      ∃ hm : 0 < m,
+      ∃ vertexPoint : CylinderStripGluedVertex n P → X,
+      ∃ edgeToX : CylinderStripGluedEdge n P → ClosedUnitInterval → X,
+      ∃ hedgeToX : ∀ e, Continuous (edgeToX e),
+      ∃ hedgeStart : ∀ e, edgeToX e closedUnitIntervalStart =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1,
+      ∃ hedgeFinish : ∀ e, edgeToX e closedUnitIntervalFinish =
+        vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2,
+      ∃ faceCenter : CylinderStripFace n m → X,
+        (∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+          e ∈ cylinderStripGluedFaceEdges n P f → ∀ x : ClosedUnitInterval,
+            dist (faceCenter f) (edgeToX e x) < ε) ∧
+        (∀ k x,
+          edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+            boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle))) :
+    HasCylinderStripGluedArbitrarilyFineData boundary := by
+  intro ε hε
+  obtain ⟨n, m, P, hm, vertexPoint, edgeToX, hedgeToX,
+      hedgeStart, hedgeFinish, faceCenter, hmesh, hboundaryPath⟩ := hmodels ε hε
+  exact ⟨{
+    n := n
+    m := m
+    pairing := P
+    hm := hm
+    vertexPoint := vertexPoint
+    edgeToX := edgeToX
+    hedgeToX := hedgeToX
+    hedgeStart := hedgeStart
+    hedgeFinish := hedgeFinish
+    faceCenter := faceCenter
+    mesh := hmesh
+    boundaryPath := hboundaryPath
+  }⟩
+
+/-- The bundled glued-strip mesh-data interface already implies the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface. -/
+theorem hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X}
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary) :
+    HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary := by
+  intro ε hε
+  obtain ⟨D⟩ := hmodels ε hε
+  exact ⟨D.toAbstractVariableDirectedQuotientGeometricPolygonalModel⟩
+
 theorem hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
     {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X}
     (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ,
@@ -5258,12 +5349,21 @@ theorem hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cyl
         (∀ k x,
           edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
             boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle))) :
-    HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary := by
-  intro ε hε
-  obtain ⟨n, m, P, hm, vertexPoint, edgeToX, hedgeToX,
-      hedgeStart, hedgeFinish, faceCenter, hmesh, hboundaryPath⟩ := hmodels ε hε
-  exact ⟨cylinderStripGluedAbstractVariableDirectedQuotientGeometricModel_of_mesh
-    P hm vertexPoint edgeToX hedgeToX hedgeStart hedgeFinish faceCenter hmesh hboundaryPath⟩
+    HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary :=
+  hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData
+    (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
+
+/-- Consequently bundled explicit glued-strip quotient mesh data at every
+positive scale already yields the odd boundary-degree obstruction on the
+remaining free boundary. -/
+theorem hasOddBoundaryDegreeObstruction_of_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X}
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData
+      hmodels)
 
 /-- Consequently explicit glued-strip quotient data at every positive mesh
  scale already yields the odd boundary-degree obstruction on the remaining
@@ -5289,9 +5389,8 @@ theorem hasOddBoundaryDegreeObstruction_of_cylinderStripGlued_data
           edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
             boundary ((angularSubdivisionParameter m k x : ℝ) : UnitAddCircle))) :
     HasOddBoundaryDegreeObstruction boundary :=
-  hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
-    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGlued_data
-      hmodels)
+  hasOddBoundaryDegreeObstruction_of_cylinderStripGluedArbitrarilyFineData
+    (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
 
 /-- Bundle explicit checkerboard-cylinder strip data into the directed abstract
 variable-face-size geometric polygonal-model interface on the square-cylinder

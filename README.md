@@ -60,8 +60,10 @@ runs both checks on every push and pull request.
   omitting face-vertex injectivity so it applies to quotient cell
   structures with repeated face vertices after gluing, together with its
   arbitrarily-fine, compact-map, and homeomorphism transport theorems, the
-  resulting odd boundary-degree obstruction, and the downstream homeomorph
-  wrappers that now reach the planar Jacobian and certificate layers;
+  resulting odd boundary-degree obstruction, a bundled explicit
+  `HasCylinderStripGluedArbitrarilyFineData` mesh-data interface for the
+  glued-strip quotient input, and downstream coverage wrappers from that
+  bundled interface;
 - the resulting coverage implication: an odd radial boundary degree forces
   the puncture into the extension image, hence every point in the bounded
   nonzero-degree component of a mixed Givens curve is covered;
@@ -152,8 +154,11 @@ needs:
    `HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels` is now
    formalized for cell decompositions where face vertices may repeat after
    gluing, it already transports across compact continuous maps and
-   homeomorphisms, and its homeomorphism-level wrappers now reach the planar
-   coverage, Jacobian, slack-defect, and certificate statements.  The stronger directed interface
+   homeomorphisms, and it now also has a bundled explicit
+   `HasCylinderStripGluedArbitrarilyFineData` source interface whose
+   coverage-level wrappers are formalized. Its homeomorphism-level wrappers
+   now reach the planar coverage, Jacobian, slack-defect, and certificate
+   statements.  The stronger directed interface
    `HasAbstractVariableDirectedArbitrarilyFinePolygonalModels` and the
    undirected interfaces `HasArbitrarilyFinePolygonalModels` /
    `HasFinePolygonalModels` are also formalized and still suffice when

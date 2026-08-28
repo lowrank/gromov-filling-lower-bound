@@ -394,6 +394,43 @@ theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_closedUnitD
     (continuous_givensMetricFourierMap hboundary N j)
     (givensMetricFourierMap_on_boundary hboundary j)
 
+/-- Bundled explicit glued-strip quotient mesh data already supplies the
+needed odd-degree obstruction, so the genuine metric Fourier map covers the
+Jordan region at the origin without any extra topological hypothesis. -/
+theorem givensMetricFourierMap_jordan_region_subset_range_of_cylinderStripGluedArbitrarilyFineData
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact givensBoundaryCurve_jordan_region_subset_range_of_cylinderStripGluedArbitrarilyFineData
+    j hmodels (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    hpartition hzero
+
+/-- Separation-free compact-domain coverage for the genuine metric Fourier map
+also follows from the bundled glued-strip quotient mesh-data interface. -/
+theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_cylinderStripGluedArbitrarilyFineData
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact exists_givensBoundaryCurve_bounded_region_subset_range_of_cylinderStripGluedArbitrarilyFineData
+    j hmodels (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+
 /-- Explicit glued-strip quotient data already supplies the needed
 odd-degree obstruction, so the genuine metric Fourier map covers the Jordan
 region at the origin without any extra topological hypothesis. -/
@@ -424,11 +461,9 @@ theorem givensMetricFourierMap_jordan_region_subset_range_of_cylinderStripGlued_
       (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
     (hzero : 0 ∈ region₁) :
     region₁ ⊆ Set.range (givensMetricFourierMap boundary N j) := by
-  exact givensBoundaryCurve_jordan_region_subset_range_of_cylinderStripGlued_data
-    j hmodels (givensMetricFourierMap boundary N j)
-    (continuous_givensMetricFourierMap hboundary N j)
-    (givensMetricFourierMap_on_boundary hboundary j)
-    hpartition hzero
+  exact givensMetricFourierMap_jordan_region_subset_range_of_cylinderStripGluedArbitrarilyFineData
+    (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
+    hboundary j hpartition hzero
 
 /-- Separation-free compact-domain coverage for the genuine metric Fourier map
 also follows from explicit glued-strip quotient data. -/
@@ -458,10 +493,9 @@ theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_cylinderStr
       IsOpen region ∧ IsConnected region ∧
       Bornology.IsBounded region ∧ 0 ∈ region ∧
       region ⊆ Set.range (givensMetricFourierMap boundary N j) := by
-  exact exists_givensBoundaryCurve_bounded_region_subset_range_of_cylinderStripGlued_data
-    j hmodels (givensMetricFourierMap boundary N j)
-    (continuous_givensMetricFourierMap hboundary N j)
-    (givensMetricFourierMap_on_boundary hboundary j)
+  exact exists_givensMetricFourierMap_bounded_region_subset_range_of_cylinderStripGluedArbitrarilyFineData
+    (hasCylinderStripGluedArbitrarilyFineData_of_cylinderStripGlued_data hmodels)
+    hboundary j
 
 /-- If the boundary is identified with the standard closed-disk boundary by a
 homeomorphism, explicit checkerboard cylinder-strip data already supplies the
