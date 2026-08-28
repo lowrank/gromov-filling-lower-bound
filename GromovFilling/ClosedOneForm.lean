@@ -680,6 +680,35 @@ theorem curveIntegral_eq_zero_of_closedUnitSquareHomeomorphBoundaryExtension_unb
       (boundary := boundaryMap) (e := e) hboundaryMap (F := F) (ht := ht)
       hω hdω_symm hcontdiff)
 
+/-- The bundled square-homeomorphism-plus-glued-strip interface already
+implies the boundary vanishing statement needed on the oriented side.  Only the
+homeomorphism and boundary identification are used here; the polygonal-model
+data is carried to match the orientation-free geometric interface. -/
+theorem curveIntegral_eq_zero_of_closedUnitSquare_homeomorphCylinderStripGluedArbitrarilyFineData_of_diffContOnCl
+    {𝕜 E G Y : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+    [NormedSpace ℝ E] [NormedAddCommGroup G] [NormedSpace 𝕜 G] [NormedSpace ℝ G]
+    [PseudoMetricSpace Y]
+    {t : Set E} {ω : E → E →L[𝕜] G}
+    {boundary : UnitAddCircle → Y}
+    (hboundaryCont : Continuous boundary)
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData closedUnitSquareBoundary boundary)
+    (F : C(Y, E))
+    (ht : ∀ a ∈ Ioo (0 : I) 1, ∀ b ∈ Ioo (0 : I) 1,
+      F (D.homeomorph (closedUnitSquareRadial (a, unitIntervalToUnitAddCircle b))) ∈ t)
+    (hω : DiffContOnCl ℝ ω t)
+    (hdω_symm : ∀ x ∈ t, ∀ u ∈ tangentConeAt ℝ t x, ∀ v ∈ tangentConeAt ℝ t x,
+      fderivWithin ℝ ω t x u v = fderivWithin ℝ ω t x v u)
+    (hcontdiff : ContDiffOn ℝ 2
+      (fun xy : ℝ × ℝ ↦
+        Set.IccExtend zero_le_one
+          ((circleHomotopyToUnitAddCirclePath
+            (ContinuousMap.closedUnitSquareBoundaryNullhomotopy
+              (F.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩))).extend xy.1) xy.2)
+      (Icc 0 1)) :
+    ∫ᶜ x in unitAddCirclePath (F.comp ⟨boundary, hboundaryCont⟩), ω x = 0 := by
+  exact curveIntegral_eq_zero_of_closedUnitSquareHomeomorphBoundaryExtension_unbundled_of_diffContOnCl
+    hboundaryCont D.homeomorph D.boundaryHomeomorph F ht hω hdω_symm hcontdiff
+
 end CircleHomotopyOnUnitAddCircle
 
 section FreePathHomotopy
