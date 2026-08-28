@@ -221,6 +221,122 @@ theorem ComplexSourceChartCertificateSystem.universal_ennreal
   intro N
   exact (S.data N).finite_universal_ennreal area (S.budget N)
 
+/-- A canonical choice of the Jordan region of the mixed `j`th boundary curve
+that contains the origin. -/
+def givensBoundaryCurveChosenJordanRegion {N : ℕ} (j : Fin N) : Set ℂ :=
+  Classical.choose (exists_givensBoundaryCurve_jordanPartition_at_origin j)
+
+/-- The complementary Jordan region paired with
+`givensBoundaryCurveChosenJordanRegion`. -/
+def givensBoundaryCurveChosenJordanRegionComplement {N : ℕ} (j : Fin N) : Set ℂ :=
+  Classical.choose (Classical.choose_spec
+    (exists_givensBoundaryCurve_jordanPartition_at_origin j))
+
+/-- The chosen Jordan regions form a Jordan partition of the mixed boundary
+curve. -/
+theorem givensBoundaryCurveChosenJordanPartition
+    {N : ℕ} (j : Fin N) :
+    IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j))
+      (givensBoundaryCurveChosenJordanRegion j)
+      (givensBoundaryCurveChosenJordanRegionComplement j) :=
+  (Classical.choose_spec (Classical.choose_spec
+    (exists_givensBoundaryCurve_jordanPartition_at_origin j))).1
+
+/-- The chosen Jordan region contains the origin. -/
+theorem zero_mem_givensBoundaryCurveChosenJordanRegion
+    {N : ℕ} (j : Fin N) :
+    0 ∈ givensBoundaryCurveChosenJordanRegion j :=
+  (Classical.choose_spec (Classical.choose_spec
+    (exists_givensBoundaryCurve_jordanPartition_at_origin j))).2
+
+/-- Source-side finite chart data with the topological witness generated
+internally from the odd boundary-degree obstruction.  This removes the need to
+supply the planar witness regions or their coverage by hand. -/
+structure FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction
+    (N : ℕ) (X : Type*) [TopologicalSpace X] (boundary : UnitAddCircle → X) where
+  hobstruction : HasOddBoundaryDegreeObstruction boundary
+  rowMap : Fin N → X → ℂ
+  rowMap_cont : ∀ j, Continuous (rowMap j)
+  rowMap_boundary : ∀ j t, rowMap j (boundary t) = givensBoundaryCurveAddCircle j t
+  m : ℕ
+  sourcePiece : Fin m → Set X
+  sourcePiece_cover : Set.univ ⊆ ⋃ i, sourcePiece i
+  targetPiece : Fin m → Set ℂ
+  chart : ∀ i, sourcePiece i → targetPiece i
+  targetPiece_open : ∀ i, IsOpen (targetPiece i)
+  localMap : Fin N → Fin m → ℂ → ℂ
+  K : Fin N → Fin m → ℝ≥0
+  local_lipschitz : ∀ j i, LipschitzOnWith (K j i) (localMap j i) (targetPiece i)
+  local_agree : ∀ j i (x : sourcePiece i),
+    rowMap j x = localMap j i (chart i x)
+
+/-- Obstruction-level source-side chart data canonically yields the finite
+source-chart certificate data used by the planar certificate layer. -/
+def FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.toFiniteComplexSourceChartCertificateData
+    {N : ℕ} {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary) :
+    FiniteComplexSourceChartCertificateData N X where
+  m := D.m
+  omega := fun j ↦ givensBoundaryCurveChosenJordanRegion j
+  witness := by
+    intro j
+    exact le_of_eq <|
+      (volume_givensBoundaryCurve_jordan_region j
+        (givensBoundaryCurveChosenJordanPartition j)
+        (zero_mem_givensBoundaryCurveChosenJordanRegion j)).symm
+  rowMap := D.rowMap
+  rowMap_covers := by
+    intro j
+    exact givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+      j boundary D.hobstruction (D.rowMap j) (D.rowMap_cont j) (D.rowMap_boundary j)
+      (givensBoundaryCurveChosenJordanPartition j)
+      (zero_mem_givensBoundaryCurveChosenJordanRegion j)
+  sourcePiece := D.sourcePiece
+  sourcePiece_cover := D.sourcePiece_cover
+  targetPiece := D.targetPiece
+  chart := D.chart
+  targetPiece_open := D.targetPiece_open
+  localMap := D.localMap
+  K := D.K
+  local_lipschitz := D.local_lipschitz
+  local_agree := D.local_agree
+
+/-- An obstruction-level bundled source-side finite chart certificate implies
+the `N`-mode orientation-free lower bound once its total Jacobian budget is
+available. -/
+theorem FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_universal_ennreal
+    {N : ℕ} {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary)
+    (area : ℝ≥0∞)
+    (hbudget :
+      (∑ j : Fin N,
+        (D.toFiniteComplexSourceChartCertificateData.toFiniteComplexLocalCertificateData).jacobianMass j) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
+  (D.toFiniteComplexSourceChartCertificateData).finite_universal_ennreal area hbudget
+
+/-- Obstruction-level source-side chart data for every finite truncation at a
+common area budget.  Constructing this object is the exact remaining
+orientation-free chart-globalization task once the odd-degree obstruction is
+available on the source. -/
+structure ComplexSourceChartSystemOfOddBoundaryDegreeObstruction
+    (X : Type*) [TopologicalSpace X]
+    (boundary : UnitAddCircle → X) (area : ℝ≥0∞) where
+  data : ∀ N : ℕ, FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary
+  budget : ∀ N : ℕ,
+    (∑ j : Fin N,
+      (((data N).toFiniteComplexSourceChartCertificateData).toFiniteComplexLocalCertificateData).jacobianMass j) ≤ area
+
+/-- An obstruction-level bundled source-side chart certificate system implies
+the full orientation-free universal bound. -/
+theorem ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal
+    {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystemOfOddBoundaryDegreeObstruction X boundary area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact (S.data N).finite_universal_ennreal area (S.budget N)
+
 /-- The finite orientation-free Fourier certificate for complex-plane
 domains under the exact topological interface: an odd boundary-degree
 obstruction and the global Jacobian budget. -/
