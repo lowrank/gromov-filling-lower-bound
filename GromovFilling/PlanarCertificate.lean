@@ -1208,6 +1208,64 @@ structure ComplexSourceChartSystem
   data : ∀ N : ℕ, FiniteComplexSourceChartData N X boundary
   budget : ∀ N : ℕ, (∑ j : Fin N, (data N).jacobianMass j) ≤ area
 
+/-- A compact-source family of open chart covers, one for each truncation level
+`N`, packages directly into the bundled generic source-chart system. -/
+noncomputable def ComplexSourceChartSystem.ofCompactOpenCover
+    {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : ℕ → Type*}
+    (area : ℝ≥0∞)
+    (rowMap : ∀ N : ℕ, Fin N → X → ℂ)
+    (rowMap_cont : ∀ N : ℕ, ∀ j : Fin N, Continuous (rowMap N j))
+    (rowMap_boundary : ∀ N : ℕ, ∀ j : Fin N, ∀ t,
+      rowMap N j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (sourcePiece : ∀ N : ℕ, ι N → Set X)
+    (sourcePiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (sourcePiece N i))
+    (sourcePiece_cover : ∀ N : ℕ, Set.univ ⊆ ⋃ i, sourcePiece N i)
+    (targetPiece : ∀ N : ℕ, ι N → Set ℂ)
+    (chart : ∀ N : ℕ, ∀ i : ι N, sourcePiece N i → targetPiece N i)
+    (targetPiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (targetPiece N i))
+    (localMap : ∀ N : ℕ, Fin N → ι N → ℂ → ℂ)
+    (K : ∀ N : ℕ, Fin N → ι N → ℝ≥0)
+    (local_lipschitz : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N,
+      LipschitzOnWith (K N j i) (localMap N j i) (targetPiece N i))
+    (local_agree : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N, ∀ x : sourcePiece N i,
+      rowMap N j x = localMap N j i (chart N i x))
+    (budget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (FiniteComplexSourceChartData.ofCompactOpenCover
+          (rowMap N)
+          (fun j ↦ rowMap_cont N j)
+          (fun j t ↦ rowMap_boundary N j t)
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).jacobianMass j) ≤ area) :
+    ComplexSourceChartSystem X boundary area where
+  data := fun N ↦
+    FiniteComplexSourceChartData.ofCompactOpenCover
+      (rowMap N)
+      (fun j ↦ rowMap_cont N j)
+      (fun j t ↦ rowMap_boundary N j t)
+      (sourcePiece N)
+      (fun i ↦ sourcePiece_open N i)
+      (sourcePiece_cover N)
+      (targetPiece N)
+      (chart N)
+      (fun i ↦ targetPiece_open N i)
+      (localMap N)
+      (K N)
+      (fun j i ↦ local_lipschitz N j i)
+      (fun j i x ↦ local_agree N j i x)
+  budget := by
+    intro N
+    simpa using budget N
+
 /-- A bundled generic source-chart system implies the full orientation-free
 universal bound once the odd boundary-degree obstruction is available on the
 source. -/
@@ -2674,6 +2732,56 @@ structure MetricComplexSourceChartSystem
   hboundary : IsometricCircleBoundary boundary
   data : ∀ N : ℕ, FiniteMetricComplexSourceChartData N X boundary
   budget : ∀ N : ℕ, (∑ j : Fin N, (data N).jacobianMass j) ≤ area
+
+/-- A compact-source family of open chart covers, one for each truncation level
+`N`, packages directly into the bundled metric source-chart system. -/
+noncomputable def MetricComplexSourceChartSystem.ofCompactOpenCover
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : ℕ → Type*}
+    (area : ℝ≥0∞)
+    (hboundary : IsometricCircleBoundary boundary)
+    (sourcePiece : ∀ N : ℕ, ι N → Set X)
+    (sourcePiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (sourcePiece N i))
+    (sourcePiece_cover : ∀ N : ℕ, Set.univ ⊆ ⋃ i, sourcePiece N i)
+    (targetPiece : ∀ N : ℕ, ι N → Set ℂ)
+    (chart : ∀ N : ℕ, ∀ i : ι N, sourcePiece N i → targetPiece N i)
+    (targetPiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (targetPiece N i))
+    (localMap : ∀ N : ℕ, Fin N → ι N → ℂ → ℂ)
+    (K : ∀ N : ℕ, Fin N → ι N → ℝ≥0)
+    (local_lipschitz : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N,
+      LipschitzOnWith (K N j i) (localMap N j i) (targetPiece N i))
+    (local_agree : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N, ∀ x : sourcePiece N i,
+      givensMetricFourierMap boundary N j x = localMap N j i (chart N i x))
+    (budget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (FiniteMetricComplexSourceChartData.ofCompactOpenCover
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).jacobianMass j) ≤ area) :
+    MetricComplexSourceChartSystem X boundary area where
+  hboundary := hboundary
+  data := fun N ↦
+    FiniteMetricComplexSourceChartData.ofCompactOpenCover
+      (sourcePiece N)
+      (fun i ↦ sourcePiece_open N i)
+      (sourcePiece_cover N)
+      (targetPiece N)
+      (chart N)
+      (fun i ↦ targetPiece_open N i)
+      (localMap N)
+      (K N)
+      (fun j i ↦ local_lipschitz N j i)
+      (fun j i x ↦ local_agree N j i x)
+  budget := by
+    intro N
+    simpa using budget N
 
 /-- Bundled metric source-chart data likewise converts to the generic
 source-chart system by taking the row maps to be the genuine mixed metric
