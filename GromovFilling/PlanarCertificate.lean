@@ -103,7 +103,6 @@ theorem ComplexLocalCertificateSystem.universal_ennreal_add
   apply universal_ennreal_bound_of_finite_certificates_add
   intro N
   exact (S.data N).finite_universal_ennreal_add area defect (hbudget N)
-
 /-- A compact open cover can be reindexed by `Fin n` after passing to a finite
 subcover.  This is the basic compactness bridge from arbitrary atlas-style
 chart families to the finite source-chart certificate interfaces. -/
@@ -619,6 +618,8 @@ noncomputable def FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofC
       local_lipschitz := fun j i ↦ local_lipschitz j (e i)
       local_agree := fun j i x ↦ local_agree j (e i) x }
 
+
+
 /-- An obstruction-level bundled source-side finite chart certificate implies
 the `N`-mode orientation-free lower bound once its total Jacobian budget is
 available. -/
@@ -683,6 +684,123 @@ theorem FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_univer
         (D.toFiniteComplexSourceChartCertificateData.toFiniteComplexLocalCertificateData).jacobianMass j) + defect ≤ area) :
     ENNReal.ofReal (finiteUniversalConstant N) + defect ≤ area :=
   (D.toFiniteComplexSourceChartCertificateData).finite_universal_ennreal_add area defect hbudget
+/-- A compact source with an arbitrary open chart cover and an odd
+boundary-degree obstruction already yields the `N`-mode orientation-free lower
+bound once the summed Jacobian budget is stated on the extracted finite
+subcover. -/
+theorem FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_universal_ennreal_ofCompactOpenCover
+    {N : ℕ} {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : Type*}
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (rowMap : Fin N → X → ℂ)
+    (rowMap_cont : ∀ j, Continuous (rowMap j))
+    (rowMap_boundary : ∀ j t, rowMap j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (sourcePiece : ι → Set X)
+    (sourcePiece_open : ∀ i, IsOpen (sourcePiece i))
+    (sourcePiece_cover : Set.univ ⊆ ⋃ i, sourcePiece i)
+    (targetPiece : ι → Set ℂ)
+    (chart : ∀ i, sourcePiece i → targetPiece i)
+    (targetPiece_open : ∀ i, IsOpen (targetPiece i))
+    (localMap : Fin N → ι → ℂ → ℂ)
+    (K : Fin N → ι → ℝ≥0)
+    (local_lipschitz : ∀ j i, LipschitzOnWith (K j i) (localMap j i) (targetPiece i))
+    (local_agree : ∀ j i (x : sourcePiece i),
+      rowMap j x = localMap j i (chart i x))
+    (area : ℝ≥0∞)
+    (hbudget :
+      (∑ j : Fin N,
+        (((FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+          hobstruction rowMap rowMap_cont rowMap_boundary sourcePiece sourcePiece_open
+          sourcePiece_cover targetPiece chart targetPiece_open localMap K
+          local_lipschitz local_agree).toFiniteComplexSourceChartCertificateData).toFiniteComplexLocalCertificateData).jacobianMass j) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  let D :=
+    FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+      hobstruction rowMap rowMap_cont rowMap_boundary sourcePiece sourcePiece_open
+      sourcePiece_cover targetPiece chart targetPiece_open localMap K
+      local_lipschitz local_agree
+  simpa [D] using
+    (FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_universal_ennreal
+      D area hbudget)
+
+/-- A compact source with an arbitrary open chart cover and an odd
+boundary-degree obstruction already yields the rowwise bounded witness region
+once the finite subcover has been extracted. -/
+theorem FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.exists_bounded_region_volume_le_jacobianMass_ofCompactOpenCover
+    {N : ℕ} {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : Type*}
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (rowMap : Fin N → X → ℂ)
+    (rowMap_cont : ∀ j, Continuous (rowMap j))
+    (rowMap_boundary : ∀ j t, rowMap j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (sourcePiece : ι → Set X)
+    (sourcePiece_open : ∀ i, IsOpen (sourcePiece i))
+    (sourcePiece_cover : Set.univ ⊆ ⋃ i, sourcePiece i)
+    (targetPiece : ι → Set ℂ)
+    (chart : ∀ i, sourcePiece i → targetPiece i)
+    (targetPiece_open : ∀ i, IsOpen (targetPiece i))
+    (localMap : Fin N → ι → ℂ → ℂ)
+    (K : Fin N → ι → ℝ≥0)
+    (local_lipschitz : ∀ j i, LipschitzOnWith (K j i) (localMap j i) (targetPiece i))
+    (local_agree : ∀ j i (x : sourcePiece i),
+      rowMap j x = localMap j i (chart i x))
+    (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        (((FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+          hobstruction rowMap rowMap_cont rowMap_boundary sourcePiece sourcePiece_open
+          sourcePiece_cover targetPiece chart targetPiece_open localMap K
+          local_lipschitz local_agree).toFiniteComplexSourceChartCertificateData).toFiniteComplexLocalCertificateData).jacobianMass j := by
+  let D :=
+    FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+      hobstruction rowMap rowMap_cont rowMap_boundary sourcePiece sourcePiece_open
+      sourcePiece_cover targetPiece chart targetPiece_open localMap K
+      local_lipschitz local_agree
+  simpa [D] using
+    (FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.exists_bounded_region_volume_le_jacobianMass
+      D j)
+
+/-- A compact source with an arbitrary open chart cover and an odd
+boundary-degree obstruction also carries any common additive defect term through
+that extracted finite subcover. -/
+theorem FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_universal_ennreal_add_ofCompactOpenCover
+    {N : ℕ} {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : Type*}
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (rowMap : Fin N → X → ℂ)
+    (rowMap_cont : ∀ j, Continuous (rowMap j))
+    (rowMap_boundary : ∀ j t, rowMap j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (sourcePiece : ι → Set X)
+    (sourcePiece_open : ∀ i, IsOpen (sourcePiece i))
+    (sourcePiece_cover : Set.univ ⊆ ⋃ i, sourcePiece i)
+    (targetPiece : ι → Set ℂ)
+    (chart : ∀ i, sourcePiece i → targetPiece i)
+    (targetPiece_open : ∀ i, IsOpen (targetPiece i))
+    (localMap : Fin N → ι → ℂ → ℂ)
+    (K : Fin N → ι → ℝ≥0)
+    (local_lipschitz : ∀ j i, LipschitzOnWith (K j i) (localMap j i) (targetPiece i))
+    (local_agree : ∀ j i (x : sourcePiece i),
+      rowMap j x = localMap j i (chart i x))
+    (area defect : ℝ≥0∞)
+    (hbudget :
+      (∑ j : Fin N,
+        (((FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+          hobstruction rowMap rowMap_cont rowMap_boundary sourcePiece sourcePiece_open
+          sourcePiece_cover targetPiece chart targetPiece_open localMap K
+          local_lipschitz local_agree).toFiniteComplexSourceChartCertificateData).toFiniteComplexLocalCertificateData).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) + defect ≤ area := by
+  let D :=
+    FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+      hobstruction rowMap rowMap_cont rowMap_boundary sourcePiece sourcePiece_open
+      sourcePiece_cover targetPiece chart targetPiece_open localMap K
+      local_lipschitz local_agree
+  simpa [D] using
+    (FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_universal_ennreal_add
+      D area defect hbudget)
+
+
 /-- Obstruction-level source-side chart data for every finite truncation at a
 common area budget.  Constructing this object is the exact remaining
 orientation-free chart-globalization task once the odd-degree obstruction is
@@ -756,6 +874,8 @@ noncomputable def ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.ofCompa
     intro N
     simpa using budget N
 
+
+
 /-- An obstruction-level bundled source-side chart certificate system implies
 the full orientation-free universal bound. -/
 theorem ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal
@@ -778,6 +898,126 @@ theorem ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal
   apply universal_ennreal_bound_of_finite_certificates_add
   intro N
   exact (S.data N).finite_universal_ennreal_add area defect (hbudget N)
+
+/-- A compact-source family of open chart covers with an odd boundary-degree
+obstruction already yields the full orientation-free universal bound once the
+summed Jacobian budgets are stated on the extracted finite subcovers. -/
+theorem ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal_ofCompactOpenCover
+    {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : ℕ → Type*}
+    (area : ℝ≥0∞)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (rowMap : ∀ N : ℕ, Fin N → X → ℂ)
+    (rowMap_cont : ∀ N : ℕ, ∀ j : Fin N, Continuous (rowMap N j))
+    (rowMap_boundary : ∀ N : ℕ, ∀ j : Fin N, ∀ t,
+      rowMap N j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (sourcePiece : ∀ N : ℕ, ι N → Set X)
+    (sourcePiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (sourcePiece N i))
+    (sourcePiece_cover : ∀ N : ℕ, Set.univ ⊆ ⋃ i, sourcePiece N i)
+    (targetPiece : ∀ N : ℕ, ι N → Set ℂ)
+    (chart : ∀ N : ℕ, ∀ i : ι N, sourcePiece N i → targetPiece N i)
+    (targetPiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (targetPiece N i))
+    (localMap : ∀ N : ℕ, Fin N → ι N → ℂ → ℂ)
+    (K : ∀ N : ℕ, Fin N → ι N → ℝ≥0)
+    (local_lipschitz : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N,
+      LipschitzOnWith (K N j i) (localMap N j i) (targetPiece N i))
+    (local_agree : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N, ∀ x : sourcePiece N i,
+      rowMap N j x = localMap N j i (chart N i x))
+    (budget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (((FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+          hobstruction
+          (rowMap N)
+          (fun j ↦ rowMap_cont N j)
+          (fun j t ↦ rowMap_boundary N j t)
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).toFiniteComplexSourceChartCertificateData).toFiniteComplexLocalCertificateData).jacobianMass j) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  let S :=
+    ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+      area hobstruction rowMap rowMap_cont rowMap_boundary sourcePiece
+      sourcePiece_open sourcePiece_cover targetPiece chart targetPiece_open
+      localMap K local_lipschitz local_agree budget
+  simpa [S] using
+    (ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal S)
+
+/-- The same compact-source family of open chart covers also carries any
+common additive defect term unchanged through the extracted finite subcovers. -/
+theorem ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal_add_ofCompactOpenCover
+    {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : ℕ → Type*}
+    (area defect : ℝ≥0∞)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (rowMap : ∀ N : ℕ, Fin N → X → ℂ)
+    (rowMap_cont : ∀ N : ℕ, ∀ j : Fin N, Continuous (rowMap N j))
+    (rowMap_boundary : ∀ N : ℕ, ∀ j : Fin N, ∀ t,
+      rowMap N j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (sourcePiece : ∀ N : ℕ, ι N → Set X)
+    (sourcePiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (sourcePiece N i))
+    (sourcePiece_cover : ∀ N : ℕ, Set.univ ⊆ ⋃ i, sourcePiece N i)
+    (targetPiece : ∀ N : ℕ, ι N → Set ℂ)
+    (chart : ∀ N : ℕ, ∀ i : ι N, sourcePiece N i → targetPiece N i)
+    (targetPiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (targetPiece N i))
+    (localMap : ∀ N : ℕ, Fin N → ι N → ℂ → ℂ)
+    (K : ∀ N : ℕ, Fin N → ι N → ℝ≥0)
+    (local_lipschitz : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N,
+      LipschitzOnWith (K N j i) (localMap N j i) (targetPiece N i))
+    (local_agree : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N, ∀ x : sourcePiece N i,
+      rowMap N j x = localMap N j i (chart N i x))
+    (budget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (((FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+          hobstruction
+          (rowMap N)
+          (fun j ↦ rowMap_cont N j)
+          (fun j t ↦ rowMap_boundary N j t)
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).toFiniteComplexSourceChartCertificateData).toFiniteComplexLocalCertificateData).jacobianMass j) ≤ area)
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (((FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+          hobstruction
+          (rowMap N)
+          (fun j ↦ rowMap_cont N j)
+          (fun j t ↦ rowMap_boundary N j t)
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).toFiniteComplexSourceChartCertificateData).toFiniteComplexLocalCertificateData).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area := by
+  let S :=
+    ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+      area hobstruction rowMap rowMap_cont rowMap_boundary sourcePiece
+      sourcePiece_open sourcePiece_cover targetPiece chart targetPiece_open
+      localMap K local_lipschitz local_agree budget
+  simpa [S] using
+    (ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal_add
+      S hbudget)
+
+
+
 
 /-- In an obstruction-level bundled source-side chart system, each row in
 every finite truncation produces a bounded open connected witness region at
@@ -1952,6 +2192,8 @@ noncomputable def FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstructi
       local_lipschitz := fun j i ↦ local_lipschitz j (e i)
       local_agree := fun j i x ↦ local_agree j (e i) x }
 
+
+
 /-- The total planar Jacobian mass extracted from one finite metric
 source-chart certificate. -/
 def FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.jacobianMass
@@ -2007,6 +2249,115 @@ theorem FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_
     (hbudget : (∑ j : Fin N, D.jacobianMass hboundary j) + defect ≤ area) :
     ENNReal.ofReal (finiteUniversalConstant N) + defect ≤ area :=
   (D.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction hboundary).finite_universal_ennreal_add area defect hbudget
+/-- A compact source with an arbitrary open chart cover and an odd
+boundary-degree obstruction already yields the `N`-mode metric source-chart
+lower bound once the summed Jacobian budget is stated on the extracted finite
+subcover. -/
+theorem FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_universal_ennreal_ofCompactOpenCover
+    {N : ℕ} {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : Type*}
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (sourcePiece : ι → Set X)
+    (sourcePiece_open : ∀ i, IsOpen (sourcePiece i))
+    (sourcePiece_cover : Set.univ ⊆ ⋃ i, sourcePiece i)
+    (targetPiece : ι → Set ℂ)
+    (chart : ∀ i, sourcePiece i → targetPiece i)
+    (targetPiece_open : ∀ i, IsOpen (targetPiece i))
+    (localMap : Fin N → ι → ℂ → ℂ)
+    (K : Fin N → ι → ℝ≥0)
+    (local_lipschitz : ∀ j i, LipschitzOnWith (K j i) (localMap j i) (targetPiece i))
+    (local_agree : ∀ j i (x : sourcePiece i),
+      givensMetricFourierMap boundary N j x = localMap j i (chart i x))
+    (hboundary : IsometricCircleBoundary boundary)
+    (area : ℝ≥0∞)
+    (hbudget :
+      (∑ j : Fin N,
+        (FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+          hobstruction sourcePiece sourcePiece_open sourcePiece_cover targetPiece
+          chart targetPiece_open localMap K local_lipschitz local_agree).jacobianMass
+            hboundary j) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area := by
+  let D :=
+    FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+      hobstruction sourcePiece sourcePiece_open sourcePiece_cover targetPiece
+      chart targetPiece_open localMap K local_lipschitz local_agree
+  simpa [D] using
+    (FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_universal_ennreal
+      D hboundary area hbudget)
+
+/-- A compact source with an arbitrary open chart cover and an odd
+boundary-degree obstruction already yields the rowwise bounded witness region
+for the genuine metric Fourier maps once the finite subcover has been
+extracted. -/
+theorem FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.exists_bounded_region_volume_le_jacobianMass_ofCompactOpenCover
+    {N : ℕ} {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : Type*}
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (sourcePiece : ι → Set X)
+    (sourcePiece_open : ∀ i, IsOpen (sourcePiece i))
+    (sourcePiece_cover : Set.univ ⊆ ⋃ i, sourcePiece i)
+    (targetPiece : ι → Set ℂ)
+    (chart : ∀ i, sourcePiece i → targetPiece i)
+    (targetPiece_open : ∀ i, IsOpen (targetPiece i))
+    (localMap : Fin N → ι → ℂ → ℂ)
+    (K : Fin N → ι → ℝ≥0)
+    (local_lipschitz : ∀ j i, LipschitzOnWith (K j i) (localMap j i) (targetPiece i))
+    (local_agree : ∀ j i (x : sourcePiece i),
+      givensMetricFourierMap boundary N j x = localMap j i (chart i x))
+    (hboundary : IsometricCircleBoundary boundary)
+    (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        (FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+          hobstruction sourcePiece sourcePiece_open sourcePiece_cover targetPiece
+          chart targetPiece_open localMap K local_lipschitz local_agree).jacobianMass
+            hboundary j := by
+  let D :=
+    FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+      hobstruction sourcePiece sourcePiece_open sourcePiece_cover targetPiece
+      chart targetPiece_open localMap K local_lipschitz local_agree
+  simpa [D] using
+    (FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.exists_bounded_region_volume_le_jacobianMass
+      D hboundary j)
+
+/-- A compact source with an arbitrary open chart cover and an odd
+boundary-degree obstruction also carries any common additive defect term through
+that extracted finite metric subcover. -/
+theorem FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_universal_ennreal_add_ofCompactOpenCover
+    {N : ℕ} {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : Type*}
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (sourcePiece : ι → Set X)
+    (sourcePiece_open : ∀ i, IsOpen (sourcePiece i))
+    (sourcePiece_cover : Set.univ ⊆ ⋃ i, sourcePiece i)
+    (targetPiece : ι → Set ℂ)
+    (chart : ∀ i, sourcePiece i → targetPiece i)
+    (targetPiece_open : ∀ i, IsOpen (targetPiece i))
+    (localMap : Fin N → ι → ℂ → ℂ)
+    (K : Fin N → ι → ℝ≥0)
+    (local_lipschitz : ∀ j i, LipschitzOnWith (K j i) (localMap j i) (targetPiece i))
+    (local_agree : ∀ j i (x : sourcePiece i),
+      givensMetricFourierMap boundary N j x = localMap j i (chart i x))
+    (hboundary : IsometricCircleBoundary boundary)
+    (area defect : ℝ≥0∞)
+    (hbudget :
+      (∑ j : Fin N,
+        (FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+          hobstruction sourcePiece sourcePiece_open sourcePiece_cover targetPiece
+          chart targetPiece_open localMap K local_lipschitz local_agree).jacobianMass
+            hboundary j) + defect ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) + defect ≤ area := by
+  let D :=
+    FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+      hobstruction sourcePiece sourcePiece_open sourcePiece_cover targetPiece
+      chart targetPiece_open localMap K local_lipschitz local_agree
+  simpa [D] using
+    (FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_universal_ennreal_add
+      D hboundary area defect hbudget)
+
+
 
 /-- Bundled source-side chart data for the genuine mixed metric Fourier maps,
 for every finite truncation at a common area budget.  This is the direct
@@ -2087,6 +2438,8 @@ def MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.toComplexSource
     simpa [FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.jacobianMass]
       using S.budget N
 
+
+
 /-- A bundled metric source-chart certificate system implies the full
 orientation-free universal bound. -/
 theorem MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal
@@ -2107,6 +2460,110 @@ theorem MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_e
   apply universal_ennreal_bound_of_finite_certificates_add
   intro N
   exact (S.data N).finite_universal_ennreal_add S.hboundary area defect (hbudget N)
+/-- A compact-source family of open chart covers with an odd boundary-degree
+obstruction already yields the full metric source-chart universal bound once
+the summed Jacobian budgets are stated on the extracted finite subcovers. -/
+theorem MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal_ofCompactOpenCover
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : ℕ → Type*}
+    (area : ℝ≥0∞)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (sourcePiece : ∀ N : ℕ, ι N → Set X)
+    (sourcePiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (sourcePiece N i))
+    (sourcePiece_cover : ∀ N : ℕ, Set.univ ⊆ ⋃ i, sourcePiece N i)
+    (targetPiece : ∀ N : ℕ, ι N → Set ℂ)
+    (chart : ∀ N : ℕ, ∀ i : ι N, sourcePiece N i → targetPiece N i)
+    (targetPiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (targetPiece N i))
+    (localMap : ∀ N : ℕ, Fin N → ι N → ℂ → ℂ)
+    (K : ∀ N : ℕ, Fin N → ι N → ℝ≥0)
+    (local_lipschitz : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N,
+      LipschitzOnWith (K N j i) (localMap N j i) (targetPiece N i))
+    (local_agree : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N, ∀ x : sourcePiece N i,
+      givensMetricFourierMap boundary N j x = localMap N j i (chart N i x))
+    (budget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+          hobstruction
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).jacobianMass hboundary j) ≤ area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  let S :=
+    MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+      area hboundary hobstruction sourcePiece sourcePiece_open sourcePiece_cover
+      targetPiece chart targetPiece_open localMap K local_lipschitz local_agree
+      budget
+  simpa [S] using
+    (MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal S)
+
+/-- The same compact-source family of open chart covers also carries any
+common additive defect term unchanged through the extracted finite metric
+subcovers. -/
+theorem MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal_add_ofCompactOpenCover
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : ℕ → Type*}
+    (area defect : ℝ≥0∞)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (sourcePiece : ∀ N : ℕ, ι N → Set X)
+    (sourcePiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (sourcePiece N i))
+    (sourcePiece_cover : ∀ N : ℕ, Set.univ ⊆ ⋃ i, sourcePiece N i)
+    (targetPiece : ∀ N : ℕ, ι N → Set ℂ)
+    (chart : ∀ N : ℕ, ∀ i : ι N, sourcePiece N i → targetPiece N i)
+    (targetPiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (targetPiece N i))
+    (localMap : ∀ N : ℕ, Fin N → ι N → ℂ → ℂ)
+    (K : ∀ N : ℕ, Fin N → ι N → ℝ≥0)
+    (local_lipschitz : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N,
+      LipschitzOnWith (K N j i) (localMap N j i) (targetPiece N i))
+    (local_agree : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N, ∀ x : sourcePiece N i,
+      givensMetricFourierMap boundary N j x = localMap N j i (chart N i x))
+    (budget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+          hobstruction
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).jacobianMass hboundary j) ≤ area)
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+          hobstruction
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).jacobianMass hboundary j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area := by
+  let S :=
+    MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.ofCompactOpenCover
+      area hboundary hobstruction sourcePiece sourcePiece_open sourcePiece_cover
+      targetPiece chart targetPiece_open localMap K local_lipschitz local_agree
+      budget
+  simpa [S] using
+    (MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal_add
+      S hbudget)
+
+
 
 /-- In an obstruction-level bundled metric source-chart system, each row in
 every finite truncation produces a bounded open connected witness region at
