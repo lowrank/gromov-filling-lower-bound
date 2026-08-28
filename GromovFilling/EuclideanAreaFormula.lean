@@ -120,6 +120,49 @@ theorem volume_le_lintegral_abs_det_fderiv_of_isOpen_of_subset_range
   (measure_mono hcoverage).trans
     (volume_image_le_lintegral_abs_det_fderiv_of_isOpen f s hs hf)
 
+/-- Finite-open-cover gluing for the local planar Jacobian bound.  If a region
+is covered by the images of finitely many open pieces on which the same map is
+Lipschitz, its measure is bounded by the sum of the corresponding Jacobian
+integrals. -/
+theorem volume_le_sum_lintegral_abs_det_fderiv_of_isOpen_of_subset_iUnion_range
+    {n : ℕ} (f : EuclideanPlane → EuclideanPlane)
+    (pieces : Fin n → Set EuclideanPlane) (omega : Set EuclideanPlane)
+    (hpieces : ∀ i, IsOpen (pieces i))
+    {K : Fin n → ℝ≥0} (hf : ∀ i, LipschitzOnWith (K i) f (pieces i))
+    (hcoverage : omega ⊆ ⋃ i, f '' pieces i) :
+    volume omega ≤
+      ∑ i, ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ f x).det| ∂volume := by
+  calc
+    volume omega ≤ volume (⋃ i, f '' pieces i) := measure_mono hcoverage
+    _ ≤ ∑' i, volume (f '' pieces i) := measure_iUnion_le (fun i => f '' pieces i)
+    _ ≤ ∑' i, ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ f x).det| ∂volume := by
+      refine ENNReal.tsum_le_tsum ?_
+      intro i
+      exact volume_image_le_lintegral_abs_det_fderiv_of_isOpen
+        f (pieces i) (hpieces i) (hf i)
+    _ = ∑ i, ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ f x).det| ∂volume := by
+      simpa using
+        (tsum_fintype
+          (f := fun i : Fin n =>
+            ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ f x).det| ∂volume))
+
+/-- Finite-open-cover gluing for the local planar Jacobian bound, stated with
+the source written as the union of the pieces. -/
+theorem volume_le_sum_lintegral_abs_det_fderiv_of_isOpen_of_subset_range_iUnion
+    {n : ℕ} (f : EuclideanPlane → EuclideanPlane)
+    (pieces : Fin n → Set EuclideanPlane) (omega : Set EuclideanPlane)
+    (hpieces : ∀ i, IsOpen (pieces i))
+    {K : Fin n → ℝ≥0} (hf : ∀ i, LipschitzOnWith (K i) f (pieces i))
+    (hcoverage : omega ⊆ f '' (⋃ i, pieces i)) :
+    volume omega ≤
+      ∑ i, ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ f x).det| ∂volume := by
+  refine volume_le_sum_lintegral_abs_det_fderiv_of_isOpen_of_subset_iUnion_range
+    f pieces omega hpieces hf ?_
+  intro y hy
+  rcases hcoverage hy with ⟨x, hx, rfl⟩
+  rcases Set.mem_iUnion.mp hx with ⟨i, hi⟩
+  exact Set.mem_iUnion.mpr ⟨i, ⟨x, hi, rfl⟩⟩
+
 /-- Coverage of a measurable planar region, together with the Lipschitz
 area formula, bounds its measure by the Jacobian integral. -/
 theorem volume_le_lintegral_abs_det_fderiv_of_subset_range

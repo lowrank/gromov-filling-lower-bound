@@ -81,7 +81,9 @@ runs both checks on every push and pull request.
   both `Fin 2 → ℝ` and `ℂ`, derived from Rademacher's theorem, null-image
   control for the exceptional set, and mathlib's Jacobian image bound;
   for a complex-plane domain it is composed directly with the Jordan
-  coverage theorem to bound the covered region by the Jacobian integral;
+  coverage theorem to bound the covered region by the Jacobian integral,
+  and the same local inequality now glues across finitely many open planar
+  pieces by summing the chartwise Jacobian integrals;
 - the exact identification of mathlib's real determinant on `ℂ` with the
   elementary planar Jacobian, its finite-sum integrated `ENNReal` form,
   and the passage from a Hilbert--Schmidt derivative-energy bound to a

@@ -138,6 +138,48 @@ theorem complex_volume_le_lintegral_abs_det_fderiv_of_isOpen_of_subset_range
   (measure_mono hcoverage).trans
     (complex_volume_image_le_lintegral_abs_det_fderiv_of_isOpen f s hs hf)
 
+/-- Finite-open-cover gluing for the local complex Jacobian bound.  If a region
+is covered by finitely many chart pieces, the total covered area is bounded by
+the sum of the Jacobian integrals on those pieces. -/
+theorem complex_volume_le_sum_lintegral_abs_det_fderiv_of_isOpen_of_subset_iUnion_range
+    {n : ℕ} (f : ℂ → ℂ)
+    (pieces : Fin n → Set ℂ) (omega : Set ℂ)
+    (hpieces : ∀ i, IsOpen (pieces i))
+    {K : Fin n → ℝ≥0} (hf : ∀ i, LipschitzOnWith (K i) f (pieces i))
+    (hcoverage : omega ⊆ ⋃ i, f '' pieces i) :
+    volume omega ≤
+      ∑ i, ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ f x).det| ∂volume := by
+  calc
+    volume omega ≤ volume (⋃ i, f '' pieces i) := measure_mono hcoverage
+    _ ≤ ∑' i, volume (f '' pieces i) := measure_iUnion_le (fun i => f '' pieces i)
+    _ ≤ ∑' i, ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ f x).det| ∂volume := by
+      refine ENNReal.tsum_le_tsum ?_
+      intro i
+      exact complex_volume_image_le_lintegral_abs_det_fderiv_of_isOpen
+        f (pieces i) (hpieces i) (hf i)
+    _ = ∑ i, ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ f x).det| ∂volume := by
+      simpa using
+        (tsum_fintype
+          (f := fun i : Fin n =>
+            ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ f x).det| ∂volume))
+
+/-- Finite-open-cover gluing for the local complex Jacobian bound, stated with
+the source written as the union of the pieces. -/
+theorem complex_volume_le_sum_lintegral_abs_det_fderiv_of_isOpen_of_subset_range_iUnion
+    {n : ℕ} (f : ℂ → ℂ)
+    (pieces : Fin n → Set ℂ) (omega : Set ℂ)
+    (hpieces : ∀ i, IsOpen (pieces i))
+    {K : Fin n → ℝ≥0} (hf : ∀ i, LipschitzOnWith (K i) f (pieces i))
+    (hcoverage : omega ⊆ f '' (⋃ i, pieces i)) :
+    volume omega ≤
+      ∑ i, ∫⁻ x in pieces i, ENNReal.ofReal |(fderiv ℝ f x).det| ∂volume := by
+  refine complex_volume_le_sum_lintegral_abs_det_fderiv_of_isOpen_of_subset_iUnion_range
+    f pieces omega hpieces hf ?_
+  intro y hy
+  rcases hcoverage hy with ⟨x, hx, rfl⟩
+  rcases Set.mem_iUnion.mp hx with ⟨i, hi⟩
+  exact Set.mem_iUnion.mpr ⟨i, ⟨x, hi, rfl⟩⟩
+
 /-- Coverage version of the global complex-plane area inequality. -/
 theorem complex_volume_le_lintegral_abs_det_fderiv_of_subset_range
     (f : ℂ → ℂ) (s omega : Set ℂ) (hs : MeasurableSet s)
