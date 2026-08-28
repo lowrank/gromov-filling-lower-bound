@@ -1242,6 +1242,79 @@ theorem exists_givens_bounded_region_volume_le_complex_jacobian_of_closedUnitSqu
       hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closedUnitSquareBoundary
       G hG hboundary hGLipschitz
 
+/-- If the boundary is identified with the standard closed-square boundary by a
+homeomorphism and the odd boundary-degree obstruction is supplied through the
+bundled explicit glued-strip quotient square interface, the Jordan region
+forced by Lemma 5.4 is covered and the global complex Jacobian bound applies. -/
+theorem givens_jordan_region_volume_le_complex_jacobian_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    volume region₁ ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  let _ : CompactSpace ℂ := Homeomorph.compactSpace e
+  exact
+    givens_jordan_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+      j boundary
+      (hasOddBoundaryDegreeObstruction_of_closedUnitSquare_homeomorph_cylinderStripGlued
+        e hboundaryHomeomorph)
+      G hG hboundary hpartition hzero hGLipschitz
+
+/-- The same bundled explicit glued-strip quotient square route also yields the
+mixed boundary-area lower bound. -/
+theorem givens_mixedBoundaryArea_le_complex_jacobian_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
+    exists_givensBoundaryCurve_jordanPartition_at_origin j
+  rw [← volume_givensBoundaryCurve_jordan_region j hpartition hzero]
+  exact
+    givens_jordan_region_volume_le_complex_jacobian_of_closedUnitSquare_homeomorph_cylinderStripGlued
+      j boundary e hboundaryHomeomorph G hG hboundary hpartition hzero hGLipschitz
+
+/-- The same bundled explicit glued-strip quotient square route also produces a
+bounded witness region whose volume is controlled by the Jacobian integral. -/
+theorem exists_givens_bounded_region_volume_le_complex_jacobian_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (e : ClosedUnitSquare ≃ₜ ℂ)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  obtain ⟨region₁, region₂, hpartition, hzero⟩ :=
+    exists_givensBoundaryCurve_jordanPartition_at_origin j
+  exact ⟨region₁, hpartition.region₁_open,
+    hpartition.region₁_connected,
+    givensBoundaryCurve_jordan_region_at_origin_bounded
+      j hpartition hzero,
+    hzero,
+    givens_jordan_region_volume_le_complex_jacobian_of_closedUnitSquare_homeomorph_cylinderStripGlued
+      j boundary e hboundaryHomeomorph G hG hboundary hpartition hzero hGLipschitz⟩
+
 end
 
 end GromovFilling

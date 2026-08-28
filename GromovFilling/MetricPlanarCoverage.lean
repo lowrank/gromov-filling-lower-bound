@@ -972,6 +972,46 @@ theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_closedUnitS
     (continuous_givensMetricFourierMap hboundary N j)
     (givensMetricFourierMap_on_boundary hboundary j)
 
+/-- If the boundary is identified with the standard closed-square boundary by a
+homeomorphism, the genuine metric Fourier map also covers the Jordan region at
+the origin through the bundled explicit glued-strip quotient square route. -/
+theorem givensMetricFourierMap_jordan_region_subset_range_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact givensBoundaryCurve_jordan_region_subset_range_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    j e hboundaryHomeomorph (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    hpartition hzero
+
+/-- Separation-free square-homeomorphic coverage for the genuine metric Fourier
+map likewise follows from the bundled explicit glued-strip quotient square
+route. -/
+theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundaryHomeomorph : boundary = e ∘ closedUnitSquareBoundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact exists_givensBoundaryCurve_bounded_region_subset_range_of_closedUnitSquare_homeomorph_cylinderStripGlued
+    j e hboundaryHomeomorph (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+
 end
 
 end GromovFilling
