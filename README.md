@@ -88,7 +88,9 @@ runs both checks on every push and pull request.
   a source-side finite/infinite chart-certificate interface converts
   abstract chart data into that planar certificate layer, and an
   obstruction-level variant now generates the Jordan witness regions
-  automatically from the mixed boundary curves;
+  automatically from the mixed boundary curves, and the corresponding
+  source-side metric-chart interface now feeds that certificate layer
+  directly for the genuine mixed Fourier maps;
 - the exact identification of mathlib's real determinant on `ℂ` with the
   elementary planar Jacobian, its finite-sum integrated `ENNReal` form,
   and the passage from a Hilbert--Schmidt derivative-energy bound to a

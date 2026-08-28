@@ -337,6 +337,89 @@ theorem ComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal
   intro N
   exact (S.data N).finite_universal_ennreal area (S.budget N)
 
+/-- Source-side finite chart data for the actual metric Fourier family, with
+the topological witness again generated internally from an odd boundary-degree
+obstruction.  This is the direct chart-globalization interface for the genuine
+mixed metric maps. -/
+structure FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction
+    (N : ℕ) (X : Type*) [PseudoMetricSpace X] (boundary : UnitAddCircle → X) where
+  hobstruction : HasOddBoundaryDegreeObstruction boundary
+  m : ℕ
+  sourcePiece : Fin m → Set X
+  sourcePiece_cover : Set.univ ⊆ ⋃ i, sourcePiece i
+  targetPiece : Fin m → Set ℂ
+  chart : ∀ i, sourcePiece i → targetPiece i
+  targetPiece_open : ∀ i, IsOpen (targetPiece i)
+  localMap : Fin N → Fin m → ℂ → ℂ
+  K : Fin N → Fin m → ℝ≥0
+  local_lipschitz : ∀ j i, LipschitzOnWith (K j i) (localMap j i) (targetPiece i)
+  local_agree : ∀ j i (x : sourcePiece i),
+    givensMetricFourierMap boundary N j x = localMap j i (chart i x)
+
+/-- Metric source-side chart data converts to the generic obstruction-level
+source-chart certificate by taking the row maps to be the genuine mixed metric
+Fourier maps. -/
+def FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction
+    {N : ℕ} {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary)
+    (hboundary : IsometricCircleBoundary boundary) :
+    FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary where
+  hobstruction := D.hobstruction
+  rowMap := fun j ↦ givensMetricFourierMap boundary N j
+  rowMap_cont := fun j ↦ continuous_givensMetricFourierMap hboundary N j
+  rowMap_boundary := fun j t ↦ givensMetricFourierMap_on_boundary hboundary j t
+  m := D.m
+  sourcePiece := D.sourcePiece
+  sourcePiece_cover := D.sourcePiece_cover
+  targetPiece := D.targetPiece
+  chart := D.chart
+  targetPiece_open := D.targetPiece_open
+  localMap := D.localMap
+  K := D.K
+  local_lipschitz := D.local_lipschitz
+  local_agree := D.local_agree
+
+/-- The total planar Jacobian mass extracted from one finite metric
+source-chart certificate. -/
+def FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.jacobianMass
+    {N : ℕ} {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary)
+    (hboundary : IsometricCircleBoundary boundary) (j : Fin N) : ℝ≥0∞ :=
+  ((D.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction hboundary).toFiniteComplexSourceChartCertificateData.toFiniteComplexLocalCertificateData).jacobianMass j
+
+/-- A finite metric source-chart certificate yields the `N`-mode
+orientation-free lower bound once its summed local planar Jacobian budget is
+available. -/
+theorem FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_universal_ennreal
+    {N : ℕ} {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (area : ℝ≥0∞)
+    (hbudget : (∑ j : Fin N, D.jacobianMass hboundary j) ≤ area) :
+    ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
+  (D.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction hboundary).finite_universal_ennreal area hbudget
+
+/-- Bundled source-side chart data for the genuine mixed metric Fourier maps,
+for every finite truncation at a common area budget.  This is the direct
+chart-globalization interface now left on the orientation-free side once the
+odd-degree obstruction is available on the source. -/
+structure MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction
+    (X : Type*) [PseudoMetricSpace X]
+    (boundary : UnitAddCircle → X) (area : ℝ≥0∞) where
+  hboundary : IsometricCircleBoundary boundary
+  data : ∀ N : ℕ, FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary
+  budget : ∀ N : ℕ, (∑ j : Fin N, (data N).jacobianMass hboundary j) ≤ area
+
+/-- A bundled metric source-chart certificate system implies the full
+orientation-free universal bound. -/
+theorem MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.universal_ennreal
+    {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction X boundary area) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  apply universal_ennreal_bound_of_finite_certificates
+  intro N
+  exact (S.data N).finite_universal_ennreal S.hboundary area (S.budget N)
+
 /-- The finite orientation-free Fourier certificate for complex-plane
 domains under the exact topological interface: an odd boundary-degree
 obstruction and the global Jacobian budget. -/
