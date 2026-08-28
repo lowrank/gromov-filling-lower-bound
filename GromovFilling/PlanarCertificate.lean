@@ -42,6 +42,15 @@ def FiniteComplexLocalCertificateData.jacobianMass
   ∑ i : Fin D.m,
     ∫⁻ x in D.pieces i, ENNReal.ofReal |(fderiv ℝ (D.G j i) x).det| ∂volume
 
+/-- In a finite local planar certificate, each row's mixed boundary area is
+bounded by that row's summed local Jacobian mass. -/
+theorem FiniteComplexLocalCertificateData.mixedBoundaryArea_le_jacobianMass
+    {N : ℕ} (D : FiniteComplexLocalCertificateData N) (j : Fin N) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤ D.jacobianMass j := by
+  exact (D.witness j).trans
+    (complex_volume_le_sum_lintegral_abs_det_fderiv_of_isOpen_of_subset_iUnion_image
+      D.pieces (D.G j) (D.omega j) D.open_pieces (D.lipschitz j) (D.cover j))
+
 /-- A bundled finite chartwise local certificate implies the `N`-mode
 orientation-free lower bound once its total Jacobian budget is available. -/
 theorem FiniteComplexLocalCertificateData.finite_universal_ennreal
@@ -327,6 +336,14 @@ theorem FiniteComplexSourceChartCertificateData.finite_universal_ennreal
     ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
   (D.toFiniteComplexLocalCertificateData).finite_universal_ennreal area hbudget
 
+/-- In a finite source-chart certificate, each row's mixed boundary area is
+bounded by the row's chartwise Jacobian mass. -/
+theorem FiniteComplexSourceChartCertificateData.mixedBoundaryArea_le_jacobianMass
+    {N : ℕ} {X : Type*} (D : FiniteComplexSourceChartCertificateData N X) (j : Fin N) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      (D.toFiniteComplexLocalCertificateData).jacobianMass j :=
+  (D.toFiniteComplexLocalCertificateData).mixedBoundaryArea_le_jacobianMass j
+
 
 /-- A bundled source-side finite chart certificate also carries any common
 additive defect term unchanged. -/
@@ -462,6 +479,15 @@ theorem FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_univer
     ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
   (D.toFiniteComplexSourceChartCertificateData).finite_universal_ennreal area hbudget
 
+/-- Under the odd boundary-degree obstruction, each row of a finite
+source-chart system already satisfies the rowwise mixed-area/Jacobian bound. -/
+theorem FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.mixedBoundaryArea_le_jacobianMass
+    {N : ℕ} {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary) (j : Fin N) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      (D.toFiniteComplexSourceChartCertificateData.toFiniteComplexLocalCertificateData).jacobianMass j :=
+  (D.toFiniteComplexSourceChartCertificateData).mixedBoundaryArea_le_jacobianMass j
+
 
 /-- An obstruction-level bundled source-side finite chart certificate also
 carries any common additive defect term unchanged. -/
@@ -577,6 +603,22 @@ theorem FiniteComplexSourceChartData.finite_universal_ennreal_of_odd_boundary_de
     using
       (D.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction hobstruction).finite_universal_ennreal
         area hbudget
+
+/-- Once the odd boundary-degree obstruction is supplied, each row of a
+finite generic source-chart system satisfies the rowwise mixed-area/Jacobian
+bound. -/
+theorem FiniteComplexSourceChartData.mixedBoundaryArea_le_jacobianMass_of_odd_boundary_degree_obstruction
+    {N : ℕ} {X : Type*} [TopologicalSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteComplexSourceChartData N X boundary)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary) (j : Fin N) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤ D.jacobianMass j := by
+  simpa [FiniteComplexSourceChartData.jacobianMass,
+    FiniteComplexSourceChartData.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction,
+    FiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction.toFiniteComplexSourceChartCertificateData,
+    FiniteComplexSourceChartCertificateData.toFiniteComplexLocalCertificateData,
+    FiniteComplexLocalCertificateData.jacobianMass] using
+      (D.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction hobstruction).mixedBoundaryArea_le_jacobianMass
+        j
 
 /-- A finite generic source-chart certificate carries any common additive
 defect term once the odd-degree obstruction is supplied separately. -/
@@ -1483,6 +1525,15 @@ theorem FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.finite_
     ENNReal.ofReal (finiteUniversalConstant N) ≤ area :=
   (D.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction hboundary).finite_universal_ennreal area hbudget
 
+/-- Under the odd boundary-degree obstruction, each row of a finite metric
+source-chart system already satisfies the rowwise mixed-area/Jacobian bound. -/
+theorem FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.mixedBoundaryArea_le_jacobianMass
+    {N : ℕ} {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary)
+    (hboundary : IsometricCircleBoundary boundary) (j : Fin N) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤ D.jacobianMass hboundary j :=
+  (D.toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction hboundary).mixedBoundaryArea_le_jacobianMass j
+
 
 /-- A finite metric source-chart certificate also carries any common additive
 defect term unchanged. -/
@@ -1577,6 +1628,21 @@ theorem FiniteMetricComplexSourceChartData.finite_universal_ennreal_of_odd_bound
     using
       (D.toFiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction hobstruction).finite_universal_ennreal
         hboundary area hbudget
+
+/-- Once the odd boundary-degree obstruction is supplied, each row of a
+finite metric source-chart system satisfies the rowwise mixed-area/Jacobian
+bound. -/
+theorem FiniteMetricComplexSourceChartData.mixedBoundaryArea_le_jacobianMass_of_odd_boundary_degree_obstruction
+    {N : ℕ} {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteMetricComplexSourceChartData N X boundary)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (hboundary : IsometricCircleBoundary boundary) (j : Fin N) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤ D.jacobianMass j := by
+  simpa [FiniteMetricComplexSourceChartData.jacobianMass,
+    FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.jacobianMass,
+    FiniteMetricComplexSourceChartData.toFiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction] using
+      (D.toFiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction hobstruction).mixedBoundaryArea_le_jacobianMass
+        hboundary j
 
 
 /-- A finite metric source-chart certificate carries any common additive
