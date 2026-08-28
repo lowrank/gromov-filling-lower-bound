@@ -860,6 +860,20 @@ theorem ComplexSourceChartSystem.universal_ennreal_of_closedUnitDisk_homeomorph_
   S.universal_ennreal_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_direct e hboundaryMap)
 
+/-- The disk-homeomorphic route through the quotient-friendly directed
+abstract polygonal-model interface likewise supplies the odd boundary-degree
+obstruction for a generic source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_closedUnitDisk_homeomorph_abstractVariableDirectedQuotient
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_abstractVariableDirectedQuotient
+      e hboundaryMap)
+
 /-- The disk-homeomorphic route through the packaged disk existence interface
 likewise supplies the odd boundary-degree obstruction for a generic
 source-chart system. -/
@@ -1209,6 +1223,21 @@ theorem ComplexSourceChartSystem.universal_ennreal_add_of_closedUnitDisk_homeomo
     ENNReal.ofReal universalConstant + defect ≤ area :=
   S.universal_ennreal_add_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_direct e hboundaryMap)
+    hbudget
+
+/-- The additive-defect generic source-chart certificate also follows from the
+quotient-friendly directed disk-homeomorphism interface. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_closedUnitDisk_homeomorph_abstractVariableDirectedQuotient
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_abstractVariableDirectedQuotient
+      e hboundaryMap)
     hbudget
 
 /-- The disk-homeomorphic route through the packaged disk existence interface
@@ -1706,6 +1735,20 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_of_closedUnitDisk_homeo
   S.universal_ennreal_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_direct e hboundaryMap)
 
+/-- The disk-homeomorphic route through the quotient-friendly directed
+abstract polygonal-model interface likewise supplies the odd boundary-degree
+obstruction for a metric source-chart system. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_closedUnitDisk_homeomorph_abstractVariableDirectedQuotient
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_abstractVariableDirectedQuotient
+      e hboundaryMap)
+
 /-- The disk-homeomorphic route through the packaged disk existence interface
 likewise supplies the odd boundary-degree obstruction for a metric
 source-chart system. -/
@@ -2055,6 +2098,21 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_closedUnitDisk_h
     ENNReal.ofReal universalConstant + defect ≤ area :=
   S.universal_ennreal_add_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_direct e hboundaryMap)
+    hbudget
+
+/-- The additive-defect metric source-chart certificate also follows from the
+quotient-friendly directed disk-homeomorphism interface. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_closedUnitDisk_homeomorph_abstractVariableDirectedQuotient
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_abstractVariableDirectedQuotient
+      e hboundaryMap)
     hbudget
 
 /-- The disk-homeomorphic route through the packaged disk existence interface

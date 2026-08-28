@@ -6568,6 +6568,44 @@ theorem hasAbstractVariableDirectedFinePolygonalModels_of_closedUnitDisk_homeomo
     (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitDisk_homeomorph
       e hboundary)
 
+/-- The same disk-homeomorphic hypothesis also yields the quotient-friendly
+directed abstract arbitrarily fine polygonal-model interface furnished by the
+explicit square-center construction. -/
+theorem hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_closedUnitDisk_homeomorph
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitDiskBoundary) :
+    HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary :=
+  hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_homeomorph e hboundary
+    hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closedUnitDiskBoundary
+
+/-- The same disk-homeomorphic hypothesis also yields the map-dependent
+quotient-friendly directed fine polygonal-model interface after the compact
+uniform-continuity step. -/
+theorem hasAbstractVariableDirectedQuotientFinePolygonalModels_of_closedUnitDisk_homeomorph
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitDiskBoundary) :
+    HasAbstractVariableDirectedQuotientFinePolygonalModels boundary :=
+  hasAbstractVariableDirectedQuotientFinePolygonalModels_of_abstractVariableDirectedQuotientArbitrarilyFine
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_closedUnitDisk_homeomorph
+      e hboundary)
+
+/-- The same disk-homeomorphic hypothesis also discharges the odd
+boundary-degree obstruction through the quotient-friendly directed abstract
+polygonal-model interface furnished by the explicit square-center construction. -/
+theorem hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_abstractVariableDirectedQuotient
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitDiskBoundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    e hboundary
+    hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_closedUnitDiskBoundary
+
 /-- The same disk-homeomorphic hypothesis also discharges the odd
 boundary-degree obstruction through the directed abstract polygonal-model
 interface furnished by the explicit square-center construction. -/
