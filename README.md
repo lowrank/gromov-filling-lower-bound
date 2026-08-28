@@ -95,7 +95,10 @@ runs both checks on every push and pull request.
   obstruction, with direct wrappers from nullhomotopies and the
   quotient-friendly directed abstract arbitrarily-fine polygonal-model
   interface, and the same local, source-chart, and metric source-chart
-  layers now also carry a common additive defect term unchanged;
+  layers now also carry a common additive defect term unchanged, and
+  the metric source-chart interface now has the same closed-disk,
+  closed-square, and disk-homeomorphism topological wrappers as the
+  older whole-plane certificate theorems;
 - the exact identification of mathlib's real determinant on `ℂ` with the
   elementary planar Jacobian, its finite-sum integrated `ENNReal` form,
   and the passage from a Hilbert--Schmidt derivative-energy bound to a
