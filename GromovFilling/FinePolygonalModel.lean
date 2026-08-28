@@ -4607,12 +4607,92 @@ def AbstractGeometricPolygonalModel.map
           simpa using congrArg f (D.model.boundaryPath k x) }
     mesh := hmesh }
 
+/-- An ordinary abstract finite polygonal model can be viewed as a directed
+variable-face-size model by declaring every face-edge occurrence to use the
+forward global orientation. -/
+def AbstractFinePolygonalModel.toAbstractVariableDirectedFinePolygonalModel
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {H : X → UnitAddCircle}
+    (D : AbstractFinePolygonalModel boundary H) :
+    AbstractVariableDirectedFinePolygonalModel boundary H := by
+  let _ := D.instVertexFintype
+  let _ := D.instEdgeFintype
+  let _ := D.instFaceFintype
+  let _ := D.instVertexDecidableEq
+  let _ := D.instEdgeDecidableEq
+  let _ := D.instFaceDecidableEq
+  exact
+    { Vertex := D.Vertex
+      Edge := D.Edge
+      Face := D.Face
+      instVertexFintype := D.instVertexFintype
+      instEdgeFintype := D.instEdgeFintype
+      instFaceFintype := D.instFaceFintype
+      instVertexDecidableEq := D.instVertexDecidableEq
+      instEdgeDecidableEq := D.instEdgeDecidableEq
+      instFaceDecidableEq := D.instFaceDecidableEq
+      faceSize := fun _ ↦ D.faceSize
+      boundarySize := D.boundarySize
+      edgeEnds := D.edgeEnds
+      faceEdges := D.faceEdges
+      boundaryEdges := D.boundaryEdges
+      edgeFaceCount := D.edgeFaceCount
+      faceVertex := D.faceVertex
+      faceEdge := D.faceEdge
+      faceEdgeForward := fun _ _ ↦ true
+      faceVertex_injective := D.faceVertex_injective
+      faceEdge_injective := D.faceEdge_injective
+      faceEdges_eq := D.faceEdges_eq
+      faceEdge_ends := by
+        intro f k
+        simpa using D.faceEdge_ends f k
+      boundaryEdge := D.boundaryEdge
+      boundaryEdge_injective := D.boundaryEdge_injective
+      boundaryVertex := D.boundaryVertex
+      boundaryEdge_ends := D.boundaryEdge_ends
+      boundaryEdges_eq := D.boundaryEdges_eq
+      vertexPoint := D.vertexPoint
+      edgeToX := D.edgeToX
+      edgeToX_continuous := D.edgeToX_continuous
+      edgeToX_start := D.edgeToX_start
+      edgeToX_finish := D.edgeToX_finish
+      faceCenter := D.faceCenter
+      halfTurn_mesh := D.halfTurn_mesh
+      boundaryParameter := D.boundaryParameter
+      boundaryParameter_continuous := D.boundaryParameter_continuous
+      boundaryParameter_start := D.boundaryParameter_start
+      boundaryParameter_finish := D.boundaryParameter_finish
+      boundaryPath := D.boundaryPath }
+
+/-- The geometric version of the preceding orientation-forgetting upgrade. -/
+def AbstractGeometricPolygonalModel.toAbstractVariableDirectedGeometricPolygonalModel
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {ε : ℝ}
+    (D : AbstractGeometricPolygonalModel boundary ε) :
+    AbstractVariableDirectedGeometricPolygonalModel boundary ε := by
+  refine
+    { model := D.model.toAbstractVariableDirectedFinePolygonalModel
+      mesh := ?_ }
+  intro f e he x
+  simpa using D.mesh f e he x
+
 /-- The abstract map-independent surface input: compatible polygonal models exist
 at every positive geometric mesh scale, with arbitrary finite index sets. -/
 def HasAbstractArbitrarilyFinePolygonalModels
     {X : Type*} [PseudoMetricSpace X]
     (boundary : UnitAddCircle → X) : Prop :=
   ∀ ε : ℝ, 0 < ε → Nonempty (AbstractGeometricPolygonalModel boundary ε)
+
+/-- Any map-independent ordinary abstract arbitrarily-fine polygonal-model
+interface also supplies the directed variable-face-size interface. -/
+theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_abstractArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X}
+    (hmodels : HasAbstractArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary := by
+  intro ε hε
+  obtain ⟨D⟩ := hmodels ε hε
+  exact ⟨D.toAbstractVariableDirectedGeometricPolygonalModel⟩
 
 /-- Bundle explicit checkerboard-cylinder data into the ordinary abstract
 geometric polygonal-model interface on the square-cylinder boundary. -/
