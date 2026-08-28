@@ -2592,6 +2592,320 @@ theorem hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedAr
     (hasAbstractVariableDirectedFinePolygonalModels_of_homeomorph_abstractVariableDirectedArbitrarilyFine
       e hboundary hmodels)
 
+/-- A quotient-friendly directed abstract fine polygonal model.  Unlike
+`AbstractVariableDirectedFinePolygonalModel`, this interface does not require
+the face-vertex parametrizations to be injective, so it applies to quotient
+cell structures where vertices may repeat after gluing. -/
+structure AbstractVariableDirectedQuotientFinePolygonalModel
+    {X : Type*} [TopologicalSpace X]
+    (boundary : UnitAddCircle → X) (H : X → UnitAddCircle) where
+  Vertex : Type
+  Edge : Type
+  Face : Type
+  [instVertexFintype : Fintype Vertex]
+  [instEdgeFintype : Fintype Edge]
+  [instFaceFintype : Fintype Face]
+  [instVertexDecidableEq : DecidableEq Vertex]
+  [instEdgeDecidableEq : DecidableEq Edge]
+  [instFaceDecidableEq : DecidableEq Face]
+  faceSize : Face → ℕ
+  boundarySize : ℕ
+  edgeEnds : Edge → Vertex × Vertex
+  faceEdges : Face → Finset Edge
+  boundaryEdges : Finset Edge
+  edgeFaceCount : ∀ e : Edge,
+    (Finset.univ.filter fun f ↦ e ∈ faceEdges f).card =
+      if e ∈ boundaryEdges then 1 else 2
+  faceVertex : ∀ f, Fin (faceSize f + 1) → Vertex
+  faceEdge : ∀ f, Fin (faceSize f + 1) → Edge
+  faceEdgeForward : ∀ f, Fin (faceSize f + 1) → Bool
+  faceEdge_injective : ∀ f, Function.Injective (faceEdge f)
+  faceEdges_eq : ∀ f, faceEdges f = Finset.univ.image (faceEdge f)
+  faceEdge_ends : ∀ f k, edgeEnds (faceEdge f k) =
+    if faceEdgeForward f k then
+      (faceVertex f k, faceVertex f (cyclicSucc k))
+    else
+      (faceVertex f (cyclicSucc k), faceVertex f k)
+  boundaryEdge : Fin (boundarySize + 1) → Edge
+  boundaryEdge_injective : Function.Injective boundaryEdge
+  boundaryVertex : Fin (boundarySize + 1) → Vertex
+  boundaryEdge_ends : ∀ k, edgeEnds (boundaryEdge k) =
+    (boundaryVertex k, boundaryVertex (cyclicSucc k))
+  boundaryEdges_eq : boundaryEdges = Finset.univ.image boundaryEdge
+  vertexPoint : Vertex → X
+  edgeToX : Edge → ClosedUnitInterval → X
+  edgeToX_continuous : ∀ e, Continuous (edgeToX e)
+  edgeToX_start : ∀ e, edgeToX e closedUnitIntervalStart =
+    vertexPoint (edgeEnds e).1
+  edgeToX_finish : ∀ e, edgeToX e closedUnitIntervalFinish =
+    vertexPoint (edgeEnds e).2
+  faceCenter : Face → X
+  halfTurn_mesh : ∀ (f : Face) (e : Edge),
+    e ∈ faceEdges f → ∀ x : ClosedUnitInterval,
+      dist (H (faceCenter f)) (H (edgeToX e x)) < 1 / 2
+  boundaryParameter : ∀ _k,
+    ClosedUnitInterval → ℝ
+  boundaryParameter_continuous : ∀ k, Continuous (boundaryParameter k)
+  boundaryParameter_start : ∀ k,
+    boundaryParameter k closedUnitIntervalStart = cyclicVertexParameter k
+  boundaryParameter_finish : ∀ k,
+    boundaryParameter k closedUnitIntervalFinish =
+      cyclicEdgeFinishParameter k
+  boundaryPath : ∀ k x,
+    edgeToX (boundaryEdge k) x =
+      boundary ((boundaryParameter k x : ℝ) : UnitAddCircle)
+
+/-- The quotient-friendly directed abstract fine interface still suffices for
+the odd boundary-degree obstruction, because the finite theorem only uses the
+cyclic face-edge data and not face-vertex injectivity. -/
+theorem AbstractVariableDirectedQuotientFinePolygonalModel.no_odd_boundary_degree
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {H : X → UnitAddCircle}
+    (D : AbstractVariableDirectedQuotientFinePolygonalModel boundary H)
+    (hH : Continuous H)
+    (degree : ℤ) (hdegree : HasCircleDegree (H ∘ boundary) degree)
+    (hodd : Odd degree) : False := by
+  classical
+  let _ := D.instVertexFintype
+  let _ := D.instEdgeFintype
+  let _ := D.instFaceFintype
+  let _ := D.instVertexDecidableEq
+  let _ := D.instEdgeDecidableEq
+  let _ := D.instFaceDecidableEq
+  exact no_odd_degree_of_fine_polygonal_circle_extension_variable_with_edge_directions
+    D.edgeEnds D.faceEdges D.boundaryEdges D.edgeFaceCount D.faceSize
+    D.faceVertex D.faceEdge D.faceEdgeForward
+    D.faceEdge_injective D.faceEdges_eq D.faceEdge_ends D.boundaryEdge
+    D.boundaryEdge_injective D.boundaryVertex D.boundaryEdge_ends
+    D.boundaryEdges_eq D.vertexPoint (fun _ ↦ ClosedUnitInterval)
+    (fun _ ↦ closedUnitIntervalStart) (fun _ ↦ closedUnitIntervalFinish)
+    D.edgeToX D.edgeToX_continuous D.edgeToX_start D.edgeToX_finish
+    H hH D.faceCenter D.halfTurn_mesh boundary D.boundaryParameter
+    D.boundaryParameter_continuous D.boundaryParameter_start
+    D.boundaryParameter_finish D.boundaryPath degree hdegree hodd
+
+/-- Any directed abstract fine polygonal model can be viewed as quotient
+friendly by forgetting the unnecessary face-vertex injectivity field. -/
+def AbstractVariableDirectedFinePolygonalModel.toAbstractVariableDirectedQuotientFinePolygonalModel
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {H : X → UnitAddCircle}
+    (D : AbstractVariableDirectedFinePolygonalModel boundary H) :
+    AbstractVariableDirectedQuotientFinePolygonalModel boundary H :=
+  { D with }
+
+/-- Map-dependent quotient-friendly directed fine polygonal models with
+arbitrary finite index sets. -/
+def HasAbstractVariableDirectedQuotientFinePolygonalModels
+    {X : Type*} [TopologicalSpace X]
+    (boundary : UnitAddCircle → X) : Prop :=
+  ∀ (H : X → UnitAddCircle), Continuous H →
+    Nonempty (AbstractVariableDirectedQuotientFinePolygonalModel boundary H)
+
+/-- Quotient-friendly directed abstract fine polygonal models imply the odd
+boundary-degree obstruction. -/
+theorem hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary) :
+    HasOddBoundaryDegreeObstruction boundary := by
+  intro H hH degree hdegree hodd
+  obtain ⟨D⟩ := hfine H hH
+  exact D.no_odd_boundary_degree hH degree hdegree hodd
+
+/-- An abstract geometric quotient-friendly directed polygonal model with
+variable face sizes and face-local edge directions. -/
+structure AbstractVariableDirectedQuotientGeometricPolygonalModel
+    {X : Type*} [PseudoMetricSpace X]
+    (boundary : UnitAddCircle → X) (ε : ℝ) where
+  model : AbstractVariableDirectedQuotientFinePolygonalModel boundary (fun _ ↦ (0 : UnitAddCircle))
+  mesh : ∀ (f : model.Face) (e : model.Edge),
+    e ∈ model.faceEdges f → ∀ x : ClosedUnitInterval,
+      dist (model.faceCenter f) (model.edgeToX e x) < ε
+
+/-- Replace the vacuous constant-map half-turn estimate in a quotient-friendly
+directed abstract geometric model by a supplied estimate for a particular
+circle-valued map. -/
+def AbstractVariableDirectedQuotientGeometricPolygonalModel.toAbstractVariableDirectedQuotientFinePolygonalModel
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {ε : ℝ}
+    (D : AbstractVariableDirectedQuotientGeometricPolygonalModel boundary ε)
+    (H : X → UnitAddCircle)
+    (hhalf : ∀ (f : D.model.Face) (e : D.model.Edge),
+      e ∈ D.model.faceEdges f → ∀ x : ClosedUnitInterval,
+        dist (H (D.model.faceCenter f)) (H (D.model.edgeToX e x)) < 1 / 2) :
+    AbstractVariableDirectedQuotientFinePolygonalModel boundary H :=
+  { D.model with halfTurn_mesh := hhalf }
+
+/-- Any directed abstract geometric polygonal model can be viewed as
+quotient-friendly by forgetting face-vertex injectivity. -/
+def AbstractVariableDirectedGeometricPolygonalModel.toAbstractVariableDirectedQuotientGeometricPolygonalModel
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {ε : ℝ}
+    (D : AbstractVariableDirectedGeometricPolygonalModel boundary ε) :
+    AbstractVariableDirectedQuotientGeometricPolygonalModel boundary ε := by
+  refine
+    { model := D.model.toAbstractVariableDirectedQuotientFinePolygonalModel
+      mesh := ?_ }
+  intro f e he x
+  simpa using D.mesh f e he x
+
+/-- Push a quotient-friendly directed abstract geometric polygonal model
+forward along a continuous map whose restriction to the boundary agrees with a
+new parametrization. -/
+def AbstractVariableDirectedQuotientGeometricPolygonalModel.map
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    {δ ε : ℝ} (D : AbstractVariableDirectedQuotientGeometricPolygonalModel boundary δ)
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmesh : ∀ (face : D.model.Face) (e : D.model.Edge),
+      e ∈ D.model.faceEdges face → ∀ x : ClosedUnitInterval,
+        dist (f (D.model.faceCenter face)) (f (D.model.edgeToX e x)) < ε) :
+    AbstractVariableDirectedQuotientGeometricPolygonalModel boundary' ε :=
+  { model :=
+      { D.model with
+        vertexPoint := fun v ↦ f (D.model.vertexPoint v)
+        edgeToX := fun e x ↦ f (D.model.edgeToX e x)
+        edgeToX_continuous := fun e ↦ hf.comp (D.model.edgeToX_continuous e)
+        edgeToX_start := by
+          intro e
+          rw [D.model.edgeToX_start]
+        edgeToX_finish := by
+          intro e
+          rw [D.model.edgeToX_finish]
+        faceCenter := fun face ↦ f (D.model.faceCenter face)
+        halfTurn_mesh := by
+          intro face e he x
+          simp
+        boundaryPath := by
+          intro k x
+          rw [hboundary]
+          simpa using congrArg f (D.model.boundaryPath k x) }
+    mesh := hmesh }
+
+/-- The map-independent quotient-friendly directed surface input: compatible
+polygonal models exist at every positive geometric mesh scale. -/
+def HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X]
+    (boundary : UnitAddCircle → X) : Prop :=
+  ∀ ε : ℝ, 0 < ε →
+    Nonempty (AbstractVariableDirectedQuotientGeometricPolygonalModel boundary ε)
+
+/-- On a compact metric domain, quotient-friendly directed abstract
+arbitrarily fine geometric polygonal models provide the map-dependent
+quotient-friendly abstract fine models needed by the mod-two argument. -/
+theorem hasAbstractVariableDirectedQuotientFinePolygonalModels_of_abstractVariableDirectedQuotientArbitrarilyFine
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X}
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractVariableDirectedQuotientFinePolygonalModels boundary := by
+  intro H hH
+  have hUniform : UniformContinuous H :=
+    CompactSpace.uniformContinuous_of_continuous hH
+  obtain ⟨δ, hδ, hδH⟩ :=
+    Metric.uniformContinuous_iff.mp hUniform (1 / 2) (by norm_num)
+  obtain ⟨D⟩ := hmodels δ hδ
+  refine ⟨D.toAbstractVariableDirectedQuotientFinePolygonalModel H ?_⟩
+  intro f e he x
+  exact hδH (D.mesh f e he x)
+
+/-- Quotient-friendly directed abstract arbitrarily fine compatible geometric
+models imply the odd boundary-degree obstruction. -/
+theorem hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X}
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+    (hasAbstractVariableDirectedQuotientFinePolygonalModels_of_abstractVariableDirectedQuotientArbitrarilyFine
+      hmodels)
+
+/-- The stronger directed abstract fine polygonal-model interface already
+supplies the quotient-friendly one. -/
+theorem hasAbstractVariableDirectedQuotientFinePolygonalModels_of_abstractVariableDirectedFinePolygonalModels
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (hfine : HasAbstractVariableDirectedFinePolygonalModels boundary) :
+    HasAbstractVariableDirectedQuotientFinePolygonalModels boundary := by
+  intro H hH
+  obtain ⟨D⟩ := hfine H hH
+  exact ⟨D.toAbstractVariableDirectedQuotientFinePolygonalModel⟩
+
+/-- The stronger directed abstract arbitrarily-fine polygonal-model interface
+already supplies the quotient-friendly one. -/
+theorem hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X}
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary := by
+  intro ε hε
+  obtain ⟨D⟩ := hmodels ε hε
+  exact ⟨D.toAbstractVariableDirectedQuotientGeometricPolygonalModel⟩
+
+/-- Quotient-friendly directed variable-face-size abstract arbitrarily fine
+polygonal models transport across continuous maps from a compact source by
+uniform continuity. -/
+theorem hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_compact_continuous
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary' := by
+  intro ε hε
+  have hUniform : UniformContinuous f :=
+    CompactSpace.uniformContinuous_of_continuous hf
+  obtain ⟨δ, hδ, hδf⟩ :=
+    Metric.uniformContinuous_iff.mp hUniform ε hε
+  obtain ⟨D⟩ := hmodels δ hδ
+  refine ⟨D.map f hf hboundary ?_⟩
+  intro face e he x
+  exact hδf (D.mesh face e he x)
+
+/-- Homeomorphic compact images inherit quotient-friendly directed
+variable-face-size abstract arbitrarily fine polygonal models. -/
+theorem hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_homeomorph
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundary : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary' :=
+  hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_compact_continuous
+    e e.continuous_toFun hboundary hmodels
+
+/-- A boundary-respecting homeomorphism from a compact source carrying
+quotient-friendly directed abstract arbitrarily fine polygonal models
+transfers the corresponding map-dependent quotient-friendly directed fine
+interface to the target boundary. -/
+theorem hasAbstractVariableDirectedQuotientFinePolygonalModels_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundary : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractVariableDirectedQuotientFinePolygonalModels boundary' :=
+  hasAbstractVariableDirectedQuotientFinePolygonalModels_of_abstractVariableDirectedQuotientArbitrarilyFine
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_homeomorph
+      e hboundary hmodels)
+
+/-- A boundary-respecting homeomorphism from a compact source carrying the
+quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface transfers the odd boundary-degree obstruction to the target
+boundary. -/
+theorem hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundary : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary) :
+    HasOddBoundaryDegreeObstruction boundary' :=
+  hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+    (hasAbstractVariableDirectedQuotientFinePolygonalModels_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+      e hboundary hmodels)
+
 /-- Directed variable-face-size abstract closed-square models transfer to the
 closed-disk boundary through the radial square-to-disk map. -/
 theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitSquare

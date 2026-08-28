@@ -56,6 +56,11 @@ runs both checks on every push and pull request.
 - a map-independent `HasArbitrarilyFinePolygonalModels` interface and the
   compact uniform-continuity argument converting its geometric mesh bound
   into the half-turn mesh needed for every continuous circle-valued map;
+- a quotient-friendly directed abstract polygonal-model interface,
+  omitting face-vertex injectivity so it applies to quotient cell
+  structures with repeated face vertices after gluing, together with its
+  arbitrarily-fine, compact-map, and homeomorphism transport theorems and
+  the resulting odd boundary-degree obstruction;
 - the resulting coverage implication: an odd radial boundary degree forces
   the puncture into the extension image, hence every point in the bounded
   nonzero-degree component of a mixed Givens curve is covered;
@@ -113,12 +118,15 @@ needs:
    case.  The strongest currently packaged route uses either a direct
    surface-level odd-degree argument, or a theorem furnishing arbitrarily fine
    finite triangulations/cell structures at some bundled polygonal-model
-   interface.  For future work, the directed abstract variable-face-size
-   interface `HasAbstractVariableDirectedArbitrarilyFinePolygonalModels` is the
-   closest match to general surface cell decompositions and already transports
-   across compact homeomorphisms; the stronger undirected interfaces
-   `HasArbitrarilyFinePolygonalModels` / `HasFinePolygonalModels` are also
-   formalized and still suffice when available.  The compact
+   interface.  The quotient-friendly directed interface
+   `HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels` is now
+   formalized for cell decompositions where face vertices may repeat after
+   gluing, and it already transports across compact continuous maps and
+   homeomorphisms.  The stronger directed interface
+   `HasAbstractVariableDirectedArbitrarilyFinePolygonalModels` and the
+   undirected interfaces `HasArbitrarilyFinePolygonalModels` /
+   `HasFinePolygonalModels` are also formalized and still suffice when
+   available.  The compact
    uniform-continuity passage from these geometric statements to the odd
    boundary-degree obstruction is formalized, and the disk-homeomorphic case is
    discharged directly and also at the directed abstract polygonal-model
