@@ -371,6 +371,31 @@ theorem jordan_region_subset_range_of_abstractVariableDirectedQuotientArbitraril
     G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
     hpartition hy₀
 
+/-- The generic Jordan-region coverage theorem already follows from the
+map-dependent quotient-friendly directed abstract fine polygonal-model
+interface. -/
+theorem jordan_region_subset_range_of_abstractVariableDirectedQuotientFine
+    {X : Type*} [TopologicalSpace X]
+    (boundary : UnitAddCircle → X)
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition (Set.range curve) region₁ region₂)
+    (hy₀ : y₀ ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  jordan_region_subset_range_of_odd_boundary_degree_obstruction boundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+      hfine)
+    G hG curve hcurve hboundary y₀ havoid₀ degree hdegree hodd
+    hpartition hy₀
+
 /-- Separation-free generic Jordan coverage also follows directly from the
 quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface. -/
@@ -395,6 +420,32 @@ theorem exists_bounded_jordan_region_subset_range_of_abstractVariableDirectedQuo
     boundary
     (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
       hmodels)
+    G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
+
+/-- Separation-free generic Jordan coverage already follows from the
+map-dependent quotient-friendly directed abstract fine polygonal-model
+interface. -/
+theorem exists_bounded_jordan_region_subset_range_of_abstractVariableDirectedQuotientFine
+    {X : Type*} [TopologicalSpace X]
+    (boundary : UnitAddCircle → X)
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (curve : UnitAddCircle → ℂ) (hcurve : Continuous curve)
+    (hcurveJordan : Nonempty (Set.range curve ≃ₜ UnitAddCircle))
+    (hboundary : ∀ t, G (boundary t) = curve t)
+    (y₀ : ℂ) (havoid₀ : ∀ t, curve t ≠ y₀)
+    (degree : ℤ)
+    (hdegree : HasComplexCircleDegree
+      (radialMap curve y₀ havoid₀) degree)
+    (hodd : Odd degree) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ y₀ ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_bounded_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    boundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+      hfine)
     G hG curve hcurve hcurveJordan hboundary y₀ havoid₀ degree hdegree hodd
 
 /-- The generic Jordan-region coverage theorem transfers across a
@@ -1724,6 +1775,28 @@ theorem givensBoundaryCurve_jordan_region_subset_range_of_abstractVariableDirect
       hmodels)
     G hG hboundary hpartition hzero
 
+/-- Once Jordan separation is fixed, the quotient-friendly directed
+map-dependent abstract fine polygonal-model interface already forces the
+Givens Jordan region into the image. -/
+theorem givensBoundaryCurve_jordan_region_subset_range_of_abstractVariableDirectedQuotientFinePolygonalModels
+    {X : Type*} [TopologicalSpace X]
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → X)
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range G :=
+  givensBoundaryCurve_jordan_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+      hfine)
+    G hG hboundary hpartition hzero
+
 /-- Coverage also transfers from any compact source carrying the weaker
 quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface through a boundary-respecting continuous map into the target
@@ -1978,6 +2051,27 @@ theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_abstractVariab
     j boundary
     (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
       hmodels)
+    G hG hboundary
+
+/-- Separation-free Givens-boundary coverage already follows from the
+map-dependent quotient-friendly directed abstract fine polygonal-model
+interface. -/
+theorem exists_givensBoundaryCurve_bounded_region_subset_range_of_abstractVariableDirectedQuotientFinePolygonalModels
+    {X : Type*} [TopologicalSpace X]
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → X)
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary)
+    (G : X → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range G :=
+  exists_givensBoundaryCurve_bounded_region_subset_range_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+      hfine)
     G hG hboundary
 
 /-- Separation-free coverage also transfers from a compact source carrying

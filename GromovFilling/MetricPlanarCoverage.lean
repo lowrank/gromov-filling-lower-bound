@@ -194,6 +194,26 @@ theorem givensMetricFourierMap_jordan_region_subset_range_of_compact_continuous_
     (givensMetricFourierMap_on_boundary hboundary' j)
     hpartition hzero
 
+/-- Compact-domain coverage for the genuine metric Fourier map already
+follows from the map-dependent quotient-friendly directed abstract fine
+polygonal-model interface. -/
+theorem givensMetricFourierMap_jordan_region_subset_range_of_abstractVariableDirectedQuotientFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X}
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁) :
+    region₁ ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact givensBoundaryCurve_jordan_region_subset_range_of_abstractVariableDirectedQuotientFinePolygonalModels
+    j boundary hfine (givensMetricFourierMap boundary N j)
+    (continuous_givensMetricFourierMap hboundary N j)
+    (givensMetricFourierMap_on_boundary hboundary j)
+    hpartition hzero
+
 /-- Compact-domain coverage for the genuine metric Fourier map also follows
 from a boundary-respecting homeomorphism to any compact source carrying the
 bundled homeomorphism-plus-glued-strip interface. -/
@@ -739,6 +759,25 @@ theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_homeomorph_
       j D (givensMetricFourierMap boundary' N j)
       (continuous_givensMetricFourierMap hboundary' N j)
       (givensMetricFourierMap_on_boundary hboundary' j)
+
+/-- Separation-free compact-domain coverage for the genuine metric Fourier
+map already follows from the map-dependent quotient-friendly directed
+abstract fine polygonal-model interface. -/
+theorem exists_givensMetricFourierMap_bounded_region_subset_range_of_abstractVariableDirectedQuotientFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X}
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    {N : ℕ} (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      region ⊆ Set.range (givensMetricFourierMap boundary N j) := by
+  exact
+    exists_givensBoundaryCurve_bounded_region_subset_range_of_abstractVariableDirectedQuotientFinePolygonalModels
+      j boundary hfine (givensMetricFourierMap boundary N j)
+      (continuous_givensMetricFourierMap hboundary N j)
+      (givensMetricFourierMap_on_boundary hboundary j)
 
 /-- The original unbundled homeomorphism-plus-glued-strip hypothesis likewise
 supplies the separation-free metric Givens-map coverage theorem after

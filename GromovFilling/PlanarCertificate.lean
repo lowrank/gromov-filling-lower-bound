@@ -630,6 +630,19 @@ theorem ComplexSourceChartSystem.universal_ennreal_of_abstractVariableDirectedQu
     (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
       hmodels)
 
+/-- The map-dependent quotient-friendly directed abstract fine polygonal-model
+interface already supplies the odd boundary-degree obstruction needed by a
+generic source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_abstractVariableDirectedQuotientFinePolygonalModels
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+      hfine)
+
 /-- The stronger directed abstract arbitrarily-fine polygonal-model interface
 already supplies the obstruction needed by a generic source-chart system. -/
 theorem ComplexSourceChartSystem.universal_ennreal_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
@@ -991,6 +1004,21 @@ theorem ComplexSourceChartSystem.universal_ennreal_add_of_abstractVariableDirect
   S.universal_ennreal_add_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
       hmodels)
+    hbudget
+
+/-- The map-dependent quotient-friendly directed abstract fine polygonal-model
+interface already supplies the additive-defect generic source-chart
+certificate. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_abstractVariableDirectedQuotientFinePolygonalModels
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+      hfine)
     hbudget
 
 /-- The stronger directed abstract arbitrarily-fine polygonal-model interface
@@ -1618,6 +1646,19 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_of_abstractVariableDire
     (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
       hmodels)
 
+/-- The map-dependent quotient-friendly directed abstract fine polygonal-model
+interface already supplies the odd boundary-degree obstruction needed by a
+metric source-chart system. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_abstractVariableDirectedQuotientFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+      hfine)
+
 /-- The stronger directed abstract arbitrarily-fine polygonal-model interface
 already supplies the obstruction needed by a metric source-chart system. -/
 theorem MetricComplexSourceChartSystem.universal_ennreal_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
@@ -1976,6 +2017,21 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_abstractVariable
   S.universal_ennreal_add_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
       hmodels)
+    hbudget
+
+/-- The map-dependent quotient-friendly directed abstract fine polygonal-model
+interface already supplies the additive-defect metric source-chart
+certificate. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_abstractVariableDirectedQuotientFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+      hfine)
     hbudget
 
 /-- The stronger directed abstract arbitrarily-fine polygonal-model interface

@@ -270,6 +270,28 @@ theorem givens_jordan_region_volume_le_complex_jacobian
     (complex_volume_le_lintegral_abs_det_fderiv_of_subset_range
       G Set.univ region₁ MeasurableSet.univ hGLipschitz hcoverage')
 
+/-- The same planar Jacobian bound already follows from the map-dependent
+quotient-friendly directed abstract fine polygonal-model interface. -/
+theorem givens_jordan_region_volume_le_complex_jacobian_of_abstractVariableDirectedQuotientFinePolygonalModels
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {region₁ region₂ : Set ℂ}
+    (hpartition : IsJordanPartition
+      (Set.range (givensBoundaryCurveAddCircle j)) region₁ region₂)
+    (hzero : 0 ∈ region₁)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    volume region₁ ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  exact givens_jordan_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+      hfine)
+    G hG hboundary hpartition hzero hGLipschitz
+
 /-- The same planar Jacobian bound also transfers from a compact source
 carrying the bundled homeomorphism-plus-glued-strip interface, once a
 boundary-respecting homeomorphism identifies that source with the planar
@@ -544,6 +566,25 @@ theorem givens_mixedBoundaryArea_le_complex_jacobian
     j hpartition hzero]
   exact givens_jordan_region_volume_le_complex_jacobian
     j boundary hfine G hG hboundary hpartition hzero hGLipschitz
+
+/-- The same planar Lemma 5.4 inequality already follows from the
+map-dependent quotient-friendly directed abstract fine polygonal-model
+interface. -/
+theorem givens_mixedBoundaryArea_le_complex_jacobian_of_abstractVariableDirectedQuotientFinePolygonalModels
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ENNReal.ofReal (mixedBoundaryArea (givensMatrix N) j) ≤
+      ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  exact givens_mixedBoundaryArea_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+      hfine)
+    G hG hboundary hGLipschitz
 
 /-- The same planar Lemma 5.4 inequality also transfers directly from a
 compact source carrying the bundled homeomorphism-plus-glued-strip
@@ -841,6 +882,28 @@ theorem exists_givens_bounded_region_volume_le_complex_jacobian
     hzero,
     givens_jordan_region_volume_le_complex_jacobian
       j boundary hfine G hG hboundary hpartition hzero hGLipschitz⟩
+
+/-- Obstruction-level planar Lemma 5.4 with the odd-degree obstruction
+supplied by the map-dependent quotient-friendly directed abstract fine
+polygonal-model interface. -/
+theorem exists_givens_bounded_region_volume_le_complex_jacobian_of_abstractVariableDirectedQuotientFinePolygonalModels
+    {N : ℕ} (j : Fin N)
+    (boundary : UnitAddCircle → ℂ)
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary)
+    (G : ℂ → ℂ) (hG : Continuous G)
+    (hboundary : ∀ t,
+      G (boundary t) = givensBoundaryCurveAddCircle j t)
+    {K : ℝ≥0} (hGLipschitz : LipschitzWith K G) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤
+        ∫⁻ x, ENNReal.ofReal |(fderiv ℝ G x).det| ∂volume := by
+  exact exists_givens_bounded_region_volume_le_complex_jacobian_of_odd_boundary_degree_obstruction
+    j boundary
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+      hfine)
+    G hG hboundary hGLipschitz
 
 /-- The same bounded-region conclusion also transfers directly from a compact
 source carrying the bundled homeomorphism-plus-glued-strip interface. -/
