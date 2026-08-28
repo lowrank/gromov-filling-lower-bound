@@ -22,6 +22,68 @@ private def cylinderStripLowerBoundaryVertexValue
   H (cylinderStripGluedPointLowerBoundary P
     (angularSubdivisionPoint m j))
 
+private theorem cylinderStripLowerBoundaryVertexStart_preserves_value
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    (H : CylinderStripGluedPointSpace P → UnitAddCircle)
+    (j : Fin (m + 1)) :
+    cylinderStripLowerBoundaryVertexValue P H j =
+      cylinderStripLowerBoundaryVertexValue P H (P.pairedStart j) := by
+  apply congrArg H
+  rcases horient : P.orientation j with _ | _
+  · rw [P.pairedStart_preserving horient]
+    change cylinderStripPointQuotientMap P
+        (closedUnitIntervalStart, angularSubdivisionPoint m j) =
+      cylinderStripPointQuotientMap P
+        (closedUnitIntervalStart,
+          angularSubdivisionPoint m (P.edgePair j))
+    rw [← angularSubdivisionArc_start m j,
+      ← angularSubdivisionArc_start m (P.edgePair j)]
+    exact cylinderStripPointQuotientMap_lower_pair_preserving
+      P horient closedUnitIntervalStart
+  · rw [P.pairedStart_reversing horient]
+    change cylinderStripPointQuotientMap P
+        (closedUnitIntervalStart, angularSubdivisionPoint m j) =
+      cylinderStripPointQuotientMap P
+        (closedUnitIntervalStart,
+          angularSubdivisionPoint m (cyclicSucc (P.edgePair j)))
+    rw [← angularSubdivisionArc_start m j,
+      ← angularSubdivisionArc_finish m (P.edgePair j)]
+    simpa using
+      cylinderStripPointQuotientMap_lower_pair_reversing
+        P horient closedUnitIntervalStart
+
+private theorem cylinderStripLowerBoundaryVertexFinish_preserves_value
+    {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
+    (H : CylinderStripGluedPointSpace P → UnitAddCircle)
+    (j : Fin (m + 1)) :
+    cylinderStripLowerBoundaryVertexValue P H (cyclicSucc j) =
+      cylinderStripLowerBoundaryVertexValue P H (P.pairedFinish j) := by
+  apply congrArg H
+  rcases horient : P.orientation j with _ | _
+  · rw [P.pairedFinish_preserving horient]
+    change cylinderStripPointQuotientMap P
+        (closedUnitIntervalStart,
+          angularSubdivisionPoint m (cyclicSucc j)) =
+      cylinderStripPointQuotientMap P
+        (closedUnitIntervalStart,
+          angularSubdivisionPoint m (cyclicSucc (P.edgePair j)))
+    rw [← angularSubdivisionArc_finish m j,
+      ← angularSubdivisionArc_finish m (P.edgePair j)]
+    exact cylinderStripPointQuotientMap_lower_pair_preserving
+      P horient closedUnitIntervalFinish
+  · rw [P.pairedFinish_reversing horient]
+    change cylinderStripPointQuotientMap P
+        (closedUnitIntervalStart,
+          angularSubdivisionPoint m (cyclicSucc j)) =
+      cylinderStripPointQuotientMap P
+        (closedUnitIntervalStart,
+          angularSubdivisionPoint m (P.edgePair j))
+    rw [← angularSubdivisionArc_finish m j,
+      ← angularSubdivisionArc_start m (P.edgePair j)]
+    simpa using
+      cylinderStripPointQuotientMap_lower_pair_reversing
+        P horient closedUnitIntervalFinish
+
 private theorem cylinderStripLowerBoundaryVertexStep_preserves_value
     {m : ℕ} (P : CylinderStripLowerBoundaryPairing m)
     (H : CylinderStripGluedPointSpace P → UnitAddCircle)
@@ -29,56 +91,11 @@ private theorem cylinderStripLowerBoundaryVertexStep_preserves_value
     (hstep : CylinderStripLowerBoundaryVertexStep P a b) :
     cylinderStripLowerBoundaryVertexValue P H a =
       cylinderStripLowerBoundaryVertexValue P H b := by
-  apply congrArg H
   cases hstep with
-  | start j =>
-      rcases horient : P.orientation j with _ | _
-      · rw [P.pairedStart_preserving horient]
-        change cylinderStripPointQuotientMap P
-            (closedUnitIntervalStart, angularSubdivisionPoint m j) =
-          cylinderStripPointQuotientMap P
-            (closedUnitIntervalStart,
-              angularSubdivisionPoint m (P.edgePair j))
-        rw [← angularSubdivisionArc_start m j,
-          ← angularSubdivisionArc_start m (P.edgePair j)]
-        exact cylinderStripPointQuotientMap_lower_pair_preserving
-          P horient closedUnitIntervalStart
-      · rw [P.pairedStart_reversing horient]
-        change cylinderStripPointQuotientMap P
-            (closedUnitIntervalStart, angularSubdivisionPoint m j) =
-          cylinderStripPointQuotientMap P
-            (closedUnitIntervalStart,
-              angularSubdivisionPoint m (cyclicSucc (P.edgePair j)))
-        rw [← angularSubdivisionArc_start m j,
-          ← angularSubdivisionArc_finish m (P.edgePair j)]
-        simpa using
-          cylinderStripPointQuotientMap_lower_pair_reversing
-            P horient closedUnitIntervalStart
-  | finish j =>
-      rcases horient : P.orientation j with _ | _
-      · rw [P.pairedFinish_preserving horient]
-        change cylinderStripPointQuotientMap P
-            (closedUnitIntervalStart,
-              angularSubdivisionPoint m (cyclicSucc j)) =
-          cylinderStripPointQuotientMap P
-            (closedUnitIntervalStart,
-              angularSubdivisionPoint m (cyclicSucc (P.edgePair j)))
-        rw [← angularSubdivisionArc_finish m j,
-          ← angularSubdivisionArc_finish m (P.edgePair j)]
-        exact cylinderStripPointQuotientMap_lower_pair_preserving
-          P horient closedUnitIntervalFinish
-      · rw [P.pairedFinish_reversing horient]
-        change cylinderStripPointQuotientMap P
-            (closedUnitIntervalStart,
-              angularSubdivisionPoint m (cyclicSucc j)) =
-          cylinderStripPointQuotientMap P
-            (closedUnitIntervalStart,
-              angularSubdivisionPoint m (P.edgePair j))
-        rw [← angularSubdivisionArc_finish m j,
-          ← angularSubdivisionArc_start m (P.edgePair j)]
-        simpa using
-          cylinderStripPointQuotientMap_lower_pair_reversing
-            P horient closedUnitIntervalFinish
+  | start =>
+      exact cylinderStripLowerBoundaryVertexStart_preserves_value P H _
+  | finish =>
+      exact cylinderStripLowerBoundaryVertexFinish_preserves_value P H _
 
 /-- The value of a circle map on a lower-boundary vertex.  The value descends
 to the vertex quotient because the point quotient identifies exactly the
