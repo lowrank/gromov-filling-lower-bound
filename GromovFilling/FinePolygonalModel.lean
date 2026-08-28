@@ -2241,6 +2241,40 @@ def AbstractVariableDirectedGeometricPolygonalModel.toAbstractVariableDirectedFi
     AbstractVariableDirectedFinePolygonalModel boundary H :=
   { D.model with halfTurn_mesh := hhalf }
 
+/-- Push a directed variable-face-size abstract geometric polygonal model
+forward along a continuous map whose restriction to the boundary agrees with a
+new parametrization. -/
+def AbstractVariableDirectedGeometricPolygonalModel.map
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    {δ ε : ℝ} (D : AbstractVariableDirectedGeometricPolygonalModel boundary δ)
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmesh : ∀ (face : D.model.Face) (e : D.model.Edge),
+      e ∈ D.model.faceEdges face → ∀ x : ClosedUnitInterval,
+        dist (f (D.model.faceCenter face)) (f (D.model.edgeToX e x)) < ε) :
+    AbstractVariableDirectedGeometricPolygonalModel boundary' ε :=
+  { model :=
+      { D.model with
+        vertexPoint := fun v ↦ f (D.model.vertexPoint v)
+        edgeToX := fun e x ↦ f (D.model.edgeToX e x)
+        edgeToX_continuous := fun e ↦ hf.comp (D.model.edgeToX_continuous e)
+        edgeToX_start := by
+          intro e
+          rw [D.model.edgeToX_start]
+        edgeToX_finish := by
+          intro e
+          rw [D.model.edgeToX_finish]
+        faceCenter := fun face ↦ f (D.model.faceCenter face)
+        halfTurn_mesh := by
+          intro face e he x
+          simp
+        boundaryPath := by
+          intro k x
+          rw [hboundary]
+          simpa using congrArg f (D.model.boundaryPath k x) }
+    mesh := hmesh }
+
 /-- The map-independent directed surface input: compatible polygonal models
 exist at every positive geometric mesh scale. -/
 def HasAbstractVariableDirectedArbitrarilyFinePolygonalModels
@@ -2275,6 +2309,55 @@ theorem hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFi
     HasOddBoundaryDegreeObstruction boundary :=
   hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedFinePolygonalModels
     (hasAbstractVariableDirectedFinePolygonalModels_of_abstractVariableDirectedArbitrarilyFine hmodels)
+
+/-- Directed variable-face-size abstract arbitrarily fine polygonal models
+transport across continuous maps from a compact source by uniform continuity. -/
+theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_compact_continuous
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (f : X → Y) (hf : Continuous f)
+    (hboundary : boundary' = f ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary' := by
+  intro ε hε
+  have hUniform : UniformContinuous f :=
+    CompactSpace.uniformContinuous_of_continuous hf
+  obtain ⟨δ, hδ, hδf⟩ :=
+    Metric.uniformContinuous_iff.mp hUniform ε hε
+  obtain ⟨D⟩ := hmodels δ hδ
+  refine ⟨D.map f hf hboundary ?_⟩
+  intro face e he x
+  exact hδf (D.mesh face e he x)
+
+/-- Homeomorphic compact images inherit directed variable-face-size abstract
+arbitrarily fine polygonal models. -/
+theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_homeomorph
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y}
+    (e : X ≃ₜ Y)
+    (hboundary : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary) :
+    HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary' :=
+  hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_compact_continuous
+    e e.continuous_toFun hboundary hmodels
+
+/-- Directed variable-face-size abstract closed-square models transfer to the
+closed-disk boundary through the radial square-to-disk map. -/
+theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitSquare
+    (hsquare : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels closedUnitSquareBoundary) :
+    HasAbstractVariableDirectedArbitrarilyFinePolygonalModels closedUnitDiskBoundary :=
+  hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_compact_continuous
+    closedUnitSquareToDisk continuous_closedUnitSquareToDisk
+    closedUnitSquareToDisk_comp_boundary hsquare
+
+/-- Directed variable-face-size abstract models on the radial cylinder boundary
+push forward directly to the closed unit square boundary. -/
+theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitSquareCylinderBoundary
+    (hcyl : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels closedUnitSquareCylinderBoundary) :
+    HasAbstractVariableDirectedArbitrarilyFinePolygonalModels closedUnitSquareBoundary :=
+  hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_compact_continuous
+    closedUnitSquareRadial continuous_closedUnitSquareRadial
+    closedUnitSquareRadial_comp_cylinderBoundary hcyl
 
 /-- Vertices of the disk-like model with one central polygon and a quadrilateral annulus. -/
 abbrev SquareCenterPolygonVertex (n m : ℕ) := Fin (n + 1) × Fin (m + 1)
