@@ -4704,6 +4704,70 @@ theorem cylinderStripGluedEdge_faceCount_of_pos {n m : ℕ}
     Quotient.out_eq e
   simpa [e', hout] using cylinderStripGluedEdge_faceCount_of_pos_rep P hm e'
 
+theorem no_odd_degree_of_cylinderStripGlued_circle_extension_with_boundary_degree
+    {X : Type*} [TopologicalSpace X] {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (hm : 0 < m)
+    (vertexPoint : CylinderStripGluedVertex n P → X)
+    (EdgePoint : CylinderStripGluedEdge n P → Type*)
+    [∀ e, TopologicalSpace (EdgePoint e)]
+    [∀ e, PreconnectedSpace (EdgePoint e)]
+    (edgeStart edgeFinish : ∀ e, EdgePoint e)
+    (edgeToX : ∀ e, EdgePoint e → X)
+    (hedgeToX : ∀ e, Continuous (edgeToX e))
+    (hedgeStart : ∀ e, edgeToX e (edgeStart e) =
+      vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).1)
+    (hedgeFinish : ∀ e, edgeToX e (edgeFinish e) =
+      vertexPoint (cylinderStripGluedEdgeChosenEnds n P e).2)
+    (H : X → UnitAddCircle) (hH : Continuous H)
+    (cut : CylinderStripFace n m → ℝ)
+    (hcut : ∀ (f : CylinderStripFace n m) (e : CylinderStripGluedEdge n P),
+      e ∈ cylinderStripGluedFaceEdges n P f → ∀ x,
+        H (edgeToX e x) ≠ (cut f : UnitAddCircle))
+    (vertexLift : CylinderStripGluedVertex n P → ℝ)
+    (hvertexLift : ∀ v,
+      (vertexLift v : UnitAddCircle) = H (vertexPoint v))
+    (edgeLift : ∀ e, EdgePoint e → ℝ)
+    (hedgeLift : ∀ e, Continuous (edgeLift e))
+    (hedgeLiftProjects : ∀ e x,
+      (edgeLift e x : UnitAddCircle) = H (edgeToX e x))
+    (turn : CylinderStripGluedEdge n P → ℤ)
+    (hturn : ∀ e : CylinderStripGluedEdge n P, (turn e : ℝ) =
+      (edgeLift e (edgeStart e) -
+          vertexLift (cylinderStripGluedEdgeChosenEnds n P e).1) -
+        (edgeLift e (edgeFinish e) -
+          vertexLift (cylinderStripGluedEdgeChosenEnds n P e).2))
+    (boundaryMap : UnitAddCircle → X)
+    (boundaryParameter : ∀ k,
+      EdgePoint (cylinderStripGluedBoundaryEdge n P k) → ℝ)
+    (hboundaryParameter : ∀ k, Continuous (boundaryParameter k))
+    (hboundaryParameterStart : ∀ k,
+      boundaryParameter k (edgeStart (cylinderStripGluedBoundaryEdge n P k)) =
+        cyclicVertexParameter k)
+    (hboundaryParameterFinish : ∀ k,
+      boundaryParameter k (edgeFinish (cylinderStripGluedBoundaryEdge n P k)) =
+        cyclicEdgeFinishParameter k)
+    (hboundaryPath : ∀ k x,
+      edgeToX (cylinderStripGluedBoundaryEdge n P k) x =
+        boundaryMap ((boundaryParameter k x : ℝ) : UnitAddCircle))
+    (degree : ℤ) (hdegree : HasCircleDegree (H ∘ boundaryMap) degree)
+    (hodd : Odd degree) : False := by
+  exact no_odd_degree_of_polygonal_circle_extension_with_boundary_degree_of_faceEven
+    (edgeEnds := cylinderStripGluedEdgeChosenEnds n P)
+    (faceEdges := cylinderStripGluedFaceEdges n P)
+    (boundaryEdges := cylinderStripGluedBoundaryEdges n P)
+    (hcount := cylinderStripGluedEdge_faceCount_of_pos P hm)
+    (hfaceEven := cylinderStripGluedFaceEven_of_pos P hm)
+    (boundaryEdge := cylinderStripGluedBoundaryEdge n P)
+    (hboundaryEdge := cylinderStripGluedBoundaryEdge_injective P)
+    (boundaryVertex := cylinderStripGluedBoundaryVertex n P)
+    (hboundaryEnds := cylinderStripGluedBoundaryEdge_ends P)
+    (hboundary := cylinderStripGluedBoundaryEdges_eq n P)
+    vertexPoint EdgePoint edgeStart edgeFinish edgeToX hedgeToX
+    hedgeStart hedgeFinish H hH cut hcut vertexLift hvertexLift edgeLift
+    hedgeLift hedgeLiftProjects turn hturn boundaryMap boundaryParameter
+    hboundaryParameter hboundaryParameterStart hboundaryParameterFinish
+    hboundaryPath degree hdegree hodd
+
 /-- Bundle explicit checkerboard-cylinder strip data into the directed abstract
 variable-face-size geometric polygonal-model interface on the square-cylinder
 boundary. -/
