@@ -739,6 +739,74 @@ theorem ComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of
     hobstruction j
 
 /-- The quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface also supplies the bounded witness regions rowwise for a generic
+source-chart system. -/
+theorem ComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ (S.data N).jacobianMass j :=
+  S.exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+      hmodels) N j
+
+/-- The map-dependent quotient-friendly directed abstract fine polygonal-model
+interface already supplies the same rowwise witness regions for a generic
+source-chart system. -/
+theorem ComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of_abstractVariableDirectedQuotientFinePolygonalModels
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary)
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ (S.data N).jacobianMass j :=
+  S.exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+      hfine) N j
+
+/-- The stronger directed abstract arbitrarily-fine polygonal-model interface
+likewise yields the rowwise bounded witness regions for a generic source-chart
+system. -/
+theorem ComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ (S.data N).jacobianMass j :=
+  S.exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+      hmodels) N j
+
+/-- The bundled explicit glued-strip quotient mesh-data interface already
+supplies the same rowwise bounded witness regions for a generic source-chart
+system. -/
+theorem ComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary)
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ (S.data N).jacobianMass j :=
+  S.exists_bounded_region_volume_le_jacobianMass_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData
+      hmodels) N j
+
+/-- The quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface supplies the odd boundary-degree obstruction needed by a generic
 source-chart system. -/
 theorem ComplexSourceChartSystem.universal_ennreal_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
@@ -1839,6 +1907,74 @@ theorem MetricComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianM
       volume region ≤ (S.data N).jacobianMass j := by
   exact (S.data N).exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
     hobstruction S.hboundary j
+
+/-- The quotient-friendly directed abstract arbitrarily-fine polygonal-model
+interface also supplies the bounded witness regions rowwise for a metric
+source-chart system. -/
+theorem MetricComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ (S.data N).jacobianMass j :=
+  S.exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+      hmodels) N j
+
+/-- The map-dependent quotient-friendly directed abstract fine polygonal-model
+interface already supplies the same rowwise witness regions for a metric
+source-chart system. -/
+theorem MetricComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of_abstractVariableDirectedQuotientFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (hfine : HasAbstractVariableDirectedQuotientFinePolygonalModels boundary)
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ (S.data N).jacobianMass j :=
+  S.exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientFinePolygonalModels
+      hfine) N j
+
+/-- The stronger directed abstract arbitrarily-fine polygonal-model interface
+likewise yields the rowwise bounded witness regions for a metric source-chart
+system. -/
+theorem MetricComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ (S.data N).jacobianMass j :=
+  S.exists_bounded_region_volume_le_jacobianMass_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+      hmodels) N j
+
+/-- The bundled explicit glued-strip quotient mesh-data interface already
+supplies the same rowwise bounded witness regions for a metric source-chart
+system. -/
+theorem MetricComplexSourceChartSystem.exists_bounded_region_volume_le_jacobianMass_of_cylinderStripGluedArbitrarilyFineData
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (hmodels : HasCylinderStripGluedArbitrarilyFineData boundary)
+    (N : ℕ) (j : Fin N) :
+    ∃ region : Set ℂ,
+      IsOpen region ∧ IsConnected region ∧
+      Bornology.IsBounded region ∧ 0 ∈ region ∧
+      volume region ≤ (S.data N).jacobianMass j :=
+  S.exists_bounded_region_volume_le_jacobianMass_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
+    (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_cylinderStripGluedArbitrarilyFineData
+      hmodels) N j
 
 /-- The quotient-friendly directed abstract arbitrarily-fine polygonal-model
 interface supplies the odd boundary-degree obstruction needed by a metric
