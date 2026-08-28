@@ -158,6 +158,49 @@ theorem curveIntegral_eq_zero_of_closedUnitSquare_homeomorph_cylinderStripGlued_
     (curveIntegral_eq_zero_of_closedUnitSquare_homeomorph_cylinderStripGluedArbitrarilyFineData_of_diffContOnCl
       (D := D) (F := F) (ht := ht) hω hdω_symm hcontdiff)
 
+
+/-- The bundled square-homeomorphism-plus-glued-strip interface also yields
+its Stokes package, expressed through the closed-square wrapper theorem. -/
+theorem curveIntegral_eq_setIntegral_fderiv_skew_of_closedUnitSquare_homeomorph_cylinderStripGluedArbitrarilyFineData_of_contDiff
+    {E F Y : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
+    [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData closedUnitSquareBoundary boundary)
+    (Fmap : C(Y, E))
+    {ω : E → E →L[ℝ] F}
+    (hω : closedOneFormContDiffProp ω)
+    (hcontdiff : closedUnitSquareMapSquareContDiffProp
+      (Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩)) :
+    ClosedUnitSquareMapStokesProp
+      (Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩) ω := by
+  simpa using
+    (curveIntegral_eq_setIntegral_fderiv_skew_of_closedUnitSquareMap_of_contDiff
+      (Fmap := Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩) hω hcontdiff)
+
+/-- Direct square-homeomorphism interface for the Stokes package. -/
+theorem curveIntegral_eq_setIntegral_fderiv_skew_of_closedUnitSquare_homeomorph_cylinderStripGlued_of_contDiff
+    {E F Y : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
+    [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundaryMap : boundary = e ∘ closedUnitSquareBoundary)
+    (Fmap : C(Y, E))
+    {ω : E → E →L[ℝ] F}
+    (hω : closedOneFormContDiffProp ω)
+    (hcontdiff : closedUnitSquareMapSquareContDiffProp
+      (Fmap.comp ⟨e, e.continuous_toFun⟩)) :
+    ClosedUnitSquareMapStokesProp
+      (Fmap.comp ⟨e, e.continuous_toFun⟩) ω := by
+  let D : HomeomorphCylinderStripGluedArbitrarilyFineData closedUnitSquareBoundary boundary :=
+    { homeomorph := e
+      boundaryHomeomorph := hboundaryMap
+      models := hasCylinderStripGluedArbitrarilyFineData_closedUnitSquareBoundary }
+  simpa [D] using
+    (curveIntegral_eq_setIntegral_fderiv_skew_of_closedUnitSquare_homeomorph_cylinderStripGluedArbitrarilyFineData_of_contDiff
+      (D := D) (Fmap := Fmap) hω hcontdiff)
+
 end
 
 end GromovFilling

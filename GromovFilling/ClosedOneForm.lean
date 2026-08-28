@@ -1227,6 +1227,56 @@ theorem curveIntegral_eq_setIntegral_fderiv_skew_of_closedUnitDiskMap_of_contDif
     curveIntegral_eq_setIntegral_fderiv_skew_of_unitAddCircleHomotopy_of_contDiff
       (H := ContinuousMap.closedUnitDiskBoundaryNullhomotopy Fmap) hω hcontdiff
 
+/-- The same Stokes package when the boundary loop comes from a continuous map
+on the closed unit square. -/
+def closedUnitSquareMapSquare (Fmap : C(ClosedUnitSquare, E)) : ℝ × ℝ → E :=
+  unitAddCircleHomotopySquare (ContinuousMap.closedUnitSquareBoundaryNullhomotopy Fmap)
+
+def closedUnitSquareMapSquareDeriv (Fmap : C(ClosedUnitSquare, E)) :
+    ℝ × ℝ → ℝ × ℝ →L[ℝ] E :=
+  unitAddCircleHomotopySquareDeriv (ContinuousMap.closedUnitSquareBoundaryNullhomotopy Fmap)
+
+def closedUnitSquareMapSkewIntegrand
+    (Fmap : C(ClosedUnitSquare, E)) (ω : E → E →L[ℝ] F) : ℝ × ℝ → F :=
+  fun x ↦
+    fderiv ℝ ω (closedUnitSquareMapSquare Fmap x)
+        (closedUnitSquareMapSquareDeriv Fmap x (1, 0))
+        (closedUnitSquareMapSquareDeriv Fmap x (0, 1)) -
+      fderiv ℝ ω (closedUnitSquareMapSquare Fmap x)
+        (closedUnitSquareMapSquareDeriv Fmap x (0, 1))
+        (closedUnitSquareMapSquareDeriv Fmap x (1, 0))
+
+def closedUnitSquareBoundaryIntegral
+    (Fmap : C(ClosedUnitSquare, E))
+    (ω : E → E →L[ℝ] F) : F :=
+  ∫ᶜ x in unitAddCirclePath (ContinuousMap.compClosedUnitSquareBoundary Fmap), ω x
+
+def closedUnitSquareSquareIntegral
+    (Fmap : C(ClosedUnitSquare, E))
+    (ω : E → E →L[ℝ] F) : F :=
+  ∫ x in (Icc (0 : ℝ × ℝ) 1), closedUnitSquareMapSkewIntegrand Fmap ω x
+
+def closedUnitSquareMapSquareContDiffProp
+    (Fmap : C(ClosedUnitSquare, E)) : Prop :=
+  ContDiffOn ℝ 2 (closedUnitSquareMapSquare Fmap) (Icc 0 1)
+
+def ClosedUnitSquareMapStokesProp
+    (Fmap : C(ClosedUnitSquare, E)) (ω : E → E →L[ℝ] F) : Prop :=
+  closedUnitSquareBoundaryIntegral Fmap ω = closedUnitSquareSquareIntegral Fmap ω
+
+theorem curveIntegral_eq_setIntegral_fderiv_skew_of_closedUnitSquareMap_of_contDiff
+    {ω : E → E →L[ℝ] F}
+    (Fmap : C(ClosedUnitSquare, E))
+    (hω : closedOneFormContDiffProp ω)
+    (hcontdiff : closedUnitSquareMapSquareContDiffProp Fmap) :
+    ClosedUnitSquareMapStokesProp Fmap ω := by
+  unfold closedUnitSquareMapSquareContDiffProp at hcontdiff
+  unfold ClosedUnitSquareMapStokesProp closedUnitSquareBoundaryIntegral closedUnitSquareSquareIntegral
+  simpa [closedUnitSquareMapSquare, closedUnitSquareMapSquareDeriv,
+    closedUnitSquareMapSkewIntegrand] using
+    curveIntegral_eq_setIntegral_fderiv_skew_of_unitAddCircleHomotopy_of_contDiff
+      (H := ContinuousMap.closedUnitSquareBoundaryNullhomotopy Fmap) hω hcontdiff
+
 set_option maxHeartbeats 200000
 
 end GeometricStokes
