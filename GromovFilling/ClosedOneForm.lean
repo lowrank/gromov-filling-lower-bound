@@ -1277,6 +1277,63 @@ theorem curveIntegral_eq_setIntegral_fderiv_skew_of_closedUnitSquareMap_of_contD
     curveIntegral_eq_setIntegral_fderiv_skew_of_unitAddCircleHomotopy_of_contDiff
       (H := ContinuousMap.closedUnitSquareBoundaryNullhomotopy Fmap) hω hcontdiff
 
+theorem norm_closedUnitSquareBoundaryIntegral_le_of_integrand_bound
+    {ω : E → E →L[ℝ] F} (Fmap : C(ClosedUnitSquare, E))
+    {B area : ℝ} {J : ℝ × ℝ → ℝ}
+    (hstokes : ClosedUnitSquareMapStokesProp Fmap ω)
+    (hB : 0 ≤ B)
+    (hintegrand : MeasureTheory.Integrable
+      (fun x ↦ closedUnitSquareMapSkewIntegrand Fmap ω x)
+      (MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    (hJ : MeasureTheory.Integrable J
+      (MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    (hbound : ∀ x ∈ Icc (0 : ℝ × ℝ) 1,
+      ‖closedUnitSquareMapSkewIntegrand Fmap ω x‖ ≤ B * J x)
+    (harea : ∫ x in Icc (0 : ℝ × ℝ) 1, J x ≤ area) :
+    ‖closedUnitSquareBoundaryIntegral Fmap ω‖ ≤ B * area := by
+  unfold ClosedUnitSquareMapStokesProp closedUnitSquareSquareIntegral at hstokes
+  rw [hstokes]
+  calc
+    ‖∫ x in Icc (0 : ℝ × ℝ) 1, closedUnitSquareMapSkewIntegrand Fmap ω x‖ ≤
+        ∫ x in Icc (0 : ℝ × ℝ) 1, ‖closedUnitSquareMapSkewIntegrand Fmap ω x‖ := by
+      simpa using
+        (MeasureTheory.norm_integral_le_integral_norm
+          (μ := MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1))
+          (f := fun x ↦ closedUnitSquareMapSkewIntegrand Fmap ω x))
+    _ ≤ ∫ x in Icc (0 : ℝ × ℝ) 1, B * J x := by
+      have hbound_ae :
+          ∀ᵐ x ∂ MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1),
+            ‖closedUnitSquareMapSkewIntegrand Fmap ω x‖ ≤ B * J x := by
+        rw [MeasureTheory.ae_restrict_iff' measurableSet_Icc]
+        exact Filter.Eventually.of_forall hbound
+      exact MeasureTheory.integral_mono_ae hintegrand.norm (hJ.const_mul B) hbound_ae
+    _ = B * ∫ x in Icc (0 : ℝ × ℝ) 1, J x := by
+      simpa [smul_eq_mul] using
+        (MeasureTheory.integral_const_mul B (fun x : ℝ × ℝ ↦ J x)
+          (μ := MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    _ ≤ B * area := by
+      gcongr
+
+theorem norm_closedUnitSquareBoundaryIntegral_le_of_contDiff
+    {ω : E → E →L[ℝ] F} (Fmap : C(ClosedUnitSquare, E))
+    {B area : ℝ} {J : ℝ × ℝ → ℝ}
+    (hω : closedOneFormContDiffProp ω)
+    (hcontdiff : closedUnitSquareMapSquareContDiffProp Fmap)
+    (hB : 0 ≤ B)
+    (hintegrand : MeasureTheory.Integrable
+      (fun x ↦ closedUnitSquareMapSkewIntegrand Fmap ω x)
+      (MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    (hJ : MeasureTheory.Integrable J
+      (MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    (hbound : ∀ x ∈ Icc (0 : ℝ × ℝ) 1,
+      ‖closedUnitSquareMapSkewIntegrand Fmap ω x‖ ≤ B * J x)
+    (harea : ∫ x in Icc (0 : ℝ × ℝ) 1, J x ≤ area) :
+    ‖closedUnitSquareBoundaryIntegral Fmap ω‖ ≤ B * area := by
+  exact norm_closedUnitSquareBoundaryIntegral_le_of_integrand_bound Fmap
+    (curveIntegral_eq_setIntegral_fderiv_skew_of_closedUnitSquareMap_of_contDiff
+      (Fmap := Fmap) hω hcontdiff)
+    hB hintegrand hJ hbound harea
+
 set_option maxHeartbeats 200000
 
 end GeometricStokes

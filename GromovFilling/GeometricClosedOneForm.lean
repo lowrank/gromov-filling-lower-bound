@@ -201,6 +201,70 @@ theorem curveIntegral_eq_setIntegral_fderiv_skew_of_closedUnitSquare_homeomorph_
     (curveIntegral_eq_setIntegral_fderiv_skew_of_closedUnitSquare_homeomorph_cylinderStripGluedArbitrarilyFineData_of_contDiff
       (D := D) (Fmap := Fmap) hω hcontdiff)
 
+/-- Bundled square-homeomorphism interface for the calibrated Stokes norm bound. -/
+theorem norm_curveIntegral_le_of_closedUnitSquare_homeomorph_cylinderStripGluedArbitrarilyFineData_of_contDiff
+    {E F Y : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
+    [PseudoMetricSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (D : HomeomorphCylinderStripGluedArbitrarilyFineData closedUnitSquareBoundary boundary)
+    (Fmap : C(Y, E))
+    {ω : E → E →L[ℝ] F}
+    {B area : ℝ} {J : ℝ × ℝ → ℝ}
+    (hω : closedOneFormContDiffProp ω)
+    (hcontdiff : closedUnitSquareMapSquareContDiffProp
+      (Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩))
+    (hB : 0 ≤ B)
+    (hintegrand : MeasureTheory.Integrable
+      (fun x ↦ closedUnitSquareMapSkewIntegrand
+        (Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩) ω x)
+      (MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    (hJ : MeasureTheory.Integrable J
+      (MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    (hbound : ∀ x ∈ Icc (0 : ℝ × ℝ) 1,
+      ‖closedUnitSquareMapSkewIntegrand
+          (Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩) ω x‖ ≤ B * J x)
+    (harea : ∫ x in Icc (0 : ℝ × ℝ) 1, J x ≤ area) :
+    ‖closedUnitSquareBoundaryIntegral
+        (Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩) ω‖ ≤ B * area := by
+  exact norm_closedUnitSquareBoundaryIntegral_le_of_contDiff
+    (Fmap := Fmap.comp ⟨D.homeomorph, D.homeomorph.continuous_toFun⟩)
+    hω hcontdiff hB hintegrand hJ hbound harea
+
+/-- Direct square-homeomorphism interface for the calibrated Stokes norm bound. -/
+theorem norm_curveIntegral_le_of_closedUnitSquare_homeomorph_cylinderStripGlued_of_contDiff
+    {E F Y : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
+    [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitSquare ≃ₜ Y)
+    (hboundaryMap : boundary = e ∘ closedUnitSquareBoundary)
+    (Fmap : C(Y, E))
+    {ω : E → E →L[ℝ] F}
+    {B area : ℝ} {J : ℝ × ℝ → ℝ}
+    (hω : closedOneFormContDiffProp ω)
+    (hcontdiff : closedUnitSquareMapSquareContDiffProp
+      (Fmap.comp ⟨e, e.continuous_toFun⟩))
+    (hB : 0 ≤ B)
+    (hintegrand : MeasureTheory.Integrable
+      (fun x ↦ closedUnitSquareMapSkewIntegrand
+        (Fmap.comp ⟨e, e.continuous_toFun⟩) ω x)
+      (MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    (hJ : MeasureTheory.Integrable J
+      (MeasureTheory.volume.restrict (Icc (0 : ℝ × ℝ) 1)))
+    (hbound : ∀ x ∈ Icc (0 : ℝ × ℝ) 1,
+      ‖closedUnitSquareMapSkewIntegrand
+          (Fmap.comp ⟨e, e.continuous_toFun⟩) ω x‖ ≤ B * J x)
+    (harea : ∫ x in Icc (0 : ℝ × ℝ) 1, J x ≤ area) :
+    ‖closedUnitSquareBoundaryIntegral (Fmap.comp ⟨e, e.continuous_toFun⟩) ω‖ ≤ B * area := by
+  let D : HomeomorphCylinderStripGluedArbitrarilyFineData closedUnitSquareBoundary boundary :=
+    { homeomorph := e
+      boundaryHomeomorph := hboundaryMap
+      models := hasCylinderStripGluedArbitrarilyFineData_closedUnitSquareBoundary }
+  simpa [D] using
+    (norm_curveIntegral_le_of_closedUnitSquare_homeomorph_cylinderStripGluedArbitrarilyFineData_of_contDiff
+      (D := D) (Fmap := Fmap) hω hcontdiff hB hintegrand hJ hbound harea)
+
 end
 
 end GromovFilling
