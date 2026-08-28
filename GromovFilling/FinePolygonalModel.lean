@@ -3384,6 +3384,15 @@ def cylinderStripGluedLowerBoundaryEdgeTag (n : ℕ) {m : ℕ}
       intro a b hab
       exact eqvGen_cylinderStripEdgeGluing_preserves_lowerBoundaryEdgeTag P hab)
 
+theorem cylinderStripGluedLowerBoundaryEdge_eq_of_tag_some {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m)
+    {e : CylinderStripEdge n m}
+    {c : CylinderStripLowerBoundaryEdgeClass P}
+    (h : cylinderStripGluedLowerBoundaryEdgeTag n P
+        (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e) = some c) :
+    ∃ j : Fin (m + 1), e = CylinderStripEdge.angular (0 : Fin (n + 2)) j := by
+  exact cylinderStripLowerBoundaryEdge_eq_of_tag_some P h
+
 @[simp] theorem mk_cylinderStripGluedLowerEdge_eq_iff {n m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m) (j k : Fin (m + 1)) :
     Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P)
@@ -3883,6 +3892,8 @@ theorem cylinderStripGluedFaceEdge_ends {n m : ℕ}
         hend'.symm.trans hchosen'
       simpa [vpair] using (congrArg Prod.swap hs).symm
 
+
+
 @[simp] theorem radialSubdivisionLower_injective {n : ℕ} :
     Function.Injective (@radialSubdivisionLower n) := by
   intro a b h
@@ -4086,6 +4097,74 @@ theorem mem_cylinderStripFaceEdges_angular_iff {n m : ℕ}
           simpa [hpar, hu] using (cylinderStripFaceEdge_three (f := (i', j)))⟩
 
 
+
+theorem cylinderStripGluedFaceEdge_injective_of_pos {n m : ℕ}
+    (P : CylinderStripLowerBoundaryPairing m) (hm : 0 < m)
+    (f : CylinderStripFace n m) :
+    Function.Injective (cylinderStripGluedFaceEdge n P f) := by
+  classical
+  rcases f with ⟨i₀, j₀⟩
+  intro a b h
+  let e₁ := cylinderStripFaceEdge (i₀, j₀) a
+  let e₂ := cylinderStripFaceEdge (i₀, j₀) b
+  have hq : Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e₁ =
+      Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e₂ := by
+    simpa [cylinderStripGluedFaceEdge, e₁, e₂] using h
+  have he₁mem : e₁ ∈ cylinderStripFaceEdges (i₀, j₀) := by
+    rw [cylinderStripFaceEdges_eq]
+    exact Finset.mem_image.mpr ⟨a, Finset.mem_univ _, by simp [e₁]⟩
+  have he₂mem : e₂ ∈ cylinderStripFaceEdges (i₀, j₀) := by
+    rw [cylinderStripFaceEdges_eq]
+    exact Finset.mem_image.mpr ⟨b, Finset.mem_univ _, by simp [e₂]⟩
+  have heq : e₁ = e₂ := by
+    cases h₁ : e₁ with
+    | radial i j =>
+        have h₂ : e₂ = CylinderStripEdge.radial i j := by
+          exact (mk_cylinderStripGluedEdge_eq_radial_iff P e₂ i j).1 <| by
+            simpa [h₁] using hq.symm
+        simpa [h₁] using h₂.symm
+    | angular i j =>
+        by_cases hi0 : i = 0
+        · subst hi0
+          have hm₁ : CylinderStripEdge.angular (0 : Fin (n + 2)) j ∈
+              cylinderStripFaceEdges (i₀, j₀) := by
+            simpa [h₁] using he₁mem
+          have hj₀j : j₀ = j :=
+            (mem_cylinderStripFaceEdges_angular_iff
+              (0 : Fin (n + 2)) i₀ j j₀).1 hm₁ |>.1
+          have hi₀ : i₀ = 0 := by
+            rcases (mem_cylinderStripFaceEdges_angular_iff
+                (0 : Fin (n + 2)) i₀ j j₀).1 hm₁ with ⟨_, hlevel⟩
+            rcases hlevel with hlevel | hlevel
+            · exact radialSubdivisionLower_injective hlevel
+            · exact False.elim (radialSubdivisionUpper_ne_zero i₀ hlevel)
+          have htag : cylinderStripGluedLowerBoundaryEdgeTag n P
+              (Quotient.mk (cylinderStripEdgeGluingSetoid (n := n) P) e₂) =
+              some (Quotient.mk (cylinderStripLowerBoundaryEdgeSetoid P) j) := by
+            have htag' := congrArg (cylinderStripGluedLowerBoundaryEdgeTag n P) hq.symm
+            rw [h₁, cylinderStripGluedLowerBoundaryEdgeTag_mk_lower] at htag'
+            exact htag'
+          obtain ⟨k, hk⟩ := cylinderStripGluedLowerBoundaryEdge_eq_of_tag_some P htag
+          have hm₂ : CylinderStripEdge.angular (0 : Fin (n + 2)) k ∈
+              cylinderStripFaceEdges (i₀, j₀) := by
+            rw [← hk]
+            exact he₂mem
+          rcases (mem_cylinderStripFaceEdges_angular_iff
+              (0 : Fin (n + 2)) i₀ k j₀).1 hm₂ with ⟨hj₀k, hlevel⟩
+          have hk_eq_j : k = j := by
+            calc
+              k = j₀ := hj₀k.symm
+              _ = j := hj₀j
+          rcases hlevel with hlevel | hlevel
+          · simpa [hk_eq_j] using hk.symm
+          · exfalso
+            exact radialSubdivisionUpper_ne_zero i₀ (by simpa [hi₀] using hlevel)
+        · have h₂ : e₂ = CylinderStripEdge.angular i j := by
+            exact (mk_cylinderStripGluedEdge_eq_angular_of_ne_zero_iff P e₂ i j hi0).1 <| by
+              simpa [h₁] using hq.symm
+          simpa [h₁] using h₂.symm
+  exact (cylinderStripFaceEdge_injective_of_pos hm (i₀, j₀)) <| by
+    simpa [e₁, e₂] using heq
 
 theorem exists_mem_cylinderStripFaceEdges_eq_gluedLowerEdge_iff {n m : ℕ}
     (P : CylinderStripLowerBoundaryPairing m)
