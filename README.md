@@ -138,10 +138,11 @@ runs both checks on every push and pull request.
   Euclidean chart-level interface for the future oriented Stokes/comass
   argument;
 - the explicit square-center directed polygonal-model construction on the
-  closed square and closed disk boundaries, together with transfer of that
-  directed arbitrarily-fine interface to every compact metric boundary
-  homeomorphic to the closed disk and the resulting direct coverage,
-  Jacobian, and certificate wrappers.
+  closed square and closed disk boundaries, the corresponding bundled
+  glued-strip mesh-data interface on the closed disk boundary, transfer of
+  that directed arbitrarily-fine interface to every compact metric boundary
+  homeomorphic to the closed disk, and the resulting direct and bundled
+  disk-homeomorphism certificate wrappers.
 
 ## Not yet end-to-end
 

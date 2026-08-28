@@ -7196,6 +7196,16 @@ theorem hasCylinderStripGluedArbitrarilyFineData_closedUnitSquareBoundary :
               (dist_angularSubdivisionArc_point_le m hm j x).trans_lt hmδ
         simpa [faceCenter, cylinderStripEdgePathOnClosedUnitSquare] using hδradial hsrc
 
+/-- The bundled explicit strip-square construction also transports across the
+radial square-to-disk boundary map, giving bundled glued-strip quotient mesh
+data on the standard closed-disk boundary. -/
+theorem hasCylinderStripGluedArbitrarilyFineData_closedUnitDiskBoundary :
+    HasCylinderStripGluedArbitrarilyFineData closedUnitDiskBoundary :=
+  hasCylinderStripGluedArbitrarilyFineData_of_compact_continuous
+    closedUnitSquareToDisk continuous_closedUnitSquareToDisk
+    closedUnitSquareToDisk_comp_boundary
+    hasCylinderStripGluedArbitrarilyFineData_closedUnitSquareBoundary
+
 /-- The explicit square-center construction immediately yields the directed
 closed-disk boundary model family via the radial square-to-disk map. -/
 theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitDiskBoundary :
@@ -7317,6 +7327,31 @@ theorem hasAbstractVariableDirectedQuotientFinePolygonalModels_of_closedUnitDisk
     HasAbstractVariableDirectedQuotientFinePolygonalModels boundary :=
   hasAbstractVariableDirectedQuotientFinePolygonalModels_of_abstractVariableDirectedQuotientArbitrarilyFine
     (hasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels_of_closedUnitDisk_homeomorph
+      e hboundary)
+
+/-- A compact metric boundary identified with the standard closed-disk boundary
+also inherits the bundled glued-strip quotient mesh-data interface. -/
+def homeomorphCylinderStripGluedArbitrarilyFineData_of_closedUnitDisk_homeomorph
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitDiskBoundary) :
+    HomeomorphCylinderStripGluedArbitrarilyFineData closedUnitDiskBoundary boundary :=
+  { homeomorph := e
+    boundaryHomeomorph := hboundary
+    models := hasCylinderStripGluedArbitrarilyFineData_closedUnitDiskBoundary }
+
+/-- The same disk-homeomorphic hypothesis also discharges the odd
+boundary-degree obstruction through the bundled glued-strip quotient
+interface furnished by the explicit disk-side square construction. -/
+theorem hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_cylinderStripGlued
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitDiskBoundary) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_homeomorphCylinderStripGluedArbitrarilyFineData
+    (homeomorphCylinderStripGluedArbitrarilyFineData_of_closedUnitDisk_homeomorph
       e hboundary)
 
 /-- The same disk-homeomorphic hypothesis also discharges the odd

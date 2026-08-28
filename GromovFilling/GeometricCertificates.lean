@@ -822,6 +822,269 @@ theorem universal_ennreal_add_of_metric_chartSystem_closedUnitDisk_homeomorph
     ENNReal.ofReal universalConstant + defect ≤ area :=
   S.universal_ennreal_add_of_closedUnitDisk_homeomorph e hboundaryMap hdisk hbudget
 
+/-- Current exact orientation-free geometric endpoint for the disk-homeomorphic
+route at the generic source-chart-system interface, using the bundled explicit
+glued-strip quotient disk interface. -/
+theorem universal_ennreal_of_chartSystem_closedUnitDisk_homeomorph_cylinderStripGlued
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_closedUnitDisk_homeomorph_cylinderStripGlued e hboundaryMap
+
+/-- Current exact slack-refined orientation-free geometric endpoint for the
+ disk-homeomorphic route at the generic source-chart-system interface, using
+ the bundled explicit glued-strip quotient disk interface. -/
+theorem universal_ennreal_add_of_chartSystem_closedUnitDisk_homeomorph_cylinderStripGlued
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_closedUnitDisk_homeomorph_cylinderStripGlued
+    e hboundaryMap hbudget
+
+/-- Current exact orientation-free geometric endpoint for the disk-homeomorphic
+route at the metric source-chart-system interface, using the bundled explicit
+glued-strip quotient disk interface. -/
+theorem universal_ennreal_of_metric_chartSystem_closedUnitDisk_homeomorph_cylinderStripGlued
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_closedUnitDisk_homeomorph_cylinderStripGlued e hboundaryMap
+
+/-- Current exact slack-refined orientation-free geometric endpoint for the
+ disk-homeomorphic route at the metric source-chart-system interface, using
+ the bundled explicit glued-strip quotient disk interface. -/
+theorem universal_ennreal_add_of_metric_chartSystem_closedUnitDisk_homeomorph_cylinderStripGlued
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_closedUnitDisk_homeomorph_cylinderStripGlued
+    e hboundaryMap hbudget
+
+/-- Exact orientation-free geometric endpoint for the disk-homeomorphic route
+from bundled compact-open-cover generic chart data, using the bundled explicit
+glued-strip quotient disk interface. -/
+theorem universal_ennreal_of_compactOpenCover_closedUnitDisk_homeomorph_cylinderStripGlued
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : ℕ → Type*} {area : ℝ≥0∞}
+    (rowMap : ∀ N : ℕ, Fin N → X → ℂ)
+    (rowMap_cont : ∀ N : ℕ, ∀ j : Fin N, Continuous (rowMap N j))
+    (rowMap_boundary : ∀ N : ℕ, ∀ j : Fin N, ∀ t,
+      rowMap N j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (sourcePiece : ∀ N : ℕ, ι N → Set X)
+    (sourcePiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (sourcePiece N i))
+    (sourcePiece_cover : ∀ N : ℕ, Set.univ ⊆ ⋃ i, sourcePiece N i)
+    (targetPiece : ∀ N : ℕ, ι N → Set ℂ)
+    (chart : ∀ N : ℕ, ∀ i : ι N, sourcePiece N i → targetPiece N i)
+    (targetPiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (targetPiece N i))
+    (localMap : ∀ N : ℕ, Fin N → ι N → ℂ → ℂ)
+    (K : ∀ N : ℕ, Fin N → ι N → ℝ≥0)
+    (local_lipschitz : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N,
+      LipschitzOnWith (K N j i) (localMap N j i) (targetPiece N i))
+    (local_agree : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N, ∀ x : sourcePiece N i,
+      rowMap N j x = localMap N j i (chart N i x))
+    (budget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (FiniteComplexSourceChartData.ofCompactOpenCover
+          (rowMap N)
+          (fun j ↦ rowMap_cont N j)
+          (fun j t ↦ rowMap_boundary N j t)
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).jacobianMass j) ≤ area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  let S :=
+    ComplexSourceChartSystem.ofCompactOpenCover area rowMap rowMap_cont
+      rowMap_boundary sourcePiece sourcePiece_open sourcePiece_cover targetPiece
+      chart targetPiece_open localMap K local_lipschitz local_agree budget
+  simpa [S] using
+    (S.universal_ennreal_of_closedUnitDisk_homeomorph_cylinderStripGlued e hboundaryMap)
+
+/-- Exact slack-refined orientation-free geometric endpoint for the
+ disk-homeomorphic route from bundled compact-open-cover generic chart data,
+ using the bundled explicit glued-strip quotient disk interface. -/
+theorem universal_ennreal_add_of_compactOpenCover_closedUnitDisk_homeomorph_cylinderStripGlued
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : ℕ → Type*} {area defect : ℝ≥0∞}
+    (rowMap : ∀ N : ℕ, Fin N → X → ℂ)
+    (rowMap_cont : ∀ N : ℕ, ∀ j : Fin N, Continuous (rowMap N j))
+    (rowMap_boundary : ∀ N : ℕ, ∀ j : Fin N, ∀ t,
+      rowMap N j (boundary t) = givensBoundaryCurveAddCircle j t)
+    (sourcePiece : ∀ N : ℕ, ι N → Set X)
+    (sourcePiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (sourcePiece N i))
+    (sourcePiece_cover : ∀ N : ℕ, Set.univ ⊆ ⋃ i, sourcePiece N i)
+    (targetPiece : ∀ N : ℕ, ι N → Set ℂ)
+    (chart : ∀ N : ℕ, ∀ i : ι N, sourcePiece N i → targetPiece N i)
+    (targetPiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (targetPiece N i))
+    (localMap : ∀ N : ℕ, Fin N → ι N → ℂ → ℂ)
+    (K : ∀ N : ℕ, Fin N → ι N → ℝ≥0)
+    (local_lipschitz : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N,
+      LipschitzOnWith (K N j i) (localMap N j i) (targetPiece N i))
+    (local_agree : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N, ∀ x : sourcePiece N i,
+      rowMap N j x = localMap N j i (chart N i x))
+    (budget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (FiniteComplexSourceChartData.ofCompactOpenCover
+          (rowMap N)
+          (fun j ↦ rowMap_cont N j)
+          (fun j t ↦ rowMap_boundary N j t)
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).jacobianMass j) ≤ area)
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (FiniteComplexSourceChartData.ofCompactOpenCover
+          (rowMap N)
+          (fun j ↦ rowMap_cont N j)
+          (fun j t ↦ rowMap_boundary N j t)
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).jacobianMass j) + defect ≤ area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary) :
+    ENNReal.ofReal universalConstant + defect ≤ area := by
+  let S :=
+    ComplexSourceChartSystem.ofCompactOpenCover area rowMap rowMap_cont
+      rowMap_boundary sourcePiece sourcePiece_open sourcePiece_cover targetPiece
+      chart targetPiece_open localMap K local_lipschitz local_agree budget
+  simpa [S] using
+    (S.universal_ennreal_add_of_closedUnitDisk_homeomorph_cylinderStripGlued
+      e hboundaryMap hbudget)
+
+/-- Exact orientation-free geometric endpoint for the disk-homeomorphic route
+from bundled compact-open-cover metric chart data, using the bundled explicit
+glued-strip quotient disk interface. -/
+theorem universal_ennreal_of_metric_compactOpenCover_closedUnitDisk_homeomorph_cylinderStripGlued
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : ℕ → Type*} {area : ℝ≥0∞}
+    (hboundary : IsometricCircleBoundary boundary)
+    (sourcePiece : ∀ N : ℕ, ι N → Set X)
+    (sourcePiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (sourcePiece N i))
+    (sourcePiece_cover : ∀ N : ℕ, Set.univ ⊆ ⋃ i, sourcePiece N i)
+    (targetPiece : ∀ N : ℕ, ι N → Set ℂ)
+    (chart : ∀ N : ℕ, ∀ i : ι N, sourcePiece N i → targetPiece N i)
+    (targetPiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (targetPiece N i))
+    (localMap : ∀ N : ℕ, Fin N → ι N → ℂ → ℂ)
+    (K : ∀ N : ℕ, Fin N → ι N → ℝ≥0)
+    (local_lipschitz : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N,
+      LipschitzOnWith (K N j i) (localMap N j i) (targetPiece N i))
+    (local_agree : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N, ∀ x : sourcePiece N i,
+      givensMetricFourierMap boundary N j x = localMap N j i (chart N i x))
+    (budget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (FiniteMetricComplexSourceChartData.ofCompactOpenCover
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).jacobianMass j) ≤ area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary) :
+    ENNReal.ofReal universalConstant ≤ area := by
+  let S :=
+    MetricComplexSourceChartSystem.ofCompactOpenCover area hboundary sourcePiece
+      sourcePiece_open sourcePiece_cover targetPiece chart targetPiece_open
+      localMap K local_lipschitz local_agree budget
+  simpa [S] using
+    (S.universal_ennreal_of_closedUnitDisk_homeomorph_cylinderStripGlued e hboundaryMap)
+
+/-- Exact slack-refined orientation-free geometric endpoint for the
+ disk-homeomorphic route from bundled compact-open-cover metric chart data,
+ using the bundled explicit glued-strip quotient disk interface. -/
+theorem universal_ennreal_add_of_metric_compactOpenCover_closedUnitDisk_homeomorph_cylinderStripGlued
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {ι : ℕ → Type*} {area defect : ℝ≥0∞}
+    (hboundary : IsometricCircleBoundary boundary)
+    (sourcePiece : ∀ N : ℕ, ι N → Set X)
+    (sourcePiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (sourcePiece N i))
+    (sourcePiece_cover : ∀ N : ℕ, Set.univ ⊆ ⋃ i, sourcePiece N i)
+    (targetPiece : ∀ N : ℕ, ι N → Set ℂ)
+    (chart : ∀ N : ℕ, ∀ i : ι N, sourcePiece N i → targetPiece N i)
+    (targetPiece_open : ∀ N : ℕ, ∀ i : ι N, IsOpen (targetPiece N i))
+    (localMap : ∀ N : ℕ, Fin N → ι N → ℂ → ℂ)
+    (K : ∀ N : ℕ, Fin N → ι N → ℝ≥0)
+    (local_lipschitz : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N,
+      LipschitzOnWith (K N j i) (localMap N j i) (targetPiece N i))
+    (local_agree : ∀ N : ℕ, ∀ j : Fin N, ∀ i : ι N, ∀ x : sourcePiece N i,
+      givensMetricFourierMap boundary N j x = localMap N j i (chart N i x))
+    (budget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (FiniteMetricComplexSourceChartData.ofCompactOpenCover
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).jacobianMass j) ≤ area)
+    (hbudget : ∀ N : ℕ,
+      (∑ j : Fin N,
+        (FiniteMetricComplexSourceChartData.ofCompactOpenCover
+          (sourcePiece N)
+          (fun i ↦ sourcePiece_open N i)
+          (sourcePiece_cover N)
+          (targetPiece N)
+          (chart N)
+          (fun i ↦ targetPiece_open N i)
+          (localMap N)
+          (K N)
+          (fun j i ↦ local_lipschitz N j i)
+          (fun j i x ↦ local_agree N j i x)).jacobianMass j) + defect ≤ area)
+    (e : ClosedUnitDisk ≃ₜ X)
+    (hboundaryMap : boundary = e ∘ closedUnitDiskBoundary) :
+    ENNReal.ofReal universalConstant + defect ≤ area := by
+  let S :=
+    MetricComplexSourceChartSystem.ofCompactOpenCover area hboundary sourcePiece
+      sourcePiece_open sourcePiece_cover targetPiece chart targetPiece_open
+      localMap K local_lipschitz local_agree budget
+  simpa [S] using
+    (S.universal_ennreal_add_of_closedUnitDisk_homeomorph_cylinderStripGlued
+      e hboundaryMap hbudget)
+
 /-- Exact orientation-free geometric endpoint for the disk-homeomorphic route
 from bundled compact-open-cover generic chart data. -/
 theorem universal_ennreal_of_compactOpenCover_closedUnitDisk_homeomorph
