@@ -1361,6 +1361,28 @@ structure FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction
   local_agree : ∀ j i (x : sourcePiece i),
     givensMetricFourierMap boundary N j x = localMap j i (chart i x)
 
+/-- Metric source-side chart data converts to the generic source-chart
+certificate by taking the row maps to be the genuine mixed metric Fourier
+maps. -/
+def FiniteMetricComplexSourceChartData.toFiniteComplexSourceChartData
+    {N : ℕ} {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X}
+    (D : FiniteMetricComplexSourceChartData N X boundary)
+    (hboundary : IsometricCircleBoundary boundary) :
+    FiniteComplexSourceChartData N X boundary where
+  rowMap := fun j ↦ givensMetricFourierMap boundary N j
+  rowMap_cont := fun j ↦ continuous_givensMetricFourierMap hboundary N j
+  rowMap_boundary := fun j t ↦ givensMetricFourierMap_on_boundary hboundary j t
+  m := D.m
+  sourcePiece := D.sourcePiece
+  sourcePiece_cover := D.sourcePiece_cover
+  targetPiece := D.targetPiece
+  chart := D.chart
+  targetPiece_open := D.targetPiece_open
+  localMap := D.localMap
+  K := D.K
+  local_lipschitz := D.local_lipschitz
+  local_agree := D.local_agree
+
 /-- Metric source-side chart data converts to the generic obstruction-level
 source-chart certificate by taking the row maps to be the genuine mixed metric
 Fourier maps. -/
@@ -1426,6 +1448,20 @@ structure MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction
   hboundary : IsometricCircleBoundary boundary
   data : ∀ N : ℕ, FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction N X boundary
   budget : ∀ N : ℕ, (∑ j : Fin N, (data N).jacobianMass hboundary j) ≤ area
+
+/-- Bundled metric obstruction-level source-chart data converts to the generic
+obstruction-level source-chart system by taking the row maps to be the genuine
+mixed metric Fourier maps. -/
+def MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction.toComplexSourceChartSystemOfOddBoundaryDegreeObstruction
+    {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystemOfOddBoundaryDegreeObstruction X boundary area) :
+    ComplexSourceChartSystemOfOddBoundaryDegreeObstruction X boundary area where
+  data := fun N ↦
+    (S.data N).toFiniteComplexSourceChartDataOfOddBoundaryDegreeObstruction S.hboundary
+  budget := by
+    intro N
+    simpa [FiniteMetricComplexSourceChartDataOfOddBoundaryDegreeObstruction.jacobianMass]
+      using S.budget N
 
 /-- A bundled metric source-chart certificate system implies the full
 orientation-free universal bound. -/
@@ -1511,6 +1547,21 @@ structure MetricComplexSourceChartSystem
   hboundary : IsometricCircleBoundary boundary
   data : ∀ N : ℕ, FiniteMetricComplexSourceChartData N X boundary
   budget : ∀ N : ℕ, (∑ j : Fin N, (data N).jacobianMass j) ≤ area
+
+/-- Bundled metric source-chart data likewise converts to the generic
+source-chart system by taking the row maps to be the genuine mixed metric
+Fourier maps. -/
+def MetricComplexSourceChartSystem.toComplexSourceChartSystem
+    {X : Type*} [PseudoMetricSpace X] {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area) :
+    ComplexSourceChartSystem X boundary area where
+  data := fun N ↦ (S.data N).toFiniteComplexSourceChartData S.hboundary
+  budget := by
+    intro N
+    simpa [FiniteMetricComplexSourceChartData.jacobianMass,
+      FiniteComplexSourceChartData.jacobianMass,
+      FiniteMetricComplexSourceChartData.toFiniteComplexSourceChartData]
+      using S.budget N
 
 /-- A bundled metric source-chart system implies the full orientation-free
 universal bound once the odd boundary-degree obstruction is available on the
