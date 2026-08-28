@@ -4898,6 +4898,112 @@ theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_cylinderStr
   exact ⟨cylinderStripAbstractVariableDirectedGeometricModel_of_mesh
     n m hm hedgeFaceCount faceCenter hmesh⟩
 
+/-- The explicit cylinder-strip data already yields the directed abstract
+variable-face-size arbitrarily-fine interface on the closed square boundary,
+by pushing the strip models across the radial square-cylinder map. -/
+theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitSquareBoundary_of_cylinderStrip_data
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (e : CylinderStripEdge n m),
+        e ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match e with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε) :
+    HasAbstractVariableDirectedArbitrarilyFinePolygonalModels closedUnitSquareBoundary :=
+  hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitSquareCylinderBoundary
+    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_cylinderStrip_data hmodels)
+
+/-- The same explicit cylinder-strip data therefore also yields the directed
+abstract variable-face-size arbitrarily-fine interface on the closed disk
+boundary. -/
+theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitDiskBoundary_of_cylinderStrip_data
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (e : CylinderStripEdge n m),
+        e ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match e with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε) :
+    HasAbstractVariableDirectedArbitrarilyFinePolygonalModels closedUnitDiskBoundary :=
+  hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitSquare
+    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitSquareBoundary_of_cylinderStrip_data
+      hmodels)
+
+/-- Consequently the explicit cylinder-strip data already supplies the odd
+boundary-degree obstruction on the closed disk boundary. -/
+theorem hasOddBoundaryDegreeObstruction_closedUnitDiskBoundary_of_cylinderStrip_data
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (e : CylinderStripEdge n m),
+        e ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match e with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε) :
+    HasOddBoundaryDegreeObstruction closedUnitDiskBoundary :=
+  hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitDiskBoundary_of_cylinderStrip_data
+      hmodels)
+
+/-- The cylinder-strip data also transfers across a boundary-respecting
+homeomorphism from the closed disk, giving the directed abstract arbitrarily
+fine interface on any compact metric target boundary. -/
+theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitDiskBoundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (e : CylinderStripEdge n m),
+        e ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match e with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε) :
+    HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary :=
+  hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_homeomorph e hboundary
+    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitDiskBoundary_of_cylinderStrip_data
+      hmodels)
+
+/-- The same cylinder-strip data therefore yields the odd boundary-degree
+obstruction on every compact metric boundary homeomorphic to the closed disk. -/
+theorem hasOddBoundaryDegreeObstruction_of_closedUnitDisk_homeomorph_cylinderStrip_data
+    {Y : Type*} [PseudoMetricSpace Y] [CompactSpace Y]
+    {boundary : UnitAddCircle → Y}
+    (e : ClosedUnitDisk ≃ₜ Y)
+    (hboundary : boundary = e ∘ closedUnitDiskBoundary)
+    (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
+      ∃ _hedgeFaceCount : ∀ e : CylinderStripEdge n m,
+        (Finset.univ.filter fun f ↦ e ∈ cylinderStripFaceEdges f).card =
+          if e ∈ cylinderStripBoundaryEdges (n := n) (m := m) then 1 else 2,
+      ∃ faceCenter : CylinderStripFace n m → ClosedUnitInterval × UnitAddCircle,
+      ∀ (f : CylinderStripFace n m) (e : CylinderStripEdge n m),
+        e ∈ cylinderStripFaceEdges f → ∀ x : ClosedUnitInterval,
+          dist (faceCenter f)
+            (match e with
+              | .radial i j => cylinderRadialEdgePath n m i j x
+              | .angular i j => cylinderAngularEdgePath n m i j x) < ε) :
+    HasOddBoundaryDegreeObstruction boundary :=
+  hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+    e hboundary
+    (hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_closedUnitDiskBoundary_of_cylinderStrip_data
+      hmodels)
+
 /-- Vertices of the disk-like model with one central polygon and a quadrilateral annulus. -/
 abbrev SquareCenterPolygonVertex (n m : ℕ) := Fin (n + 1) × Fin (m + 1)
 
