@@ -1,4 +1,5 @@
 import GromovFilling.Oriented
+import GromovFilling.FourierArea
 import GromovFilling.Universal
 import Mathlib.NumberTheory.ZetaValues
 
@@ -219,18 +220,19 @@ theorem tsum_boundaryQuadraticCore :
     _ = (7 / 8 : ℝ) * zetaThree + 1 - Real.pi ^ 4 / 48 := by
       linarith
 
+/-- Odd-mode coefficient of the resonant oriented boundary deformation. -/
+def resonantBoundaryCoefficient (lam : ℝ) (k : ℕ) : ℝ :=
+  boundaryRadius (oddMode k) +
+    lam * boundaryRadius (oddMode 0) ^ 2 *
+      boundaryRadius (oddMode k + 2)
+
 /-- The boundary action before evaluating its three odd-mode series. -/
 def boundaryActionSeries (lam : ℝ) : ℝ :=
   ∑' k : ℕ, Real.pi * (oddMode k : ℝ) *
-    (boundaryRadius (oddMode k) +
-      lam * boundaryRadius (oddMode 0) ^ 2 *
-        boundaryRadius (oddMode k + 2)) ^ 2
+    (resonantBoundaryCoefficient lam k) ^ 2
 
 private lemma boundaryActionTerm_eq (lam : ℝ) (k : ℕ) :
-    Real.pi * (oddMode k : ℝ) *
-        (boundaryRadius (oddMode k) +
-          lam * boundaryRadius (oddMode 0) ^ 2 *
-            boundaryRadius (oddMode k + 2)) ^ 2 =
+    Real.pi * (oddMode k : ℝ) * (resonantBoundaryCoefficient lam k) ^ 2 =
       (16 / Real.pi) * oddCubicTerm k +
         ((512 / Real.pi ^ 3) * lam) *
           (1 / ((oddMode k : ℝ) * ((oddMode k + 2 : ℕ) : ℝ) ^ 2)) +
@@ -238,10 +240,88 @@ private lemma boundaryActionTerm_eq (lam : ℝ) (k : ℕ) :
           ((oddMode k : ℝ) / ((oddMode k + 2 : ℕ) : ℝ) ^ 4) := by
   have hk : (oddMode k : ℝ) ≠ 0 := by unfold oddMode; push_cast; positivity
   have hk2 : ((oddMode k + 2 : ℕ) : ℝ) ≠ 0 := by positivity
-  unfold boundaryRadius oddCubicTerm oddMode
+  unfold resonantBoundaryCoefficient boundaryRadius oddCubicTerm oddMode
   push_cast
   field_simp [Real.pi_ne_zero, hk, hk2]
   ring
+
+lemma summable_boundaryActionSeries_term (lam : ℝ) :
+    Summable (fun k : ℕ ↦
+      Real.pi * (oddMode k : ℝ) * (resonantBoundaryCoefficient lam k) ^ 2) := by
+  have hcubic := summable_oddCubicTerm.hasSum
+  rw [tsum_oddCubicTerm] at hcubic
+  have hconst : HasSum (fun k : ℕ ↦ (16 / Real.pi) * oddCubicTerm k)
+      universalConstant := by
+    convert hcubic.mul_left (16 / Real.pi) using 1
+    unfold universalConstant
+    ring
+  have hlinear : HasSum (fun k : ℕ ↦
+      ((512 / Real.pi ^ 3) * lam) *
+        (1 / ((oddMode k : ℝ) * ((oddMode k + 2 : ℕ) : ℝ) ^ 2)))
+      (boundaryLinear * lam) := by
+    convert hasSum_boundaryLinearCore.mul_left ((512 / Real.pi ^ 3) * lam) using 1
+    unfold boundaryLinear
+    ring
+  have hquadratic : HasSum (fun k : ℕ ↦
+      ((4096 / Real.pi ^ 5) * lam ^ 2) *
+        ((oddMode k : ℝ) / ((oddMode k + 2 : ℕ) : ℝ) ^ 4))
+      (boundaryQuadratic * lam ^ 2) := by
+    have hcore := summable_boundaryQuadraticCore.hasSum
+    rw [tsum_boundaryQuadraticCore] at hcore
+    convert hcore.mul_left ((4096 / Real.pi ^ 5) * lam ^ 2) using 1
+    unfold boundaryQuadratic
+    ring
+  have hall := hconst.add (hlinear.add hquadratic)
+  have hseries : HasSum (fun k : ℕ ↦
+      Real.pi * (oddMode k : ℝ) * (resonantBoundaryCoefficient lam k) ^ 2)
+      (universalConstant + boundaryLinear * lam + boundaryQuadratic * lam ^ 2) := by
+    simpa only [boundaryActionTerm_eq, add_assoc] using hall
+  exact hseries.summable
+
+/-- The finite resonant truncation has Green area equal to its partial boundary
+action sum. -/
+theorem fourierGreenArea_resonantBoundaryCoefficient_eq_sum_range
+    (lam : ℝ) (N : ℕ) :
+    fourierGreenArea
+        (fun k : Fin N ↦ oddMode k)
+        (fun k : Fin N ↦ resonantBoundaryCoefficient lam k) =
+      Finset.sum (Finset.range N)
+        (fun k ↦ Real.pi * (oddMode k : ℝ) * (resonantBoundaryCoefficient lam k) ^ 2) := by
+  rw [fourierGreenArea_eq
+    (m := fun k : Fin N ↦ oddMode k)
+    (a := fun k : Fin N ↦ resonantBoundaryCoefficient lam k)
+    (oddMode_injective.comp Fin.val_injective)]
+  calc
+    Real.pi * ∑ k : Fin N, (oddMode k : ℝ) * (resonantBoundaryCoefficient lam k) ^ 2 =
+        Real.pi * Finset.sum (Finset.range N)
+          (fun k ↦ (oddMode k : ℝ) * (resonantBoundaryCoefficient lam k) ^ 2) := by
+          congr 1
+          exact Fin.sum_univ_eq_sum_range
+            (fun k ↦ (oddMode k : ℝ) * (resonantBoundaryCoefficient lam k) ^ 2) N
+    _ = Finset.sum (Finset.range N)
+          (fun k ↦ Real.pi * (oddMode k : ℝ) * (resonantBoundaryCoefficient lam k) ^ 2) := by
+          rw [Finset.mul_sum]
+          apply Finset.sum_congr rfl
+          intro k hk
+          ring
+
+/-- The Green areas of the finite resonant truncations converge to the full
+resonant boundary action series. -/
+theorem tendsto_fourierGreenArea_resonantBoundaryCoefficient (lam : ℝ) :
+    Filter.Tendsto
+      (fun N : ℕ ↦
+        fourierGreenArea
+          (fun k : Fin N ↦ oddMode k)
+          (fun k : Fin N ↦ resonantBoundaryCoefficient lam k))
+      Filter.atTop (nhds (boundaryActionSeries lam)) := by
+  have hsum : HasSum
+      (fun k : ℕ ↦
+        Real.pi * (oddMode k : ℝ) * (resonantBoundaryCoefficient lam k) ^ 2)
+      (boundaryActionSeries lam) := by
+    simpa [boundaryActionSeries] using (summable_boundaryActionSeries_term lam).hasSum
+  convert hsum.tendsto_sum_nat using 1
+  ext N
+  exact fourierGreenArea_resonantBoundaryCoefficient_eq_sum_range lam N
 
 /-- Proposition 9.1: the infinite boundary series is exactly the closed
 quadratic polynomial used by the oriented certificate. -/
@@ -272,15 +352,11 @@ theorem boundaryActionSeries_eq (lam : ℝ) :
     unfold boundaryQuadratic
     ring
   have hall := hconst.add (hlinear.add hquadratic)
-  have hseries : HasSum (fun k : ℕ ↦ Real.pi * (oddMode k : ℝ) *
-      (boundaryRadius (oddMode k) +
-        lam * boundaryRadius (oddMode 0) ^ 2 *
-          boundaryRadius (oddMode k + 2)) ^ 2)
-      (universalConstant + boundaryLinear * lam +
-        boundaryQuadratic * lam ^ 2) := by
-    simpa only [boundaryActionTerm_eq, add_assoc] using hall
-  unfold boundaryActionSeries boundaryAction
-  exact hseries.tsum_eq
+  have hseries : HasSum (fun k : ℕ ↦
+      Real.pi * (oddMode k : ℝ) * (resonantBoundaryCoefficient lam k) ^ 2)
+      (boundaryAction lam) := by
+    simpa only [boundaryActionTerm_eq, boundaryAction, add_assoc] using hall
+  simpa [boundaryActionSeries] using hseries.tsum_eq
 
 end
 
