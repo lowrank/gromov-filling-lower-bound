@@ -98,6 +98,13 @@ theorem universal_of_givens_coverage_budget
   exact finite_universal_of_givens_coverage_budget N area jacobianMass
     hcoverage hbudget
 
+/-- The exact universal certificate also yields a rigorous decimal lower
+bound for the area. -/
+theorem universal_area_gt_53567723441 {area : ℝ}
+    (hcertificate : universalConstant ≤ area) :
+    (53567723441 / 10000000000 : ℝ) < area :=
+  universalConstant_gt_53567723441.trans_le hcertificate
+
 /-- `ENNReal` form of the infinite Givens certificate, suited to
 measure-theoretic area budgets. -/
 theorem universal_ennreal_of_givens_coverage_budget

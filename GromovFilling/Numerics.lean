@@ -104,6 +104,17 @@ theorem zetaThree_gt_1202056903 :
     norm_num [zetaTailLower, Finset.sum_range_succ]
   exact hrational.trans_le hprefix
 
+/-- A ten-decimal rational lower enclosure for `ζ(3)`, enough for a
+rigorous orientation-free headline decimal. -/
+theorem zetaThree_gt_12020569031 :
+    (12020569031 / 10000000000 : ℝ) < zetaThree := by
+  have hprefix := zetaThree_lower_from_prefix (offset := 15) (by norm_num)
+  have hrational :
+      (12020569031 / 10000000000 : ℝ) <
+        (∑ k ∈ Finset.range 15, 1 / (k : ℝ) ^ 3) + zetaTailLower 15 := by
+    norm_num [zetaTailLower, Finset.sum_range_succ]
+  exact hrational.trans_le hprefix
+
 /-- Constructive ten-decimal lower bound for `π`.  The list consists of
 directed rational upper approximants to the iterated half-angle radicals. -/
 theorem pi_gt_31415926535 : (31415926535 / 10000000000 : ℝ) < Real.pi := by
@@ -257,6 +268,32 @@ private lemma comassBound_point_zero_three_pos : 0 < comassBound (3 / 100) := by
   have hc : 0 ≤ Cstar ^ 2 / (4 * (1 - Dstar * (3 / 100))) := by positivity
   unfold comassBound
   nlinarith [sq_nonneg (3 / 100 : ℝ)]
+
+/-- A rigorous ten-decimal lower bound for the orientation-free universal
+constant. -/
+theorem universalConstant_gt_53567723441 :
+    (53567723441 / 10000000000 : ℝ) < universalConstant := by
+  have hz : (12020569031 / 10000000000 : ℝ) < zetaThree :=
+    zetaThree_gt_12020569031
+  have hp : Real.pi < piUpper := pi_lt_31415926536
+  have hrational :
+      (53567723441 / 10000000000 : ℝ) <
+        14 * (12020569031 / 10000000000 : ℝ) / piUpper := by
+    norm_num [piUpper]
+  have hznonneg : 0 ≤ zetaThree := by linarith
+  have hpiUpper_nonneg : 0 ≤ piUpper := by norm_num [piUpper]
+  calc
+    (53567723441 / 10000000000 : ℝ) <
+        14 * (12020569031 / 10000000000 : ℝ) / piUpper := hrational
+    _ ≤ 14 * zetaThree / piUpper := by
+      have hzle : (12020569031 / 10000000000 : ℝ) ≤ zetaThree := le_of_lt hz
+      gcongr
+    _ ≤ 14 * zetaThree / Real.pi := by
+      have : 14 * zetaThree / piUpper ≤ 14 * zetaThree / Real.pi := by
+        gcongr
+      exact this
+    _ = universalConstant := by
+      rw [universalConstant]
 
 /-- The exact strict decimal claimed in the oriented headline theorem. -/
 theorem nonlinearCertificate_point_zero_three_gt :
