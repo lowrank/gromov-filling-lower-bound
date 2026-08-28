@@ -605,6 +605,67 @@ theorem ComplexSourceChartSystem.universal_ennreal_of_abstractVariableDirectedQu
     (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
       hmodels)
 
+/-- The stronger directed abstract arbitrarily-fine polygonal-model interface
+already supplies the obstruction needed by a generic source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+      hmodels)
+
+/-- Coverage also transfers from a compact source carrying the quotient-friendly
+ directed abstract arbitrarily-fine polygonal-model interface once a
+ boundary-respecting homeomorphism identifies that source with the target of a
+ generic source-chart system. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+
+/-- The same homeomorphism-transfer route works already from the stronger
+ directed abstract arbitrarily-fine polygonal-model interface. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+
+/-- The same homeomorphism-transfer route also works from the ordinary
+ arbitrarily-fine polygonal-model interface.  This is the direct handoff from a
+ future compact-surface triangulation theorem to the generic source-chart
+ certificate layer. -/
+theorem ComplexSourceChartSystem.universal_ennreal_of_homeomorph_arbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_arbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+
 /-- A nullhomotopy of the source boundary loop likewise supplies the odd
 boundary-degree obstruction needed by a generic source-chart system. -/
 theorem ComplexSourceChartSystem.universal_ennreal_of_nullhomotopy
@@ -733,6 +794,72 @@ theorem ComplexSourceChartSystem.universal_ennreal_add_of_abstractVariableDirect
   S.universal_ennreal_add_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
       hmodels)
+    hbudget
+
+/-- The stronger directed abstract arbitrarily-fine polygonal-model interface
+already supplies the additive-defect generic source-chart certificate. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem X boundary area)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+      hmodels)
+    hbudget
+
+/-- The additive-defect generic source-chart certificate also transfers from a
+ compact source carrying the quotient-friendly directed abstract arbitrarily-
+ fine polygonal-model interface through a boundary-respecting homeomorphism. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+    hbudget
+
+/-- The same additive-defect transfer route works already from the stronger
+ directed abstract arbitrarily-fine polygonal-model interface. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+    hbudget
+
+/-- The same additive-defect transfer route also works from the ordinary
+ arbitrarily-fine polygonal-model interface. -/
+theorem ComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_arbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : ComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_arbitrarilyFine
+      e hboundaryHomeomorph hmodels)
     hbudget
 
 /-- A nullhomotopy of the source boundary loop likewise supplies the odd
@@ -1050,6 +1177,65 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_of_abstractVariableDire
     (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
       hmodels)
 
+/-- The stronger directed abstract arbitrarily-fine polygonal-model interface
+already supplies the obstruction needed by a metric source-chart system. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+      hmodels)
+
+/-- The metric source-chart certificate also transfers from a compact source
+ carrying the quotient-friendly directed abstract arbitrarily-fine polygonal-
+ model interface through a boundary-respecting homeomorphism. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+
+/-- The same metric transfer route works already from the stronger directed
+ abstract arbitrarily-fine polygonal-model interface. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+
+/-- The same metric transfer route also works from the ordinary arbitrarily-
+ fine polygonal-model interface, which is the direct target of a future
+ compact-surface triangulation theorem. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_of_homeomorph_arbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary) :
+    ENNReal.ofReal universalConstant ≤ area :=
+  S.universal_ennreal_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_arbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+
 /-- A nullhomotopy of the source boundary loop likewise supplies the odd
 boundary-degree obstruction needed by a metric source-chart system. -/
 theorem MetricComplexSourceChartSystem.universal_ennreal_of_nullhomotopy
@@ -1178,6 +1364,72 @@ theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_abstractVariable
   S.universal_ennreal_add_of_odd_boundary_degree_obstruction
     (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedQuotientArbitrarilyFinePolygonalModels
       hmodels)
+    hbudget
+
+/-- The stronger directed abstract arbitrarily-fine polygonal-model interface
+already supplies the additive-defect metric source-chart certificate. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem X boundary area)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_abstractVariableDirectedArbitrarilyFinePolygonalModels
+      hmodels)
+    hbudget
+
+/-- The additive-defect metric source-chart certificate also transfers from a
+ compact source carrying the quotient-friendly directed abstract arbitrarily-
+ fine polygonal-model interface through a boundary-respecting homeomorphism. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedQuotientArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedQuotientArbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+    hbudget
+
+/-- The same additive-defect metric transfer route works already from the
+ stronger directed abstract arbitrarily-fine polygonal-model interface. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasAbstractVariableDirectedArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_abstractVariableDirectedArbitrarilyFine
+      e hboundaryHomeomorph hmodels)
+    hbudget
+
+/-- The same additive-defect metric transfer route also works from the
+ ordinary arbitrarily-fine polygonal-model interface. -/
+theorem MetricComplexSourceChartSystem.universal_ennreal_add_of_homeomorph_arbitrarilyFine
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    [CompactSpace X] [CompactSpace Y]
+    {boundary : UnitAddCircle → X} {boundary' : UnitAddCircle → Y} {area defect : ℝ≥0∞}
+    (S : MetricComplexSourceChartSystem Y boundary' area)
+    (e : X ≃ₜ Y)
+    (hboundaryHomeomorph : boundary' = e ∘ boundary)
+    (hmodels : HasArbitrarilyFinePolygonalModels boundary)
+    (hbudget : ∀ N : ℕ, (∑ j : Fin N, (S.data N).jacobianMass j) + defect ≤ area) :
+    ENNReal.ofReal universalConstant + defect ≤ area :=
+  S.universal_ennreal_add_of_odd_boundary_degree_obstruction
+    (hasOddBoundaryDegreeObstruction_of_homeomorph_arbitrarilyFine
+      e hboundaryHomeomorph hmodels)
     hbudget
 
 /-- A nullhomotopy of the source boundary loop likewise supplies the odd

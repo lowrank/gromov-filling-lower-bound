@@ -93,9 +93,11 @@ runs both checks on every push and pull request.
   directly for the genuine mixed Fourier maps, and both the generic
   source-chart and metric source-chart interfaces now have topologically
   neutral versions separating the chart data from the odd-degree
-  obstruction, with direct wrappers from nullhomotopies and the
-  quotient-friendly directed abstract arbitrarily-fine polygonal-model
-  interface, and the same local, source-chart, and metric source-chart
+  obstruction, with direct wrappers from nullhomotopies, from the
+  quotient-friendly and stronger directed abstract arbitrarily-fine
+  polygonal-model interfaces, and through homeomorphism transport from
+  future compact-surface triangulation theorems stated at those polygonal
+  interfaces, and the same local, source-chart, and metric source-chart
   layers now also carry a common additive defect term unchanged at
   both the finite and bundled infinite-system levels, and
   the metric source-chart interface now has the same closed-disk,
