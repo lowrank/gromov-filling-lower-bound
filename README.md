@@ -102,6 +102,10 @@ runs both checks on every push and pull request.
   and the genuine metric Fourier maps;
 - the algebraic/numerical conclusions of the orientation-free and oriented
   certificates at their stated geometric interfaces;
+- fixed-endpoint path-homotopy invariance of closed `1`-form curve
+  integrals, plus vanishing on nullhomotopic loops, packaged at a reusable
+  Euclidean chart-level interface for the future oriented Stokes/comass
+  argument;
 - the explicit square-center directed polygonal-model construction on the
   closed square and closed disk boundaries, together with transfer of that
   directed arbitrarily-fine interface to every compact metric boundary
