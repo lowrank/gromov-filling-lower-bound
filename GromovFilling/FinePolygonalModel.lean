@@ -2609,6 +2609,33 @@ theorem cyclicPred_ne_self_of_pos {m : ℕ} (hm : 0 < m) (j : Fin (m + 1)) :
     simpa [h] using (show cyclicSucc (cyclicPred j) = j by simp)
   exact (cyclicSucc_ne_self_of_pos hm j) hsucc
 
+@[simp] theorem lowerSquareRingLevel_castLT {n : ℕ} (i : Fin (n + 1))
+    (hi : i ≠ Fin.last n) :
+    lowerSquareRingLevel (i.castLT (Fin.val_lt_last hi)) = i := by
+  apply Fin.ext
+  simp [lowerSquareRingLevel]
+
+@[simp] theorem upperSquareRingLevel_pred {n : ℕ} (i : Fin (n + 1)) (hi : i ≠ 0) :
+    upperSquareRingLevel (i.pred hi) = i := by
+  apply Fin.ext
+  have hpos : 0 < (i : ℕ) := Fin.pos_iff_ne_zero.mpr hi
+  change ((i.pred hi : Fin n).1 + 1) = i.1
+  rw [Fin.val_pred]
+  omega
+
+theorem upperSquareRingLevel_ne_zero {n : ℕ} (i : Fin (n + 1)) :
+    upperSquareRingLevel i ≠ 0 := by
+  intro h
+  have hval := congrArg Fin.val h
+  simp [upperSquareRingLevel] at hval
+
+theorem lowerSquareRingLevel_ne_last {n : ℕ} (i : Fin n) :
+    lowerSquareRingLevel i ≠ Fin.last n := by
+  intro h
+  have hval := congrArg Fin.val h
+  simp [lowerSquareRingLevel] at hval
+  omega
+
 theorem squareCenterPolygonRadial_faceCount_of_pos {n m : ℕ} (hm : 0 < m)
     (i : Fin n) (j : Fin (m + 1)) :
     (Finset.univ.filter fun f : SquareCenterPolygonFace n m ↦
@@ -2655,15 +2682,182 @@ theorem squareCenterPolygonRadial_faceCount_of_pos {n m : ℕ} (hm : 0 < m)
         | SquareCenterPolygonFace.center => j) h
     exact hneq hk.symm
 
+
+@[simp] theorem lowerSquareRingLevel_castPred {n : ℕ} (i : Fin (n + 1))
+    (hi : i ≠ Fin.last n) :
+    lowerSquareRingLevel (i.castPred hi) = i := by
+  simpa [Fin.castPred] using lowerSquareRingLevel_castLT i hi
+
+theorem squareCenterPolygonAngular_faceCount_of_eq_last {n m : ℕ}
+    (j : Fin (m + 1)) :
+    (Finset.univ.filter fun f : SquareCenterPolygonFace n m ↦
+      SquareCenterPolygonEdge.angular (Fin.last n) j ∈ squareCenterPolygonFaceEdges f).card = 1 := by
+  cases n with
+  | zero =>
+      have hfilter :
+          (Finset.univ.filter fun f : SquareCenterPolygonFace 0 m ↦
+            SquareCenterPolygonEdge.angular (Fin.last 0) j ∈ squareCenterPolygonFaceEdges f) =
+              ({SquareCenterPolygonFace.center} : Finset (SquareCenterPolygonFace 0 m)) := by
+        ext f
+        cases f with
+        | center => simp [squareCenterPolygonFaceEdges, squareCenterPolygonFaceEdge]
+        | annulus i k => exact Fin.elim0 i
+      rw [hfilter]
+      simp
+  | succ n =>
+      have hlast0 : (Fin.last (n + 1) : Fin (n + 2)) ≠ 0 := by
+        intro h
+        have hval := congrArg Fin.val h
+        simp at hval
+      have hfilter :
+          (Finset.univ.filter fun f : SquareCenterPolygonFace (n + 1) m ↦
+            SquareCenterPolygonEdge.angular (Fin.last (n + 1)) j ∈ squareCenterPolygonFaceEdges f) =
+              ({SquareCenterPolygonFace.annulus (Fin.last n) j} : Finset (SquareCenterPolygonFace (n + 1) m)) := by
+        ext f
+        cases f with
+        | center =>
+            simp [mem_squareCenterPolygonFaceEdges_center_angular_iff, hlast0]
+        | annulus i' k =>
+            simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+            constructor
+            · intro hk
+              rcases (mem_squareCenterPolygonFaceEdges_annulus_angular_iff (Fin.last (n + 1)) i' j k).mp hk with h | h
+              · rcases h with ⟨hu, hk⟩
+                have hi' : i' = Fin.last n := by
+                  apply upperSquareRingLevel_injective
+                  simpa [upperSquareRingLevel_last] using hu
+                subst hi'
+                simpa [hk]
+              · rcases h with ⟨hl, hk⟩
+                exact False.elim (lowerSquareRingLevel_ne_last i' hl)
+            · intro hk
+              injection hk with hi' hk'
+              subst hi'
+              subst hk'
+              exact Finset.mem_image.mpr ⟨1, Finset.mem_univ _, by
+                simp [squareCenterPolygonFaceSize, squareCenterPolygonFaceEdge, upperSquareRingLevel_last]⟩
+      rw [hfilter]
+      simp
+
+theorem squareCenterPolygonAngular_faceCount_of_ne_last {n m : ℕ} (hm : 0 < m)
+    (i : Fin (n + 1)) (j : Fin (m + 1)) (hi : i ≠ Fin.last n) :
+    (Finset.univ.filter fun f : SquareCenterPolygonFace n m ↦
+      SquareCenterPolygonEdge.angular i j ∈ squareCenterPolygonFaceEdges f).card = 2 := by
+  cases n with
+  | zero =>
+      fin_cases i
+      exfalso
+      exact hi (by simp)
+  | succ n =>
+      by_cases hi0 : i = 0
+      · have hfilter :
+          (Finset.univ.filter fun f : SquareCenterPolygonFace (n + 1) m ↦
+            SquareCenterPolygonEdge.angular i j ∈ squareCenterPolygonFaceEdges f) =
+              ({SquareCenterPolygonFace.center, SquareCenterPolygonFace.annulus 0 j} :
+                Finset (SquareCenterPolygonFace (n + 1) m)) := by
+          ext f
+          cases f with
+          | center =>
+              simp [mem_squareCenterPolygonFaceEdges_center_angular_iff, hi0]
+          | annulus i' k =>
+              simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert,
+                Finset.mem_singleton]
+              constructor
+              · intro hk
+                rcases (mem_squareCenterPolygonFaceEdges_annulus_angular_iff i i' j k).mp hk with h | h
+                · rcases h with ⟨hu, hk⟩
+                  exact False.elim (upperSquareRingLevel_ne_zero i' (hu.trans hi0))
+                · rcases h with ⟨hl, hk⟩
+                  have hi' : i' = 0 := by
+                    apply lowerSquareRingLevel_injective
+                    simpa [hi0] using hl
+                  subst hi'
+                  exact Or.inr (by simpa [hk])
+              · intro hk
+                rcases hk with hk | hk
+                · cases hk
+                · cases hk
+                  simpa [hi0] using (mem_squareCenterPolygonFaceEdges_annulus_angular_iff 0 0 j j).2 <|
+                    Or.inr ⟨show lowerSquareRingLevel (0 : Fin (n + 1)) = (0 : Fin (n + 2)) by rfl, rfl⟩
+        rw [hfilter]
+        apply Finset.card_pair
+        intro h
+        cases h
+      · have hfilter :
+          (Finset.univ.filter fun f : SquareCenterPolygonFace (n + 1) m ↦
+            SquareCenterPolygonEdge.angular i j ∈ squareCenterPolygonFaceEdges f) =
+              ({SquareCenterPolygonFace.annulus (i.pred hi0) j,
+                SquareCenterPolygonFace.annulus (i.castPred hi) j} :
+                  Finset (SquareCenterPolygonFace (n + 1) m)) := by
+          ext f
+          cases f with
+          | center =>
+              simp [mem_squareCenterPolygonFaceEdges_center_angular_iff, hi0]
+          | annulus i' k =>
+              simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert,
+                Finset.mem_singleton]
+              constructor
+              · intro hk
+                rcases (mem_squareCenterPolygonFaceEdges_annulus_angular_iff i i' j k).mp hk with h | h
+                · rcases h with ⟨hu, hk⟩
+                  have hi' : i' = i.pred hi0 := by
+                    apply upperSquareRingLevel_injective
+                    simpa using hu
+                  subst hi'
+                  exact Or.inl (by simpa [hk])
+                · rcases h with ⟨hl, hk⟩
+                  have hi'' : i' = i.castPred hi := by
+                    apply lowerSquareRingLevel_injective
+                    simpa using hl
+                  subst hi''
+                  exact Or.inr (by simpa [hk])
+              · intro hk
+                rcases hk with hk | hk
+                · cases hk
+                  exact (mem_squareCenterPolygonFaceEdges_annulus_angular_iff i (i.pred hi0) j j).2 <|
+                    Or.inl ⟨upperSquareRingLevel_pred i hi0, rfl⟩
+                · cases hk
+                  exact (mem_squareCenterPolygonFaceEdges_annulus_angular_iff i (i.castPred hi) j j).2 <|
+                    Or.inr ⟨lowerSquareRingLevel_castPred i hi, rfl⟩
+        rw [hfilter]
+        apply Finset.card_pair
+        intro h
+        have hidx : i.pred hi0 = i.castPred hi := by
+          simpa using congrArg (fun f => match f with
+            | SquareCenterPolygonFace.annulus i _ => i
+            | SquareCenterPolygonFace.center => i.pred hi0) h
+        have hcontr : lowerSquareRingLevel (i.pred hi0) = upperSquareRingLevel (i.pred hi0) := by
+          calc
+            lowerSquareRingLevel (i.pred hi0) = lowerSquareRingLevel (i.castPred hi) := by simpa [hidx]
+            _ = i := lowerSquareRingLevel_castPred i hi
+            _ = upperSquareRingLevel (i.pred hi0) := by symm; exact upperSquareRingLevel_pred i hi0
+        exact lowerSquareRingLevel_ne_upperSquareRingLevel (i.pred hi0) hcontr
+
+theorem squareCenterPolygonEdgeFaceCount_of_pos {n m : ℕ} (hm : 0 < m)
+    (e : SquareCenterPolygonEdge n m) :
+    (Finset.univ.filter fun f ↦ e ∈ squareCenterPolygonFaceEdges f).card =
+      if e ∈ squareCenterPolygonBoundaryEdges (n := n) (m := m) then 1 else 2 := by
+  cases e with
+  | radial i j =>
+      rw [if_neg]
+      · exact squareCenterPolygonRadial_faceCount_of_pos hm i j
+      · simpa using (mem_squareCenterPolygonBoundaryEdges_radial_iff (n := n) (m := m) i j)
+  | angular i j =>
+      by_cases hi : i = Fin.last n
+      · rw [if_pos]
+        · subst hi
+          exact squareCenterPolygonAngular_faceCount_of_eq_last j
+        · exact (mem_squareCenterPolygonBoundaryEdges_angular_iff (n := n) (m := m) i j).2 hi
+      · rw [if_neg]
+        · exact squareCenterPolygonAngular_faceCount_of_ne_last hm i j hi
+        · exact mt (mem_squareCenterPolygonBoundaryEdges_angular_iff (n := n) (m := m) i j).1 hi
+
 /-- Bundle the explicit center-polygon annulus data into the abstract directed
 variable-face-size geometric interface, isolating the remaining global edge-count
 and mesh estimates as hypotheses. -/
-def squareCenterPolygonAbstractVariableDirectedGeometricModel_of_edgeFaceCount_of_mesh
+def squareCenterPolygonAbstractVariableDirectedGeometricModel_of_mesh
     (n m : ℕ) (hm : 0 < m) {ε : ℝ}
     (faceCenter : SquareCenterPolygonFace n m → ClosedUnitSquare)
-    (hedgeFaceCount : ∀ e : SquareCenterPolygonEdge n m,
-      (Finset.univ.filter fun f ↦ e ∈ squareCenterPolygonFaceEdges f).card =
-        if e ∈ squareCenterPolygonBoundaryEdges (n := n) (m := m) then 1 else 2)
     (hmesh : ∀ (f : SquareCenterPolygonFace n m) (e : SquareCenterPolygonEdge n m),
       e ∈ squareCenterPolygonFaceEdges f → ∀ x : ClosedUnitInterval,
         dist (faceCenter f) (squareCenterPolygonEdgePath n m e x) < ε) :
@@ -2677,7 +2871,7 @@ def squareCenterPolygonAbstractVariableDirectedGeometricModel_of_edgeFaceCount_o
       edgeEnds := squareCenterPolygonEdgeEnds
       faceEdges := squareCenterPolygonFaceEdges
       boundaryEdges := squareCenterPolygonBoundaryEdges (n := n) (m := m)
-      edgeFaceCount := hedgeFaceCount
+      edgeFaceCount := squareCenterPolygonEdgeFaceCount_of_pos hm
       faceVertex := squareCenterPolygonFaceVertex
       faceEdge := squareCenterPolygonFaceEdge
       faceEdgeForward := squareCenterPolygonFaceEdgeForward
@@ -2719,22 +2913,19 @@ def squareCenterPolygonAbstractVariableDirectedGeometricModel_of_edgeFaceCount_o
   mesh := hmesh
 
 /-- The explicit center-polygon annulus data already yields abstract directed
-variable-face-size fine polygonal models as soon as the remaining edge-count and
-mesh estimates are supplied at every scale. -/
+variable-face-size fine polygonal models as soon as the geometric mesh estimates
+are supplied at every scale. -/
 theorem hasAbstractVariableDirectedArbitrarilyFinePolygonalModels_of_squareCenterPolygon_data
     (hmodels : ∀ ε : ℝ, 0 < ε → ∃ n m : ℕ, ∃ _hm : 0 < m,
       ∃ faceCenter : SquareCenterPolygonFace n m → ClosedUnitSquare,
-      (∀ e : SquareCenterPolygonEdge n m,
-        (Finset.univ.filter fun f ↦ e ∈ squareCenterPolygonFaceEdges f).card =
-          if e ∈ squareCenterPolygonBoundaryEdges (n := n) (m := m) then 1 else 2) ∧
       (∀ (f : SquareCenterPolygonFace n m) (e : SquareCenterPolygonEdge n m),
         e ∈ squareCenterPolygonFaceEdges f → ∀ x : ClosedUnitInterval,
           dist (faceCenter f) (squareCenterPolygonEdgePath n m e x) < ε)) :
     HasAbstractVariableDirectedArbitrarilyFinePolygonalModels closedUnitSquareBoundary := by
   intro ε hε
-  obtain ⟨n, m, hm, faceCenter, hcount, hmesh⟩ := hmodels ε hε
-  exact ⟨squareCenterPolygonAbstractVariableDirectedGeometricModel_of_edgeFaceCount_of_mesh
-    n m hm faceCenter hcount hmesh⟩
+  obtain ⟨n, m, hm, faceCenter, hmesh⟩ := hmodels ε hε
+  exact ⟨squareCenterPolygonAbstractVariableDirectedGeometricModel_of_mesh
+    n m hm faceCenter hmesh⟩
 
 /-- Every concrete `Fin`-indexed model is an abstract finite-index model. -/
 def FinePolygonalModel.toAbstractFinePolygonalModel
