@@ -295,7 +295,7 @@ theorem twoJacobian_complex_eq_abs_det (L : ℂ →L[ℝ] ℂ) :
     Complex.finrank_real_complex_fact
   exact twoJacobian_eq_abs_det L
 
-private theorem tangentSpace_finrank_eq_two
+theorem tangentSpace_finrank_eq_two
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [TopologicalSpace M] [ChartedSpace H M]
