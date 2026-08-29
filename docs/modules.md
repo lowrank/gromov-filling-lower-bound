@@ -12,7 +12,7 @@ module list and fails if any source file is missing from the umbrella.
 | Metric profiles | `DistanceProfile`, `ProfileFourier` | genuine distance-defined Fourier maps and planar derivatives |
 | Orthogonal mixing | `Givens`, `BoundaryCertificate`, `DominantHarmonic` | explicit rotations, dominance, injectivity |
 | Degree and Jordan theory | `CircleDegree`, `BoundaryDegree`, `RadialDegreeStability`, `JordanBoundary` | degree, components, and Jordan regions |
-| Polygonal topology | `ModTwoDegree`, `PolygonalSurfaceObstruction`, `FinePolygonalModel`, `GeneralSurfaceObstruction`, `SurfaceTriangulationFoundation` | finite obstruction, mesh interfaces, arbitrary side pairings, boundary-regular compact-surface triangulability |
+| Polygonal topology | `ModTwoDegree`, `PolygonalSurfaceObstruction`, `FinePolygonalModel`, `GeneralSurfaceObstruction`, `SurfaceTriangulationFoundation`, `SurfaceClassificationFoundation` | finite obstruction, mesh interfaces, arbitrary side pairings, boundary-regular triangulability, faithful compact-surface classification |
 | Planar area | `EuclideanAreaFormula`, `ComplexAreaFormula`, `JacobianBudget`, `ComplexJacobianBudget` | area formula and determinant budgets |
 | Coverage | `SurfaceCoverage`, `MetricPlanarCoverage` | Jordan-region coverage for abstract and metric Fourier maps |
 | Oriented argument | `ClosedOneForm`, `Oriented`, `GeometricClosedOneForm` | Stokes interfaces and scalar nonlinear optimization |
@@ -24,8 +24,8 @@ module list and fails if any source file is missing from the umbrella.
 - `lean-toolchain` pins Lean `4.29.0`.
 - `lakefile.lean` pins mathlib and the Jordan curve package.
 - `lake-manifest.json` records the exact dependency revisions.
-- `ClassificationOfSurfaces/VENDOR.json` pins the Apache-2.0 Radó source
-  closure and its Lean/mathlib compatibility target.
+- `ClassificationOfSurfaces/VENDOR.json` pins the Apache-2.0 compact-surface
+  classification source closure and its Lean/mathlib compatibility target.
 - `.github/workflows/ci.yml` enforces the package build, umbrella check,
   fail-closed source scan with negative control, and live axiom audit.
 - `scripts/verify.sh` is the one-command local reproduction path.

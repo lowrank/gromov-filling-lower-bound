@@ -13,7 +13,7 @@ manuscript ledger is maintained in
 | Linear algebra | Givens entries, orthogonality, energy preservation, dominance |
 | Boundary topology | circle degree, degree one, Jordan partition, bounded component |
 | Finite surface topology | mod-2 cochain obstruction, face lifts, edge turns, general side pairings |
-| Compact-surface topology | Radó finite geometric triangulation for half-space-modeled compact connected surfaces |
+| Compact-surface topology | Radó finite boundary-regular triangulation and faithful polygonal classification for half-space-modeled compact connected surfaces |
 | Planar analysis | Lipschitz area inequality, determinant identity, Jacobian budgets |
 | Certificate logic | finite-to-infinite universal deduction, defect propagation, scalar optimization |
 | Rigorous numerics | rational bounds for `π`, `ζ(3)`, and the displayed constants |
@@ -85,14 +85,22 @@ returned finite complex covers the surface, has edge valence at most two, and
 meets the ambient boundary facewise. The unique cyclic boundary component
 still has to be extracted before the relaxed handoff applies.
 
+`GromovFilling.SurfaceClassificationFoundation` also exposes the vendored
+classification theorem. Every compact connected surface under the same
+half-space-manifold hypotheses is homeomorphic to the sphere or to a faithful
+orientable or nonorientable polygonal normal-form quotient. This removes the
+absolute classification gap, but the theorem does not identify the supplied
+boundary parametrization with a designated free loop of the normal form. That
+relative-boundary statement is still required for Lemma 5.4.
+
 ## Partial headline statements
 
 The finite universal certificate and the nonlinear oriented certificate are
 kernel-verified deductions from named geometric inputs. The following bridges
 are not yet verified for every compact Riemannian surface:
 
-- cyclic-boundary extraction from the verified full-support
-  boundary-facewise-regular finite surface triangulation;
+- identification of the supplied one-boundary parametrization with the unique
+  free loop in the verified polygonal normal form;
 - almost-everywhere eikonal differentiation and weak parameter integration;
 - intrinsic area measure and chartwise Jacobian globalization;
 - the global differential-form Stokes/comass inequality.

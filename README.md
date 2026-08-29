@@ -97,7 +97,7 @@ lower obstruction automatically. Callers no longer supply it as a field.
 | Path | Purpose |
 |---|---|
 | [`GromovFilling/`](GromovFilling/) | Lean definitions, lemmas, and certificate theorems |
-| [`ClassificationOfSurfaces/`](ClassificationOfSurfaces/) | pinned Apache-2.0 Radó triangulation source closure, adapted to Lean 4.29 |
+| [`ClassificationOfSurfaces/`](ClassificationOfSurfaces/) | pinned Apache-2.0 compact-surface classification source closure, adapted to Lean 4.29 |
 | [`GromovFilling.lean`](GromovFilling.lean) | canonical generated umbrella import |
 | [`fourier_resonant_filling_area_v3.tex`](fourier_resonant_filling_area_v3.tex) | companion manuscript source |
 | [`FORMALIZATION.md`](FORMALIZATION.md) | exact manuscript-to-Lean statement ledger |
@@ -127,9 +127,9 @@ scan fails closed.
 
 The end-to-end Riemannian statements still require:
 
-1. extraction of the unique boundary cycle, up to circle-homeomorphic
-   reparametrization, from the verified full-support boundary-facewise-regular
-   Radó triangulation;
+1. identification of the supplied one-boundary parametrization, up to a circle
+   homeomorphism, with the unique free loop in the verified polygonal
+   classification normal form;
 2. Riemannian eikonal and weak parameter-integral differentiation;
 3. globalization of the planar area formula through surface charts, including
    the intrinsic `J₂` density;
@@ -152,6 +152,6 @@ changes.
 ## License
 
 The Gromov-filling project is released under the [MIT License](LICENSE). The
-vendored Radó source closure retains its upstream
+vendored compact-surface classification source closure retains its upstream
 [Apache-2.0 license](ClassificationOfSurfaces/LICENSE) and modification
 notices.

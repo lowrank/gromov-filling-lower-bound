@@ -40,6 +40,7 @@ import GromovFilling.ProfileFourier
 import GromovFilling.RadialDegreeStability
 import GromovFilling.RadialProjection
 import GromovFilling.ResonanceTrace
+import GromovFilling.SurfaceClassificationFoundation
 import GromovFilling.SurfaceCoverage
 import GromovFilling.SurfaceTriangulationFoundation
 import GromovFilling.Universal
