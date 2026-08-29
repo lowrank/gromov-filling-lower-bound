@@ -72,6 +72,8 @@ every compiled project declaration against the exact allowlist `propext`,
 - planar Lipschitz area inequalities and Jacobian budgets;
 - sharp interior Riemannian Lipschitz-to-derivative bounds for boundary
   distance, odd-profile, and antipodal-slack functions;
+- intrinsic half-energy two-Jacobian bounds and finite-family integrated
+  Riemannian Jacobian budgets;
 - strict positivity and symmetry of the Proposition 8.1 logarithmic sine
   kernel at interior off-diagonal points;
 - summability, Tonelli/antidiagonal reindexing, and the exact closed form of
