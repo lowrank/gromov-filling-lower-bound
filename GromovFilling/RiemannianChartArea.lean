@@ -52,6 +52,48 @@ def riemannianChartAreaMeasure
   Measure.map F
     ((volume.restrict s).withDensity (riemannianChartDensity I F))
 
+/-- Restricting a chart-area measure in the manifold is the same as
+restricting its coordinate domain to the corresponding preimage. -/
+theorem restrict_riemannianChartAreaMeasure
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [MeasurableSpace M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)]
+    (F : ℂ → M) (s : Set ℂ) (hs : MeasurableSet s)
+    (t : Set M) (ht : MeasurableSet t)
+    (hF : AEMeasurable F (volume.restrict s)) :
+    (riemannianChartAreaMeasure I F s).restrict t =
+      riemannianChartAreaMeasure I F (s ∩ F ⁻¹' t) := by
+  unfold riemannianChartAreaMeasure
+  have hFweighted : AEMeasurable F
+      ((volume.restrict s).withDensity (riemannianChartDensity I F)) :=
+    hF.mono_ac (withDensity_absolutelyContinuous _ _)
+  rw [Measure.restrict_map_of_aemeasurable hFweighted ht,
+    restrict_withDensity' (F ⁻¹' t) (riemannianChartDensity I F),
+    Measure.restrict_restrict' hs, inter_comm]
+
+/-- A chart-area contribution is supported on the image of its coordinate
+set.  Consequently, restricting it to any measurable superset of that image
+does not change the measure. -/
+theorem restrict_riemannianChartAreaMeasure_of_image_subset
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [MeasurableSpace M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)]
+    (F : ℂ → M) (s : Set ℂ) (hs : MeasurableSet s)
+    (t : Set M) (ht : MeasurableSet t)
+    (hF : AEMeasurable F (volume.restrict s))
+    (hst : F '' s ⊆ t) :
+    (riemannianChartAreaMeasure I F s).restrict t =
+      riemannianChartAreaMeasure I F s := by
+  rw [restrict_riemannianChartAreaMeasure I F s hs t ht hF]
+  congr 2
+  exact inter_eq_left.2 fun z hz ↦ hst ⟨z, hz, rfl⟩
+
 /-- The manifold chain rule in the multiplicative `ℝ≥0∞` form used by the
 chart-area measure. -/
 theorem ofReal_riemannianTwoJacobian_comp_eq_chartDensity_mul
