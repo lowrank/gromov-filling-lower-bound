@@ -13,7 +13,7 @@ orthonormal bases and proved independent of those bases.  Consequently the
 definition does not require either vector space to be oriented.
 -/
 
-open scoped Bundle Manifold
+open scoped Bundle InnerProductSpace Manifold
 open Bundle
 
 namespace GromovFilling
@@ -131,7 +131,7 @@ theorem twoJacobian_eq_abs_areaForm
       rw [Module.Basis.det_apply]
       apply congrArg Matrix.det
       ext i j
-      rw [LinearMap.toMatrix_apply, Basis.toMatrix_apply]
+      rw [LinearMap.toMatrix_apply, Module.Basis.toMatrix_apply]
       rfl
     _ = |o.volumeForm (fun i ↦ L (e i))| :=
       (o.volumeForm_robust' f (fun i ↦ L (e i))).symm
