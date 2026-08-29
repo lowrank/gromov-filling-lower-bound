@@ -34,6 +34,7 @@ import GromovFilling.Oriented
 import GromovFilling.PlanarCertificate
 import GromovFilling.PolygonalSurfaceObstruction
 import GromovFilling.PolynomialDiskArea
+import GromovFilling.PositiveLogSineKernel
 import GromovFilling.ProfileFourier
 import GromovFilling.RadialDegreeStability
 import GromovFilling.RadialProjection
