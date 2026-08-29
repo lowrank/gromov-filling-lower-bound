@@ -30,3 +30,5 @@ case "$scan_rc" in
     exit "$scan_rc"
     ;;
 esac
+
+./scripts/check_lean_unicode_confusables.sh
