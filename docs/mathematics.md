@@ -96,10 +96,12 @@ orthonormal bases and multiplicative under the manifold chain rule, and
 identified exactly with this planar absolute-determinant density. The
 chart-induced area measure, its exact weighted `lintegral` transfer, the local
 surface area inequality, and its summation over a countable covering chart
-family are verified. The remaining step is to prove standard smooth and
-boundary charts satisfy those interfaces, establish invariance on overlaps
-(or a compatible disjointification), and identify the construction with the
-canonical global area measure.
+family are verified. Exact integral and measure invariance under injective
+differentiable complex-coordinate reparametrizations is also verified under
+explicit local almost-everywhere measurability hypotheses. The remaining step
+is to prove intrinsic Jacobian-density measurability for standard smooth
+charts, treat half-space boundary charts, and identify a non-overcounting
+atlas construction with the canonical global area measure.
 
 The orientation-free constant is
 

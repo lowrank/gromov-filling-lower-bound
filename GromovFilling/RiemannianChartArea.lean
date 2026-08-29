@@ -73,6 +73,32 @@ theorem ofReal_riemannianTwoJacobian_comp_eq_chartDensity_mul
 
 /-- Integration against a single chart-area measure is exactly weighted
 planar integration on its coordinate domain. -/
+theorem lintegral_riemannianChartAreaMeasure_of_aemeasurable
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [MeasurableSpace M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)]
+    (F : ℂ → M) (s : Set ℂ)
+    (hF : AEMeasurable F (volume.restrict s))
+    (hDensity : AEMeasurable
+      (riemannianChartDensity I F) (volume.restrict s))
+    (q : M → ℝ≥0∞) (hq : Measurable q) :
+    ∫⁻ y, q y ∂riemannianChartAreaMeasure I F s =
+      ∫⁻ z in s, riemannianChartDensity I F z * q (F z) ∂volume := by
+  rw [riemannianChartAreaMeasure]
+  have hFweighted : AEMeasurable F
+      ((volume.restrict s).withDensity (riemannianChartDensity I F)) :=
+    hF.mono_ac (withDensity_absolutelyContinuous _ _)
+  rw [lintegral_map' hq.aemeasurable hFweighted]
+  have hqF : AEMeasurable (fun z ↦ q (F z)) (volume.restrict s) :=
+    hq.comp_aemeasurable hF
+  rw [lintegral_withDensity_eq_lintegral_mul₀ hDensity hqF]
+  rfl
+
+/-- Measurable-data specialization of
+`lintegral_riemannianChartAreaMeasure_of_aemeasurable`. -/
 theorem lintegral_riemannianChartAreaMeasure
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
@@ -86,10 +112,8 @@ theorem lintegral_riemannianChartAreaMeasure
     (q : M → ℝ≥0∞) (hq : Measurable q) :
     ∫⁻ y, q y ∂riemannianChartAreaMeasure I F s =
       ∫⁻ z in s, riemannianChartDensity I F z * q (F z) ∂volume := by
-  rw [riemannianChartAreaMeasure, lintegral_map hq hF]
-  have hqF : Measurable (fun z ↦ q (F z)) := hq.comp hF
-  rw [lintegral_withDensity_eq_lintegral_mul _ hDensity hqF]
-  rfl
+  exact lintegral_riemannianChartAreaMeasure_of_aemeasurable
+    I F s hF.aemeasurable.restrict hDensity.aemeasurable.restrict q hq
 
 /-- Local planar image-area inequality in intrinsic Riemannian `J₂`
 notation. -/

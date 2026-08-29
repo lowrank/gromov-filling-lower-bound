@@ -50,6 +50,7 @@ import GromovFilling.ResonanceTrace
 import GromovFilling.RiemannianAreaFormula
 import GromovFilling.RiemannianAtlasArea
 import GromovFilling.RiemannianChartArea
+import GromovFilling.RiemannianChartTransition
 import GromovFilling.RiemannianTwoJacobian
 import GromovFilling.SurfaceClassificationFoundation
 import GromovFilling.SurfaceCoverage
