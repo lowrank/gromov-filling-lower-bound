@@ -17,6 +17,7 @@ manuscript ledger is maintained in
 | Certificate logic | finite-to-infinite universal deduction, defect propagation, scalar optimization |
 | Rigorous numerics | rational bounds for `π`, `ζ(3)`, and the displayed constants |
 | Logarithmic sine kernel | squared-sine gap, positive sine quotient, strict off-diagonal positivity, symmetry |
+| Resonance trace arithmetic | nonnegative double-series summability, Tonelli/antidiagonal regrouping, exact scalar value |
 | De Sitter profile algebra | quadric membership, formal-velocity speed, pairwise Lorentz product, Züst kernel identity |
 
 Proposition 8.1 is partial. `PositiveLogSineKernel.lean` verifies the exact
@@ -31,6 +32,12 @@ Proposition 15.1 is verified at an explicit denominator interface:
 and requires the relevant sine denominators to be nonzero. It does not claim a
 separate almost-everywhere differentiability theorem for arbitrary Lipschitz
 profiles.
+
+Lemma 14.3 is partial. `ResonanceTrace.lean` proves convergence of the
+manuscript's nonnegative scalar double series, its Tonelli/antidiagonal
+reindexing, and its exact value `π/2 + 7ζ(3)/π + π³/24`. It does not
+construct the infinite matrix on ℓ², prove Gram positivity or trace class, or
+identify the scalar series with an operator trace.
 
 ## General polygon-side pairings
 
@@ -63,6 +70,6 @@ are not yet verified for every compact Riemannian surface:
 
 Several later finite or algebraic manuscript claims remain suitable for future
 formalization, including completion of the separable barrier, Hardy
-stationarity, the stationary-resonance hierarchy, and the one-high-leg
-spectral ceiling. Their current status is recorded individually in the root
-statement ledger.
+stationarity, the stationary-resonance hierarchy, the operator layer of the
+exact-trace lemma, and the one-high-leg spectral ceiling. Their current status
+is recorded individually in the root statement ledger.

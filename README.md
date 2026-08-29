@@ -66,6 +66,8 @@ every compiled project declaration against the exact allowlist `propext`,
 - planar Lipschitz area inequalities and Jacobian budgets;
 - strict positivity and symmetry of the Proposition 8.1 logarithmic sine
   kernel at interior off-diagonal points;
+- summability, Tonelli/antidiagonal reindexing, and the exact closed form of
+  the scalar double series underlying the Lemma 14.3 trace calculation;
 - the de Sitter quadric, formal-velocity, Lorentz-product, and Züst-kernel
   identities from Proposition 15.1;
 - finite and infinite certificate deductions, boundary-action series, and
@@ -107,9 +109,9 @@ The project is pinned to:
   `e442525a662e9e3beb8205b9fa1fc99509076ded`.
 
 The latest hardened CI receipt, run
-[`33222433335`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33222433335)
-on merge commit `24a89cc64c589f1f8895e19697b37fdf56e674bd`, audited
-**4,002 declarations** under `GromovFilling`; every declaration stayed within
+[`33223947651`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33223947651)
+on merge commit `f865cada856fe51367c73daa07cbd61497dc52e0`, audited
+**4,030 declarations** under `GromovFilling`; every declaration stayed within
 the standard logical allowlist. CI also fails if the umbrella omits a source
 module or if project Lean source contains placeholder, custom axiom, unsafe,
 or native reduction escape tokens, and a negative control confirms that this

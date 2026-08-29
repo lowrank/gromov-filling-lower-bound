@@ -37,7 +37,7 @@ Riemannian surfaces.
 | Proposition 13.1, Infinite family of stationary resonances | **Open feasible obligation** | No Lean declaration currently encodes the general hierarchy and stationarity proof. |
 | Lemma 14.1, High-mode test | **Open feasible obligation** | Not formalized. |
 | Theorem 14.2, Finite one-high-leg ceiling | **Open feasible obligation** | Not formalized. |
-| Lemma 14.3, Exact trace | **Open feasible obligation** | Not formalized. |
+| Lemma 14.3, Exact trace | **Partial** | `ResonanceTrace.lean` verifies nonnegative scalar double-series summability, Tonelli/antidiagonal reindexing, and the exact value `π/2 + 7ζ(3)/π + π³/24`. The ℓ² operator construction, Gram positivity, trace-class proof, and identification of this series with the operator trace remain unverified. |
 | Theorem 14.4, Rigorous one-high-leg spectral ceiling | **Open feasible obligation** | The required operator/spectral estimate and numerical enclosure are absent. |
 | Proposition 15.1, de Sitter identities | **Verified** | `DeSitterProfile.lean` proves the de Sitter quadric identity, the formal-velocity Lorentz speed, the pairwise Lorentz inner product, and Züst's coefficient-kernel identity. The interface takes the profile values and derivative value as explicit scalars and exposes every required nonzero sine denominator; it does not assert the separate almost-everywhere differentiability bridge for a Lipschitz profile. |
 
@@ -64,9 +64,9 @@ so this project records them explicitly instead.
 
 - Lean `4.29.0`, mathlib `v4.29.0`, JordanCurveTheorem
   `e442525a662e9e3beb8205b9fa1fc99509076ded`.
-- GitHub Actions run `33222433335` on merge commit
-  `24a89cc64c589f1f8895e19697b37fdf56e674bd`: canonical umbrella check,
+- GitHub Actions run `33223947651` on merge commit
+  `f865cada856fe51367c73daa07cbd61497dc52e0`: canonical umbrella check,
   fail-closed source scan, injected-`sorry` negative control, full package
   build, and live axiom audit.
-- Live audit result: 4,002 declarations under `GromovFilling`; allowed axioms
+- Live audit result: 4,030 declarations under `GromovFilling`; allowed axioms
   exactly `propext`, `Classical.choice`, and `Quot.sound`.

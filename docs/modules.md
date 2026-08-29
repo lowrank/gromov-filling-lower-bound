@@ -8,7 +8,7 @@ module list and fails if any source file is missing from the umbrella.
 | Family | Main modules | Role |
 |---|---|---|
 | Constants and limits | `Constants`, `Universal`, `Numerics` | exact constants, asymptotic passage, rational enclosures |
-| Fourier boundary | `FourierBoundary`, `FourierArea`, `FourierBessel`, `BoundaryActionSeries` | triangle wave, Green action, Bessel estimates, resonant series |
+| Fourier boundary | `FourierBoundary`, `FourierArea`, `FourierBessel`, `BoundaryActionSeries`, `ResonanceTrace` | triangle wave, Green action, Bessel estimates, resonant series, exact scalar trace arithmetic |
 | Metric profiles | `DistanceProfile`, `ProfileFourier` | genuine distance-defined Fourier maps and planar derivatives |
 | Orthogonal mixing | `Givens`, `BoundaryCertificate`, `DominantHarmonic` | explicit rotations, dominance, injectivity |
 | Degree and Jordan theory | `CircleDegree`, `BoundaryDegree`, `RadialDegreeStability`, `JordanBoundary` | degree, components, and Jordan regions |
