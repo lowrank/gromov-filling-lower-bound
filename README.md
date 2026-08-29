@@ -131,8 +131,9 @@ require:
 
 1. Riemannian eikonal and weak parameter-integral differentiation;
 2. a Riemannian area measure and chartwise globalization of the planar area
-   formula. The intrinsic pointwise `J₂` density and its exact agreement with
-   the planar absolute determinant are now verified;
+   formula. The intrinsic pointwise `J₂` between arbitrary two-dimensional
+   Riemannian manifolds, its multiplicative chain rule, and its exact
+   agreement with the planar absolute determinant are now verified;
 3. a global differential-form Stokes/comass interface for the oriented case.
 
 These are tracked gaps, not project axioms. The repository does not encode an

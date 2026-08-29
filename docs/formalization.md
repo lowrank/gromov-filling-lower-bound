@@ -142,8 +142,10 @@ kernel-verified deductions from named geometric inputs. The following bridges
 are not yet verified for every compact Riemannian surface:
 
 - almost-everywhere eikonal differentiation and weak parameter integration;
-- Riemannian area measure and chartwise Jacobian globalization (the intrinsic
-  pointwise `J₂` and its exact planar identification are verified);
+- Riemannian area measure and chart-integration/change-of-variables
+  globalization (the intrinsic pointwise `J₂` between arbitrary
+  two-dimensional Riemannian manifolds, its chain rule, and its exact planar
+  identification are verified);
 - the global differential-form Stokes/comass inequality.
 
 !!! danger "No conditional-shell upgrade"

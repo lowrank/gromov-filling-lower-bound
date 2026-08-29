@@ -76,8 +76,8 @@ scope:
 
 1. Riemannian eikonal and parameter-integral differentiation;
 2. a Riemannian area measure and chartwise globalization of the planar area
-   formula (the intrinsic pointwise `J₂` and its planar identification are
-   verified);
+   formula (the intrinsic pointwise `J₂` between two-dimensional Riemannian
+   manifolds, its chain rule, and its planar identification are verified);
 3. a global differential-form Stokes/comass interface for the oriented case.
 
 The repository keeps these foundations visible. It does not replace them with
