@@ -29,6 +29,7 @@ import GromovFilling.GeometricClosedOneForm
 import GromovFilling.Givens
 import GromovFilling.GivensDisk
 import GromovFilling.GivensDiskArea
+import GromovFilling.InfiniteCorrelationBounds
 import GromovFilling.JacobianBudget
 import GromovFilling.JordanBoundary
 import GromovFilling.JordanSchoenfliesCoverage
