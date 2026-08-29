@@ -115,9 +115,9 @@ The project is pinned to:
   `e442525a662e9e3beb8205b9fa1fc99509076ded`.
 
 The latest hardened CI receipt, run
-[`33226422322`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33226422322)
-on merge commit `ecad55ca15d4bda1f73c59969d7dc9f8809736fa`, audited
-**4,134 declarations** under `GromovFilling`; every declaration stayed within
+[`33243992351`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33243992351)
+on merge commit `a10df992320109c1da8929b4dd62385ef4838024`, audited
+**4,665 declarations** under `GromovFilling`; every declaration stayed within
 the standard logical allowlist. CI also fails if the umbrella omits a source
 module or if project Lean source contains placeholder, custom axiom, unsafe,
 or native reduction escape tokens, and a negative control confirms that this
@@ -130,8 +130,9 @@ in `GromovFilling.Lemma54`. The remaining end-to-end Riemannian statements
 require:
 
 1. Riemannian eikonal and weak parameter-integral differentiation;
-2. globalization of the planar area formula through surface charts, including
-   the intrinsic `J₂` density;
+2. a Riemannian area measure and chartwise globalization of the planar area
+   formula. The intrinsic pointwise `J₂` density and its exact agreement with
+   the planar absolute determinant are now verified;
 3. a global differential-form Stokes/comass interface for the oriented case.
 
 These are tracked gaps, not project axioms. The repository does not encode an
