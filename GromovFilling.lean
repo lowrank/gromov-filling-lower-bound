@@ -51,6 +51,7 @@ import GromovFilling.RiemannianAreaFormula
 import GromovFilling.RiemannianAtlasArea
 import GromovFilling.RiemannianChartArea
 import GromovFilling.RiemannianChartTransition
+import GromovFilling.RiemannianInteriorCoverage
 import GromovFilling.RiemannianStandardChart
 import GromovFilling.RiemannianTwoJacobian
 import GromovFilling.SurfaceClassificationFoundation
