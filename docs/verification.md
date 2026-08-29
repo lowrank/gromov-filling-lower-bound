@@ -19,6 +19,7 @@ The script runs:
 ```text
 ./scripts/check_umbrella.sh
 ./scripts/check_surface_vendor.sh
+./scripts/check_schoenflies_vendor.sh
 ./scripts/check_no_proof_escapes.sh
 ./scripts/test_proof_escape_gate.sh
 lake exe cache get
@@ -34,14 +35,17 @@ Every pull request to `main` must pass:
 2. **Pinned surface-vendor closure.** Metadata, license, Lean/mathlib target,
    and all 132 modules must match the exact transitive closure of the
    classification entry module.
-3. **Fail-closed source escape scan.** Gromov and vendored surface-topology
+3. **Pinned Jordan--Schönflies closure.** Metadata, licenses, Lean/mathlib
+   target, namespace isolation, minimal imports, and all 134 source plus four
+   compatibility modules must match the exact audited closure.
+4. **Fail-closed source escape scan.** Gromov and vendored surface-topology
    Lean files reject placeholder, custom axiom, unsafe, and native reduction
    escape tokens; scanner errors are failures rather than clean results.
-4. **Negative control.** A scratch source with an injected `sorry` must be
+5. **Negative control.** A scratch source with an injected `sorry` must be
    rejected with the expected diagnostic and exit code.
-5. **Pinned full build.** The complete package elaborates with Lean `4.29.0`
+6. **Pinned full build.** The complete package elaborates with Lean `4.29.0`
    and the revisions in `lake-manifest.json`.
-6. **Live axiom audit.** Every declaration under `GromovFilling` is inspected
+7. **Live axiom audit.** Every declaration under `GromovFilling` is inspected
    in the compiled environment.
 
 The accepted logical infrastructure is exactly:

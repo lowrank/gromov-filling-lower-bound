@@ -66,6 +66,9 @@ every compiled project declaration against the exact allowlist `propext`,
   hypotheses;
 - arbitrary fixed-point-free polygon-side pairings, including
   orientation-reversing identifications;
+- the full orientation-free Lemma 5.4: arbitrary Jordan-boundary coverage,
+  interior preimages, and the canonical Riemannian two-Jacobian area
+  inequality;
 - planar Lipschitz area inequalities and Jacobian budgets;
 - strict positivity and symmetry of the Proposition 8.1 logarithmic sine
   kernel at interior off-diagonal points;
@@ -98,6 +101,7 @@ lower obstruction automatically. Callers no longer supply it as a field.
 |---|---|
 | [`GromovFilling/`](GromovFilling/) | Lean definitions, lemmas, and certificate theorems |
 | [`ClassificationOfSurfaces/`](ClassificationOfSurfaces/) | pinned Apache-2.0 compact-surface classification source closure, adapted to Lean 4.29 |
+| [`Wikipedia/`](Wikipedia/) and [`SchoenfliesCompat/`](SchoenfliesCompat/) | pinned Apache-2.0 Jordan--Schönflies source closure and project compatibility layer |
 | [`GromovFilling.lean`](GromovFilling.lean) | canonical generated umbrella import |
 | [`fourier_resonant_filling_area_v3.tex`](fourier_resonant_filling_area_v3.tex) | companion manuscript source |
 | [`FORMALIZATION.md`](FORMALIZATION.md) | exact manuscript-to-Lean statement ledger |
@@ -125,19 +129,14 @@ scan fails closed.
 
 ## Current frontier
 
-The Lemma 5.4 compact-surface boundary obstruction is now end-to-end verified
-in `GromovFilling.Lemma54`. The remaining end-to-end Riemannian statements
-require:
+Lemma 5.4 is now end-to-end verified. `GromovFilling.Lemma54` proves the
+compact-surface boundary obstruction, `JordanSchoenfliesCoverage` proves
+coverage of the canonical bounded Jordan component, and `Lemma54Area` proves
+the canonical Riemannian two-Jacobian area inequality. The remaining headline
+surface statements require:
 
 1. Riemannian eikonal and weak parameter-integral differentiation;
-2. an overlap-invariant canonical Riemannian area measure. Intrinsic `J₂`, its
-   chain rule, the exact one-chart weighted measure/integral transfer, and the
-   countable-atlas coverage inequality are now verified, as is exact
-   reparametrization invariance under explicit local almost-everywhere
-   measurability hypotheses; intrinsic Jacobian-density measurability,
-   standard-chart instantiation, boundary charts, and canonical atlas
-   identification remain;
-3. a global differential-form Stokes/comass interface for the oriented case.
+2. a global differential-form Stokes/comass interface for the oriented case.
 
 These are tracked gaps, not project axioms. The repository does not encode an
 open target as an assumption and call the resulting implication a proof.
@@ -158,4 +157,5 @@ changes.
 The Gromov-filling project is released under the [MIT License](LICENSE). The
 vendored compact-surface classification source closure retains its upstream
 [Apache-2.0 license](ClassificationOfSurfaces/LICENSE) and modification
-notices.
+notices. The Jordan--Schönflies source and compatibility closures retain their
+upstream [Apache-2.0](Wikipedia/LICENSE) licenses and provenance metadata.

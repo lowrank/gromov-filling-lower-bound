@@ -14,7 +14,7 @@ manuscript ledger is maintained in
 | Boundary topology | circle degree, degree one, Jordan partition, bounded component |
 | Finite surface topology | mod-2 cochain obstruction, face lifts, edge turns, general side pairings |
 | Compact-surface topology | Radó finite boundary-regular triangulation and faithful polygonal classification for half-space-modeled compact connected surfaces |
-| Planar and local Riemannian analysis | Lipschitz area inequality, intrinsic two-Jacobian and chain rule, one-chart weighted area measure and integral transfer, countable-atlas coverage inequality, exact planar determinant identity, Jacobian budgets |
+| Planar and Riemannian analysis | Lipschitz area inequality, intrinsic two-Jacobian and chain rule, controlled interior charts, disjoint countable-atlas coverage, chart-independence, canonical Riemannian surface area, exact planar determinant identity, Jacobian budgets |
 | Certificate logic | finite-to-infinite universal deduction, defect propagation, scalar optimization |
 | Rigorous numerics | rational bounds for `π`, `ζ(3)`, and the displayed constants |
 | Logarithmic sine kernel | squared-sine gap, positive sine quotient, strict off-diagonal positivity, symmetry |
@@ -135,6 +135,16 @@ eliminates the sphere endpoint, handles both orientability branches, and
 transports the canonical parity obstruction through the unique same-range
 circle homeomorphism.
 
+`GromovFilling.JordanSchoenfliesCoverage` closes the remaining topological
+half of Lemma 5.4. It defines the canonical bounded component of any
+continuously embedded complex circle, proves its open, connected, bounded,
+component character, straightens the curve to a model square, produces odd
+radial degree internally, and proves coverage by every continuous extension
+with the compact-surface obstruction. `GromovFilling.Lemma54Area` then excludes
+boundary preimages and applies the canonical controlled-atlas area theorem.
+The resulting `lemma54_riemannian_area` is the complete manuscript inequality,
+with no orientation or explicit winding-number hypothesis.
+
 ## Partial headline statements
 
 The finite universal certificate and the nonlinear oriented certificate are
@@ -142,10 +152,6 @@ kernel-verified deductions from named geometric inputs. The following bridges
 are not yet verified for every compact Riemannian surface:
 
 - almost-everywhere eikonal differentiation and weak parameter integration;
-- overlap-invariant canonical Riemannian area measure (the intrinsic pointwise
-  `J₂`, its chain rule, the exact one-chart weighted measure/integral transfer,
-  and countable-atlas coverage inequality are verified; standard-chart
-  interfaces, overlap invariance, and boundary charts remain);
 - the global differential-form Stokes/comass inequality.
 
 !!! danger "No conditional-shell upgrade"
