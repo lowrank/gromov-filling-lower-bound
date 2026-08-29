@@ -50,6 +50,7 @@ import GromovFilling.ResonanceTrace
 import GromovFilling.RiemannianAreaFormula
 import GromovFilling.RiemannianAtlasArea
 import GromovFilling.RiemannianChartArea
+import GromovFilling.RiemannianChartDensity
 import GromovFilling.RiemannianChartTransition
 import GromovFilling.RiemannianInteriorCoverage
 import GromovFilling.RiemannianStandardChart
