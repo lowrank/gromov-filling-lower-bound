@@ -13,6 +13,7 @@ manuscript ledger is maintained in
 | Linear algebra | Givens entries, orthogonality, energy preservation, dominance |
 | Boundary topology | circle degree, degree one, Jordan partition, bounded component |
 | Finite surface topology | mod-2 cochain obstruction, face lifts, edge turns, general side pairings |
+| Compact-surface topology | Radó finite geometric triangulation for half-space-modeled compact connected surfaces |
 | Planar analysis | Lipschitz area inequality, determinant identity, Jacobian budgets |
 | Certificate logic | finite-to-infinite universal deduction, defect propagation, scalar optimization |
 | Rigorous numerics | rational bounds for `π`, `ζ(3)`, and the displayed constants |
@@ -76,13 +77,22 @@ the schema's free loop to the supplied boundary. The remaining Lemma 5.4
 topology task is to produce this boundary-component-preserving existential
 presentation from the compact connected one-boundary manifold hypotheses.
 
+`GromovFilling.SurfaceTriangulationFoundation` now supplies the preceding
+finite-triangulability step unconditionally. It imports a pinned,
+Lean-4.29-compatible Radó source closure and proves
+`exists_geometricTriangulation_compact_connected_surface`. The returned
+`GeometricTriangulation` does not yet retain the boundary-facewise invariant
+maintained internally by the Radó induction, so the unique cyclic boundary
+component still has to be extracted before the relaxed handoff applies.
+
 ## Partial headline statements
 
 The finite universal certificate and the nonlinear oriented certificate are
 kernel-verified deductions from named geometric inputs. The following bridges
 are not yet verified for every compact Riemannian surface:
 
-- surface classification or arbitrarily-fine compatible cell structures;
+- boundary-aware output and cyclic-boundary extraction from the verified
+  finite surface triangulation;
 - almost-everywhere eikonal differentiation and weak parameter integration;
 - intrinsic area measure and chartwise Jacobian globalization;
 - the global differential-form Stokes/comass inequality.
