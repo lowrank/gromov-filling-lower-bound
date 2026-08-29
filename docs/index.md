@@ -71,7 +71,8 @@ caller assumption.
 Four end-to-end bridges remain outside the verified scope:
 
 1. a classification or fine cell-decomposition theorem for arbitrary compact
-   one-boundary surfaces;
+   one-boundary surfaces, identifying the boundary component up to a circle
+   homeomorphism;
 2. Riemannian eikonal and parameter-integral differentiation;
 3. globalization of the planar area formula through surface charts;
 4. a global differential-form Stokes/comass interface for the oriented case.

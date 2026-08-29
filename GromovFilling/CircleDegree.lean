@@ -1,4 +1,6 @@
 import GromovFilling.RadialProjection
+import Mathlib.Analysis.Convex.Contractible
+import Mathlib.Analysis.LocallyConvex.WithSeminorms
 import Mathlib.Topology.Covering.AddCircle
 import Mathlib.Topology.Homotopy.Lifting
 
@@ -121,6 +123,127 @@ theorem HasCircleDegree.unique
   rw [hperiodD0, hperiodE0] at hconstant
   have hcast : (d : ℝ) = (e : ℝ) := by linarith
   exact_mod_cast hcast
+
+/-- Every continuous circle map has an integer degree.  The lift is obtained
+from the universal covering `ℝ → ℝ/ℤ`; its displacement over one period is
+integer-valued and constant by uniqueness of real lifts. -/
+theorem exists_hasCircleDegree
+    (H : UnitAddCircle → UnitAddCircle) (hH : Continuous H) :
+    ∃ d : ℤ, HasCircleDegree H d := by
+  let cov : IsCoveringMap ((↑) : ℝ → UnitAddCircle) :=
+    AddCircle.isCoveringMap_coe (p := (1 : ℝ))
+  let base : C(ℝ, UnitAddCircle) :=
+    ⟨fun t ↦ H (t : UnitAddCircle),
+      hH.comp (AddCircle.continuous_mk' (1 : ℝ))⟩
+  obtain ⟨r, _hr, hr⟩ := AddCircle.eq_coe_Ico (H (0 : UnitAddCircle))
+  have hbase : ((r : ℝ) : UnitAddCircle) = base 0 := by
+    simpa [base] using hr
+  obtain ⟨lift, hlift, _hunique⟩ :=
+    cov.existsUnique_continuousMap_lifts base 0 r hbase
+  have hproject : ∀ t : ℝ,
+      ((lift t : ℝ) : UnitAddCircle) = H (t : UnitAddCircle) := by
+    intro t
+    have ht := congrFun hlift.2 t
+    simpa [base] using ht
+  have hproject_period : ∀ t : ℝ,
+      ((lift (t + 1) : ℝ) : UnitAddCircle) =
+        ((lift t : ℝ) : UnitAddCircle) := by
+    intro t
+    rw [hproject, hproject]
+    congr 1
+    simp
+  obtain ⟨d, hd⟩ :=
+    exists_integer_difference_of_same_unitAddCircle
+      (lift 1) (lift 0) (by simpa using hproject_period 0)
+  refine ⟨d, lift, lift.continuous, hproject, ?_⟩
+  intro t
+  have hconstant :=
+    real_circle_lifts_difference_eq
+      (fun s : ℝ ↦ lift (s + 1)) lift
+      (lift.continuous.comp (continuous_id.add continuous_const))
+      lift.continuous hproject_period t 0
+  norm_num at hconstant
+  linarith
+
+/-- Iterating the one-period displacement of a real lift through an
+arbitrary integer number of turns multiplies that displacement. -/
+private theorem circleDegreeLift_add_int
+    (lift : ℝ → ℝ) (d : ℤ)
+    (hperiod : ∀ t : ℝ, lift (t + 1) = lift t + (d : ℝ))
+    (t : ℝ) (n : ℤ) :
+    lift (t + (n : ℝ)) = lift t + (d : ℝ) * (n : ℝ) := by
+  refine Int.inductionOn' n 0 (by simp) ?_ ?_
+  · intro k _hk ih
+    calc
+      lift (t + ((k + 1 : ℤ) : ℝ)) =
+          lift ((t + (k : ℝ)) + 1) := by
+            congr 1
+            push_cast
+            ring
+      _ = lift (t + (k : ℝ)) + (d : ℝ) := hperiod _
+      _ = lift t + (d : ℝ) * ((k + 1 : ℤ) : ℝ) := by
+            rw [ih]
+            push_cast
+            ring
+  · intro k _hk ih
+    have hp := hperiod (t + ((k - 1 : ℤ) : ℝ))
+    have harg :
+        t + ((k - 1 : ℤ) : ℝ) + 1 = t + (k : ℝ) := by
+      push_cast
+      ring
+    rw [harg] at hp
+    calc
+      lift (t + ((k - 1 : ℤ) : ℝ)) =
+          lift (t + (k : ℝ)) - (d : ℝ) := by
+            linarith
+      _ = lift t + (d : ℝ) * ((k - 1 : ℤ) : ℝ) := by
+            rw [ih]
+            push_cast
+            ring
+
+/-- Degrees multiply under composition of circle maps. -/
+theorem HasCircleDegree.comp
+    {H K : UnitAddCircle → UnitAddCircle} {d e : ℤ}
+    (hH : HasCircleDegree H d) (hK : HasCircleDegree K e) :
+    HasCircleDegree (H ∘ K) (d * e) := by
+  obtain ⟨liftH, hliftH, hprojectH, hperiodH⟩ := hH
+  obtain ⟨liftK, hliftK, hprojectK, hperiodK⟩ := hK
+  refine ⟨liftH ∘ liftK, hliftH.comp hliftK, ?_, ?_⟩
+  · intro t
+    change ((liftH (liftK t) : ℝ) : UnitAddCircle) = H (K (t : UnitAddCircle))
+    rw [hprojectH, hprojectK]
+  · intro t
+    change liftH (liftK (t + 1)) =
+      liftH (liftK t) + ((d * e : ℤ) : ℝ)
+    rw [hperiodK]
+    rw [circleDegreeLift_add_int liftH d hperiodH (liftK t) e]
+    push_cast
+    rfl
+
+/-- The degree of a circle homeomorphism is `1` or `-1`.  Its inverse has a
+degree, and composition with the inverse forces the product of the two degrees
+to be one. -/
+theorem HasCircleDegree.eq_one_or_neg_one_of_circleHomeomorph
+    (e : UnitAddCircle ≃ₜ UnitAddCircle) {d : ℤ}
+    (hd : HasCircleDegree e d) : d = 1 ∨ d = -1 := by
+  obtain ⟨dInv, hdInv⟩ :=
+    exists_hasCircleDegree e.symm e.continuous_invFun
+  have hcomp : HasCircleDegree (e ∘ e.symm) (d * dInv) := hd.comp hdInv
+  have hid : HasCircleDegree (e ∘ e.symm) 1 := by
+    simpa using hasCircleDegree_id
+  have hmul : d * dInv = 1 := HasCircleDegree.unique hcomp hid
+  rcases Int.mul_eq_one_iff_eq_one_or_neg_one.mp hmul with hpos | hneg
+  · exact Or.inl hpos.1
+  · exact Or.inr hneg.1
+
+/-- A circle homeomorphism admits an odd degree. -/
+theorem exists_odd_hasCircleDegree_circleHomeomorph
+    (e : UnitAddCircle ≃ₜ UnitAddCircle) :
+    ∃ d : ℤ, HasCircleDegree e d ∧ Odd d := by
+  obtain ⟨d, hd⟩ := exists_hasCircleDegree e e.continuous_toFun
+  rcases hd.eq_one_or_neg_one_of_circleHomeomorph e with hpos | hneg
+  · exact ⟨d, hd, hpos.symm ▸ (odd_one : Odd (1 : ℤ))⟩
+  · exact ⟨d, hd, hneg.symm ▸ (odd_one : Odd (1 : ℤ)).neg⟩
 
 /-- Every constant additive-circle map has degree zero. -/
 theorem hasCircleDegree_const (u : UnitAddCircle) :
