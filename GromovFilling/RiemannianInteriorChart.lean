@@ -79,6 +79,7 @@ theorem contMDiffOn_interiorComplexExtChart
   apply (contMDiffOn_extChartAt_symm x).comp
     e.toContinuousLinearEquiv.contDiff.contMDiff.contMDiffOn
   intro z hz
+  change e z ∈ (extChartAt I x).target
   exact interior_subset hz
 
 /-- An interior complex inverse chart is manifold-differentiable at every
@@ -239,7 +240,7 @@ theorem lipschitzOnWith_interiorComplexExtChart_of_convex
   intro z hz w hw
   change e z ∈ t at hz
   change e w ∈ t at hw
-  rw [IsRiemannianManifold.out]
+  rw [IsRiemannianManifold.out (I := I)]
   rw [← e.edist_map z w]
   let η := ContinuousAffineMap.lineMap (R := ℝ) (e z) (e w)
   set γ := (extChartAt I x).symm ∘ η
@@ -322,7 +323,7 @@ theorem nonempty_interiorChartControl
         (extChartAt I x).target ∩
           {y | ‖mfderiv[range I] (extChartAt I x).symm y‖ₑ < C} :=
     mem_nhdsWithin_iff.1
-      (inter_mem (extChartAt_target_mem_nhdsWithin x) hC)
+      (Filter.inter_mem (extChartAt_target_mem_nhdsWithin x) hC)
   exact ⟨⟨C, C_pos, r, r_pos, hr⟩⟩
 
 /-- The convex interior model set on which a controlled inverse chart will
@@ -447,7 +448,7 @@ theorem image_controlledInteriorComplexChartDomain
         controlledInteriorComplexChartDomain I e c =
       controlledInteriorChartNeighborhood I c ∩ I.interior M := by
   rw [interiorComplexExtChart, controlledInteriorComplexChartDomain,
-    ← Set.image_image, e.surjective.image_preimage]
+    Set.image_comp, Set.image_preimage_eq _ e.surjective]
   rw [(extChartAt I x).symm_image_eq_source_inter_preimage
     (controlledInteriorChartSet_subset_target I c)]
   ext y
@@ -533,7 +534,15 @@ theorem exists_fin_controlledInteriorComplexExtChart_cover
   refine Set.mem_iUnion.mpr ⟨t.equivFin ⟨x, hxt⟩, ?_⟩
   rw [chosenControlledInteriorComplexChartDomain,
     image_controlledInteriorComplexChartDomain I e]
-  simpa using And.intro hyx hy
+  have hcenter :
+      ((t.equivFin.symm (t.equivFin ⟨x, hxt⟩) : t) : M) = x :=
+    congrArg Subtype.val (t.equivFin.symm_apply_apply ⟨x, hxt⟩)
+  change y ∈ controlledInteriorChartNeighborhood I
+      (chosenInteriorChartControl I
+        ((t.equivFin.symm (t.equivFin ⟨x, hxt⟩) : t) : M)) ∩
+        I.interior M
+  rw [hcenter]
+  exact ⟨hyx, hy⟩
 
 end
 
