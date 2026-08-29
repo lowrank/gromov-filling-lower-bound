@@ -1077,6 +1077,40 @@ theorem aemeasurable_riemannianTwoJacobian_of_lipschitzWith
 
 end ControlledInteriorAtlas
 
+/-- The canonical Riemannian surface-area measure.  A controlled atlas is
+chosen noncomputably, and `ControlledInteriorAtlas.areaMeasure_eq` proves
+that the resulting measure is independent of that choice. -/
+def riemannianSurfaceAreaMeasure
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
+    [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M] [Fact (Module.finrank ℝ E = 2)]
+    [Nonempty (ControlledInteriorAtlas I M)] : Measure M :=
+  (Classical.choice (inferInstance :
+    Nonempty (ControlledInteriorAtlas I M))).areaMeasure I
+
+/-- Every controlled atlas computes the canonical Riemannian surface-area
+measure. -/
+theorem ControlledInteriorAtlas.areaMeasure_eq_riemannianSurfaceAreaMeasure
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
+    [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M] [Fact (Module.finrank ℝ E = 2)]
+    [Nonempty (ControlledInteriorAtlas I M)]
+    (A : ControlledInteriorAtlas I M) :
+    A.areaMeasure I = riemannianSurfaceAreaMeasure I := by
+  exact A.areaMeasure_eq I
+    (Classical.choice (inferInstance :
+      Nonempty (ControlledInteriorAtlas I M)))
+
 /-- The analytic area conclusion for a globally Lipschitz surface map and a
 controlled disjoint atlas.  Planar Rademacher supplies manifold
 differentiability, and chartwise measurable embeddings transfer planar
@@ -1128,6 +1162,31 @@ theorem complex_volume_le_lintegral_riemannianTwoJacobian_of_controlledInteriorA
       (A.interior_subset_iUnion_image_piece I hx) with ⟨i, z, hz, rfl⟩
     exact Set.mem_iUnion.mpr
       ⟨i, ⟨A.parametrization i z, ⟨z, hz, rfl⟩, rfl⟩⟩
+
+/-- The analytic area conclusion expressed using the canonical Riemannian
+surface-area measure, with no atlas choice remaining in the statement. -/
+theorem complex_volume_le_lintegral_riemannianTwoJacobian
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
+    [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M] [Fact (Module.finrank ℝ E = 2)]
+    [Nonempty (ControlledInteriorAtlas I M)]
+    (G : M → ℂ) (omega : Set ℂ)
+    {KG : ℝ≥0} (hG : LipschitzWith KG G)
+    (hcoverage : omega ⊆ G '' I.interior M) :
+    volume omega ≤
+      ∫⁻ x, ENNReal.ofReal (riemannianTwoJacobian I G x)
+        ∂riemannianSurfaceAreaMeasure I := by
+  let A : ControlledInteriorAtlas I M :=
+    Classical.choice (inferInstance :
+      Nonempty (ControlledInteriorAtlas I M))
+  rw [← A.areaMeasure_eq_riemannianSurfaceAreaMeasure I]
+  exact complex_volume_le_lintegral_riemannianTwoJacobian_of_controlledInteriorAtlas
+    I A G omega hG hcoverage
 
 end
 
