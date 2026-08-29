@@ -14,7 +14,7 @@ Gromov's filling-area problem.
     theorems remain conditional on specific Riemannian-surface foundations.
 
 <div class="status-strip">
-  <div><strong>4,134</strong><span>project declarations accepted by the live axiom audit</span></div>
+  <div><strong>4,665</strong><span>project declarations accepted by the live axiom audit</span></div>
   <div><strong>Lean 4.29</strong><span>pinned toolchain with mathlib 4.29 and a fixed Jordan input</span></div>
   <div><strong>MIT</strong><span>public source, reproducible CI, and explicit claim boundaries</span></div>
 </div>
@@ -75,7 +75,9 @@ in `GromovFilling.Lemma54`. Three analytic bridges remain outside the verified
 scope:
 
 1. Riemannian eikonal and parameter-integral differentiation;
-2. globalization of the planar area formula through surface charts;
+2. a Riemannian area measure and chartwise globalization of the planar area
+   formula (the intrinsic pointwise `J₂` and its planar identification are
+   verified);
 3. a global differential-form Stokes/comass interface for the oriented case.
 
 The repository keeps these foundations visible. It does not replace them with

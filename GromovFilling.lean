@@ -47,6 +47,8 @@ import GromovFilling.RadialProjection
 import GromovFilling.RadoAmbientBoundary
 import GromovFilling.RadoBoundaryLocus
 import GromovFilling.ResonanceTrace
+import GromovFilling.RiemannianAreaFormula
+import GromovFilling.RiemannianTwoJacobian
 import GromovFilling.SurfaceClassificationFoundation
 import GromovFilling.SurfaceCoverage
 import GromovFilling.SurfaceTriangulationFoundation
