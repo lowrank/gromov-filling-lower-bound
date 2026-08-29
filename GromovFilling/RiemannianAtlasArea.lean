@@ -50,6 +50,96 @@ theorem lintegral_riemannianAtlasAreaMeasure
   exact lintegral_sum_measure q
     (fun i ↦ riemannianChartAreaMeasure I (F i) (pieces i))
 
+/-- Countable-atlas globalization of the local area inequality from an
+almost-everywhere chain identity.  The integration pieces may be measurable
+subsets of larger open domains on which the pulled-back maps are Lipschitz;
+this is the form needed after disjointifying an open chart cover. -/
+theorem complex_volume_le_lintegral_riemannianAtlasAreaMeasure_of_ae_chain
+    {ι E H M : Type*} [Countable ι]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [MeasurableSpace M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)]
+    (F : ι → ℂ → M) (pieces domains : ι → Set ℂ) (G : M → ℂ)
+    (omega : Set ℂ)
+    (hpieces : ∀ i, MeasurableSet (pieces i))
+    (hdomains : ∀ i, IsOpen (domains i))
+    (hsubset : ∀ i, pieces i ⊆ domains i)
+    {K : ι → ℝ≥0}
+    (hLipschitz : ∀ i, LipschitzOnWith (K i) (G ∘ F i) (domains i))
+    (hFmeas : ∀ i, AEMeasurable (F i) (volume.restrict (pieces i)))
+    (hDensityMeas : ∀ i, AEMeasurable
+      (riemannianChartDensity I (F i)) (volume.restrict (pieces i)))
+    (q : M → ℝ≥0∞)
+    (hq : ∀ i, AEMeasurable q
+      (riemannianChartAreaMeasure I (F i) (pieces i)))
+    (hchain : ∀ i, ∀ᵐ z ∂volume.restrict (pieces i),
+      ENNReal.ofReal
+          (riemannianTwoJacobian 𝓘(ℝ, ℂ) (G ∘ F i) z) =
+        riemannianChartDensity I (F i) z * q (F i z))
+    (hcoverage : omega ⊆ ⋃ i, G '' (F i '' pieces i)) :
+    volume omega ≤ ∫⁻ x, q x ∂riemannianAtlasAreaMeasure I F pieces := by
+  calc
+    volume omega ≤ volume (⋃ i, G '' (F i '' pieces i)) :=
+      measure_mono hcoverage
+    _ ≤ ∑' i, volume (G '' (F i '' pieces i)) :=
+      measure_iUnion_le (fun i ↦ G '' (F i '' pieces i))
+    _ ≤ ∑' i, ∫⁻ x, q x
+          ∂riemannianChartAreaMeasure I (F i) (pieces i) := by
+      refine ENNReal.tsum_le_tsum ?_
+      intro i
+      exact
+        complex_volume_image_image_le_lintegral_riemannianChartAreaMeasure_of_ae_chain
+          I (F i) G (pieces i) (domains i) (hpieces i) (hdomains i)
+          (hsubset i) (hLipschitz i) (hFmeas i) (hDensityMeas i)
+          q (hq i) (hchain i)
+    _ = ∫⁻ x, q x ∂riemannianAtlasAreaMeasure I F pieces := by
+      symm
+      exact lintegral_riemannianAtlasAreaMeasure I F pieces q
+
+/-- Intrinsic-Jacobian specialization of
+`complex_volume_le_lintegral_riemannianAtlasAreaMeasure_of_ae_chain`.
+It requires manifold differentiability only almost everywhere on each
+measurable chart piece. -/
+theorem complex_volume_le_lintegral_riemannianTwoJacobian_of_atlas_of_ae_mdifferentiable
+    {ι E H M : Type*} [Countable ι]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [MeasurableSpace M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)]
+    (F : ι → ℂ → M) (pieces domains : ι → Set ℂ) (G : M → ℂ)
+    (omega : Set ℂ)
+    (hpieces : ∀ i, MeasurableSet (pieces i))
+    (hdomains : ∀ i, IsOpen (domains i))
+    (hsubset : ∀ i, pieces i ⊆ domains i)
+    {K : ι → ℝ≥0}
+    (hLipschitz : ∀ i, LipschitzOnWith (K i) (G ∘ F i) (domains i))
+    (hFmeas : ∀ i, AEMeasurable (F i) (volume.restrict (pieces i)))
+    (hDensityMeas : ∀ i, AEMeasurable
+      (riemannianChartDensity I (F i)) (volume.restrict (pieces i)))
+    (hJacobianMeas : ∀ i, AEMeasurable
+      (fun x ↦ ENNReal.ofReal (riemannianTwoJacobian I G x))
+      (riemannianChartAreaMeasure I (F i) (pieces i)))
+    (hDiff : ∀ i, ∀ᵐ z ∂volume.restrict (pieces i),
+      MDifferentiableAt 𝓘(ℝ, ℂ) I (F i) z ∧
+        MDifferentiableAt I 𝓘(ℝ, ℂ) G (F i z))
+    (hcoverage : omega ⊆ ⋃ i, G '' (F i '' pieces i)) :
+    volume omega ≤
+      ∫⁻ x, ENNReal.ofReal (riemannianTwoJacobian I G x)
+        ∂riemannianAtlasAreaMeasure I F pieces := by
+  apply
+    complex_volume_le_lintegral_riemannianAtlasAreaMeasure_of_ae_chain
+      I F pieces domains G omega hpieces hdomains hsubset hLipschitz
+      hFmeas hDensityMeas _ hJacobianMeas ?_ hcoverage
+  intro i
+  filter_upwards [hDiff i] with z hz
+  exact ofReal_riemannianTwoJacobian_comp_eq_chartDensity_mul
+    I (F i) G z hz.1 hz.2
+
 /-- Countable-atlas globalization of the local Riemannian area inequality
 under the natural local almost-everywhere measurability assumptions. -/
 theorem complex_volume_le_lintegral_riemannianTwoJacobian_of_atlas_of_aemeasurable
