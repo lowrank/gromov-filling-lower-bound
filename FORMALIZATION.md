@@ -89,9 +89,9 @@ intrinsic two-Jacobian inequality.
 
 - Lean `4.29.0`, mathlib `v4.29.0`, JordanCurveTheorem
   `e442525a662e9e3beb8205b9fa1fc99509076ded`.
-- GitHub Actions run `33243992351` on merge commit
-  `a10df992320109c1da8929b4dd62385ef4838024`: canonical umbrella check,
+- GitHub Actions run `33266848279` on merge commit
+  `7f2e341cb95f82d23e3106ce45a1169649ff8cb8`: canonical umbrella check,
   fail-closed source scan, injected-`sorry` negative control, full package
   build, and live axiom audit.
-- Live audit result: 4,665 declarations under `GromovFilling`; allowed axioms
+- Live audit result: 5,019 declarations under `GromovFilling`; allowed axioms
   exactly `propext`, `Classical.choice`, and `Quot.sound`.
