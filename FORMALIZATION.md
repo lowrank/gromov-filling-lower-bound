@@ -35,8 +35,8 @@ Riemannian surfaces.
 | Proposition 11.1, Nonlinear comass bound | **Partial** | `nonlinear_comass_optimization` and the explicit `Cstar`, `Dstar`, and `Qstar` scalar estimates are verified. The analytic passage from genuine surface profiles to its hypotheses is not formalized. |
 | Theorem 12.1, One-parameter nonlinear certificate | **Partial** | Boundary action, scalar comass division, and rigorous numerics are verified conditional on the global Stokes/comass inequality. |
 | Proposition 13.1, Infinite family of stationary resonances | **Open feasible obligation** | No Lean declaration currently encodes the general hierarchy and stationarity proof. |
-| Lemma 14.1, High-mode test | **Open feasible obligation** | Not formalized. |
-| Theorem 14.2, Finite one-high-leg ceiling | **Open feasible obligation** | Not formalized. |
+| Lemma 14.1, High-mode test | **Partial** | `OneHighLeg.lean` exhibits the positive odd mode `m = 2J+1`, proves unit norm and anti-periodicity, and computes the exact symplectic value `1 + ∑ μⱼ²` of the occupied output coordinates. Identifying those coordinates with the differential of the full normalized nonlinear map, and hence with an arbitrary global ambient comass, remains unverified. |
+| Theorem 14.2, Finite one-high-leg ceiling | **Partial** | `OneHighLeg.lean` defines the exact finite resonance matrix and boundary-action series, proves their quadratic-form identity, summability and weighted-Gram positivity, realizes the largest Rayleigh value as an eigenvalue, and proves the finite ceiling at the explicit high-mode interface. The infinite coefficient-space differential and global ambient-comass bridge remain unverified. |
 | Lemma 14.3, Exact trace | **Partial** | `ResonanceTrace.lean` verifies nonnegative scalar double-series summability, Tonelli/antidiagonal reindexing, and the exact value `π/2 + 7ζ(3)/π + π³/24`. The ℓ² operator construction, Gram positivity, trace-class proof, and identification of this series with the operator trace remain unverified. |
 | Theorem 14.4, Rigorous one-high-leg spectral ceiling | **Open feasible obligation** | The required operator/spectral estimate and numerical enclosure are absent. |
 | Proposition 15.1, de Sitter identities | **Verified** | `DeSitterProfile.lean` proves the de Sitter quadric identity, the formal-velocity Lorentz speed, the pairwise Lorentz inner product, and Züst's coefficient-kernel identity. The interface takes the profile values and derivative value as explicit scalars and exposes every required nonzero sine denominator; it does not assert the separate almost-everywhere differentiability bridge for a Lipschitz profile. |
@@ -64,8 +64,8 @@ so this project records them explicitly instead.
 
 - Lean `4.29.0`, mathlib `v4.29.0`, JordanCurveTheorem
   `e442525a662e9e3beb8205b9fa1fc99509076ded`.
-- GitHub Actions run `33223947651` on merge commit
-  `f865cada856fe51367c73daa07cbd61497dc52e0`: canonical umbrella check,
+- GitHub Actions run `33224380893` on merge commit
+  `3669b2dd9b6ea5845266438ee7a3837e4010a9e8`: canonical umbrella check,
   fail-closed source scan, injected-`sorry` negative control, full package
   build, and live axiom audit.
 - Live audit result: 4,030 declarations under `GromovFilling`; allowed axioms

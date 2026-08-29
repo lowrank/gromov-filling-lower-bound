@@ -49,8 +49,8 @@ Quot.sound
 ```
 
 The latest hardened receipt, run
-[`33223947651`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33223947651)
-on merge commit `f865cada856fe51367c73daa07cbd61497dc52e0`, audited
+[`33224380893`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33224380893)
+on merge commit `3669b2dd9b6ea5845266438ee7a3837e4010a9e8`, audited
 4,030 project declarations with no other axioms.
 
 ## What a pass means

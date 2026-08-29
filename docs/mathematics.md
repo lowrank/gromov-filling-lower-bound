@@ -49,6 +49,28 @@ integer edge turns, and the signed boundary-turn identity are constructed in
 Lean. The general glued-pairing theorem covers both preserving and reversing
 side identifications.
 
+## Finite one-high-leg ceiling
+
+For `J` normalized resonances, Lean exhibits the positive odd test frequency
+`m = 2J+1`, proves its unit norm and anti-periodicity, and computes the exact
+occupied-coordinate symplectic cost
+
+```text
+1 + ∑ j, μ_j².
+```
+
+The displayed finite resonance matrix is constructed entry by entry from its
+convergent odd-mode series. Its quadratic form is proved equal to the boundary
+action series and is decomposed into a sum of nonnegative weighted squares.
+This gives positive semidefiniteness, shows that the largest Rayleigh value is
+an eigenvalue, and proves the finite ceiling whenever the ambient comass
+bounds the exhibited high-mode plane.
+
+The remaining interface is analytic rather than finite-dimensional: the
+modeled occupied outputs must still be identified with the derivative of the
+full normalized nonlinear map on its infinite coefficient space and then with
+the global ambient comass.
+
 ## Resonance trace arithmetic
 
 The scalar series underlying the exact-trace calculation is now verified:
