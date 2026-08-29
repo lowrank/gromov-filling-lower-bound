@@ -15,6 +15,7 @@ manuscript ledger is maintained in
 | Finite surface topology | mod-2 cochain obstruction, face lifts, edge turns, general side pairings |
 | Compact-surface topology | Radó finite boundary-regular triangulation and faithful polygonal classification for half-space-modeled compact connected surfaces |
 | Planar and Riemannian analysis | Lipschitz area inequality, intrinsic two-Jacobian and chain rule, controlled interior charts, disjoint countable-atlas coverage, chart-independence, canonical Riemannian surface area, exact planar determinant identity, Jacobian budgets |
+| Riemannian profile derivatives | sharp intrinsic `‖D f‖ ≤ K` at interior differentiability points for globally `K`-Lipschitz real functions, including boundary distance, odd profile, and antipodal slack |
 | Certificate logic | finite-to-infinite universal deduction, defect propagation, scalar optimization |
 | Rigorous numerics | rational bounds for `π`, `ζ(3)`, and the displayed constants |
 | Logarithmic sine kernel | squared-sine gap, positive sine quotient, strict off-diagonal positivity, symmetry |
