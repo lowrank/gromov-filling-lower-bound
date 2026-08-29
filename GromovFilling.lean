@@ -38,5 +38,6 @@ import GromovFilling.PositiveLogSineKernel
 import GromovFilling.ProfileFourier
 import GromovFilling.RadialDegreeStability
 import GromovFilling.RadialProjection
+import GromovFilling.ResonanceTrace
 import GromovFilling.SurfaceCoverage
 import GromovFilling.Universal
