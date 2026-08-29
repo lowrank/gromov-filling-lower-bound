@@ -730,6 +730,57 @@ theorem isOpen_range_of_isOpen_of_continuous_injective
     exact hyf₀.symm
   exact Filter.mem_of_superset (hZopen.mem_nhds hfuZ) hZrange
 
+/-- Open-embedding form of manifold invariance of domain.
+
+A continuous injection from an open part of the model vector space into a manifold modeled on
+`I` is not merely open onto its whole range: every open subdomain also has open image.  This
+wrapper packages that local consequence as an `IsOpenEmbedding`, which is the form needed to
+turn explicit polyhedral page coordinates into genuine manifold charts. -/
+theorem isOpenEmbedding_of_isOpen_of_continuous_injective
+    (I : ModelWithCorners 𝕜 E H) [HasInvarianceOfDomain E]
+    {U : Set E} (hU : IsOpen U) (f : U → M)
+    (hfcont : Continuous f) (hfinj : Function.Injective f) :
+    _root_.Topology.IsOpenEmbedding f := by
+  refine _root_.Topology.IsOpenEmbedding.of_continuous_injective_isOpenMap
+    hfcont hfinj ?_
+  intro A hA
+  let valA : A → E := fun x => x.1.1
+  have hvalA : _root_.Topology.IsOpenEmbedding valA := by
+    exact hU.isOpenEmbedding_subtypeVal.comp
+      hA.isOpenEmbedding_subtypeVal
+  let UA : Set E := Set.range valA
+  have hUA : IsOpen UA := hvalA.isOpen_range
+  let lift : UA → U := fun x => ⟨x.1, by
+    obtain ⟨a, ha⟩ := x.2
+    change a.1.1 = x.1 at ha
+    exact ha ▸ a.1.2⟩
+  have hliftCont : Continuous lift := by
+    apply Continuous.subtype_mk continuous_subtype_val
+  have hliftInj : Function.Injective lift := by
+    intro x y hxy
+    exact Subtype.ext (congrArg (fun z : U => z.1) hxy)
+  let g : UA → M := fun x => f (lift x)
+  have hgCont : Continuous g := hfcont.comp hliftCont
+  have hgInj : Function.Injective g := hfinj.comp hliftInj
+  have hgOpen : IsOpen (Set.range g) :=
+    isOpen_range_of_isOpen_of_continuous_injective I hUA g hgCont hgInj
+  rw [show f '' A = Set.range g by
+    ext y
+    constructor
+    · rintro ⟨x, hxA, rfl⟩
+      let a : A := ⟨x, hxA⟩
+      let u : UA := ⟨x.1, ⟨a, rfl⟩⟩
+      refine ⟨u, ?_⟩
+      change f (lift u) = f x
+      congr 1
+    · rintro ⟨u, rfl⟩
+      obtain ⟨a, ha⟩ := u.2
+      refine ⟨a.1, a.2, ?_⟩
+      change f a.1 = f (lift u)
+      congr 1
+      exact Subtype.ext ha]
+  exact hgOpen
+
 /-- Embedding-form wrapper for
 `isOpen_range_of_isOpen_of_continuous_injective`. -/
 theorem isOpen_range_of_isOpen_of_isEmbedding
