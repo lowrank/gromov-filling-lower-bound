@@ -65,6 +65,7 @@ import GromovFilling.RiemannianProfileFourierAE
 import GromovFilling.RiemannianProfileFourierEnergy
 import GromovFilling.RiemannianStandardChart
 import GromovFilling.RiemannianTwoJacobian
+import GromovFilling.RiemannianUniversalFourierBound
 import GromovFilling.SurfaceClassificationFoundation
 import GromovFilling.SurfaceCoverage
 import GromovFilling.SurfaceTriangulationFoundation
