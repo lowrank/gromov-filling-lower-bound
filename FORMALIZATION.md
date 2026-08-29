@@ -23,7 +23,7 @@ Riemannian surfaces.
 | Lemma 5.1, Entries of the Givens product | **Verified** | Entry, orthogonality, and energy identities are proved in `Givens.lean`. |
 | Lemma 5.2, First-harmonic dominance | **Verified** | All rowwise strict dominance estimates are proved in `Givens.lean` and exposed by `BoundaryCertificate.lean`. |
 | Lemma 5.3, Dominant first harmonic | **Verified** | Injectivity, degree one, polynomial disk extension, Jordan-region identification, and exact Fourier area are proved across `DominantHarmonic*.lean`, `BoundaryDegree*.lean`, `GivensDisk*.lean`, and `JordanBoundary.lean`. |
-| Lemma 5.4, Jordan coverage without orientation | **Partial** | The finite mod-2 obstruction, arbitrary polygon-side pairing theorem, circle-homeomorphism reparametrization invariance, and glued-schema coverage deductions are verified. `exists_full_support_boundary_facewise_regular_partial_triangulation` retains the boundary-aware Radó output, while `image_polygonalBoundaryLocus_polygonalRealizationHomeomorph` identifies the finite-cyclic once-used-side locus exactly with the Radó triangulation's complete valence-one edge locus. `exists_admissible_normalForm_boundaryRealizationEquivData` preserves that locus through every normalization move, and `image_canonicalOrientableRealizationHomeomorph_boundaryLocus_one` and its nonorientable analogue identify the one-block endpoint exactly with the canonical obstruction loop in the raw quotient, where the odd boundary-degree obstruction is verified. The remaining topology output is to identify the valence-one edge locus with the ambient manifold boundary, deduce one canonical boundary block from the one-component hypothesis, and match the supplied parametrization with that loop up to a circle homeomorphism. |
+| Lemma 5.4, Jordan coverage without orientation | **Partial** | The topological mod-2 core is now end-to-end verified. `hasOddBoundaryDegreeObstruction_of_compact_connected_surface_boundary` starts from the exact compact connected Hausdorff half-space-manifold hypotheses and a continuous injective parametrization of the whole ambient boundary, then composes boundary-aware Radó triangulation, valence-one/ambient-boundary equality, boundary-faithful Gallier--Xu normalization, the connected one-block theorem, injectivity of the canonical free loop, same-range circle reparametrization, and the orientable/nonorientable parity obstructions. Existing `SurfaceCoverage.lean` theorems turn this obstruction into coverage at every point of odd radial degree; the Givens curves used in the certificate have verified degree one. The remaining part of the manuscript lemma is the general Riemannian Lipschitz area/Jacobian globalization identifying the intrinsic `J₂` integral. |
 | Proposition 5.5, Finite universal certificate | **Partial** | `finite_universal_certificate` and its certificate wrappers verify the deduction from coverage plus Jacobian budgets. Those geometric budgets are not yet supplied for arbitrary Riemannian surfaces. |
 | Theorem 6.1, Antipodal defect | **Partial** | The pointwise defect budget and additive certificate propagation are verified on planar/chart interfaces. Intrinsic surface globalization remains unverified. |
 | Lemma 7.1, Hilbert-valued Stokes | **Partial** | `ClosedOneForm.lean` proves fixed-endpoint homotopy invariance and disk/square Stokes/comass interfaces in finite-dimensional Euclidean targets. The infinite-dimensional Hilbert-valued surface theorem is not formalized. |
@@ -45,27 +45,22 @@ Riemannian surfaces.
 
 The following are tracked formalization gaps rather than hidden hypotheses:
 
-1. identify the Radó realization's valence-one edge locus with the ambient
-   manifold boundary, use its one-component parametrization to force one
-   canonical boundary block, and identify that parametrization with the
-   resulting unique free loop up to a circle homeomorphism, producing the
-   presentation consumed by
-   `hasOddBoundaryDegreeObstruction_of_exists_homeomorph_cylinderStripGluedPointBoundary_pairing_reparametrized`;
-2. Rademacher/eikonal and parameter-integral differentiation on a
+1. Rademacher/eikonal and parameter-integral differentiation on a
    two-dimensional Riemannian manifold with boundary;
-3. globalization of the planar area formula through Riemannian charts,
+2. globalization of the planar area formula through Riemannian charts,
    including identification of coordinate determinant density with `J₂`;
-4. the global differential-form/Stokes/comass interface for the oriented
+3. the global differential-form/Stokes/comass interface for the oriented
    argument.
 
 The pinned mathlib revision contains Riemannian-manifold primitives but no
 surface triangulation/classification theorem or ready-made manifold area
 formula/Stokes package. The project now vendors and audits the exact
 classification source closure needed for finite triangulability and faithful
-polygonal normal forms, while keeping the relative-boundary refinement and the
-analytic bridges explicit rather than introducing project assumptions.
+polygonal normal forms. The relative-boundary refinement is now closed in
+`Lemma54.lean`; the remaining analytic bridges stay explicit rather than being
+introduced as project assumptions.
 
-The 131-module transitive closure of
+The 132-module transitive closure of
 [`mccorvie/classification-of-surfaces`](https://github.com/mccorvie/classification-of-surfaces)
 at commit `e3c7230fe78d7b056a415d9ecae6f77887046b32` is vendored under
 `ClassificationOfSurfaces/`, with explicit Apache-2.0 provenance and Lean
@@ -76,13 +71,13 @@ normalization theorem proves that the faithful polygonal homeomorphism carries
 the complete once-used-side locus to the canonical once-used-side locus.
 `RadoBoundaryLocus.lean` first identifies that finite-cyclic locus exactly with
 the complete valence-one edge locus of the original geometric triangulation.
-`CanonicalBoundaryLocus.lean` carries that complete locus through the raw
-representative quotient and, for one boundary block, identifies it exactly
-with the canonical orientable or nonorientable obstruction loop. The remaining
-relative endpoint is the identification of the valence-one edge locus with the
-ambient manifold boundary
-and the deduction that its supplied one-component parametrization forces and
-parametrizes that unique block.
+`RadoAmbientBoundary.lean` identifies the valence-one locus with the ambient
+manifold boundary. `CanonicalBoundaryLocus.lean` carries that complete locus
+through the raw representative quotient, and
+`CanonicalBoundaryConnectedness.lean` proves both that connectedness forces one
+boundary block and that the resulting canonical loop is injective.
+`Lemma54.lean` composes these results and identifies the supplied boundary
+parametrization with the canonical loop up to a circle homeomorphism.
 
 ## Current trust evidence
 
