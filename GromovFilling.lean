@@ -4,6 +4,7 @@ import GromovFilling.BoundaryDegree
 import GromovFilling.BoundaryDegreeComponents
 import GromovFilling.BoundaryLocusClassification
 import GromovFilling.BoundarySubdivisionDegree
+import GromovFilling.CanonicalBoundaryLocus
 import GromovFilling.Certificates
 import GromovFilling.CircleDegree
 import GromovFilling.ClosedOneForm

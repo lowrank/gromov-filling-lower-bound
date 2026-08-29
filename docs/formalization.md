@@ -106,11 +106,19 @@ polygonal boundary locus as the quotient image of exactly the once-used
 sides, proves that signed and unoriented relabelings and every P1/P2 move
 preserve that locus in both directions, and composes the result through the
 Gallier--Xu normalizer. Thus the normal-form homeomorphism now preserves the
-complete combinatorial boundary locus. What remains is to identify the
-Radó realization's once-used-side locus with the ambient manifold boundary,
-transport the canonical locus through the final raw-quotient adapter, and
-deduce that the supplied one-component parametrization is the unique free
-loop. That last geometric endpoint statement is still required for Lemma 5.4.
+complete combinatorial boundary locus.
+
+`GromovFilling.CanonicalBoundaryLocus` closes the other end of this relative
+chain. It classifies every once-used side of the canonical presentations as a
+free `h` side, computes the final adapter on those sides, and proves equality
+between the image of the full polygonal boundary locus and the raw quotient's
+full free-side locus. With one boundary block this set is exactly the range of
+the orientable or nonorientable canonical obstruction loop. What remains is to
+identify the Radó realization's once-used-side locus with the ambient manifold
+boundary, use the supplied one-component parametrization to force one
+canonical boundary block, and identify the parametrization with that loop up
+to a circle homeomorphism. That geometric endpoint statement is still
+required for Lemma 5.4.
 
 ## Partial headline statements
 

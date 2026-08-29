@@ -72,9 +72,10 @@ caller assumption.
 
 Four end-to-end bridges remain outside the verified scope:
 
-1. identification of the supplied one-boundary parametrization, up to a circle
-   homeomorphism, with the unique free loop in the verified polygonal
-   classification normal form;
+1. identification of the Radó once-used-side locus with the ambient boundary,
+   followed by the deduction that the supplied one-boundary parametrization
+   selects the unique free loop in the verified polygonal classification
+   normal form, up to a circle homeomorphism;
 2. Riemannian eikonal and parameter-integral differentiation;
 3. globalization of the planar area formula through surface charts;
 4. a global differential-form Stokes/comass interface for the oriented case.
