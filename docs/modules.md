@@ -12,7 +12,7 @@ module list and fails if any source file is missing from the umbrella.
 | Metric profiles | `DistanceProfile`, `ProfileFourier` | genuine distance-defined Fourier maps and planar derivatives |
 | Orthogonal mixing | `Givens`, `BoundaryCertificate`, `DominantHarmonic` | explicit rotations, dominance, injectivity |
 | Degree and Jordan theory | `CircleDegree`, `BoundaryDegree`, `RadialDegreeStability`, `JordanBoundary` | degree, components, and Jordan regions |
-| Polygonal topology | `ModTwoDegree`, `PolygonalSurfaceObstruction`, `FinePolygonalModel`, `GeneralSurfaceObstruction`, `SurfaceTriangulationFoundation` | finite obstruction, mesh interfaces, arbitrary side pairings, compact-surface triangulability |
+| Polygonal topology | `ModTwoDegree`, `PolygonalSurfaceObstruction`, `FinePolygonalModel`, `GeneralSurfaceObstruction`, `SurfaceTriangulationFoundation` | finite obstruction, mesh interfaces, arbitrary side pairings, boundary-regular compact-surface triangulability |
 | Planar area | `EuclideanAreaFormula`, `ComplexAreaFormula`, `JacobianBudget`, `ComplexJacobianBudget` | area formula and determinant budgets |
 | Coverage | `SurfaceCoverage`, `MetricPlanarCoverage` | Jordan-region coverage for abstract and metric Fourier maps |
 | Oriented argument | `ClosedOneForm`, `Oriented`, `GeometricClosedOneForm` | Stokes interfaces and scalar nonlinear optimization |
