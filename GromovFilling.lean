@@ -48,6 +48,7 @@ import GromovFilling.RadoAmbientBoundary
 import GromovFilling.RadoBoundaryLocus
 import GromovFilling.ResonanceTrace
 import GromovFilling.RiemannianAreaFormula
+import GromovFilling.RiemannianAtlasArea
 import GromovFilling.RiemannianChartArea
 import GromovFilling.RiemannianTwoJacobian
 import GromovFilling.SurfaceClassificationFoundation

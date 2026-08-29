@@ -130,10 +130,10 @@ in `GromovFilling.Lemma54`. The remaining end-to-end Riemannian statements
 require:
 
 1. Riemannian eikonal and weak parameter-integral differentiation;
-2. a canonical global Riemannian area measure and compatible-atlas
-   globalization of the planar area formula. Intrinsic `J₂`, its chain rule,
-   and the exact weighted measure/integral transfer and area inequality on one
-   parametrized chart are now verified;
+2. an overlap-invariant canonical Riemannian area measure. Intrinsic `J₂`, its
+   chain rule, the exact one-chart weighted measure/integral transfer, and the
+   countable-atlas coverage inequality are now verified; standard-chart
+   measurability, overlap invariance, and boundary charts remain;
 3. a global differential-form Stokes/comass interface for the oriented case.
 
 These are tracked gaps, not project axioms. The repository does not encode an
