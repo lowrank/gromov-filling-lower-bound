@@ -23,10 +23,12 @@ Gromov's filling-area problem.
 
 The kernel-checked development includes exact Fourier coefficients, the Givens
 mixing matrix, dominant-harmonic Jordan curves, integer circle degree, finite
-mod-2 surface obstruction, planar area and Jacobian inequalities, rigorous
-constant evaluation, off-diagonal logarithmic-sine-kernel positivity, de
-Sitter profile identities, finite one-high-leg Gram/Rayleigh algebra, exact
-scalar resonance-trace arithmetic, and conditional certificate assembly.
+mod-2 surface obstruction, boundary-regular Radó triangulation, faithful
+compact-surface polygonal classification, planar area and Jacobian
+inequalities, rigorous constant evaluation, off-diagonal
+logarithmic-sine-kernel positivity, de Sitter profile identities, finite
+one-high-leg Gram/Rayleigh algebra, exact scalar resonance-trace arithmetic,
+and conditional certificate assembly.
 
 The general glued-polygon theorem now handles every fixed-point-free
 involutive side pairing, including orientation-reversing identifications. The
@@ -70,8 +72,9 @@ caller assumption.
 
 Four end-to-end bridges remain outside the verified scope:
 
-1. extraction of the unique simplicial boundary cycle, up to a circle
-   homeomorphism, from the verified boundary-facewise-regular Radó output;
+1. identification of the supplied one-boundary parametrization, up to a circle
+   homeomorphism, with the unique free loop in the verified polygonal
+   classification normal form;
 2. Riemannian eikonal and parameter-integral differentiation;
 3. globalization of the planar area formula through surface charts;
 4. a global differential-form Stokes/comass interface for the oriented case.

@@ -15,9 +15,10 @@ metadata = json.loads(metadata_path.read_text())
 
 expected = {
     "schema": 1,
+    "name": "classification-of-surfaces-eval-closure",
     "upstream_commit": "e3c7230fe78d7b056a415d9ecae6f77887046b32",
-    "entry_module": "ClassificationOfSurfaces.Triangulation",
-    "lean_source_files": 81,
+    "entry_module": "ClassificationOfSurfaces.EvalStatement",
+    "lean_source_files": 131,
     "license": "Apache-2.0",
 }
 for key, value in expected.items():

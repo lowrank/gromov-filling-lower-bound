@@ -32,8 +32,8 @@ Every pull request to `main` must pass:
 1. **Canonical umbrella check.** Every Gromov Lean source module must appear
    in the generated umbrella import list.
 2. **Pinned surface-vendor closure.** Metadata, license, Lean/mathlib target,
-   and all 81 modules must match the exact transitive closure of the Radó
-   entry module.
+   and all 131 modules must match the exact transitive closure of the
+   classification entry module.
 3. **Fail-closed source escape scan.** Gromov and vendored surface-topology
    Lean files reject placeholder, custom axiom, unsafe, and native reduction
    escape tokens; scanner errors are failures rather than clean results.
