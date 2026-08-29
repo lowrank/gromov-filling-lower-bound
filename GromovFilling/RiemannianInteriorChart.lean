@@ -387,6 +387,22 @@ theorem controlledInteriorChartSet_subset_target
   intro y hy
   exact (c.controlled ⟨hy.1, interior_subset hy.2⟩).1
 
+/-- A controlled complex chart domain lies in the full interior inverse-chart
+domain at the same center. -/
+theorem controlledInteriorComplexChartDomain_subset_interiorComplexExtChartDomain
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    (e : ℂ ≃ₗᵢ[ℝ] E) {x : M} (c : InteriorChartControl I x) :
+    controlledInteriorComplexChartDomain I e c ⊆
+      interiorComplexExtChartDomain I e x := by
+  intro z hz
+  change e z ∈ interior (extChartAt I x).target
+  exact interior_maximal
+    (controlledInteriorChartSet_subset_target I c)
+    (isOpen_controlledInteriorChartSet I c) hz
+
 /-- The controlled complex coordinate domain is open. -/
 theorem isOpen_controlledInteriorComplexChartDomain
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
