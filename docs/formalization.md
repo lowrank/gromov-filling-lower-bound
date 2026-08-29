@@ -14,7 +14,7 @@ manuscript ledger is maintained in
 | Boundary topology | circle degree, degree one, Jordan partition, bounded component |
 | Finite surface topology | mod-2 cochain obstruction, face lifts, edge turns, general side pairings |
 | Compact-surface topology | Radó finite boundary-regular triangulation and faithful polygonal classification for half-space-modeled compact connected surfaces |
-| Planar and pointwise Riemannian analysis | Lipschitz area inequality, intrinsic two-Jacobian, basis independence, exact planar determinant identity, Jacobian budgets |
+| Planar and local Riemannian analysis | Lipschitz area inequality, intrinsic two-Jacobian and chain rule, one-chart weighted area measure and integral transfer, countable-atlas coverage inequality, exact planar determinant identity, Jacobian budgets |
 | Certificate logic | finite-to-infinite universal deduction, defect propagation, scalar optimization |
 | Rigorous numerics | rational bounds for `π`, `ζ(3)`, and the displayed constants |
 | Logarithmic sine kernel | squared-sine gap, positive sine quotient, strict off-diagonal positivity, symmetry |
@@ -142,8 +142,10 @@ kernel-verified deductions from named geometric inputs. The following bridges
 are not yet verified for every compact Riemannian surface:
 
 - almost-everywhere eikonal differentiation and weak parameter integration;
-- Riemannian area measure and chartwise Jacobian globalization (the intrinsic
-  pointwise `J₂` and its exact planar identification are verified);
+- overlap-invariant canonical Riemannian area measure (the intrinsic pointwise
+  `J₂`, its chain rule, the exact one-chart weighted measure/integral transfer,
+  and countable-atlas coverage inequality are verified; standard-chart
+  interfaces, overlap invariance, and boundary charts remain);
 - the global differential-form Stokes/comass inequality.
 
 !!! danger "No conditional-shell upgrade"

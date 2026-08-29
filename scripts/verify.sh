@@ -11,5 +11,5 @@ cd "$repo_dir"
 lake exe cache get
 lake build
 
-echo 'PASS: umbrella, build, and source proof-escape gates.'
+echo 'PASS: umbrella, build, Unicode-confusable, and source proof-escape gates.'
 echo 'The live environment axiom audit is enforced by GitHub Actions.'

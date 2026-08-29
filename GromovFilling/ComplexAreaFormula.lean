@@ -128,6 +128,38 @@ theorem complex_volume_image_le_lintegral_abs_det_fderiv_of_isOpen
   filter_upwards with x hx
   rw [hderiv x hx]
 
+/-- Local area inequality for a measurable subset of an open Lipschitz
+domain.  This is the form needed after disjointifying a finite open chart
+cover: the disjoint pieces remain measurable, although they need not remain
+open. -/
+theorem complex_volume_image_le_lintegral_abs_det_fderiv_of_measurableSet_subset_isOpen
+    (f : ℂ → ℂ) (s U : Set ℂ) (hs : MeasurableSet s)
+    (hU : IsOpen U) (hsU : s ⊆ U)
+    {K : ℝ≥0} (hf : LipschitzOnWith K f U) :
+    volume (f '' s) ≤
+      ∫⁻ x in s, ENNReal.ofReal |(fderiv ℝ f x).det| ∂volume := by
+  obtain ⟨g, hg, hfg⟩ := hf.extend_finite_dimension
+  have himage : f '' s = g '' s := by
+    ext y
+    constructor
+    · rintro ⟨x, hx, rfl⟩
+      exact ⟨x, hx, (hfg (hsU hx)).symm⟩
+    · rintro ⟨x, hx, rfl⟩
+      exact ⟨x, hx, hfg (hsU hx)⟩
+  have hderiv (x : ℂ) (hx : x ∈ s) :
+      fderiv ℝ f x = fderiv ℝ g x := by
+    have heq : f =ᶠ[𝓝 x] g := by
+      filter_upwards [hU.mem_nhds (hsU hx)] with y hy
+      exact hfg hy
+    exact heq.fderiv_eq
+  rw [himage]
+  refine (complex_volume_image_le_lintegral_abs_det_fderiv
+    g s hs hg).trans_eq ?_
+  apply lintegral_congr_ae
+  rw [Filter.EventuallyEq, ae_restrict_iff' (μ := volume) hs]
+  filter_upwards with x hx
+  rw [hderiv x hx]
+
 /-- Coverage version of the local complex-plane area inequality. -/
 theorem complex_volume_le_lintegral_abs_det_fderiv_of_isOpen_of_subset_range
     (f : ℂ → ℂ) (s omega : Set ℂ) (hs : IsOpen s)

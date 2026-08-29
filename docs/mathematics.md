@@ -91,9 +91,17 @@ For Lipschitz maps on planar pieces, the project proves a genuine area
 inequality from Rademacher's theorem and mathlib's Jacobian image bound. It
 then composes coverage, exact Fourier area, and the common derivative-energy
 budget. The pointwise two-dimensional Riemannian Jacobian is now defined
-intrinsically, proved independent of orthonormal bases, and identified exactly
-with this planar absolute-determinant density. What remains is the area measure
-and chartwise change-of-variables theorem for a general Riemannian surface.
+intrinsically between arbitrary Riemannian surfaces, proved independent of
+orthonormal bases and multiplicative under the manifold chain rule, and
+identified exactly with this planar absolute-determinant density. The
+chart-induced area measure, its exact weighted `lintegral` transfer, the local
+surface area inequality, and its summation over a countable covering chart
+family are verified. Exact integral and measure invariance under injective
+differentiable complex-coordinate reparametrizations is also verified under
+explicit local almost-everywhere measurability hypotheses. The remaining step
+is to prove intrinsic Jacobian-density measurability for standard smooth
+charts, treat half-space boundary charts, and identify a non-overcounting
+atlas construction with the canonical global area measure.
 
 The orientation-free constant is
 

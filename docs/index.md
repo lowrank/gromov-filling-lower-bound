@@ -75,9 +75,10 @@ in `GromovFilling.Lemma54`. Three analytic bridges remain outside the verified
 scope:
 
 1. Riemannian eikonal and parameter-integral differentiation;
-2. a Riemannian area measure and chartwise globalization of the planar area
-   formula (the intrinsic pointwise `J₂` and its planar identification are
-   verified);
+2. an overlap-invariant canonical Riemannian area measure (intrinsic `J₂`, its
+   chain rule, the exact one-chart weighted measure/integral transfer, and the
+   countable-atlas coverage inequality are verified; standard-chart
+   interfaces, overlap invariance, and boundary charts remain);
 3. a global differential-form Stokes/comass interface for the oriented case.
 
 The repository keeps these foundations visible. It does not replace them with
