@@ -14,7 +14,7 @@ Gromov's filling-area problem.
     theorems remain conditional on specific Riemannian-surface foundations.
 
 <div class="status-strip">
-  <div><strong>3,965</strong><span>project declarations accepted by the live axiom audit</span></div>
+  <div><strong>4,002</strong><span>project declarations accepted by the live axiom audit</span></div>
   <div><strong>Lean 4.29</strong><span>pinned toolchain with mathlib 4.29 and a fixed Jordan input</span></div>
   <div><strong>MIT</strong><span>public source, reproducible CI, and explicit claim boundaries</span></div>
 </div>
@@ -24,7 +24,8 @@ Gromov's filling-area problem.
 The kernel-checked development includes exact Fourier coefficients, the Givens
 mixing matrix, dominant-harmonic Jordan curves, integer circle degree, finite
 mod-2 surface obstruction, planar area and Jacobian inequalities, rigorous
-constant evaluation, and conditional certificate assembly.
+constant evaluation, off-diagonal logarithmic-sine-kernel positivity, de
+Sitter profile identities, and conditional certificate assembly.
 
 The general glued-polygon theorem now handles every fixed-point-free
 involutive side pairing, including orientation-reversing identifications. The

@@ -46,10 +46,11 @@ cd conj-gromov-filling
 ./scripts/verify.sh
 ```
 
-The script checks the canonical umbrella, restores the pinned mathlib cache,
-builds the complete package, and rejects source-level proof escapes. GitHub CI
-also audits every compiled project declaration against the exact allowlist
-`propext`, `Classical.choice`, and `Quot.sound`.
+The script checks the canonical umbrella, rejects source-level proof escapes,
+proves that the escape gate catches an injected placeholder, restores the
+pinned mathlib cache, and builds the complete package. GitHub CI also audits
+every compiled project declaration against the exact allowlist `propext`,
+`Classical.choice`, and `Quot.sound`.
 
 ## Verified core
 
@@ -63,6 +64,10 @@ also audits every compiled project declaration against the exact allowlist
 - arbitrary fixed-point-free polygon-side pairings, including
   orientation-reversing identifications;
 - planar Lipschitz area inequalities and Jacobian budgets;
+- strict positivity and symmetry of the Proposition 8.1 logarithmic sine
+  kernel at interior off-diagonal points;
+- the de Sitter quadric, formal-velocity, Lorentz-product, and Züst-kernel
+  identities from Proposition 15.1;
 - finite and infinite certificate deductions, boundary-action series, and
   rigorous rational enclosures for the displayed constants.
 
@@ -101,11 +106,14 @@ The project is pinned to:
 - EPFL LARA `JordanCurveTheorem` at
   `e442525a662e9e3beb8205b9fa1fc99509076ded`.
 
-The first hardened CI receipt audited **3,965 declarations** under
-`GromovFilling`; every declaration stayed within the standard logical
-allowlist. CI also fails if the umbrella omits a source module or if project
-Lean source contains placeholder, custom axiom, unsafe, or native reduction
-escape tokens.
+The latest hardened CI receipt, run
+[`33222433335`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33222433335)
+on merge commit `24a89cc64c589f1f8895e19697b37fdf56e674bd`, audited
+**4,002 declarations** under `GromovFilling`; every declaration stayed within
+the standard logical allowlist. CI also fails if the umbrella omits a source
+module or if project Lean source contains placeholder, custom axiom, unsafe,
+or native reduction escape tokens, and a negative control confirms that this
+scan fails closed.
 
 ## Current frontier
 

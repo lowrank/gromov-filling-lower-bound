@@ -16,7 +16,15 @@ manuscript ledger is maintained in
 | Planar analysis | Lipschitz area inequality, determinant identity, Jacobian budgets |
 | Certificate logic | finite-to-infinite universal deduction, defect propagation, scalar optimization |
 | Rigorous numerics | rational bounds for `π`, `ζ(3)`, and the displayed constants |
+| Logarithmic sine kernel | squared-sine gap, positive sine quotient, strict off-diagonal positivity, symmetry |
 | De Sitter profile algebra | quadric membership, formal-velocity speed, pairwise Lorentz product, Züst kernel identity |
+
+Proposition 8.1 is partial. `PositiveLogSineKernel.lean` verifies the exact
+elementary kernel inequality on `0 < t, s < π` with `t ≠ s`. The last
+hypothesis is essential: the Fourier series and logarithmic expression are
+singular on the diagonal, even though Lean's real division and logarithm are
+totalized there. The infinite-series identity, integrability passage, and
+scalar and Hilbert-valued optimization remain open.
 
 Proposition 15.1 is verified at an explicit denominator interface:
 `DeSitterProfile.lean` takes profile values and the derivative value as scalars
@@ -54,6 +62,7 @@ are not yet verified for every compact Riemannian surface:
 ## Open feasible manuscript obligations
 
 Several later finite or algebraic manuscript claims remain suitable for future
-formalization, including the separable barrier, Hardy stationarity, the
-stationary-resonance hierarchy, and the one-high-leg spectral ceiling. Their
-current status is recorded individually in the root statement ledger.
+formalization, including completion of the separable barrier, Hardy
+stationarity, the stationary-resonance hierarchy, and the one-high-leg
+spectral ceiling. Their current status is recorded individually in the root
+statement ledger.

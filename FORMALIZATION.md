@@ -27,7 +27,7 @@ Riemannian surfaces.
 | Proposition 5.5, Finite universal certificate | **Partial** | `finite_universal_certificate` and its certificate wrappers verify the deduction from coverage plus Jacobian budgets. Those geometric budgets are not yet supplied for arbitrary Riemannian surfaces. |
 | Theorem 6.1, Antipodal defect | **Partial** | The pointwise defect budget and additive certificate propagation are verified on planar/chart interfaces. Intrinsic surface globalization remains unverified. |
 | Lemma 7.1, Hilbert-valued Stokes | **Partial** | `ClosedOneForm.lean` proves fixed-endpoint homotopy invariance and disk/square Stokes/comass interfaces in finite-dimensional Euclidean targets. The infinite-dimensional Hilbert-valued surface theorem is not formalized. |
-| Proposition 8.1, Separable nonlinear barrier | **Open feasible obligation** | No Lean declaration currently represents the full positivity-kernel optimization. |
+| Proposition 8.1, Separable nonlinear barrier | **Partial** | `PositiveLogSineKernel.lean` proves the squared-sine gap identity, positivity of both sine factors, strict positivity of the logarithmic kernel, and symmetry for `0 < t, s < π` with the necessary off-diagonal hypothesis `t ≠ s`. The Fourier-series identity, its diagonal/integrability treatment, and the scalar and Hilbert-valued quadratic-form optimization remain unverified. |
 | Proposition 8.2, Holomorphic-disk barrier | **Partial** | `PolynomialDiskArea.lean` verifies the relevant holomorphic polynomial area identities. The complete Hilbert-space barrier statement and optimization are not formalized. |
 | Proposition 9.1, Boundary action | **Verified** | Exact linear and quadratic odd-mode series are proved in `BoundaryActionSeries.lean`. |
 | Lemma 10.1, Exact first variation | **Partial** | `Oriented.lean` verifies the scalar profile estimates used in the final bound. The exact Hardy autocorrelation first-variation identity is not represented as a Lean theorem. |
@@ -64,9 +64,9 @@ so this project records them explicitly instead.
 
 - Lean `4.29.0`, mathlib `v4.29.0`, JordanCurveTheorem
   `e442525a662e9e3beb8205b9fa1fc99509076ded`.
-- GitHub Actions run `33219684635` on commit
-  `46ac397810212da2574f90b46ccc9c98a95613f8`, merged as
-  `265f1f9d2029d801907d8efd61221c040246d1cf`: canonical umbrella check,
-  full package build, and live axiom audit.
-- Live audit result: 3,992 declarations under `GromovFilling`; allowed axioms
+- GitHub Actions run `33222433335` on merge commit
+  `24a89cc64c589f1f8895e19697b37fdf56e674bd`: canonical umbrella check,
+  fail-closed source scan, injected-`sorry` negative control, full package
+  build, and live axiom audit.
+- Live audit result: 4,002 declarations under `GromovFilling`; allowed axioms
   exactly `propext`, `Classical.choice`, and `Quot.sound`.
