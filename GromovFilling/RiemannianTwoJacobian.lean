@@ -128,7 +128,7 @@ theorem twoJacobian_eq_abs_areaForm
       rfl
     _ = |f.toBasis.det (fun i ↦ L (e i))| := by
       apply congrArg abs
-      rw [Basis.det_apply]
+      rw [Module.Basis.det_apply]
       apply congrArg Matrix.det
       ext i j
       rw [LinearMap.toMatrix_apply, Basis.toMatrix_apply]
@@ -155,7 +155,7 @@ theorem twoJacobian_sq_eq_gram
     (o : Orientation ℝ F (Fin 2)) (L : E →L[ℝ] F) :
     twoJacobian L ^ 2 =
       ‖L (e 0)‖ ^ 2 * ‖L (e 1)‖ ^ 2 -
-        ⟦L (e 0), L (e 1)⟧_ℝ ^ 2 := by
+        ⟪L (e 0), L (e 1)⟫_ℝ ^ 2 := by
   rw [twoJacobian_eq_abs_areaForm e o, sq_abs]
   nlinarith [o.inner_sq_add_areaForm_sq (L (e 0)) (L (e 1))]
 
@@ -170,14 +170,14 @@ theorem twoJacobian_eq_sqrt_gram
     (o : Orientation ℝ F (Fin 2)) (L : E →L[ℝ] F) :
     twoJacobian L =
       √(‖L (e 0)‖ ^ 2 * ‖L (e 1)‖ ^ 2 -
-        ⟦L (e 0), L (e 1)⟧_ℝ ^ 2) := by
+        ⟪L (e 0), L (e 1)⟫_ℝ ^ 2) := by
   calc
     twoJacobian L = |o.areaForm (L (e 0)) (L (e 1))| :=
       twoJacobian_eq_abs_areaForm e o L
     _ = √(o.areaForm (L (e 0)) (L (e 1)) ^ 2) :=
       (Real.sqrt_sq_eq_abs _).symm
     _ = √(‖L (e 0)‖ ^ 2 * ‖L (e 1)‖ ^ 2 -
-        ⟦L (e 0), L (e 1)⟧_ℝ ^ 2) := by
+        ⟪L (e 0), L (e 1)⟫_ℝ ^ 2) := by
       congr 1
       nlinarith [o.inner_sq_add_areaForm_sq (L (e 0)) (L (e 1))]
 
