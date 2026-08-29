@@ -51,6 +51,7 @@ import GromovFilling.RiemannianAreaFormula
 import GromovFilling.RiemannianAtlasArea
 import GromovFilling.RiemannianChartArea
 import GromovFilling.RiemannianChartDensity
+import GromovFilling.RiemannianChartDisjointification
 import GromovFilling.RiemannianChartTransition
 import GromovFilling.RiemannianInteriorCoverage
 import GromovFilling.RiemannianStandardChart
