@@ -1,5 +1,6 @@
 import GromovFilling.RiemannianChartArea
 import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
+import Mathlib.Geometry.Manifold.Riemannian.Basic
 import Mathlib.Geometry.Manifold.VectorBundle.Riemannian
 
 /-!
@@ -24,6 +25,35 @@ namespace GromovFilling
 
 noncomputable section
 
+local instance complexFinrankTwoFactChartDensity :
+    Fact (Module.finrank ℝ ℂ = 2) :=
+  Complex.finrank_real_complex_fact
+
+set_option backward.isDefEq.respectTransparency false in
+/-- The canonical norm-preserving identification of the complex plane with
+its tangent space at a point.  The explicit map is needed because
+`TangentSpace` is deliberately opaque to typeclass inference. -/
+private noncomputable def complexTangentLinearIsometry (z : ℂ) :
+    ℂ ≃ₗᵢ[ℝ] TangentSpace 𝓘(ℝ, ℂ) z :=
+  LinearIsometryEquiv.mk
+    (NormedSpace.fromTangentSpace z).symm.toLinearEquiv
+    (fun v ↦ by
+      simpa only [NormedSpace.fromTangentSpace] using
+        (norm_tangentSpace_vectorSpace (x := z)
+          (v := (NormedSpace.fromTangentSpace z).symm v)))
+
+/-- The fixed complex orthonormal basis, transported to the source tangent
+space with its canonical Riemannian norm. -/
+private noncomputable def complexTangentOrthonormalBasis (z : ℂ) :
+    OrthonormalBasis (Fin 2) ℝ (TangentSpace 𝓘(ℝ, ℂ) z) :=
+  Complex.orthonormalBasisOneI.map (complexTangentLinearIsometry z)
+
+@[simp]
+private theorem complexTangentOrthonormalBasis_apply (z : ℂ) (i : Fin 2) :
+    complexTangentOrthonormalBasis z i =
+      Complex.orthonormalBasisOneI i := by
+  rfl
+
 /-- The `i`th derivative vector of a parametrized Riemannian chart, using
 the fixed orthonormal basis `1, I` of the complex source. -/
 def riemannianChartGramVector
@@ -31,7 +61,7 @@ def riemannianChartGramVector
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [TopologicalSpace M] [ChartedSpace H M]
     (F : ℂ → M) (i : Fin 2) (z : ℂ) : TangentSpace I (F z) :=
-  mfderiv 𝓘(ℝ, ℂ) I F z (Complex.orthonormalBasisOneI i)
+  mfderiv 𝓘(ℝ, ℂ) I F z (complexTangentOrthonormalBasis z i)
 
 /-- The derivative vector bundled with its base point in the target tangent
 bundle. -/
@@ -56,14 +86,6 @@ def riemannianChartGramDet
     ⟪riemannianChartGramVector I F 0 z,
       riemannianChartGramVector I F 1 z⟫_ℝ ^ 2
 
-private theorem tangentSpace_finrank_eq_two_chartDensity
-    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
-    [TopologicalSpace M] [ChartedSpace H M]
-    [hE : Fact (Module.finrank ℝ E = 2)] (x : M) :
-    Module.finrank ℝ (TangentSpace I x) = 2 := by
-  simpa only [TangentSpace] using hE.out
-
 /-- The chart density is the nonnegative square root of its Gram
 determinant. -/
 theorem riemannianChartDensity_eq_ofReal_sqrt_gram
@@ -77,19 +99,18 @@ theorem riemannianChartDensity_eq_ofReal_sqrt_gram
       ENNReal.ofReal √(riemannianChartGramDet I F z) := by
   letI : Fact (Module.finrank ℝ
       (TangentSpace 𝓘(ℝ, ℂ) z) = 2) :=
-    ⟨by simpa only [TangentSpace] using Complex.finrank_real_complex⟩
+    ⟨tangentSpace_finrank_eq_two 𝓘(ℝ, ℂ) z⟩
   letI : Fact (Module.finrank ℝ (TangentSpace I (F z)) = 2) :=
-    ⟨tangentSpace_finrank_eq_two_chartDensity I (F z)⟩
+    ⟨tangentSpace_finrank_eq_two I (F z)⟩
   let e : OrthonormalBasis (Fin 2) ℝ
       (TangentSpace 𝓘(ℝ, ℂ) z) :=
-    Complex.orthonormalBasisOneI
+    complexTangentOrthonormalBasis z
   let o : Orientation ℝ (TangentSpace I (F z)) (Fin 2) :=
     (canonicalOrthonormalBasisTwo (TangentSpace I (F z))).toBasis.orientation
-  change ENNReal.ofReal
-      (twoJacobian (mfderiv 𝓘(ℝ, ℂ) I F z)) = _
-  rw [twoJacobian_eq_sqrt_gram e o]
-  simp only [riemannianChartGramDet, riemannianChartGramVector,
-    real_inner_self_eq_norm_sq, e]
+  unfold riemannianChartDensity
+  rw [riemannianTwoJacobianBetween_eq_sqrt_gram
+    𝓘(ℝ, ℂ) I F z e o]
+  rfl
 
 /-- A `C¹` map on an open complex set has continuous Gram-vector
 sections there. -/
@@ -103,7 +124,8 @@ theorem continuousOn_riemannianChartGramVectorSection
     ContinuousOn (riemannianChartGramVectorSection I F i) s := by
   let V : ℂ → TangentBundle 𝓘(ℝ, ℂ) ℂ :=
     fun z ↦ ⟨z, Complex.orthonormalBasisOneI i⟩
-  have hVmdiff : ContMDiff 𝓘(ℝ, ℂ) 𝓘(ℝ, ℂ).tangent ∞ V := by
+  have hVmdiff : ContMDiff 𝓘(ℝ, ℂ) 𝓘(ℝ, ℂ).tangent
+      (⊤ : WithTop ℕ∞) V := by
     rw [contMDiff_vectorSpace_iff_contDiff]
     exact contDiff_const
   have hTM := hF.continuousOn_tangentMapWithin (by simp) hs.uniqueMDiffOn
@@ -118,8 +140,10 @@ theorem continuousOn_riemannianChartGramVectorSection
   ext
   · rfl
   · simp only [riemannianChartGramVectorSection,
-      riemannianChartGramVector, tangentMapWithin_snd, V]
+      riemannianChartGramVector, tangentMapWithin_snd, V,
+      complexTangentOrthonormalBasis_apply]
     rw [mfderivWithin_of_isOpen hs hz]
+    rfl
 
 /-- Continuous Gram-vector sections make the chart density continuous on
 the chart piece and therefore almost everywhere measurable for restricted
@@ -128,6 +152,7 @@ theorem aemeasurable_riemannianChartDensity_of_continuousOn_gramVectors
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [TopologicalSpace M] [ChartedSpace H M]
+    [IsManifold I 1 M]
     [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
     [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
     [Fact (Module.finrank ℝ E = 2)]
