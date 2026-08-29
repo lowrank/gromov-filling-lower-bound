@@ -1,5 +1,6 @@
 import GromovFilling.RiemannianChartDisjointification
 import GromovFilling.RiemannianInteriorChart
+import Mathlib.MeasureTheory.Constructions.Polish.Basic
 
 /-!
 # A finite controlled atlas for the Riemannian interior
@@ -46,6 +47,8 @@ structure ControlledInteriorAtlas
     ∀ i, ContinuousOn (parametrization i) (domain i)
   contMDiffOn_parametrization :
     ∀ i, ContMDiffOn 𝓘(ℝ, ℂ) I 1 (parametrization i) (domain i)
+  injOn_parametrization :
+    ∀ i, Set.InjOn (parametrization i) (domain i)
   mdifferentiableAt_of_differentiableAt_comp :
     ∀ i (G : M → ℂ) z, z ∈ domain i →
       DifferentiableAt ℝ (G ∘ parametrization i) z →
@@ -128,6 +131,7 @@ def controlledInteriorAtlasOfFinCover
       isOpen_domain := ?_
       continuousOn_parametrization := ?_
       contMDiffOn_parametrization := ?_
+      injOn_parametrization := ?_
       mdifferentiableAt_of_differentiableAt_comp := ?_
       isOpen_image := ?_
       lipschitzOnWith_parametrization := ?_
@@ -161,6 +165,16 @@ def controlledInteriorAtlasOfFinCover
           hsubset
     · simp [F, domains, finControlledInteriorParametrization,
         finControlledInteriorDomain, hi]
+  · intro i
+    by_cases hi : i < n
+    · have hsubset :=
+        controlledInteriorComplexChartDomain_subset_interiorComplexExtChartDomain
+          I e (chosenInteriorChartControl I (centers ⟨i, hi⟩))
+      simpa [F, domains, finControlledInteriorParametrization,
+        finControlledInteriorDomain, hi] using
+        (injOn_interiorComplexExtChart I e (centers ⟨i, hi⟩)).mono
+          hsubset
+    · simp [domains, finControlledInteriorDomain, hi]
   · intro i G z hz hdiff
     by_cases hi : i < n
     · have hzControlled : z ∈
@@ -354,26 +368,140 @@ theorem ae_mdifferentiableAt_of_lipschitzWith
     (Measure.restrict_mono (A.piece_subset_domain I i) le_rfl)
       hdiffDomain
 
+/-- The intrinsic two-Jacobian of a globally Lipschitz map is almost
+everywhere measurable for every controlled chart contribution.  The proof
+uses the measurable embedding of each injective chart piece, planar
+measurability of `fderiv`, and the intrinsic chain rule. -/
+theorem aemeasurable_riemannianTwoJacobian_of_lipschitzWith
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
+    [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M] [Fact (Module.finrank ℝ E = 2)]
+    (A : ControlledInteriorAtlas I M) (G : M → ℂ)
+    {KG : ℝ≥0} (hG : LipschitzWith KG G) (i : ℕ) :
+    AEMeasurable
+      (fun x ↦ ENNReal.ofReal (riemannianTwoJacobian I G x))
+      (riemannianChartAreaMeasure I (A.parametrization i)
+        (A.piece I i)) := by
+  let F : ℂ → M := A.parametrization i
+  let s : Set ℂ := A.piece I i
+  let q : M → ℝ≥0∞ := fun x ↦
+    ENNReal.ofReal (riemannianTwoJacobian I G x)
+  let d : ℂ → ℝ≥0∞ := riemannianChartDensity I F
+  let dNN : ℂ → ℝ≥0 := fun z ↦ (d z).toNNReal
+  let planarJ : ℂ → ℝ≥0∞ := fun z ↦
+    ENNReal.ofReal
+      (riemannianTwoJacobian 𝓘(ℝ, ℂ) (G ∘ F) z)
+  have hs : MeasurableSet s := by
+    simpa only [s] using A.measurableSet_piece I i
+  have hsDomain : s ⊆ A.domain i := by
+    simpa only [s] using A.piece_subset_domain I i
+  have hFcont : ContinuousOn F s := by
+    exact (A.continuousOn_parametrization i).mono hsDomain
+  have hFinj : Set.InjOn F s := by
+    exact (A.injOn_parametrization i).mono hsDomain
+  have hFembed : MeasurableEmbedding (s.restrict F) :=
+    hFcont.measurableEmbedding hs hFinj
+  have hFbase : AEMeasurable F (volume.restrict s) :=
+    hFcont.aemeasurable hs
+  have hd : AEMeasurable d (volume.restrict s) := by
+    simpa only [d, F] using
+      AEMeasurable.mono_set hsDomain
+        (aemeasurable_riemannianChartDensity_of_contMDiffOn I
+          (A.parametrization i) (A.domain i) (A.isOpen_domain i)
+            (A.contMDiffOn_parametrization i))
+  have hdNN : AEMeasurable dNN (volume.restrict s) := by
+    exact hd.ennreal_toNNReal
+  have hplanarJ : Measurable planarJ := by
+    simp only [planarJ,
+      riemannianTwoJacobian_complex_eq_abs_det_fderiv]
+    exact ENNReal.measurable_ofReal.comp
+      (continuous_abs.measurable.comp
+        (ContinuousLinearMap.continuous_det.measurable.comp
+          (measurable_fderiv ℝ (G ∘ F))))
+  have hchain : planarJ =ᵐ[volume.restrict s]
+      fun z ↦ d z * q (F z) := by
+    filter_upwards [ae_restrict_mem hs,
+      A.ae_mdifferentiableAt_of_lipschitzWith I G hG i] with
+        z hz hGdiff
+    have hzDomain : z ∈ A.domain i := hsDomain hz
+    have hFdiff : MDifferentiableAt 𝓘(ℝ, ℂ) I F z := by
+      exact ((A.contMDiffOn_parametrization i z hzDomain).contMDiffAt
+        ((A.isOpen_domain i).mem_nhds hzDomain)).mdifferentiableAt
+          one_ne_zero
+    simpa only [planarJ, d, q, F] using
+      ofReal_riemannianTwoJacobian_comp_eq_chartDensity_mul
+        I F G z hFdiff hGdiff
+  have hproduct : AEMeasurable (fun z ↦ d z * q (F z))
+      (volume.restrict s) :=
+    hplanarJ.aemeasurable.restrict.congr hchain
+  have hdNNcoe : (fun z ↦ (dNN z : ℝ≥0∞)) = d := by
+    funext z
+    exact ENNReal.coe_toNNReal (by
+      simp [d, F, riemannianChartDensity])
+  have hqFweighted : AEMeasurable (fun z ↦ q (F z))
+      ((volume.restrict s).withDensity d) := by
+    rw [← hdNNcoe]
+    apply (aemeasurable_withDensity_ennreal_iff' hdNN).2
+    have hdNNcoe_apply : ∀ z, (dNN z : ℝ≥0∞) = d z :=
+      congrFun hdNNcoe
+    simpa only [hdNNcoe_apply] using hproduct
+  let ν : Measure ℂ := (volume.restrict s).withDensity d
+  have hFweighted : AEMeasurable F ν := by
+    exact hFbase.mono_ac
+      (withDensity_absolutelyContinuous (volume.restrict s) d)
+  have hνmem : ∀ᵐ z ∂ν, z ∈ s := by
+    exact (Measure.ae_le_iff_absolutelyContinuous.mpr
+      (withDensity_absolutelyContinuous (volume.restrict s) d))
+        (ae_restrict_mem hs)
+  have hνrestrict : ν.restrict s = ν :=
+    Measure.restrict_eq_self_of_ae_mem hνmem
+  let μs : Measure s := Measure.comap ((↑) : s → ℂ) ν
+  have hcoeMap : μs.map ((↑) : s → ℂ) = ν := by
+    rw [show μs = Measure.comap ((↑) : s → ℂ) ν by rfl,
+      map_comap_subtype_coe hs, hνrestrict]
+  have hqSubtype : AEMeasurable (q ∘ s.restrict F) μs := by
+    have hqRestrict : AEMeasurable (fun z ↦ q (F z)) (ν.restrict s) := by
+      rw [hνrestrict]
+      simpa only [ν] using hqFweighted
+    have hqComap :=
+      (aemeasurable_restrict_iff_comap_subtype hs).1 hqRestrict
+    simpa only [μs, Function.comp_apply, Set.restrict_apply] using hqComap
+  have hqMappedSubtype : AEMeasurable q (μs.map (s.restrict F)) :=
+    hFembed.aemeasurable_map_iff.2 hqSubtype
+  have hFafterCoe : AEMeasurable F
+      (μs.map ((↑) : s → ℂ)) := by
+    rw [hcoeMap]
+    exact hFweighted
+  have hmap : μs.map (s.restrict F) = ν.map F := by
+    change μs.map (F ∘ ((↑) : s → ℂ)) = ν.map F
+    rw [← hFafterCoe.map_map_of_aemeasurable
+      measurable_subtype_coe.aemeasurable]
+    exact congrArg (Measure.map F) hcoeMap
+  simpa only [riemannianChartAreaMeasure, q, F, s, ν, hmap] using
+    hqMappedSubtype
+
 end ControlledInteriorAtlas
 
 /-- The analytic area conclusion for a globally Lipschitz surface map and a
-controlled disjoint atlas.  Planar Rademacher now supplies manifold
-differentiability automatically; the remaining explicit regularity input is
-almost-everywhere measurability of the intrinsic Jacobian on each chart
-contribution. -/
+controlled disjoint atlas.  Planar Rademacher supplies manifold
+differentiability, and chartwise measurable embeddings transfer planar
+Jacobian measurability to the intrinsic two-Jacobian automatically. -/
 theorem complex_volume_le_lintegral_riemannianTwoJacobian_of_controlledInteriorAtlas
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
-    [PseudoEMetricSpace M] [MeasurableSpace M] [BorelSpace M]
+    [PseudoEMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
     [ChartedSpace H M] [IsManifold I 1 M]
     [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
     [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
     [IsRiemannianManifold I M] [Fact (Module.finrank ℝ E = 2)]
     (A : ControlledInteriorAtlas I M) (G : M → ℂ) (omega : Set ℂ)
     {KG : ℝ≥0} (hG : LipschitzWith KG G)
-    (hJacobianMeas : ∀ i, AEMeasurable
-      (fun x ↦ ENNReal.ofReal (riemannianTwoJacobian I G x))
-      (riemannianChartAreaMeasure I (A.parametrization i) (A.piece I i)))
     (hcoverage : omega ⊆ G '' I.interior M) :
     volume omega ≤
       ∫⁻ x, ENNReal.ofReal (riemannianTwoJacobian I G x)
@@ -395,7 +523,8 @@ theorem complex_volume_le_lintegral_riemannianTwoJacobian_of_controlledInteriorA
       (aemeasurable_riemannianChartDensity_of_contMDiffOn I
         (A.parametrization i) (A.domain i) (A.isOpen_domain i)
           (A.contMDiffOn_parametrization i))
-  · exact hJacobianMeas
+  · intro i
+    exact A.aemeasurable_riemannianTwoJacobian_of_lipschitzWith I G hG i
   · intro i
     filter_upwards [ae_restrict_mem (A.measurableSet_piece I i),
       A.ae_mdifferentiableAt_of_lipschitzWith I G hG i] with z hzPiece hzG
