@@ -14,7 +14,7 @@ Gromov's filling-area problem.
     theorems remain conditional on specific Riemannian-surface foundations.
 
 <div class="status-strip">
-  <div><strong>4,665</strong><span>project declarations accepted by the live axiom audit</span></div>
+  <div><strong>5,019</strong><span>project declarations accepted by the live axiom audit</span></div>
   <div><strong>Lean 4.29</strong><span>pinned toolchain with mathlib 4.29 and a fixed Jordan input</span></div>
   <div><strong>MIT</strong><span>public source, reproducible CI, and explicit claim boundaries</span></div>
 </div>
