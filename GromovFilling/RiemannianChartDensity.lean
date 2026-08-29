@@ -18,7 +18,7 @@ measurability hypothesis used by the chart-area and transition theorems.
 -/
 
 open Bundle MeasureTheory Set
-open scoped Bundle ENNReal Manifold NNReal
+open scoped Bundle ENNReal InnerProductSpace Manifold NNReal
 
 namespace GromovFilling
 
