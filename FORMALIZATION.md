@@ -13,12 +13,12 @@ Riemannian surfaces.
 
 | Manuscript item | Status | Lean scope and remaining boundary |
 |---|---|---|
-| Theorem 1.1, Universal Fourier bound | **Partial** | `Universal.lean`, `Certificates.lean`, and `Numerics.lean` verify the finite-to-infinite deduction and exact constant. Coverage and Jacobian input for an arbitrary Riemannian surface remains unverified. |
+| Theorem 1.1, Universal Fourier bound | **Partial** | `Universal.lean`, `Certificates.lean`, and `Numerics.lean` verify the finite-to-infinite deduction and exact constant. `RiemannianProfileFourierEnergy.lean` now proves the sharp pointwise finite odd-mode derivative-energy and intrinsic two-Jacobian budgets at every interior point satisfying the required angular and Fourier-map differentiability hypotheses. The remaining gap is to obtain those hypotheses almost everywhere on an arbitrary Riemannian filling surface and feed the resulting global Jacobian bound into the verified coverage/certificate chain. |
 | Theorem 1.2, Explicit nonlinear improvement | **Partial** | `Oriented.lean`, `BoundaryActionSeries.lean`, `Certificates.lean`, and `Numerics.lean` verify the scalar certificate and strict decimal conclusion from a calibrated Stokes/comass inequality. The global Riemannian-surface inequality remains unverified. |
 | Definition 2.1, odd profile and slack | **Verified** | Formalized in `DistanceProfile.lean` with antipodal, boundary, nonnegativity, and Lipschitz properties. |
 | Eikonal identity for boundary distance functions | **Partial** | The exact Euclidean derivative-norm identity used by the planar model is proved in `ProfileFourier.lean`. `RiemannianLipschitzDerivative.lean` proves the sharp intrinsic upper bound `‖D f‖ ≤ K` for every globally `K`-Lipschitz real-valued function at each interior differentiability point, and specializes it to boundary distance, odd profile, and antipodal slack. Riemannian Rademacher, the almost-everywhere norm equality for raw distance functions, and the product-measure bridge remain unformalized. |
-| Lemma 3.1, Differentiating the coefficients | **Partial** | `hasFDerivAt_oddProfile_weightedIntegral` and the Fourier-coordinate derivative theorems in `ProfileFourier.lean` prove weak differentiation on `ℂ`. The full surface-chart version is not formalized. |
-| Proposition 3.2, Orthogonal Jacobian budget | **Partial** | The algebraic Bessel/Jacobian inequality and genuine planar metric-profile derivative budget are verified in `JacobianBudget.lean` and `ProfileFourier.lean`; `RiemannianLipschitzDerivative.lean` supplies the sharp intrinsic pointwise derivative-norm input, while `RiemannianJacobianBudget.lean` proves the coordinate-free half-energy two-Jacobian bound and its finite-family pointwise and integrated forms. The parameterized derivative-energy estimate for the actual surface Fourier maps remains unformalized. |
+| Lemma 3.1, Differentiating the coefficients | **Partial** | `hasFDerivAt_oddProfile_weightedIntegral` and the Fourier-coordinate derivative theorems in `ProfileFourier.lean` prove weak differentiation on `ℂ`. `RiemannianProfileFourierEnergy.lean` constructs measurable angular derivative fields along clipped intrinsic tangent-chart lines and identifies each differentiable surface Fourier map derivative with its Fourier coefficient. The chartwise product-measure argument supplying the differentiability hypotheses almost everywhere on the surface remains unformalized. |
+| Proposition 3.2, Orthogonal Jacobian budget | **Partial** | The algebraic Bessel/Jacobian inequality and genuine planar metric-profile derivative budget are verified in `JacobianBudget.lean` and `ProfileFourier.lean`; `RiemannianLipschitzDerivative.lean` supplies the sharp intrinsic derivative-norm input; `RiemannianJacobianBudget.lean` proves the coordinate-free half-energy two-Jacobian bridge; and `RiemannianProfileFourierEnergy.lean` proves the exact pointwise total energy bound `≤ 2` and intrinsic Jacobian bound `≤ 1` for every finite odd-mode family under the natural differentiability hypotheses. Only the almost-everywhere surface globalization of those hypotheses remains. |
 | Lemma 4.1, Triangle-wave coefficients | **Verified** | Exact boundary Fourier coefficients are proved in `FourierBoundary.lean` and `ProfileFourier.lean`. |
 | Lemma 5.1, Entries of the Givens product | **Verified** | Entry, orthogonality, and energy identities are proved in `Givens.lean`. |
 | Lemma 5.2, First-harmonic dominance | **Verified** | All rowwise strict dominance estimates are proved in `Givens.lean` and exposed by `BoundaryCertificate.lean`. |
@@ -45,8 +45,9 @@ Riemannian surfaces.
 
 The following are tracked formalization gaps rather than hidden hypotheses:
 
-1. Rademacher/eikonal and parameter-integral differentiation on a
-   two-dimensional Riemannian manifold with boundary;
+1. the chartwise product-measure/Rademacher globalization that supplies the
+   already-formalized intrinsic parameter-integral differentiation hypotheses
+   almost everywhere on a two-dimensional Riemannian manifold with boundary;
 2. the global differential-form/Stokes/comass interface for the oriented
    argument.
 
