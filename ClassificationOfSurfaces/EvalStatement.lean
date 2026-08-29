@@ -5,6 +5,7 @@ Authors: ClassificationOfSurfaces contributors
 -/
 import ClassificationOfSurfaces.NormalForm
 import ClassificationOfSurfaces.GeometricTriangulationRealization
+import ClassificationOfSurfaces.Moise.EmbeddedComplexBoundary
 
 /-!
 # Lean Eval target theorem
