@@ -1,4 +1,5 @@
 import GromovFilling.RiemannianChartDisjointification
+import GromovFilling.RiemannianChartTransition
 import GromovFilling.RiemannianInteriorChart
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
 
@@ -510,6 +511,97 @@ theorem parametrization_comp_coordinateTransition_eventuallyEq
       A.parametrization i := by
   filter_upwards [(A.isOpen_overlapDomain I B i j).mem_nhds hz] with w hw
   exact A.parametrization_coordinateTransition I B i j hw
+
+/-- The Riemannian area contribution of a controlled chart agrees with that
+of any second controlled chart on their common image. -/
+theorem riemannianChartAreaMeasure_overlap
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [MeasurableSpace M] [BorelSpace M]
+    [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M] [Fact (Module.finrank ℝ E = 2)]
+    (A B : ControlledInteriorAtlas I M) (i j : ℕ) :
+    riemannianChartAreaMeasure I (A.parametrization i)
+        (A.overlapDomain I B i j) =
+      riemannianChartAreaMeasure I (B.parametrization j)
+        (B.overlapDomain I A j i) := by
+  let s : Set ℂ := A.overlapDomain I B i j
+  let e : ℂ → ℂ := A.coordinateTransition I B i j
+  let FA : ℂ → M := A.parametrization i
+  let FB : ℂ → M := B.parametrization j
+  have hsOpen : IsOpen s := by
+    simpa only [s] using A.isOpen_overlapDomain I B i j
+  have hs : MeasurableSet s := hsOpen.measurableSet
+  have hsA : s ⊆ A.domain i := by
+    simpa only [s] using A.overlapDomain_subset_domain I B i j
+  have himage : e '' s = B.overlapDomain I A j i := by
+    simpa only [e, s] using A.image_coordinateTransition_overlapDomain I B i j
+  have heDiff : ∀ z ∈ s, DifferentiableAt ℝ e z := by
+    intro z hz
+    exact A.differentiableAt_coordinateTransition I B i j hz
+  have heInj : Set.InjOn e s := by
+    simpa only [e, s] using A.injOn_coordinateTransition I B i j
+  have hFBdiff : ∀ z ∈ s,
+      MDifferentiableAt 𝓘(ℝ, ℂ) I FB (e z) := by
+    intro z hz
+    have hez : e z ∈ B.domain j :=
+      A.coordinateTransition_mem_domain I B i j hz
+    exact ((B.contMDiffOn_parametrization j (e z) hez).contMDiffAt
+      ((B.isOpen_domain j).mem_nhds hez)).mdifferentiableAt one_ne_zero
+  have hlocal : ∀ z ∈ s, (FB ∘ e) =ᶠ[𝓝 z] FA := by
+    intro z hz
+    simpa only [FA, FB, e, s] using
+      A.parametrization_comp_coordinateTransition_eventuallyEq I B i j hz
+  have hFAmeas : AEMeasurable FA (volume.restrict s) :=
+    ((A.continuousOn_parametrization i).mono hsA).aemeasurable hs
+  have hcompEq : (FB ∘ e) =ᵐ[volume.restrict s] FA := by
+    filter_upwards [ae_restrict_mem hs] with z hz
+    exact (hlocal z hz).self_of_nhds
+  have hFBcompMeas : AEMeasurable (FB ∘ e) (volume.restrict s) :=
+    hFAmeas.congr hcompEq.symm
+  have hFBmeas : AEMeasurable FB (volume.restrict (e '' s)) := by
+    rw [himage]
+    exact ((B.continuousOn_parametrization j).mono
+      (B.overlapDomain_subset_domain I A j i)).aemeasurable
+        (B.isOpen_overlapDomain I A j i).measurableSet
+  have hDensityA : AEMeasurable (riemannianChartDensity I FA)
+      (volume.restrict s) := by
+    exact AEMeasurable.mono_set hsA
+      (aemeasurable_riemannianChartDensity_of_contMDiffOn I
+        (A.parametrization i) (A.domain i) (A.isOpen_domain i)
+          (A.contMDiffOn_parametrization i))
+  have hDensityEq : riemannianChartDensity I (FB ∘ e)
+      =ᵐ[volume.restrict s] riemannianChartDensity I FA := by
+    filter_upwards [ae_restrict_mem hs] with z hz
+    exact riemannianChartDensity_congr_of_eventuallyEq
+      I (FB ∘ e) FA z (hlocal z hz)
+  have hDensityCompMeas : AEMeasurable
+      (riemannianChartDensity I (FB ∘ e)) (volume.restrict s) :=
+    hDensityA.congr hDensityEq.symm
+  have hDensityB : AEMeasurable (riemannianChartDensity I FB)
+      (volume.restrict (e '' s)) := by
+    rw [himage]
+    exact AEMeasurable.mono_set
+      (B.overlapDomain_subset_domain I A j i)
+      (aemeasurable_riemannianChartDensity_of_contMDiffOn I
+        (B.parametrization j) (B.domain j) (B.isOpen_domain j)
+          (B.contMDiffOn_parametrization j))
+  calc
+    riemannianChartAreaMeasure I (A.parametrization i)
+        (A.overlapDomain I B i j) =
+        riemannianChartAreaMeasure I FA s := by rfl
+    _ = riemannianChartAreaMeasure I (FB ∘ e) s :=
+      riemannianChartAreaMeasure_congr_of_eventuallyEqOn
+        I FA (FB ∘ e) s hs (fun z hz ↦ (hlocal z hz).symm)
+    _ = riemannianChartAreaMeasure I FB (e '' s) :=
+      riemannianChartAreaMeasure_comp_of_aemeasurable
+        I e FB s hs heDiff heInj hFBdiff hFBcompMeas hFBmeas
+          hDensityCompMeas hDensityB
+    _ = riemannianChartAreaMeasure I (B.parametrization j)
+        (B.overlapDomain I A j i) := by
+      rw [himage]
 
 /-- Pull the first-occurrence assignment on chart images back to each
 coordinate domain. -/

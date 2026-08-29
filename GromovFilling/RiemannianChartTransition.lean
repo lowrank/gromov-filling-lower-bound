@@ -1,4 +1,4 @@
-import GromovFilling.RiemannianChartArea
+import GromovFilling.RiemannianChartDensity
 
 /-!
 # Reparametrization invariance of Riemannian chart-area contributions
@@ -13,7 +13,7 @@ to instantiate the result with standard smooth manifold charts.
 -/
 
 open Bundle MeasureTheory Set
-open scoped Bundle ENNReal Manifold NNReal
+open scoped Bundle ENNReal Manifold NNReal Topology
 
 namespace GromovFilling
 
@@ -22,6 +22,42 @@ noncomputable section
 local instance complexFinrankTwoFactChartTransition :
     Fact (Module.finrank ℝ ℂ = 2) :=
   Complex.finrank_real_complex_fact
+
+/-- A chart-area contribution depends only on the local germ of its
+parametrization along the measurable coordinate set. -/
+theorem riemannianChartAreaMeasure_congr_of_eventuallyEqOn
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [MeasurableSpace M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)]
+    (F G : ℂ → M) (s : Set ℂ) (hs : MeasurableSet s)
+    (hlocal : ∀ z ∈ s, F =ᶠ[𝓝 z] G) :
+    riemannianChartAreaMeasure I F s =
+      riemannianChartAreaMeasure I G s := by
+  have hFG : F =ᵐ[volume.restrict s] G := by
+    filter_upwards [ae_restrict_mem hs] with z hz
+    exact (hlocal z hz).self_of_nhds
+  have hDensity : riemannianChartDensity I F =ᵐ[volume.restrict s]
+      riemannianChartDensity I G := by
+    filter_upwards [ae_restrict_mem hs] with z hz
+    exact riemannianChartDensity_congr_of_eventuallyEq
+      I F G z (hlocal z hz)
+  unfold riemannianChartAreaMeasure
+  have hweighted :=
+    (withDensity_absolutelyContinuous (volume.restrict s)
+      (riemannianChartDensity I F)).ae_le hFG
+  calc
+    Measure.map F
+        ((volume.restrict s).withDensity (riemannianChartDensity I F)) =
+        Measure.map G
+          ((volume.restrict s).withDensity (riemannianChartDensity I F)) :=
+      Measure.map_congr hweighted
+    _ = Measure.map G
+          ((volume.restrict s).withDensity (riemannianChartDensity I G)) := by
+      rw [withDensity_congr_ae hDensity]
 
 /-- The density of a reparametrized surface chart is the old chart density
 times the absolute determinant of the planar coordinate change. -/
