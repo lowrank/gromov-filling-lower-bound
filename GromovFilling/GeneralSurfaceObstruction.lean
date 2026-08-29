@@ -498,6 +498,24 @@ theorem hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBou
     (homeomorphCylinderStripGluedPointBoundaryObstructionData_of_pairing
       P e hboundary)
 
+/-- Exact existential handoff expected from a boundary-faithful compact-surface
+classification theorem.  Once the theorem supplies some polygon-side pairing
+and a homeomorphism carrying its free loop to `boundary`, the lower-loop
+obstruction is entirely internal and the target boundary has the odd-degree
+obstruction. -/
+theorem hasOddBoundaryDegreeObstruction_of_exists_homeomorph_cylinderStripGluedPointBoundary_pairing
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (hpresentation :
+      ∃ m : ℕ, ∃ P : CylinderStripLowerBoundaryPairing m,
+        ∃ e : CylinderStripGluedPointSpace P ≃ₜ X,
+          boundary = e ∘ cylinderStripGluedPointBoundary P) :
+    HasOddBoundaryDegreeObstruction boundary := by
+  obtain ⟨m, P, e, hboundary⟩ := hpresentation
+  exact
+    hasOddBoundaryDegreeObstruction_of_homeomorph_cylinderStripGluedPointBoundary_pairing
+      P e hboundary
+
 end
 
 end GromovFilling

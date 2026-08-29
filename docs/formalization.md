@@ -61,6 +61,15 @@ Consequently, the free boundary has the odd-degree obstruction for every
 polygon schema, and the existing continuous-map and homeomorphism interfaces
 derive their lower obstruction automatically.
 
+The theorem
+`hasOddBoundaryDegreeObstruction_of_exists_homeomorph_cylinderStripGluedPointBoundary_pairing`
+now states the precise classification handoff without asking the caller to
+supply any obstruction: it needs only an arbitrary side pairing and a
+homeomorphism that carries the schema's free loop to the given boundary. The
+remaining Lemma 5.4 topology task is to produce that boundary-faithful
+existential presentation from the compact connected one-boundary manifold
+hypotheses.
+
 ## Partial headline statements
 
 The finite universal certificate and the nonlinear oriented certificate are
