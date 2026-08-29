@@ -38,7 +38,10 @@ theorem subset_image_interior_of_subset_range_of_boundary_mapsTo
   refine ⟨x, ?_, hx⟩
   rw [← I.compl_boundary]
   intro hxBoundary
-  exact Set.disjoint_left.1 hdisjoint hy (hboundary hxBoundary)
+  have hyCurve : y ∈ curve := by
+    rw [← hx]
+    exact hboundary hxBoundary
+  exact Set.disjoint_left.1 hdisjoint hy hyCurve
 
 /-- Jordan-partition specialization of
 `subset_image_interior_of_subset_range_of_boundary_mapsTo` for the first
@@ -75,7 +78,7 @@ theorem IsJordanPartition.region₁_subset_image_interior_of_boundary_parametriz
   · intro x hx
     rw [← hboundaryRange] at hx
     rcases hx with ⟨t, rfl⟩
-    exact ⟨t, htrace t⟩
+    exact ⟨t, (htrace t).symm⟩
   · exact hcoverage
 
 end
