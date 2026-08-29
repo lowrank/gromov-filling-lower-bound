@@ -29,6 +29,7 @@ import GromovFilling.JacobianBudget
 import GromovFilling.JordanBoundary
 import GromovFilling.MetricPlanarCoverage
 import GromovFilling.ModTwoDegree
+import GromovFilling.NormalFormBoundaryObstruction
 import GromovFilling.Numerics
 import GromovFilling.OneHighLeg
 import GromovFilling.Oriented

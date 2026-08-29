@@ -23,7 +23,7 @@ Riemannian surfaces.
 | Lemma 5.1, Entries of the Givens product | **Verified** | Entry, orthogonality, and energy identities are proved in `Givens.lean`. |
 | Lemma 5.2, First-harmonic dominance | **Verified** | All rowwise strict dominance estimates are proved in `Givens.lean` and exposed by `BoundaryCertificate.lean`. |
 | Lemma 5.3, Dominant first harmonic | **Verified** | Injectivity, degree one, polynomial disk extension, Jordan-region identification, and exact Fourier area are proved across `DominantHarmonic*.lean`, `BoundaryDegree*.lean`, `GivensDisk*.lean`, and `JordanBoundary.lean`. |
-| Lemma 5.4, Jordan coverage without orientation | **Partial** | The finite mod-2 obstruction, arbitrary polygon-side pairing theorem, circle-homeomorphism reparametrization invariance, and glued-schema coverage deductions are verified. `exists_full_support_boundary_facewise_regular_partial_triangulation` retains the complete boundary-aware Radó output, while `compact_connected_surface_classification` gives a faithful sphere/orientable/nonorientable polygonal normal-form homeomorphism under the exact compact connected half-space-manifold hypotheses. The remaining topology output is to prove that the supplied one-boundary parametrization selects the unique free polygon loop and feed that relative presentation to the relaxed handoff. |
+| Lemma 5.4, Jordan coverage without orientation | **Partial** | The finite mod-2 obstruction, arbitrary polygon-side pairing theorem, circle-homeomorphism reparametrization invariance, and glued-schema coverage deductions are verified. `exists_full_support_boundary_facewise_regular_partial_triangulation` retains the complete boundary-aware Radó output, while `compact_connected_surface_classification` gives a faithful sphere/orientable/nonorientable polygonal normal-form homeomorphism. `hasOddBoundaryDegreeObstruction_orientableNormalBoundaryLoop` and `hasOddBoundaryDegreeObstruction_nonOrientableNormalBoundaryLoop` now verify the obstruction on every admissible one-boundary canonical normal form. The remaining topology output is to prove that the supplied one-boundary parametrization selects that unique free polygon loop and transport the result through the classification homeomorphism. |
 | Proposition 5.5, Finite universal certificate | **Partial** | `finite_universal_certificate` and its certificate wrappers verify the deduction from coverage plus Jacobian budgets. Those geometric budgets are not yet supplied for arbitrary Riemannian surfaces. |
 | Theorem 6.1, Antipodal defect | **Partial** | The pointwise defect budget and additive certificate propagation are verified on planar/chart interfaces. Intrinsic surface globalization remains unverified. |
 | Lemma 7.1, Hilbert-valued Stokes | **Partial** | `ClosedOneForm.lean` proves fixed-endpoint homotopy invariance and disk/square Stokes/comass interfaces in finite-dimensional Euclidean targets. The infinite-dimensional Hilbert-valued surface theorem is not formalized. |
@@ -72,9 +72,10 @@ at commit `e3c7230fe78d7b056a415d9ecae6f77887046b32` is vendored under
 geometric triangulation, the strengthened wrapper retains the
 boundary-facewise invariant maintained during the proof, and its final
 classification theorem gives a homeomorphism to a faithful polygonal normal
-form. The classification theorem does not yet prove that a chosen boundary
-parametrization corresponds to the unique free loop, so that relative
-statement remains open.
+form. The canonical orientable and nonorientable free loops now carry the
+verified odd boundary-degree obstruction. The classification theorem does not
+yet prove that a chosen boundary parametrization corresponds to that unique
+free loop, so that relative statement remains open.
 
 ## Current trust evidence
 
