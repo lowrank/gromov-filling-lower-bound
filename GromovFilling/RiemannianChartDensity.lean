@@ -49,12 +49,12 @@ def riemannianChartGramDet
     [TopologicalSpace M] [ChartedSpace H M]
     [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
     (F : ℂ → M) (z : ℂ) : ℝ :=
-  ⟦riemannianChartGramVector I F 0 z,
-      riemannianChartGramVector I F 0 z⟧_ℝ *
-    ⟦riemannianChartGramVector I F 1 z,
-      riemannianChartGramVector I F 1 z⟧_ℝ -
-    ⟦riemannianChartGramVector I F 0 z,
-      riemannianChartGramVector I F 1 z⟧_ℝ ^ 2
+  ⟪riemannianChartGramVector I F 0 z,
+      riemannianChartGramVector I F 0 z⟫_ℝ *
+    ⟪riemannianChartGramVector I F 1 z,
+      riemannianChartGramVector I F 1 z⟫_ℝ -
+    ⟪riemannianChartGramVector I F 0 z,
+      riemannianChartGramVector I F 1 z⟫_ℝ ^ 2
 
 private theorem tangentSpace_finrank_eq_two_chartDensity
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
