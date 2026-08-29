@@ -23,7 +23,7 @@ Riemannian surfaces.
 | Lemma 5.1, Entries of the Givens product | **Verified** | Entry, orthogonality, and energy identities are proved in `Givens.lean`. |
 | Lemma 5.2, First-harmonic dominance | **Verified** | All rowwise strict dominance estimates are proved in `Givens.lean` and exposed by `BoundaryCertificate.lean`. |
 | Lemma 5.3, Dominant first harmonic | **Verified** | Injectivity, degree one, polynomial disk extension, Jordan-region identification, and exact Fourier area are proved across `DominantHarmonic*.lean`, `BoundaryDegree*.lean`, `GivensDisk*.lean`, and `JordanBoundary.lean`. |
-| Lemma 5.4, Jordan coverage without orientation | **Partial** | The finite mod-2 obstruction, arbitrary polygon-side pairing theorem, circle-homeomorphism reparametrization invariance, and glued-schema coverage deductions are verified. `exists_full_support_boundary_facewise_regular_partial_triangulation` retains the complete boundary-aware Radó output, while `compact_connected_surface_classification` gives a faithful sphere/orientable/nonorientable polygonal normal-form homeomorphism. `hasOddBoundaryDegreeObstruction_orientableNormalBoundaryLoop` and `hasOddBoundaryDegreeObstruction_nonOrientableNormalBoundaryLoop` now verify the obstruction on every admissible one-boundary canonical normal form. The remaining topology output is to prove that the supplied one-boundary parametrization selects that unique free polygon loop and transport the result through the classification homeomorphism. |
+| Lemma 5.4, Jordan coverage without orientation | **Partial** | The finite mod-2 obstruction, arbitrary polygon-side pairing theorem, circle-homeomorphism reparametrization invariance, and glued-schema coverage deductions are verified. `exists_full_support_boundary_facewise_regular_partial_triangulation` retains the boundary-aware Radó output, while `exists_admissible_normalForm_boundaryRealizationEquivData` proves that every signed, unoriented, P1, P2, and composite Gallier--Xu normalization homeomorphism preserves the complete once-used-side locus. `hasOddBoundaryDegreeObstruction_orientableNormalBoundaryLoop` and `hasOddBoundaryDegreeObstruction_nonOrientableNormalBoundaryLoop` verify the obstruction on every admissible one-boundary canonical normal form. The remaining topology output is to identify the Radó once-used-side locus with the ambient manifold boundary, transport the canonical locus through the raw-quotient adapter, and prove that the supplied one-component parametrization selects the unique free loop. |
 | Proposition 5.5, Finite universal certificate | **Partial** | `finite_universal_certificate` and its certificate wrappers verify the deduction from coverage plus Jacobian budgets. Those geometric budgets are not yet supplied for arbitrary Riemannian surfaces. |
 | Theorem 6.1, Antipodal defect | **Partial** | The pointwise defect budget and additive certificate propagation are verified on planar/chart interfaces. Intrinsic surface globalization remains unverified. |
 | Lemma 7.1, Hilbert-valued Stokes | **Partial** | `ClosedOneForm.lean` proves fixed-endpoint homotopy invariance and disk/square Stokes/comass interfaces in finite-dimensional Euclidean targets. The infinite-dimensional Hilbert-valued surface theorem is not formalized. |
@@ -45,10 +45,11 @@ Riemannian surfaces.
 
 The following are tracked formalization gaps rather than hidden hypotheses:
 
-1. identify the supplied one-boundary parametrization with the unique free
-   polygon loop in the verified compact-surface normal form (equivalently,
-   extract that loop from the full-support boundary-facewise-regular Radó
-   triangulation), and produce the presentation consumed by
+1. identify the Radó realization's once-used-side locus with the ambient
+   manifold boundary, carry the now-verified boundary-preserving
+   finite-cyclic normalization through the canonical raw-quotient adapter,
+   and identify the supplied one-boundary parametrization with the resulting
+   unique free loop, producing the presentation consumed by
    `hasOddBoundaryDegreeObstruction_of_exists_homeomorph_cylinderStripGluedPointBoundary_pairing_reparametrized`;
 2. Rademacher/eikonal and parameter-integral differentiation on a
    two-dimensional Riemannian manifold with boundary;
@@ -69,13 +70,13 @@ The 131-module transitive closure of
 at commit `e3c7230fe78d7b056a415d9ecae6f77887046b32` is vendored under
 `ClassificationOfSurfaces/`, with explicit Apache-2.0 provenance and Lean
 4.29 compatibility notices. Its Radó theorem proves the existence of a finite
-geometric triangulation, the strengthened wrapper retains the
-boundary-facewise invariant maintained during the proof, and its final
-classification theorem gives a homeomorphism to a faithful polygonal normal
-form. The canonical orientable and nonorientable free loops now carry the
-verified odd boundary-degree obstruction. The classification theorem does not
-yet prove that a chosen boundary parametrization corresponds to that unique
-free loop, so that relative statement remains open.
+geometric triangulation, and the strengthened wrapper retains the
+boundary-facewise invariant maintained during the proof. The new relative
+normalization theorem proves that the faithful polygonal homeomorphism carries
+the complete once-used-side locus to the canonical once-used-side locus, and
+the canonical orientable and nonorientable free loops carry the verified odd
+boundary-degree obstruction. The two endpoint identifications with the
+ambient manifold boundary and the raw representative quotient remain open.
 
 ## Current trust evidence
 

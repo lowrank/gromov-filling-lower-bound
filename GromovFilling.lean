@@ -2,6 +2,7 @@ import GromovFilling.BoundaryActionSeries
 import GromovFilling.BoundaryCertificate
 import GromovFilling.BoundaryDegree
 import GromovFilling.BoundaryDegreeComponents
+import GromovFilling.BoundaryLocusClassification
 import GromovFilling.BoundarySubdivisionDegree
 import GromovFilling.Certificates
 import GromovFilling.CircleDegree
