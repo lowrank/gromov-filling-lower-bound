@@ -49,6 +49,20 @@ integer edge turns, and the signed boundary-turn identity are constructed in
 Lean. The general glued-pairing theorem covers both preserving and reversing
 side identifications.
 
+## Resonance trace arithmetic
+
+The scalar series underlying the exact-trace calculation is now verified:
+
+$$
+\sum_{j,k\ge 0}\frac{16}{\pi}\frac{2k+1}{(2k+1+2j)^4}
+=\frac{\pi}{2}+\frac{7\zeta(3)}{\pi}+\frac{\pi^3}{24}.
+$$
+
+Lean proves summability and the nonnegative Tonelli/antidiagonal regrouping,
+not merely the final arithmetic identity. The separate construction of the
+infinite matrix as a positive trace-class operator on ℓ², and the proof that
+its operator trace equals this scalar series, remain open.
+
 ## Planar area and explicit constants
 
 For Lipschitz maps on planar pieces, the project proves a genuine area
@@ -72,4 +86,3 @@ area > 5.38982446
 Both headline surface statements remain conditional until the intrinsic
 Riemannian globalization described on the
 [formalization page](formalization.md) is supplied.
-
