@@ -91,9 +91,11 @@ For Lipschitz maps on planar pieces, the project proves a genuine area
 inequality from Rademacher's theorem and mathlib's Jacobian image bound. It
 then composes coverage, exact Fourier area, and the common derivative-energy
 budget. The pointwise two-dimensional Riemannian Jacobian is now defined
-intrinsically, proved independent of orthonormal bases, and identified exactly
-with this planar absolute-determinant density. What remains is the area measure
-and chartwise change-of-variables theorem for a general Riemannian surface.
+intrinsically between arbitrary Riemannian surfaces, proved independent of
+orthonormal bases and multiplicative under the manifold chain rule, and
+identified exactly with this planar absolute-determinant density. What remains
+is construction of the area measure and the chart-integration/change-of-
+variables globalization theorem for a general Riemannian surface.
 
 The orientation-free constant is
 
