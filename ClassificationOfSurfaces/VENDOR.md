@@ -6,7 +6,7 @@ formalization.
 
 - Upstream: <https://github.com/mccorvie/classification-of-surfaces>
 - Upstream commit: `e3c7230fe78d7b056a415d9ecae6f77887046b32`
-- Imported source files: 131
+- Imported source files: 132
 - Upstream license: Apache-2.0; see [`LICENSE`](LICENSE)
 - Compatibility target: Lean 4.29.0 and mathlib v4.29.0
 
