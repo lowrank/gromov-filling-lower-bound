@@ -61,6 +61,8 @@ structure ControlledInteriorAtlas
       DifferentiableAt ℝ (G ∘ parametrization i) z →
         MDifferentiableAt I 𝓘(ℝ, ℂ) G (parametrization i z)
   isOpen_image : ∀ i, IsOpen (parametrization i '' domain i)
+  image_subset_interior :
+    ∀ i, parametrization i '' domain i ⊆ I.interior M
   lipschitzOnWith_parametrization :
     ∀ i, LipschitzOnWith (lipschitzConstant i)
       (parametrization i) (domain i)
@@ -159,6 +161,7 @@ def controlledInteriorAtlasOfFinCover
       mdifferentiableAt_coordinate := ?_
       mdifferentiableAt_of_differentiableAt_comp := ?_
       isOpen_image := ?_
+      image_subset_interior := ?_
       lipschitzOnWith_parametrization := ?_
       interior_subset_iUnion_image := ?_
       eventually_domain_eq_empty := ?_ }
@@ -282,6 +285,18 @@ def controlledInteriorAtlasOfFinCover
       exact (isOpen_controlledInteriorChartNeighborhood I
         (chosenInteriorChartControl I (centers ⟨i, hi⟩))).inter
           (I.isOpen_interior one_ne_zero)
+    · simp [F, domains, finControlledInteriorParametrization,
+        finControlledInteriorDomain, hi]
+  · intro i
+    by_cases hi : i < n
+    · rw [show F i = interiorComplexExtChart I e (centers ⟨i, hi⟩) by
+        simp [F, finControlledInteriorParametrization, hi]]
+      rw [show domains i =
+          chosenControlledInteriorComplexChartDomain I e (centers ⟨i, hi⟩) by
+        simp [domains, finControlledInteriorDomain, hi]]
+      rw [chosenControlledInteriorComplexChartDomain,
+        image_controlledInteriorComplexChartDomain I e]
+      exact inter_subset_right
     · simp [F, domains, finControlledInteriorParametrization,
         finControlledInteriorDomain, hi]
   · intro i
@@ -644,6 +659,125 @@ theorem measurableSet_piece
     A.parametrization A.domain A.isOpen_domain
       A.continuousOn_parametrization A.isOpen_image i
 
+/-- The manifold image assigned to one disjoint controlled chart piece. -/
+def imagePiece
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A : ControlledInteriorAtlas I M) (i : ℕ) : Set M :=
+  A.parametrization i '' A.piece I i
+
+/-- Every disjoint controlled chart image is Borel measurable. -/
+theorem measurableSet_imagePiece
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
+    [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A : ControlledInteriorAtlas I M) (i : ℕ) :
+    MeasurableSet (A.imagePiece I i) := by
+  exact (A.measurableSet_piece I i).image_of_continuousOn_injOn
+    ((A.continuousOn_parametrization i).mono
+      (A.piece_subset_domain I i))
+    ((A.injOn_parametrization i).mono (A.piece_subset_domain I i))
+
+/-- Restricting one chart-piece contribution to a second chart-piece image
+is equivalent to restricting the full open-overlap contribution to their
+common assigned image. -/
+theorem restrict_chartAreaMeasure_piece_eq_restrict_overlap
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
+    [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M] [Fact (Module.finrank ℝ E = 2)]
+    (A B : ControlledInteriorAtlas I M) (i j : ℕ) :
+    (riemannianChartAreaMeasure I (A.parametrization i) (A.piece I i)).restrict
+        (B.imagePiece I j) =
+      (riemannianChartAreaMeasure I (A.parametrization i)
+        (A.overlapDomain I B i j)).restrict
+          (A.imagePiece I i ∩ B.imagePiece I j) := by
+  have hpiece : MeasurableSet (A.piece I i) :=
+    A.measurableSet_piece I i
+  have hoverlap : MeasurableSet (A.overlapDomain I B i j) :=
+    (A.isOpen_overlapDomain I B i j).measurableSet
+  have hBimage : MeasurableSet (B.imagePiece I j) :=
+    B.measurableSet_imagePiece I j
+  have hpair : MeasurableSet (A.imagePiece I i ∩ B.imagePiece I j) :=
+    (A.measurableSet_imagePiece I i).inter hBimage
+  have hFpiece : AEMeasurable (A.parametrization i)
+      (volume.restrict (A.piece I i)) :=
+    ((A.continuousOn_parametrization i).mono
+      (A.piece_subset_domain I i)).aemeasurable hpiece
+  have hFoverlap : AEMeasurable (A.parametrization i)
+      (volume.restrict (A.overlapDomain I B i j)) :=
+    ((A.continuousOn_parametrization i).mono
+      (A.overlapDomain_subset_domain I B i j)).aemeasurable hoverlap
+  have hcoord :
+      A.piece I i ∩ A.parametrization i ⁻¹' (B.imagePiece I j) =
+        A.overlapDomain I B i j ∩ A.parametrization i ⁻¹'
+          (A.imagePiece I i ∩ B.imagePiece I j) := by
+    ext z
+    constructor
+    · rintro ⟨hzPiece, hzB⟩
+      refine ⟨⟨A.piece_subset_domain I i hzPiece, ?_⟩, ?_⟩
+      · exact image_mono (B.piece_subset_domain I j) hzB
+      · exact ⟨⟨z, hzPiece, rfl⟩, hzB⟩
+    · rintro ⟨hzOverlap, hzA, hzB⟩
+      rcases hzA with ⟨w, hwPiece, hwz⟩
+      have hzw : z = w := A.injOn_parametrization i hzOverlap.1
+        (A.piece_subset_domain I i hwPiece) hwz.symm
+      exact ⟨hzw ▸ hwPiece, hzB⟩
+  rw [restrict_riemannianChartAreaMeasure I (A.parametrization i)
+      (A.piece I i) hpiece (B.imagePiece I j) hBimage hFpiece,
+    restrict_riemannianChartAreaMeasure I (A.parametrization i)
+      (A.overlapDomain I B i j) hoverlap
+      (A.imagePiece I i ∩ B.imagePiece I j) hpair hFoverlap,
+    hcoord]
+
+/-- On every pair of disjoint atlas pieces, the two chart contributions
+agree after restriction to their common image. -/
+theorem restrict_chartAreaMeasure_piece_comm
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
+    [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M] [Fact (Module.finrank ℝ E = 2)]
+    (A B : ControlledInteriorAtlas I M) (i j : ℕ) :
+    (riemannianChartAreaMeasure I (A.parametrization i) (A.piece I i)).restrict
+        (B.imagePiece I j) =
+      (riemannianChartAreaMeasure I (B.parametrization j) (B.piece I j)).restrict
+        (A.imagePiece I i) := by
+  calc
+    (riemannianChartAreaMeasure I (A.parametrization i)
+        (A.piece I i)).restrict (B.imagePiece I j) =
+        (riemannianChartAreaMeasure I (A.parametrization i)
+          (A.overlapDomain I B i j)).restrict
+            (A.imagePiece I i ∩ B.imagePiece I j) :=
+      A.restrict_chartAreaMeasure_piece_eq_restrict_overlap I B i j
+    _ = (riemannianChartAreaMeasure I (B.parametrization j)
+          (B.overlapDomain I A j i)).restrict
+            (A.imagePiece I i ∩ B.imagePiece I j) := by
+      rw [A.riemannianChartAreaMeasure_overlap I B i j]
+    _ = (riemannianChartAreaMeasure I (B.parametrization j)
+          (B.overlapDomain I A j i)).restrict
+            (B.imagePiece I j ∩ A.imagePiece I i) := by
+      rw [inter_comm]
+    _ = (riemannianChartAreaMeasure I (B.parametrization j)
+          (B.piece I j)).restrict (A.imagePiece I i) :=
+      (B.restrict_chartAreaMeasure_piece_eq_restrict_overlap I A j i).symm
+
 /-- Distinct atlas pieces have disjoint images in the manifold. -/
 theorem pairwise_disjoint_image_piece
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
@@ -684,6 +818,24 @@ theorem interior_subset_iUnion_image_piece
   rw [A.iUnion_image_piece I]
   exact A.interior_subset_iUnion_image
 
+/-- The disjoint controlled chart images form an exact measurable partition
+of the manifold interior. -/
+theorem iUnion_imagePiece_eq_interior
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A : ControlledInteriorAtlas I M) :
+    (⋃ i, A.imagePiece I i) = I.interior M := by
+  apply Set.Subset.antisymm
+  · intro y hy
+    rcases Set.mem_iUnion.mp hy with ⟨i, hi⟩
+    exact A.image_subset_interior i
+      (image_mono (A.piece_subset_domain I i) hi)
+  · simpa only [imagePiece] using A.interior_subset_iUnion_image_piece I
+
 /-- The Riemannian area measure contributed by a disjoint controlled
 interior atlas. -/
 def areaMeasure
@@ -696,6 +848,83 @@ def areaMeasure
     [IsRiemannianManifold I M] [Fact (Module.finrank ℝ E = 2)]
     (A : ControlledInteriorAtlas I M) : Measure M :=
   riemannianAtlasAreaMeasure I A.parametrization (A.piece I)
+
+/-- A single chart-piece contribution decomposes over the disjoint image
+partition supplied by any second controlled atlas. -/
+theorem chartAreaMeasure_piece_eq_sum_restrict_imagePiece
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
+    [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M] [Fact (Module.finrank ℝ E = 2)]
+    (A B : ControlledInteriorAtlas I M) (i : ℕ) :
+    riemannianChartAreaMeasure I (A.parametrization i) (A.piece I i) =
+      Measure.sum (fun j ↦
+        (riemannianChartAreaMeasure I (A.parametrization i)
+          (A.piece I i)).restrict (B.imagePiece I j)) := by
+  let μi : Measure M :=
+    riemannianChartAreaMeasure I (A.parametrization i) (A.piece I i)
+  have hpiece : MeasurableSet (A.piece I i) := A.measurableSet_piece I i
+  have hF : AEMeasurable (A.parametrization i)
+      (volume.restrict (A.piece I i)) :=
+    ((A.continuousOn_parametrization i).mono
+      (A.piece_subset_domain I i)).aemeasurable hpiece
+  have hsupport : μi.restrict (I.interior M) = μi := by
+    exact restrict_riemannianChartAreaMeasure_of_image_subset
+      I (A.parametrization i) (A.piece I i) hpiece
+        (I.interior M) (I.isOpen_interior one_ne_zero).measurableSet hF
+        ((image_mono (A.piece_subset_domain I i)).trans
+          (A.image_subset_interior i))
+  have hdisjoint : Pairwise (Disjoint on fun j ↦ B.imagePiece I j) := by
+    simpa only [imagePiece] using B.pairwise_disjoint_image_piece I
+  have hpartition : μi.restrict (I.interior M) =
+      Measure.sum (fun j ↦ μi.restrict (B.imagePiece I j)) := by
+    rw [← B.iUnion_imagePiece_eq_interior I]
+    exact Measure.restrict_iUnion hdisjoint (B.measurableSet_imagePiece I)
+  exact hsupport.symm.trans hpartition
+
+/-- The Riemannian surface-area measure assembled from controlled interior
+charts is independent of the selected controlled atlas. -/
+theorem areaMeasure_eq
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
+    [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M] [Fact (Module.finrank ℝ E = 2)]
+    (A B : ControlledInteriorAtlas I M) :
+    A.areaMeasure I = B.areaMeasure I := by
+  let μA : ℕ → Measure M := fun i ↦
+    riemannianChartAreaMeasure I (A.parametrization i) (A.piece I i)
+  let μB : ℕ → Measure M := fun j ↦
+    riemannianChartAreaMeasure I (B.parametrization j) (B.piece I j)
+  change Measure.sum μA = Measure.sum μB
+  calc
+    Measure.sum μA =
+        Measure.sum (fun i ↦ Measure.sum (fun j ↦
+          (μA i).restrict (B.imagePiece I j))) := by
+      apply congrArg Measure.sum
+      funext i
+      exact A.chartAreaMeasure_piece_eq_sum_restrict_imagePiece I B i
+    _ = Measure.sum (fun j ↦ Measure.sum (fun i ↦
+          (μA i).restrict (B.imagePiece I j))) :=
+      Measure.sum_comm (fun i j ↦ (μA i).restrict (B.imagePiece I j))
+    _ = Measure.sum (fun j ↦ Measure.sum (fun i ↦
+          (μB j).restrict (A.imagePiece I i))) := by
+      apply congrArg Measure.sum
+      funext j
+      apply congrArg Measure.sum
+      funext i
+      exact A.restrict_chartAreaMeasure_piece_comm I B i j
+    _ = Measure.sum μB := by
+      apply congrArg Measure.sum
+      funext j
+      exact (B.chartAreaMeasure_piece_eq_sum_restrict_imagePiece I A j).symm
 
 /-- A globally Lipschitz surface map is manifold-differentiable almost
 everywhere along every disjoint controlled chart piece.  Rademacher is
