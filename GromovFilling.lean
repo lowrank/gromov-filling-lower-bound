@@ -22,6 +22,7 @@ import GromovFilling.FinePolygonalModel
 import GromovFilling.FourierArea
 import GromovFilling.FourierBessel
 import GromovFilling.FourierBoundary
+import GromovFilling.FourierCorrelation
 import GromovFilling.GeneralSurfaceObstruction
 import GromovFilling.GeometricCertificates
 import GromovFilling.GeometricClosedOneForm
