@@ -70,16 +70,13 @@ caller assumption.
 
 ## Current frontier
 
-The Lemma 5.4 compact-surface boundary obstruction is now end-to-end verified
-in `GromovFilling.Lemma54`. Three analytic bridges remain outside the verified
-scope:
+Lemma 5.4 is now end-to-end verified: compact-surface parity, arbitrary Jordan
+bounded-component coverage, interior preimages, and the canonical Riemannian
+two-Jacobian area inequality. Two analytic bridges remain outside the verified
+scope of the headline surface bounds:
 
 1. Riemannian eikonal and parameter-integral differentiation;
-2. an overlap-invariant canonical Riemannian area measure (intrinsic `J₂`, its
-   chain rule, the exact one-chart weighted measure/integral transfer, and the
-   countable-atlas coverage inequality are verified; standard-chart
-   interfaces, overlap invariance, and boundary charts remain);
-3. a global differential-form Stokes/comass interface for the oriented case.
+2. a global differential-form Stokes/comass interface for the oriented case.
 
 The repository keeps these foundations visible. It does not replace them with
 project axioms or encode an open target as a hypothesis and call the result a

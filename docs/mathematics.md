@@ -96,12 +96,11 @@ orthonormal bases and multiplicative under the manifold chain rule, and
 identified exactly with this planar absolute-determinant density. The
 chart-induced area measure, its exact weighted `lintegral` transfer, the local
 surface area inequality, and its summation over a countable covering chart
-family are verified. Exact integral and measure invariance under injective
-differentiable complex-coordinate reparametrizations is also verified under
-explicit local almost-everywhere measurability hypotheses. The remaining step
-is to prove intrinsic Jacobian-density measurability for standard smooth
-charts, treat half-space boundary charts, and identify a non-overcounting
-atlas construction with the canonical global area measure.
+family are verified. Standard smooth interior charts supply the required
+measurability; a finite controlled atlas is disjointified to avoid counting
+overlaps; exact chart-transition invariance identifies its measure with the
+canonical Riemannian surface-area measure. Combined with Jordan--Schönflies
+coverage, this proves the full orientation-free Lemma 5.4 inequality.
 
 The orientation-free constant is
 
@@ -116,6 +115,7 @@ conclusion
 area > 5.38982446
 ```
 
-Both headline surface statements remain conditional until the intrinsic
-Riemannian globalization described on the
-[formalization page](formalization.md) is supplied.
+Both headline surface bounds remain conditional on the eikonal/parameter-
+integral bridge, and the oriented bound additionally needs the global
+Stokes/comass interface described on the
+[formalization page](formalization.md).

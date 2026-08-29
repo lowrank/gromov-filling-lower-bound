@@ -23,7 +23,7 @@ Riemannian surfaces.
 | Lemma 5.1, Entries of the Givens product | **Verified** | Entry, orthogonality, and energy identities are proved in `Givens.lean`. |
 | Lemma 5.2, First-harmonic dominance | **Verified** | All rowwise strict dominance estimates are proved in `Givens.lean` and exposed by `BoundaryCertificate.lean`. |
 | Lemma 5.3, Dominant first harmonic | **Verified** | Injectivity, degree one, polynomial disk extension, Jordan-region identification, and exact Fourier area are proved across `DominantHarmonic*.lean`, `BoundaryDegree*.lean`, `GivensDisk*.lean`, and `JordanBoundary.lean`. |
-| Lemma 5.4, Jordan coverage without orientation | **Partial** | The topological mod-2 core is now end-to-end verified. `hasOddBoundaryDegreeObstruction_of_compact_connected_surface_boundary` starts from the exact compact connected Hausdorff half-space-manifold hypotheses and a continuous injective parametrization of the whole ambient boundary, then composes boundary-aware Radó triangulation, valence-one/ambient-boundary equality, boundary-faithful Gallier--Xu normalization, the connected one-block theorem, injectivity of the canonical free loop, same-range circle reparametrization, and the orientable/nonorientable parity obstructions. Existing `SurfaceCoverage.lean` theorems turn this obstruction into coverage at every point of odd radial degree; the Givens curves used in the certificate have verified degree one. `RiemannianTwoJacobian.lean` defines intrinsic pointwise `J₂` between arbitrary two-dimensional Riemannian manifolds and proves basis independence, multiplicativity, the manifold chain rule, isometric-reparametrization invariance, and exact agreement with the planar determinant. `RiemannianChartArea.lean` constructs the measure contributed by one parametrized chart as a Jacobian-weighted pushforward, proves its exact `lintegral` transfer identity, and derives the local surface image-area inequality from the planar theorem. `RiemannianAtlasArea.lean` sums a countable chart family, proves the exact integral decomposition, and globalizes the inequality from source coverage. `RiemannianChartTransition.lean` proves exact integral and measure invariance under injective differentiable complex-coordinate reparametrizations, with all local almost-everywhere measurability assumptions exposed. The remaining part is to discharge those measurability assumptions for standard smooth charts, handle half-space boundary charts, and identify a non-overcounting atlas construction with canonical Riemannian area. |
+| Lemma 5.4, Jordan coverage without orientation | **Verified** | `Lemma54.lean` proves the odd boundary-degree obstruction from the exact compact connected Hausdorff half-space-manifold hypotheses and a continuous injective parametrization of the whole ambient boundary. `JordanSchoenfliesCoverage.lean` uses the pinned relative Jordan--Schönflies theorem to define the canonical bounded component `Ω_C`, proves that it is open, connected, bounded, and exactly a complement component, derives its odd radial degree internally, and proves `Ω_C ⊆ G(M)` for every continuous extension with embedded boundary trace. `Lemma54Area.lean` strengthens this to interior preimages and proves the manuscript's full Riemannian conclusion: Euclidean area of `Ω_C` is at most the integral of the intrinsic two-Jacobian against the canonical Riemannian surface-area measure. No orientation or caller-supplied winding-number hypothesis remains. |
 | Proposition 5.5, Finite universal certificate | **Partial** | `finite_universal_certificate` and its certificate wrappers verify the deduction from coverage plus Jacobian budgets. Those geometric budgets are not yet supplied for arbitrary Riemannian surfaces. |
 | Theorem 6.1, Antipodal defect | **Partial** | The pointwise defect budget and additive certificate propagation are verified on planar/chart interfaces. Intrinsic surface globalization remains unverified. |
 | Lemma 7.1, Hilbert-valued Stokes | **Partial** | `ClosedOneForm.lean` proves fixed-endpoint homotopy invariance and disk/square Stokes/comass interfaces in finite-dimensional Euclidean targets. The infinite-dimensional Hilbert-valued surface theorem is not formalized. |
@@ -41,28 +41,23 @@ Riemannian surfaces.
 | Theorem 14.4, Rigorous one-high-leg spectral ceiling | **Open feasible obligation** | The required operator/spectral estimate and numerical enclosure are absent. |
 | Proposition 15.1, de Sitter identities | **Verified** | `DeSitterProfile.lean` proves the de Sitter quadric identity, the formal-velocity Lorentz speed, the pairwise Lorentz inner product, and Züst's coefficient-kernel identity. The interface takes the profile values and derivative value as explicit scalars and exposes every required nonzero sine denominator; it does not assert the separate almost-everywhere differentiability bridge for a Lipschitz profile. |
 
-## End-to-end foundations not supplied by the pinned libraries
+## Remaining end-to-end foundations not supplied by the pinned libraries
 
 The following are tracked formalization gaps rather than hidden hypotheses:
 
 1. Rademacher/eikonal and parameter-integral differentiation on a
    two-dimensional Riemannian manifold with boundary;
-2. construction of the canonical global Riemannian area measure. The
-   intrinsic pointwise `J₂`, its multiplicative chain rule and planar
-   identification, the exact one-chart weighted measure and area inequality,
-   countable-atlas summation and coverage, and local chart-transition
-   invariance are now verified. Measurability of the intrinsic Jacobian
-   densities, standard-chart instantiation, boundary charts, and canonical
-   atlas identification remain;
-3. the global differential-form/Stokes/comass interface for the oriented
+2. the global differential-form/Stokes/comass interface for the oriented
    argument.
 
 The pinned mathlib revision contains Riemannian-manifold primitives but no
-surface triangulation/classification theorem or ready-made manifold area
-formula/Stokes package. The project now vendors and audits the exact
-classification source closure needed for finite triangulability and faithful
-polygonal normal forms. The relative-boundary refinement is now closed in
-`Lemma54.lean`; the remaining analytic bridges stay explicit rather than being
+surface triangulation/classification theorem, relative Jordan--Schönflies
+theorem, or ready-made manifold Stokes package. The project vendors and audits
+the exact source closures needed for finite triangulability, faithful
+polygonal normal forms, and ambient Jordan straightening. The relative-boundary
+classification, bounded-component coverage, controlled interior atlas,
+canonical Riemannian area measure, and full Lemma 5.4 area inequality are now
+closed; the two remaining analytic bridges stay explicit rather than being
 introduced as project assumptions.
 
 The 132-module transitive closure of
@@ -83,6 +78,12 @@ through the raw representative quotient, and
 boundary block and that the resulting canonical loop is injective.
 `Lemma54.lean` composes these results and identifies the supplied boundary
 parametrization with the canonical loop up to a circle homeomorphism.
+The pinned Jordan--Schönflies closure then straightens that loop to the model
+square, where radial projection supplies an odd degree. Degree constancy
+transports it over the whole bounded component. Finally,
+`RiemannianInteriorAtlasArea.lean` and `Lemma54Area.lean` identify a finite
+controlled interior atlas with canonical Riemannian surface area and prove the
+intrinsic two-Jacobian inequality.
 
 ## Current trust evidence
 
