@@ -74,7 +74,9 @@ private lemma sum_antidiagonal_oddMode_snd (r : ℕ) :
             (Finset.Nat.sum_antidiagonal_swap
               (n := r) (f := fun p : ℕ × ℕ ↦ (oddMode p.1 : ℝ)))
     _ = ∑ k ∈ Finset.range r.succ, (oddMode k : ℝ) := by
-      rw [Finset.Nat.sum_antidiagonal_eq_sum_range_succ]
+      simpa using
+        (Finset.Nat.sum_antidiagonal_eq_sum_range_succ
+          (fun k _ : ℕ ↦ (oddMode k : ℝ)) r)
     _ = (((r + 1 : ℕ) : ℝ) ^ 2) := by
       simpa [Nat.succ_eq_add_one] using sum_range_oddMode r.succ
 
@@ -157,6 +159,7 @@ private theorem summable_pair_of_summable_antidiagonal
       ∑' p : Finset.antidiagonal r, f p
     rw [← Finset.sum_finset_coe,
       ← tsum_fintype (L := .unconditional _)]
+    rfl
 
 /-- Absolute summability of the manuscript's nonnegative trace summand on
 `ℕ × ℕ`. -/
