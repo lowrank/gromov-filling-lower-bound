@@ -50,7 +50,7 @@ theorem IsometricCircleBoundary.continuous_oddDistanceProfile_uncurry_general
       (hb.comp (hangle.add continuous_const))
   exact (hfirst.sub hsecond).div_const 2
 
-private theorem exists_tangentProfileDerivativeField
+theorem exists_tangentProfileDerivativeField
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [PseudoMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
@@ -71,12 +71,13 @@ private theorem exists_tangentProfileDerivativeField
           (oddDistanceProfile boundary (angleToUnitAddCircle t) x))
             (mfderiv I 𝓘(ℝ, ℝ)
               (oddDistanceProfile boundary (angleToUnitAddCircle t)) x v)) ∧
-      ∀ (w : ℝ → ℝ), Continuous w → (∀ t, |w t| ≤ 1) →
+      (∀ (w : ℝ → ℝ), Continuous w → (∀ t, |w t| ≤ 1) →
         HasFDerivAt (fun s : ℝ ↦ ∫ t in (-Real.pi)..Real.pi,
           oddDistanceProfile boundary (angleToUnitAddCircle t)
             (riemannianTangentChartLine I x v s) * w t)
           (ContinuousLinearMap.toSpanSingleton ℝ
-            (∫ t in (-Real.pi)..Real.pi, d t * w t)) 0 := by
+            (∫ t in (-Real.pi)..Real.pi, d t * w t)) 0) ∧
+      Function.Antiperiodic d Real.pi := by
   obtain ⟨ε, hε, hγLip⟩ :=
     exists_lipschitzOnWith_riemannianTangentChartLine I x hx v
       (show (1 : ℝ) < 2 by norm_num)
@@ -111,7 +112,7 @@ private theorem exists_tangentProfileDerivativeField
   have hdmeas : Measurable d := by
     exact (measurable_fderiv_apply_const_with_param ℝ hP 1).comp
       (measurable_id.prodMk measurable_const)
-  refine ⟨d, hdmeas, ?_, ?_⟩
+  refine ⟨d, hdmeas, ?_, ?_, ?_⟩
   · filter_upwards [hdiff] with t htdiff
     have hγdiff : MDifferentiableAt 𝓘(ℝ, ℝ) I γ 0 := by
       exact mdifferentiableAt_riemannianTangentChartLine_zero I x hx v
@@ -270,6 +271,23 @@ private theorem exists_tangentProfileDerivativeField
     change (∫ t in (-Real.pi)..Real.pi, s * (d t * w t)) =
       s * ∫ t in (-Real.pi)..Real.pi, d t * w t
     rw [intervalIntegral.integral_const_mul]
+  · intro t
+    have hangle :
+        angleToUnitAddCircle (t + Real.pi) =
+          angleToUnitAddCircle t + ((1 / 2 : ℝ) : UnitAddCircle) := by
+      rw [angleToUnitAddCircle_add]
+      congr 1
+      unfold angleToUnitAddCircle
+      rw [show Real.pi / (2 * Real.pi) = (1 / 2 : ℝ) by
+        field_simp [Real.pi_ne_zero]]
+    have hP : P (t + Real.pi) = -P t := by
+      funext s
+      simp only [P, hangle, Pi.neg_apply]
+      exact oddDistanceProfile_add_half boundary
+        (angleToUnitAddCircle t) (γc s)
+    dsimp only [d]
+    rw [hP]
+    simp
 
 private theorem riemannianComplexMFDeriv_apply_eq_fderiv_comp_tangentLine
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
@@ -304,7 +322,7 @@ private theorem riemannianComplexMFDeriv_apply_eq_fderiv_comp_tangentLine
   rw [ContinuousLinearMap.toSpanSingleton_apply_one]
   rfl
 
-private theorem riemannianComplexMFDeriv_oddProfileFourierMap_apply_eq_two_mul_fourierCoeffOn
+theorem riemannianComplexMFDeriv_oddProfileFourierMap_apply_eq_two_mul_fourierCoeffOn
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [PseudoMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
@@ -438,9 +456,9 @@ theorem sum_riemannianComplexDerivativeEnergy_oddProfileFourierMap_le_two
         (oddProfileFourierMap boundary (oddMode k)) x) :
     (∑ k : Fin N, riemannianComplexDerivativeEnergy I x e
       (oddProfileFourierMap boundary (oddMode k))) ≤ 2 := by
-  obtain ⟨d0, hd0meas, hd0eq, hd0weighted⟩ :=
+  obtain ⟨d0, hd0meas, hd0eq, hd0weighted, _hd0anti⟩ :=
     exists_tangentProfileDerivativeField I hboundary x hx (e 0) hdiff
-  obtain ⟨d1, hd1meas, hd1eq, hd1weighted⟩ :=
+  obtain ⟨d1, hd1meas, hd1eq, hd1weighted, _hd1anti⟩ :=
     exists_tangentProfileDerivativeField I hboundary x hx (e 1) hdiff
   have hd0bound : ∀ᵐ t : ℝ ∂volume.restrict
       (Set.Ioc (-Real.pi) Real.pi), ‖(d0 t : ℂ)‖ ≤ 1 := by

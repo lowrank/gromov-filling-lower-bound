@@ -36,6 +36,9 @@ import GromovFilling.Lemma54
 import GromovFilling.Lemma54Area
 import GromovFilling.MetricPlanarCoverage
 import GromovFilling.ModTwoDegree
+import GromovFilling.NonlinearCorrelationBounds
+import GromovFilling.NonlinearProfileFourierBridge
+import GromovFilling.NonlinearSymplecticCalculus
 import GromovFilling.NormalFormBoundaryObstruction
 import GromovFilling.Numerics
 import GromovFilling.OneHighLeg
@@ -61,9 +64,11 @@ import GromovFilling.RiemannianInteriorChart
 import GromovFilling.RiemannianInteriorCoverage
 import GromovFilling.RiemannianJacobianBudget
 import GromovFilling.RiemannianLipschitzDerivative
+import GromovFilling.RiemannianProfileFourierAE
 import GromovFilling.RiemannianProfileFourierEnergy
 import GromovFilling.RiemannianStandardChart
 import GromovFilling.RiemannianTwoJacobian
+import GromovFilling.RiemannianUniversalFourierBound
 import GromovFilling.SurfaceClassificationFoundation
 import GromovFilling.SurfaceCoverage
 import GromovFilling.SurfaceTriangulationFoundation
