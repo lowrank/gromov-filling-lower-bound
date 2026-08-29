@@ -30,6 +30,7 @@ import GromovFilling.GivensDisk
 import GromovFilling.GivensDiskArea
 import GromovFilling.JacobianBudget
 import GromovFilling.JordanBoundary
+import GromovFilling.JordanSchoenfliesFoundation
 import GromovFilling.Lemma54
 import GromovFilling.MetricPlanarCoverage
 import GromovFilling.ModTwoDegree

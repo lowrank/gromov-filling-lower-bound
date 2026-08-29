@@ -11,7 +11,8 @@ pattern='(^|[^[:alnum:]_])(sorry|sorryAx|admit|axiom|unsafe|native_decide)([^[:a
 
 set +e
 LC_ALL=C grep -RInE --include='*.lean' "$pattern" -- \
-  ClassificationOfSurfaces GromovFilling GromovFilling.lean >"$matches"
+  ClassificationOfSurfaces GromovFilling SchoenfliesCompat Wikipedia \
+  GromovFilling.lean >"$matches"
 scan_rc=$?
 set -e
 

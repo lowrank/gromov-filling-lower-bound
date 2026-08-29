@@ -6,7 +6,8 @@ scratch_dir="$(mktemp -d /tmp/gromov-filling-proof-escape-test.XXXXXX)"
 trap 'rm -rf "$scratch_dir"' EXIT
 
 mkdir -p "$scratch_dir/ClassificationOfSurfaces" \
-  "$scratch_dir/GromovFilling" "$scratch_dir/scripts"
+  "$scratch_dir/GromovFilling" "$scratch_dir/SchoenfliesCompat" \
+  "$scratch_dir/Wikipedia" "$scratch_dir/scripts"
 cp "$repo_dir/scripts/check_no_proof_escapes.sh" "$scratch_dir/scripts/"
 cp "$repo_dir/GromovFilling.lean" "$scratch_dir/GromovFilling.lean"
 printf '%s\n' \
