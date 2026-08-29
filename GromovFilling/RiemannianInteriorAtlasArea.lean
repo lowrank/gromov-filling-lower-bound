@@ -17,7 +17,7 @@ assumption here.
 -/
 
 open Bundle MeasureTheory Set
-open scoped Bundle ENNReal Function Manifold NNReal
+open scoped Bundle ENNReal Function Manifold NNReal Topology
 
 namespace GromovFilling
 
@@ -40,6 +40,7 @@ structure ControlledInteriorAtlas
     [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
     [IsRiemannianManifold I M] where
   parametrization : ℕ → ℂ → M
+  coordinate : ℕ → M → ℂ
   domain : ℕ → Set ℂ
   lipschitzConstant : ℕ → ℝ≥0
   isOpen_domain : ∀ i, IsOpen (domain i)
@@ -49,6 +50,11 @@ structure ControlledInteriorAtlas
     ∀ i, ContMDiffOn 𝓘(ℝ, ℂ) I 1 (parametrization i) (domain i)
   injOn_parametrization :
     ∀ i, Set.InjOn (parametrization i) (domain i)
+  coordinate_parametrization :
+    ∀ i z, z ∈ domain i → coordinate i (parametrization i z) = z
+  mdifferentiableAt_coordinate :
+    ∀ i y, y ∈ parametrization i '' domain i →
+      MDifferentiableAt I 𝓘(ℝ, ℂ) (coordinate i) y
   mdifferentiableAt_of_differentiableAt_comp :
     ∀ i (G : M → ℂ) z, z ∈ domain i →
       DifferentiableAt ℝ (G ∘ parametrization i) z →
@@ -74,6 +80,19 @@ def finControlledInteriorParametrization
     interiorComplexExtChart I e (centers ⟨i, hi⟩)
   else
     fun _ ↦ fallback
+
+/-- Pad the forward coordinate maps of a finite interior-chart family by
+the constant zero map after the final index. -/
+def finControlledInteriorCoordinate
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    (e : ℂ ≃ₗᵢ[ℝ] E) {n : ℕ} (centers : Fin n → M)
+    (i : ℕ) : M → ℂ :=
+  if hi : i < n then
+    e.symm ∘ extChartAt I (centers ⟨i, hi⟩)
+  else
+    fun _ ↦ 0
 
 /-- Pad the controlled domains of a finite inverse-chart family by empty
 sets. -/
@@ -120,18 +139,23 @@ def controlledInteriorAtlasOfFinCover
     ControlledInteriorAtlas I M := by
   let F : ℕ → ℂ → M :=
     finControlledInteriorParametrization I e centers fallback
+  let coord : ℕ → M → ℂ :=
+    finControlledInteriorCoordinate I e centers
   let domains : ℕ → Set ℂ :=
     finControlledInteriorDomain I e centers
   let K : ℕ → ℝ≥0 :=
     finControlledInteriorLipschitzConstant I centers
   refine
     { parametrization := F
+      coordinate := coord
       domain := domains
       lipschitzConstant := K
       isOpen_domain := ?_
       continuousOn_parametrization := ?_
       contMDiffOn_parametrization := ?_
       injOn_parametrization := ?_
+      coordinate_parametrization := ?_
+      mdifferentiableAt_coordinate := ?_
       mdifferentiableAt_of_differentiableAt_comp := ?_
       isOpen_image := ?_
       lipschitzOnWith_parametrization := ?_
@@ -175,6 +199,60 @@ def controlledInteriorAtlasOfFinCover
         (injOn_interiorComplexExtChart I e (centers ⟨i, hi⟩)).mono
           hsubset
     · simp [domains, finControlledInteriorDomain, hi]
+  · intro i z hz
+    by_cases hi : i < n
+    · have hzControlled : z ∈
+          chosenControlledInteriorComplexChartDomain I e (centers ⟨i, hi⟩) := by
+        simpa [domains, finControlledInteriorDomain, hi] using hz
+      have hzFull : z ∈
+          interiorComplexExtChartDomain I e (centers ⟨i, hi⟩) :=
+        controlledInteriorComplexChartDomain_subset_interiorComplexExtChartDomain
+          I e (chosenInteriorChartControl I (centers ⟨i, hi⟩)) hzControlled
+      have htarget : e z ∈
+          (extChartAt I (centers ⟨i, hi⟩)).target :=
+        interior_subset hzFull
+      rw [show coord i =
+          e.symm ∘ extChartAt I (centers ⟨i, hi⟩) by
+        simp [coord, finControlledInteriorCoordinate, hi]]
+      rw [show F i = interiorComplexExtChart I e (centers ⟨i, hi⟩) by
+        simp [F, finControlledInteriorParametrization, hi]]
+      change e.symm
+        (extChartAt I (centers ⟨i, hi⟩)
+          ((extChartAt I (centers ⟨i, hi⟩)).symm (e z))) = z
+      rw [(extChartAt I (centers ⟨i, hi⟩)).right_inv htarget,
+        e.symm_apply_apply]
+    · simp [domains, finControlledInteriorDomain, hi] at hz
+  · intro i y hy
+    by_cases hi : i < n
+    · rcases hy with ⟨z, hz, rfl⟩
+      have hzControlled : z ∈
+          chosenControlledInteriorComplexChartDomain I e (centers ⟨i, hi⟩) := by
+        simpa [domains, finControlledInteriorDomain, hi] using hz
+      have hzFull : z ∈
+          interiorComplexExtChartDomain I e (centers ⟨i, hi⟩) :=
+        controlledInteriorComplexChartDomain_subset_interiorComplexExtChartDomain
+          I e (chosenInteriorChartControl I (centers ⟨i, hi⟩)) hzControlled
+      have htarget : e z ∈
+          (extChartAt I (centers ⟨i, hi⟩)).target :=
+        interior_subset hzFull
+      have hsourceExt :
+          (extChartAt I (centers ⟨i, hi⟩)).symm (e z) ∈
+            (extChartAt I (centers ⟨i, hi⟩)).source :=
+        (extChartAt I (centers ⟨i, hi⟩)).map_target htarget
+      have hsource :
+          (extChartAt I (centers ⟨i, hi⟩)).symm (e z) ∈
+            (chartAt H (centers ⟨i, hi⟩)).source := by
+        simpa only [extChartAt_source] using hsourceExt
+      have hcoord : MDifferentiableAt I 𝓘(ℝ, ℂ)
+          (e.symm ∘ extChartAt I (centers ⟨i, hi⟩))
+          ((extChartAt I (centers ⟨i, hi⟩)).symm (e z)) :=
+        e.symm.toContinuousLinearEquiv.differentiableAt.comp_mdifferentiableAt
+          (mdifferentiableAt_extChartAt hsource)
+      simpa [coord, F, finControlledInteriorCoordinate,
+        finControlledInteriorParametrization, interiorComplexExtChart, hi]
+        using hcoord
+    · simp [F, domains, finControlledInteriorParametrization,
+        finControlledInteriorDomain, hi] at hy
   · intro i G z hz hdiff
     by_cases hi : i < n
     · have hzControlled : z ∈
@@ -241,6 +319,197 @@ theorem nonempty_controlledInteriorAtlas
     (Classical.choice inferInstance) hcover⟩
 
 namespace ControlledInteriorAtlas
+
+/-- The part of one controlled coordinate domain whose image lies in a
+second controlled chart image. -/
+def overlapDomain
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A B : ControlledInteriorAtlas I M) (i j : ℕ) : Set ℂ :=
+  A.domain i ∩ A.parametrization i ⁻¹'
+    (B.parametrization j '' B.domain j)
+
+/-- The change of coordinates from one controlled chart to another. -/
+def coordinateTransition
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A B : ControlledInteriorAtlas I M) (i j : ℕ) : ℂ → ℂ :=
+  B.coordinate j ∘ A.parametrization i
+
+/-- Controlled overlap domains are open in the complex coordinate plane. -/
+theorem isOpen_overlapDomain
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A B : ControlledInteriorAtlas I M) (i j : ℕ) :
+    IsOpen (A.overlapDomain I B i j) :=
+  (A.continuousOn_parametrization i).isOpen_inter_preimage
+    (A.isOpen_domain i) (B.isOpen_image j)
+
+/-- The first coordinate of an overlap lies in its original chart domain. -/
+theorem overlapDomain_subset_domain
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A B : ControlledInteriorAtlas I M) (i j : ℕ) :
+    A.overlapDomain I B i j ⊆ A.domain i :=
+  inter_subset_left
+
+/-- A chart coordinate followed by its parametrization is the identity on
+the chart image. -/
+theorem parametrization_coordinate
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A : ControlledInteriorAtlas I M) (i : ℕ) {y : M}
+    (hy : y ∈ A.parametrization i '' A.domain i) :
+    A.parametrization i (A.coordinate i y) = y := by
+  rcases hy with ⟨z, hz, rfl⟩
+  rw [A.coordinate_parametrization i z hz]
+
+/-- A coordinate transition sends its overlap domain into the target chart
+domain. -/
+theorem coordinateTransition_mem_domain
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A B : ControlledInteriorAtlas I M) (i j : ℕ) {z : ℂ}
+    (hz : z ∈ A.overlapDomain I B i j) :
+    A.coordinateTransition I B i j z ∈ B.domain j := by
+  rcases hz.2 with ⟨w, hw, hzw⟩
+  change B.coordinate j (A.parametrization i z) ∈ B.domain j
+  rw [← hzw, B.coordinate_parametrization j w hw]
+  exact hw
+
+/-- On an overlap, changing coordinates and using the target
+parametrization recovers the original point. -/
+theorem parametrization_coordinateTransition
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A B : ControlledInteriorAtlas I M) (i j : ℕ) {z : ℂ}
+    (hz : z ∈ A.overlapDomain I B i j) :
+    B.parametrization j (A.coordinateTransition I B i j z) =
+      A.parametrization i z := by
+  exact B.parametrization_coordinate I j hz.2
+
+/-- Coordinate transitions are differentiable at every point of their open
+overlap domain. -/
+theorem differentiableAt_coordinateTransition
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A B : ControlledInteriorAtlas I M) (i j : ℕ) {z : ℂ}
+    (hz : z ∈ A.overlapDomain I B i j) :
+    DifferentiableAt ℝ (A.coordinateTransition I B i j) z := by
+  have hA : MDifferentiableAt 𝓘(ℝ, ℂ) I
+      (A.parametrization i) z :=
+    ((A.contMDiffOn_parametrization i z hz.1).contMDiffAt
+      ((A.isOpen_domain i).mem_nhds hz.1)).mdifferentiableAt
+        one_ne_zero
+  have hB : MDifferentiableAt I 𝓘(ℝ, ℂ)
+      (B.coordinate j) (A.parametrization i z) :=
+    B.mdifferentiableAt_coordinate j (A.parametrization i z) hz.2
+  exact (hB.comp z hA).differentiableAt
+
+/-- A coordinate transition is injective on its overlap domain. -/
+theorem injOn_coordinateTransition
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A B : ControlledInteriorAtlas I M) (i j : ℕ) :
+    Set.InjOn (A.coordinateTransition I B i j)
+      (A.overlapDomain I B i j) := by
+  intro z hz w hw hzw
+  apply A.injOn_parametrization i hz.1 hw.1
+  rw [← A.parametrization_coordinateTransition I B i j hz,
+    ← A.parametrization_coordinateTransition I B i j hw, hzw]
+
+/-- A coordinate transition lands in the reverse overlap domain. -/
+theorem coordinateTransition_mem_overlapDomain
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A B : ControlledInteriorAtlas I M) (i j : ℕ) {z : ℂ}
+    (hz : z ∈ A.overlapDomain I B i j) :
+    A.coordinateTransition I B i j z ∈ B.overlapDomain I A j i := by
+  refine ⟨A.coordinateTransition_mem_domain I B i j hz, ?_⟩
+  change B.parametrization j (A.coordinateTransition I B i j z) ∈
+    A.parametrization i '' A.domain i
+  rw [A.parametrization_coordinateTransition I B i j hz]
+  exact ⟨z, hz.1, rfl⟩
+
+/-- The two coordinate transitions identify their open overlap domains. -/
+theorem image_coordinateTransition_overlapDomain
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A B : ControlledInteriorAtlas I M) (i j : ℕ) :
+    A.coordinateTransition I B i j '' A.overlapDomain I B i j =
+      B.overlapDomain I A j i := by
+  apply Set.Subset.antisymm
+  · rintro _ ⟨z, hz, rfl⟩
+    exact A.coordinateTransition_mem_overlapDomain I B i j hz
+  · intro w hw
+    let z := B.coordinateTransition I A j i w
+    have hz : z ∈ A.overlapDomain I B i j :=
+      B.coordinateTransition_mem_overlapDomain I A j i hw
+    refine ⟨z, hz, ?_⟩
+    apply B.injOn_parametrization j
+      (A.coordinateTransition_mem_domain I B i j hz) hw.1
+    rw [A.parametrization_coordinateTransition I B i j hz,
+      B.parametrization_coordinateTransition I A j i hw]
+
+/-- The target parametrization composed with a coordinate transition agrees
+locally with the source parametrization. -/
+theorem parametrization_comp_coordinateTransition_eventuallyEq
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A B : ControlledInteriorAtlas I M) (i j : ℕ) {z : ℂ}
+    (hz : z ∈ A.overlapDomain I B i j) :
+    (B.parametrization j ∘ A.coordinateTransition I B i j) =ᶠ[𝓝 z]
+      A.parametrization i := by
+  filter_upwards [(A.isOpen_overlapDomain I B i j).mem_nhds hz] with w hw
+  exact A.parametrization_coordinateTransition I B i j hw
 
 /-- Pull the first-occurrence assignment on chart images back to each
 coordinate domain. -/
