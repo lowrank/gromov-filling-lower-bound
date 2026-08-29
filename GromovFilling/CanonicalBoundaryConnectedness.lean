@@ -202,6 +202,35 @@ private theorem orientableOccurrencePoint_boundary_eq_cases
   · simp only [orientableBoundaryPosition_val] at hi0
     omega
 
+private theorem orientableBoundaryInterior_ne_occurrencePoint
+    {p n : ℕ} (j : Fin n) (t : unitInterval)
+    (ht0 : t ≠ 0) (ht1 : t ≠ 1)
+    (r : Fin (orientableBoundaryWord p n).length) (u : unitInterval)
+    (hr : r ≠ orientableBoundaryPosition p n j 1) :
+    orientableOccurrencePoint p n
+        (orientableBoundaryPosition p n j 1) t ≠
+      orientableOccurrencePoint p n r u := by
+  intro h
+  rcases orientableOccurrencePoint_boundary_eq_cases j r t u h with
+    ⟨hr', _hu⟩ | ⟨_hprev, ht0', _hu1⟩ | ⟨_hnext, ht1', _hu0⟩
+  · exact hr hr'
+  · exact ht0 ht0'
+  · exact ht1 ht1'
+
+private theorem orientableBoundaryOccurrencePoint_injective
+    {p n : ℕ} (j : Fin n) (t u : unitInterval)
+    (h : orientableOccurrencePoint p n
+          (orientableBoundaryPosition p n j 1) t =
+        orientableOccurrencePoint p n
+          (orientableBoundaryPosition p n j 1) u) :
+    t = u := by
+  rcases orientableOccurrencePoint_boundary_eq_cases j
+      (orientableBoundaryPosition p n j 1) t u h with
+    ⟨_hr, hut⟩ | ⟨hprev, _ht0, _hu1⟩ | ⟨hnext, _ht1, _hu0⟩
+  · exact hut.symm
+  · omega
+  · omega
+
 private theorem orientableOccurrencePoint_eq_of_sum_eq
     {p n : ℕ} (i r : Fin (orientableBoundaryWord p n).length)
     (t u : unitInterval)
@@ -387,6 +416,193 @@ private theorem orientableGenerator_preserves_boundaryPrecomponent
             (orientableBoundaryPosition p n k 0) (unitInterval.symm u) ∈ _
         rw [orientableBoundary_c_neg_mem_iff,
           orientableBoundary_c_pos_symm_mem_iff]
+
+private theorem orientableGenerator_avoids_boundaryInterior
+    {p n : ℕ} (hvalid : 1 ≤ p ∨ 1 ≤ n) (j : Fin n)
+    (t : unitInterval) (ht0 : t ≠ 0) (ht1 : t ≠ 1)
+    {x y : (orientableCellComplex p n).PolygonalPreRealization}
+    (hxy : PolygonGluing.Generator
+      ((orientableCellComplex p n).polygonalIdentifications
+        (orientableCellComplex_occurrencePairingValid hvalid)) x y)
+    (hpoint : x = orientableOccurrencePoint p n
+          (orientableBoundaryPosition p n j 1) t ∨
+        y = orientableOccurrencePoint p n
+          (orientableBoundaryPosition p n j 1) t) :
+    False := by
+  cases hxy with
+  | glue identification hidentification u =>
+      rw [mem_orientable_polygonalIdentifications_iff hvalid] at hidentification
+      rcases hidentification with
+        ⟨i, rfl | rfl⟩ | ⟨i, rfl | rfl⟩ | ⟨k, rfl | rfl⟩
+      · change
+          orientableOccurrencePoint p n
+                (orientableHandlePosition p n i 0) u =
+              orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n j 1) t ∨
+            orientableOccurrencePoint p n
+                (orientableHandlePosition p n i 2)
+                  (unitInterval.symm u) =
+              orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n j 1) t at hpoint
+        rcases hpoint with hx | hy
+        · exact (orientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (orientableHandlePosition p n i 0) u (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [orientableHandlePosition_val,
+                orientableBoundaryPosition_val] at this
+              omega)) hx.symm
+        · exact (orientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (orientableHandlePosition p n i 2) (unitInterval.symm u) (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [orientableHandlePosition_val,
+                orientableBoundaryPosition_val] at this
+              omega)) hy.symm
+      · change
+          orientableOccurrencePoint p n
+                (orientableHandlePosition p n i 2) u =
+              orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n j 1) t ∨
+            orientableOccurrencePoint p n
+                (orientableHandlePosition p n i 0)
+                  (unitInterval.symm u) =
+              orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n j 1) t at hpoint
+        rcases hpoint with hx | hy
+        · exact (orientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (orientableHandlePosition p n i 2) u (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [orientableHandlePosition_val,
+                orientableBoundaryPosition_val] at this
+              omega)) hx.symm
+        · exact (orientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (orientableHandlePosition p n i 0) (unitInterval.symm u) (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [orientableHandlePosition_val,
+                orientableBoundaryPosition_val] at this
+              omega)) hy.symm
+      · change
+          orientableOccurrencePoint p n
+                (orientableHandlePosition p n i 1) u =
+              orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n j 1) t ∨
+            orientableOccurrencePoint p n
+                (orientableHandlePosition p n i 3)
+                  (unitInterval.symm u) =
+              orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n j 1) t at hpoint
+        rcases hpoint with hx | hy
+        · exact (orientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (orientableHandlePosition p n i 1) u (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [orientableHandlePosition_val,
+                orientableBoundaryPosition_val] at this
+              omega)) hx.symm
+        · exact (orientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (orientableHandlePosition p n i 3) (unitInterval.symm u) (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [orientableHandlePosition_val,
+                orientableBoundaryPosition_val] at this
+              omega)) hy.symm
+      · change
+          orientableOccurrencePoint p n
+                (orientableHandlePosition p n i 3) u =
+              orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n j 1) t ∨
+            orientableOccurrencePoint p n
+                (orientableHandlePosition p n i 1)
+                  (unitInterval.symm u) =
+              orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n j 1) t at hpoint
+        rcases hpoint with hx | hy
+        · exact (orientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (orientableHandlePosition p n i 3) u (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [orientableHandlePosition_val,
+                orientableBoundaryPosition_val] at this
+              omega)) hx.symm
+        · exact (orientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (orientableHandlePosition p n i 1) (unitInterval.symm u) (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [orientableHandlePosition_val,
+                orientableBoundaryPosition_val] at this
+              omega)) hy.symm
+      · change
+          orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n k 0) u =
+              orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n j 1) t ∨
+            orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n k 2)
+                  (unitInterval.symm u) =
+              orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n j 1) t at hpoint
+        rcases hpoint with hx | hy
+        · exact (orientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (orientableBoundaryPosition p n k 0) u (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [orientableBoundaryPosition_val] at this
+              omega)) hx.symm
+        · exact (orientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (orientableBoundaryPosition p n k 2) (unitInterval.symm u) (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [orientableBoundaryPosition_val] at this
+              omega)) hy.symm
+      · change
+          orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n k 2) u =
+              orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n j 1) t ∨
+            orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n k 0)
+                  (unitInterval.symm u) =
+              orientableOccurrencePoint p n
+                (orientableBoundaryPosition p n j 1) t at hpoint
+        rcases hpoint with hx | hy
+        · exact (orientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (orientableBoundaryPosition p n k 2) u (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [orientableBoundaryPosition_val] at this
+              omega)) hx.symm
+        · exact (orientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (orientableBoundaryPosition p n k 0) (unitInterval.symm u) (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [orientableBoundaryPosition_val] at this
+              omega)) hy.symm
+
+private theorem orientableEqvGen_preserves_boundaryInterior
+    {p n : ℕ} (hvalid : 1 ≤ p ∨ 1 ≤ n) (j : Fin n)
+    (t : unitInterval) (ht0 : t ≠ 0) (ht1 : t ≠ 1)
+    {x y : (orientableCellComplex p n).PolygonalPreRealization}
+    (hxy : Relation.EqvGen
+      (PolygonGluing.Generator
+        ((orientableCellComplex p n).polygonalIdentifications
+          (orientableCellComplex_occurrencePairingValid hvalid))) x y) :
+    (x = orientableOccurrencePoint p n
+          (orientableBoundaryPosition p n j 1) t) ↔
+      (y = orientableOccurrencePoint p n
+          (orientableBoundaryPosition p n j 1) t) := by
+  induction hxy with
+  | rel x y h =>
+      constructor <;> intro hpoint
+      · exact (orientableGenerator_avoids_boundaryInterior
+          hvalid j t ht0 ht1 h (Or.inl hpoint)).elim
+      · exact (orientableGenerator_avoids_boundaryInterior
+          hvalid j t ht0 ht1 h (Or.inr hpoint)).elim
+  | refl => exact Iff.rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
 
 private theorem orientableEqvGen_preserves_boundaryPrecomponent
     {p n : ℕ} (hvalid : 1 ≤ p ∨ 1 ≤ n) (j : Fin n)
@@ -611,6 +827,35 @@ private theorem nonOrientableOccurrencePoint_boundary_eq_cases
   · simp only [nonOrientableBoundaryPosition_val] at hi0
     omega
 
+private theorem nonOrientableBoundaryInterior_ne_occurrencePoint
+    {p n : ℕ} (j : Fin n) (t : unitInterval)
+    (ht0 : t ≠ 0) (ht1 : t ≠ 1)
+    (r : Fin (nonOrientableBoundaryWord p n).length) (u : unitInterval)
+    (hr : r ≠ nonOrientableBoundaryPosition p n j 1) :
+    nonOrientableOccurrencePoint p n
+        (nonOrientableBoundaryPosition p n j 1) t ≠
+      nonOrientableOccurrencePoint p n r u := by
+  intro h
+  rcases nonOrientableOccurrencePoint_boundary_eq_cases j r t u h with
+    ⟨hr', _hu⟩ | ⟨_hprev, ht0', _hu1⟩ | ⟨_hnext, ht1', _hu0⟩
+  · exact hr hr'
+  · exact ht0 ht0'
+  · exact ht1 ht1'
+
+private theorem nonOrientableBoundaryOccurrencePoint_injective
+    {p n : ℕ} (j : Fin n) (t u : unitInterval)
+    (h : nonOrientableOccurrencePoint p n
+          (nonOrientableBoundaryPosition p n j 1) t =
+        nonOrientableOccurrencePoint p n
+          (nonOrientableBoundaryPosition p n j 1) u) :
+    t = u := by
+  rcases nonOrientableOccurrencePoint_boundary_eq_cases j
+      (nonOrientableBoundaryPosition p n j 1) t u h with
+    ⟨_hr, hut⟩ | ⟨hprev, _ht0, _hu1⟩ | ⟨hnext, _ht1, _hu0⟩
+  · exact hut.symm
+  · omega
+  · omega
+
 private theorem nonOrientableOccurrencePoint_eq_of_sum_eq
     {p n : ℕ} (i r : Fin (nonOrientableBoundaryWord p n).length)
     (t u : unitInterval)
@@ -787,6 +1032,140 @@ private theorem nonOrientableGenerator_preserves_boundaryPrecomponent
             (nonOrientableBoundaryPosition p n k 0) (unitInterval.symm u) ∈ _
         rw [nonOrientableBoundary_c_neg_mem_iff,
           nonOrientableBoundary_c_pos_symm_mem_iff]
+
+private theorem nonOrientableGenerator_avoids_boundaryInterior
+    {p n : ℕ} (hp : 1 ≤ p) (j : Fin n)
+    (t : unitInterval) (ht0 : t ≠ 0) (ht1 : t ≠ 1)
+    {x y : (nonOrientableCellComplex p n).PolygonalPreRealization}
+    (hxy : PolygonGluing.Generator
+      ((nonOrientableCellComplex p n).polygonalIdentifications
+        (nonOrientableCellComplex_occurrencePairingValid hp)) x y)
+    (hpoint : x = nonOrientableOccurrencePoint p n
+          (nonOrientableBoundaryPosition p n j 1) t ∨
+        y = nonOrientableOccurrencePoint p n
+          (nonOrientableBoundaryPosition p n j 1) t) :
+    False := by
+  cases hxy with
+  | glue identification hidentification u =>
+      rw [mem_nonOrientable_polygonalIdentifications_iff hp] at hidentification
+      rcases hidentification with ⟨i, rfl | rfl⟩ | ⟨k, rfl | rfl⟩
+      · change
+          nonOrientableOccurrencePoint p n
+                (nonOrientableCrosscapPosition p n i 0) u =
+              nonOrientableOccurrencePoint p n
+                (nonOrientableBoundaryPosition p n j 1) t ∨
+            nonOrientableOccurrencePoint p n
+                (nonOrientableCrosscapPosition p n i 1) u =
+              nonOrientableOccurrencePoint p n
+                (nonOrientableBoundaryPosition p n j 1) t at hpoint
+        rcases hpoint with hx | hy
+        · exact (nonOrientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (nonOrientableCrosscapPosition p n i 0) u (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [nonOrientableCrosscapPosition_val,
+                nonOrientableBoundaryPosition_val] at this
+              omega)) hx.symm
+        · exact (nonOrientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (nonOrientableCrosscapPosition p n i 1) u (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [nonOrientableCrosscapPosition_val,
+                nonOrientableBoundaryPosition_val] at this
+              omega)) hy.symm
+      · change
+          nonOrientableOccurrencePoint p n
+                (nonOrientableCrosscapPosition p n i 1) u =
+              nonOrientableOccurrencePoint p n
+                (nonOrientableBoundaryPosition p n j 1) t ∨
+            nonOrientableOccurrencePoint p n
+                (nonOrientableCrosscapPosition p n i 0) u =
+              nonOrientableOccurrencePoint p n
+                (nonOrientableBoundaryPosition p n j 1) t at hpoint
+        rcases hpoint with hx | hy
+        · exact (nonOrientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (nonOrientableCrosscapPosition p n i 1) u (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [nonOrientableCrosscapPosition_val,
+                nonOrientableBoundaryPosition_val] at this
+              omega)) hx.symm
+        · exact (nonOrientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (nonOrientableCrosscapPosition p n i 0) u (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [nonOrientableCrosscapPosition_val,
+                nonOrientableBoundaryPosition_val] at this
+              omega)) hy.symm
+      · change
+          nonOrientableOccurrencePoint p n
+                (nonOrientableBoundaryPosition p n k 0) u =
+              nonOrientableOccurrencePoint p n
+                (nonOrientableBoundaryPosition p n j 1) t ∨
+            nonOrientableOccurrencePoint p n
+                (nonOrientableBoundaryPosition p n k 2)
+                  (unitInterval.symm u) =
+              nonOrientableOccurrencePoint p n
+                (nonOrientableBoundaryPosition p n j 1) t at hpoint
+        rcases hpoint with hx | hy
+        · exact (nonOrientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (nonOrientableBoundaryPosition p n k 0) u (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [nonOrientableBoundaryPosition_val] at this
+              omega)) hx.symm
+        · exact (nonOrientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (nonOrientableBoundaryPosition p n k 2) (unitInterval.symm u) (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [nonOrientableBoundaryPosition_val] at this
+              omega)) hy.symm
+      · change
+          nonOrientableOccurrencePoint p n
+                (nonOrientableBoundaryPosition p n k 2) u =
+              nonOrientableOccurrencePoint p n
+                (nonOrientableBoundaryPosition p n j 1) t ∨
+            nonOrientableOccurrencePoint p n
+                (nonOrientableBoundaryPosition p n k 0)
+                  (unitInterval.symm u) =
+              nonOrientableOccurrencePoint p n
+                (nonOrientableBoundaryPosition p n j 1) t at hpoint
+        rcases hpoint with hx | hy
+        · exact (nonOrientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (nonOrientableBoundaryPosition p n k 2) u (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [nonOrientableBoundaryPosition_val] at this
+              omega)) hx.symm
+        · exact (nonOrientableBoundaryInterior_ne_occurrencePoint j t ht0 ht1
+            (nonOrientableBoundaryPosition p n k 0) (unitInterval.symm u) (by
+              intro h
+              have := congrArg Fin.val h
+              simp only [nonOrientableBoundaryPosition_val] at this
+              omega)) hy.symm
+
+private theorem nonOrientableEqvGen_preserves_boundaryInterior
+    {p n : ℕ} (hp : 1 ≤ p) (j : Fin n)
+    (t : unitInterval) (ht0 : t ≠ 0) (ht1 : t ≠ 1)
+    {x y : (nonOrientableCellComplex p n).PolygonalPreRealization}
+    (hxy : Relation.EqvGen
+      (PolygonGluing.Generator
+        ((nonOrientableCellComplex p n).polygonalIdentifications
+          (nonOrientableCellComplex_occurrencePairingValid hp))) x y) :
+    (x = nonOrientableOccurrencePoint p n
+          (nonOrientableBoundaryPosition p n j 1) t) ↔
+      (y = nonOrientableOccurrencePoint p n
+          (nonOrientableBoundaryPosition p n j 1) t) := by
+  induction hxy with
+  | rel x y h =>
+      constructor <;> intro hpoint
+      · exact (nonOrientableGenerator_avoids_boundaryInterior
+          hp j t ht0 ht1 h (Or.inl hpoint)).elim
+      · exact (nonOrientableGenerator_avoids_boundaryInterior
+          hp j t ht0 ht1 h (Or.inr hpoint)).elim
+  | refl => exact Iff.rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
 
 private theorem nonOrientableEqvGen_preserves_boundaryPrecomponent
     {p n : ℕ} (hp : 1 ≤ p) (j : Fin n)
@@ -971,6 +1350,75 @@ private theorem nonOrientableBoundaryComponents_eq_one_of_isConnected
       A B hAclosed hBclosed hcover hAmeet hBmeet
   exact Set.disjoint_left.mp hABdisjoint hqA hqB
 
+private theorem orientableBoundaryComponent_injective_Ico
+    (p : ℕ) (t u : unitInterval)
+    (ht : (t : ℝ) < 1) (hu : (u : ℝ) < 1)
+    (h : (orientableCellComplex p 1).polygonalMk
+          (orientableCellComplex_occurrencePairingValid (Or.inr (by omega)))
+          (orientableOccurrencePoint p 1
+            (orientableBoundaryPosition p 1 0 1) t) =
+        (orientableCellComplex p 1).polygonalMk
+          (orientableCellComplex_occurrencePairingValid (Or.inr (by omega)))
+          (orientableOccurrencePoint p 1
+            (orientableBoundaryPosition p 1 0 1) u)) :
+    t = u := by
+  have heqv := Quotient.exact h
+  by_cases ht0 : t = 0
+  · subst t
+    by_cases hu0 : u = 0
+    · exact hu0.symm
+    · have hu1 : u ≠ 1 := by
+        intro hu1
+        subst u
+        norm_num at hu
+      have hpoint :=
+        (orientableEqvGen_preserves_boundaryInterior
+          (p := p) (n := 1) (Or.inr (by omega)) 0 u hu0 hu1
+          heqv.symm).mp rfl
+      exact orientableBoundaryOccurrencePoint_injective 0 0 u hpoint
+  · have ht1 : t ≠ 1 := by
+      intro ht1
+      subst t
+      norm_num at ht
+    have hpoint :=
+      (orientableEqvGen_preserves_boundaryInterior
+        (p := p) (n := 1) (Or.inr (by omega)) 0 t ht0 ht1 heqv).mp rfl
+    exact orientableBoundaryOccurrencePoint_injective 0 t u hpoint.symm
+
+private theorem nonOrientableBoundaryComponent_injective_Ico
+    (p : ℕ) (hp : 1 ≤ p) (t u : unitInterval)
+    (ht : (t : ℝ) < 1) (hu : (u : ℝ) < 1)
+    (h : (nonOrientableCellComplex p 1).polygonalMk
+          (nonOrientableCellComplex_occurrencePairingValid hp)
+          (nonOrientableOccurrencePoint p 1
+            (nonOrientableBoundaryPosition p 1 0 1) t) =
+        (nonOrientableCellComplex p 1).polygonalMk
+          (nonOrientableCellComplex_occurrencePairingValid hp)
+          (nonOrientableOccurrencePoint p 1
+            (nonOrientableBoundaryPosition p 1 0 1) u)) :
+    t = u := by
+  have heqv := Quotient.exact h
+  by_cases ht0 : t = 0
+  · subst t
+    by_cases hu0 : u = 0
+    · exact hu0.symm
+    · have hu1 : u ≠ 1 := by
+        intro hu1
+        subst u
+        norm_num at hu
+      have hpoint :=
+        (nonOrientableEqvGen_preserves_boundaryInterior
+          (p := p) (n := 1) hp 0 u hu0 hu1 heqv.symm).mp rfl
+      exact nonOrientableBoundaryOccurrencePoint_injective 0 0 u hpoint
+  · have ht1 : t ≠ 1 := by
+      intro ht1
+      subst t
+      norm_num at ht
+    have hpoint :=
+      (nonOrientableEqvGen_preserves_boundaryInterior
+        (p := p) (n := 1) hp 0 t ht0 ht1 heqv).mp rfl
+    exact nonOrientableBoundaryOccurrencePoint_injective 0 t u hpoint.symm
+
 private theorem orientablePolygonalRealizationHomeomorph_boundaryPoint
     {p n : ℕ} (hvalid : 1 ≤ p ∨ 1 ≤ n)
     (j : Fin n) (t : unitInterval) :
@@ -1007,6 +1455,142 @@ private theorem nonOrientablePolygonalRealizationHomeomorph_boundaryPoint
         (nonOrientableOccurrencePoint p n
           (nonOrientableBoundaryPosition p n j 1) t)) = _
   rw [nonOrientableCarrier_boundary_h_pos]
+
+private theorem orientablePolygonalBoundaryPoint_one_eq_normalBoundaryArc
+    (p : ℕ) (t : unitInterval) :
+    orientablePolygonalRealizationHomeomorph (Or.inr (by omega))
+        ((orientableCellComplex p 1).polygonalMk
+          (orientableCellComplex_occurrencePairingValid (Or.inr (by omega)))
+          (orientableOccurrencePoint p 1
+            (orientableBoundaryPosition p 1 0 1) t)) =
+      orientableNormalBoundaryArc p t := by
+  rw [orientablePolygonalRealizationHomeomorph_boundaryPoint]
+  unfold orientableNormalBoundaryArc orientableNormalBoundaryCarrierArc
+  apply congrArg (Quot.mk (OrientableRel p 1))
+  norm_num only [Fin.coe_ofNat_eq_mod, Nat.one_mod, Nat.cast_zero,
+    Nat.cast_one, mul_zero, add_zero, mul_one]
+  have harg :
+      (4 * (p : ℝ) + 1 + (t : ℝ)) / (4 * p + 3) =
+        ((t : ℝ) - 2) / (4 * p + 3) + (1 : ℤ) := by
+    norm_num only [Int.cast_one]
+    have hden : 4 * (p : ℝ) + 3 ≠ 0 := by positivity
+    field_simp
+    ring
+  rw [harg]
+  exact ClosedUnitDisc.bdyPtOfReal_add_int _ 1
+
+private theorem nonOrientablePolygonalBoundaryPoint_one_eq_normalBoundaryArc
+    (p : ℕ) (hp : 1 ≤ p) (t : unitInterval) :
+    nonOrientablePolygonalRealizationHomeomorph hp
+        ((nonOrientableCellComplex p 1).polygonalMk
+          (nonOrientableCellComplex_occurrencePairingValid hp)
+          (nonOrientableOccurrencePoint p 1
+            (nonOrientableBoundaryPosition p 1 0 1) t)) =
+      nonOrientableNormalBoundaryArc p t := by
+  rw [nonOrientablePolygonalRealizationHomeomorph_boundaryPoint]
+  unfold nonOrientableNormalBoundaryArc nonOrientableNormalBoundaryCarrierArc
+  apply congrArg (Quot.mk (NonOrientableRel p 1))
+  norm_num only [Fin.coe_ofNat_eq_mod, Nat.one_mod, Nat.cast_zero,
+    Nat.cast_one, mul_zero, add_zero, mul_one]
+  have harg :
+      (2 * (p : ℝ) + 1 + (t : ℝ)) / (2 * p + 3) =
+        ((t : ℝ) - 2) / (2 * p + 3) + (1 : ℤ) := by
+    norm_num only [Int.cast_one]
+    have hden : 2 * (p : ℝ) + 3 ≠ 0 := by positivity
+    field_simp
+    ring
+  rw [harg]
+  exact ClosedUnitDisc.bdyPtOfReal_add_int _ 1
+
+/-- The canonical free boundary loop of an orientable one-boundary normal
+form is a Jordan parametrization. -/
+theorem injective_orientableNormalBoundaryLoop (p : ℕ) :
+    Function.Injective (orientableNormalBoundaryLoop p) := by
+  intro x y hxy
+  obtain ⟨a, ha, hax⟩ := AddCircle.eq_coe_Ico x
+  obtain ⟨b, hb, hby⟩ := AddCircle.eq_coe_Ico y
+  let t : unitInterval := ⟨a, ha.1, ha.2.le⟩
+  let u : unitInterval := ⟨b, hb.1, hb.2.le⟩
+  have hnormal : orientableNormalBoundaryArc p t =
+      orientableNormalBoundaryArc p u := by
+    rw [← hax, ← hby] at hxy
+    change orientableNormalBoundaryLoop p
+        (((t : unitInterval) : ℝ) : UnitAddCircle) =
+      orientableNormalBoundaryLoop p
+        (((u : unitInterval) : ℝ) : UnitAddCircle) at hxy
+    rw [orientableNormalBoundaryLoop_apply_unitInterval,
+      orientableNormalBoundaryLoop_apply_unitInterval] at hxy
+    exact hxy
+  have himage :
+      orientablePolygonalRealizationHomeomorph (Or.inr (by omega))
+          ((orientableCellComplex p 1).polygonalMk
+            (orientableCellComplex_occurrencePairingValid (Or.inr (by omega)))
+            (orientableOccurrencePoint p 1
+              (orientableBoundaryPosition p 1 0 1) t)) =
+        orientablePolygonalRealizationHomeomorph (Or.inr (by omega))
+          ((orientableCellComplex p 1).polygonalMk
+            (orientableCellComplex_occurrencePairingValid (Or.inr (by omega)))
+            (orientableOccurrencePoint p 1
+              (orientableBoundaryPosition p 1 0 1) u)) := by
+    rw [orientablePolygonalBoundaryPoint_one_eq_normalBoundaryArc,
+      orientablePolygonalBoundaryPoint_one_eq_normalBoundaryArc]
+    exact hnormal
+  have hquotient :=
+    (orientablePolygonalRealizationHomeomorph
+      (p := p) (n := 1) (Or.inr (by omega))).injective himage
+  have htu : t = u := orientableBoundaryComponent_injective_Ico
+    p t u (by simpa only [t] using ha.2) (by simpa only [u] using hb.2)
+    hquotient
+  calc
+    x = (a : UnitAddCircle) := hax.symm
+    _ = (b : UnitAddCircle) := congrArg (fun z : ℝ ↦ (z : UnitAddCircle))
+      (congrArg Subtype.val htu)
+    _ = y := hby
+
+/-- The canonical free boundary loop of a nonorientable one-boundary normal
+form is a Jordan parametrization. -/
+theorem injective_nonOrientableNormalBoundaryLoop (p : ℕ) (hp : 1 ≤ p) :
+    Function.Injective (nonOrientableNormalBoundaryLoop p) := by
+  intro x y hxy
+  obtain ⟨a, ha, hax⟩ := AddCircle.eq_coe_Ico x
+  obtain ⟨b, hb, hby⟩ := AddCircle.eq_coe_Ico y
+  let t : unitInterval := ⟨a, ha.1, ha.2.le⟩
+  let u : unitInterval := ⟨b, hb.1, hb.2.le⟩
+  have hnormal : nonOrientableNormalBoundaryArc p t =
+      nonOrientableNormalBoundaryArc p u := by
+    rw [← hax, ← hby] at hxy
+    change nonOrientableNormalBoundaryLoop p
+        (((t : unitInterval) : ℝ) : UnitAddCircle) =
+      nonOrientableNormalBoundaryLoop p
+        (((u : unitInterval) : ℝ) : UnitAddCircle) at hxy
+    rw [nonOrientableNormalBoundaryLoop_apply_unitInterval,
+      nonOrientableNormalBoundaryLoop_apply_unitInterval] at hxy
+    exact hxy
+  have himage :
+      nonOrientablePolygonalRealizationHomeomorph hp
+          ((nonOrientableCellComplex p 1).polygonalMk
+            (nonOrientableCellComplex_occurrencePairingValid hp)
+            (nonOrientableOccurrencePoint p 1
+              (nonOrientableBoundaryPosition p 1 0 1) t)) =
+        nonOrientablePolygonalRealizationHomeomorph hp
+          ((nonOrientableCellComplex p 1).polygonalMk
+            (nonOrientableCellComplex_occurrencePairingValid hp)
+            (nonOrientableOccurrencePoint p 1
+              (nonOrientableBoundaryPosition p 1 0 1) u)) := by
+    rw [nonOrientablePolygonalBoundaryPoint_one_eq_normalBoundaryArc,
+      nonOrientablePolygonalBoundaryPoint_one_eq_normalBoundaryArc]
+    exact hnormal
+  have hquotient :=
+    (nonOrientablePolygonalRealizationHomeomorph
+      (p := p) (n := 1) hp).injective himage
+  have htu : t = u := nonOrientableBoundaryComponent_injective_Ico
+    p hp t u (by simpa only [t] using ha.2) (by simpa only [u] using hb.2)
+    hquotient
+  calc
+    x = (a : UnitAddCircle) := hax.symm
+    _ = (b : UnitAddCircle) := congrArg (fun z : ℝ ↦ (z : UnitAddCircle))
+      (congrArg Subtype.val htu)
+    _ = y := hby
 
 private theorem image_orientablePolygonalRealizationHomeomorph_boundaryComponentsLocus
     {p n : ℕ} (hvalid : 1 ≤ p ∨ 1 ≤ n) :
