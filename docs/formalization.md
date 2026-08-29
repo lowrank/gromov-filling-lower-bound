@@ -98,9 +98,19 @@ classification theorem. Every compact connected surface under the same
 half-space-manifold hypotheses is homeomorphic to the sphere or to a faithful
 orientable or nonorientable polygonal normal-form quotient. This removes the
 absolute classification gap, and the designated canonical free loop now has
-the required obstruction. The theorem still does not identify the supplied
-boundary parametrization with that free loop. That relative-boundary statement
-is still required for Lemma 5.4.
+the required obstruction.
+
+`GromovFilling.BoundaryLocusClassification` strengthens the entire
+finite-cyclic normalization chain at the realization level. It defines the
+polygonal boundary locus as the quotient image of exactly the once-used
+sides, proves that signed and unoriented relabelings and every P1/P2 move
+preserve that locus in both directions, and composes the result through the
+Gallier--Xu normalizer. Thus the normal-form homeomorphism now preserves the
+complete combinatorial boundary locus. What remains is to identify the
+Radó realization's once-used-side locus with the ambient manifold boundary,
+transport the canonical locus through the final raw-quotient adapter, and
+deduce that the supplied one-component parametrization is the unique free
+loop. That last geometric endpoint statement is still required for Lemma 5.4.
 
 ## Partial headline statements
 
