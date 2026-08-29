@@ -50,7 +50,56 @@ theorem lintegral_riemannianAtlasAreaMeasure
   exact lintegral_sum_measure q
     (fun i ↦ riemannianChartAreaMeasure I (F i) (pieces i))
 
-/-- Countable-atlas globalization of the local Riemannian area inequality.
+/-- Countable-atlas globalization of the local Riemannian area inequality
+under the natural local almost-everywhere measurability assumptions. -/
+theorem complex_volume_le_lintegral_riemannianTwoJacobian_of_atlas_of_aemeasurable
+    {ι E H M : Type*} [Countable ι]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [MeasurableSpace M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)]
+    (F : ι → ℂ → M) (pieces : ι → Set ℂ) (G : M → ℂ)
+    (omega : Set ℂ)
+    (hpieces : ∀ i, IsOpen (pieces i))
+    {K : ι → ℝ≥0}
+    (hLipschitz : ∀ i, LipschitzOnWith (K i) (G ∘ F i) (pieces i))
+    (hFdiff : ∀ i z, z ∈ pieces i →
+      MDifferentiableAt 𝓘(ℝ, ℂ) I (F i) z)
+    (hGdiff : ∀ i z, z ∈ pieces i →
+      MDifferentiableAt I 𝓘(ℝ, ℂ) G (F i z))
+    (hFmeas : ∀ i, AEMeasurable (F i) (volume.restrict (pieces i)))
+    (hDensityMeas : ∀ i, AEMeasurable
+      (riemannianChartDensity I (F i)) (volume.restrict (pieces i)))
+    (hJacobianMeas : Measurable (fun x ↦
+      ENNReal.ofReal (riemannianTwoJacobian I G x)))
+    (hcoverage : omega ⊆ ⋃ i, G '' (F i '' pieces i)) :
+    volume omega ≤
+      ∫⁻ x, ENNReal.ofReal (riemannianTwoJacobian I G x)
+        ∂riemannianAtlasAreaMeasure I F pieces := by
+  calc
+    volume omega ≤ volume (⋃ i, G '' (F i '' pieces i)) :=
+      measure_mono hcoverage
+    _ ≤ ∑' i, volume (G '' (F i '' pieces i)) :=
+      measure_iUnion_le (fun i ↦ G '' (F i '' pieces i))
+    _ ≤ ∑' i,
+        ∫⁻ x, ENNReal.ofReal (riemannianTwoJacobian I G x)
+          ∂riemannianChartAreaMeasure I (F i) (pieces i) := by
+      refine ENNReal.tsum_le_tsum ?_
+      intro i
+      exact
+        complex_volume_image_image_le_lintegral_riemannianChartAreaMeasure_of_aemeasurable
+          I (F i) G (pieces i) (hpieces i) (hLipschitz i)
+          (hFdiff i) (hGdiff i) (hFmeas i) (hDensityMeas i)
+          hJacobianMeas
+    _ = ∫⁻ x, ENNReal.ofReal (riemannianTwoJacobian I G x)
+          ∂riemannianAtlasAreaMeasure I F pieces := by
+      symm
+      exact lintegral_riemannianAtlasAreaMeasure I F pieces _
+
+/-- Measurable-data specialization of
+`complex_volume_le_lintegral_riemannianTwoJacobian_of_atlas_of_aemeasurable`.
 If a planar set is covered by the images of the chart pieces under `G`, its
 area is bounded by the intrinsic two-Jacobian of `G` integrated against the
 sum of the chart contributions. -/
@@ -98,6 +147,45 @@ theorem complex_volume_le_lintegral_riemannianTwoJacobian_of_atlas
           ∂riemannianAtlasAreaMeasure I F pieces := by
       symm
       exact lintegral_riemannianAtlasAreaMeasure I F pieces _
+
+/-- Local-AE version of the atlas inequality stated from source coverage and
+target-range coverage. -/
+theorem complex_volume_le_lintegral_riemannianTwoJacobian_of_subset_range_of_atlas_cover_of_aemeasurable
+    {ι E H M : Type*} [Countable ι]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [MeasurableSpace M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)]
+    (F : ι → ℂ → M) (pieces : ι → Set ℂ) (G : M → ℂ)
+    (omega : Set ℂ)
+    (hpieces : ∀ i, IsOpen (pieces i))
+    {K : ι → ℝ≥0}
+    (hLipschitz : ∀ i, LipschitzOnWith (K i) (G ∘ F i) (pieces i))
+    (hFdiff : ∀ i z, z ∈ pieces i →
+      MDifferentiableAt 𝓘(ℝ, ℂ) I (F i) z)
+    (hGdiff : ∀ i z, z ∈ pieces i →
+      MDifferentiableAt I 𝓘(ℝ, ℂ) G (F i z))
+    (hFmeas : ∀ i, AEMeasurable (F i) (volume.restrict (pieces i)))
+    (hDensityMeas : ∀ i, AEMeasurable
+      (riemannianChartDensity I (F i)) (volume.restrict (pieces i)))
+    (hJacobianMeas : Measurable (fun x ↦
+      ENNReal.ofReal (riemannianTwoJacobian I G x)))
+    (hatlas : (Set.univ : Set M) ⊆ ⋃ i, F i '' pieces i)
+    (hcoverage : omega ⊆ Set.range G) :
+    volume omega ≤
+      ∫⁻ x, ENNReal.ofReal (riemannianTwoJacobian I G x)
+        ∂riemannianAtlasAreaMeasure I F pieces := by
+  apply
+    complex_volume_le_lintegral_riemannianTwoJacobian_of_atlas_of_aemeasurable
+      I F pieces G omega hpieces hLipschitz hFdiff hGdiff hFmeas
+      hDensityMeas hJacobianMeas
+  rintro y hy
+  rcases hcoverage hy with ⟨x, rfl⟩
+  rcases Set.mem_iUnion.mp (hatlas (Set.mem_univ x)) with ⟨i, hi⟩
+  rcases hi with ⟨z, hz, rfl⟩
+  exact Set.mem_iUnion.mpr ⟨i, ⟨F i z, ⟨z, hz, rfl⟩, rfl⟩⟩
 
 /-- The same atlas inequality stated from the two geometric coverage facts
 that arise in Lemma 5.4: the chart pieces cover the source manifold and the

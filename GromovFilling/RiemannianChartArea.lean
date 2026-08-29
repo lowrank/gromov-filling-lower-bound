@@ -131,7 +131,7 @@ theorem complex_volume_image_le_lintegral_riemannianTwoJacobian_of_isOpen
 /-- The area inequality on one Riemannian chart.  The image of the chart
 piece under a surface map is controlled by the integral of the surface
 Jacobian against the chart-induced area measure. -/
-theorem complex_volume_image_image_le_lintegral_riemannianChartAreaMeasure
+theorem complex_volume_image_image_le_lintegral_riemannianChartAreaMeasure_of_aemeasurable
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [TopologicalSpace M] [ChartedSpace H M]
@@ -143,8 +143,9 @@ theorem complex_volume_image_image_le_lintegral_riemannianChartAreaMeasure
     (hFdiff : ∀ z ∈ s, MDifferentiableAt 𝓘(ℝ, ℂ) I F z)
     (hGdiff : ∀ z ∈ s,
       MDifferentiableAt I 𝓘(ℝ, ℂ) G (F z))
-    (hFmeas : Measurable F)
-    (hDensityMeas : Measurable (riemannianChartDensity I F))
+    (hFmeas : AEMeasurable F (volume.restrict s))
+    (hDensityMeas : AEMeasurable
+      (riemannianChartDensity I F) (volume.restrict s))
     (hJacobianMeas : Measurable (fun x ↦
       ENNReal.ofReal (riemannianTwoJacobian I G x))) :
     volume (G '' (F '' s)) ≤
@@ -170,8 +171,36 @@ theorem complex_volume_image_image_le_lintegral_riemannianChartAreaMeasure
           ENNReal.ofReal (riemannianTwoJacobian I G x)
             ∂riemannianChartAreaMeasure I F s := by
       symm
-      exact lintegral_riemannianChartAreaMeasure I F s hFmeas
-        hDensityMeas _ hJacobianMeas
+      exact lintegral_riemannianChartAreaMeasure_of_aemeasurable
+        I F s hFmeas hDensityMeas _ hJacobianMeas
+
+/-- Measurable-data specialization of
+`complex_volume_image_image_le_lintegral_riemannianChartAreaMeasure_of_aemeasurable`. -/
+theorem complex_volume_image_image_le_lintegral_riemannianChartAreaMeasure
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [MeasurableSpace M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)]
+    (F : ℂ → M) (G : M → ℂ) (s : Set ℂ) (hs : IsOpen s)
+    {K : ℝ≥0} (hLipschitz : LipschitzOnWith K (G ∘ F) s)
+    (hFdiff : ∀ z ∈ s, MDifferentiableAt 𝓘(ℝ, ℂ) I F z)
+    (hGdiff : ∀ z ∈ s,
+      MDifferentiableAt I 𝓘(ℝ, ℂ) G (F z))
+    (hFmeas : Measurable F)
+    (hDensityMeas : Measurable (riemannianChartDensity I F))
+    (hJacobianMeas : Measurable (fun x ↦
+      ENNReal.ofReal (riemannianTwoJacobian I G x))) :
+    volume (G '' (F '' s)) ≤
+      ∫⁻ x,
+        ENNReal.ofReal (riemannianTwoJacobian I G x)
+          ∂riemannianChartAreaMeasure I F s := by
+  exact
+    complex_volume_image_image_le_lintegral_riemannianChartAreaMeasure_of_aemeasurable
+      I F G s hs hLipschitz hFdiff hGdiff
+      hFmeas.aemeasurable.restrict hDensityMeas.aemeasurable.restrict
+      hJacobianMeas
 
 end
 
