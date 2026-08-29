@@ -23,10 +23,12 @@ Gromov's filling-area problem.
 
 The kernel-checked development includes exact Fourier coefficients, the Givens
 mixing matrix, dominant-harmonic Jordan curves, integer circle degree, finite
-mod-2 surface obstruction, planar area and Jacobian inequalities, rigorous
-constant evaluation, off-diagonal logarithmic-sine-kernel positivity, de
-Sitter profile identities, finite one-high-leg Gram/Rayleigh algebra, exact
-scalar resonance-trace arithmetic, and conditional certificate assembly.
+mod-2 surface obstruction, boundary-regular Radó triangulation, faithful
+compact-surface polygonal classification, planar area and Jacobian
+inequalities, rigorous constant evaluation, off-diagonal
+logarithmic-sine-kernel positivity, de Sitter profile identities, finite
+one-high-leg Gram/Rayleigh algebra, exact scalar resonance-trace arithmetic,
+and conditional certificate assembly.
 
 The general glued-polygon theorem now handles every fixed-point-free
 involutive side pairing, including orientation-reversing identifications. The
@@ -68,14 +70,13 @@ caller assumption.
 
 ## Current frontier
 
-Four end-to-end bridges remain outside the verified scope:
+The Lemma 5.4 compact-surface boundary obstruction is now end-to-end verified
+in `GromovFilling.Lemma54`. Three analytic bridges remain outside the verified
+scope:
 
-1. a classification or fine cell-decomposition theorem for arbitrary compact
-   one-boundary surfaces, identifying the boundary component up to a circle
-   homeomorphism;
-2. Riemannian eikonal and parameter-integral differentiation;
-3. globalization of the planar area formula through surface charts;
-4. a global differential-form Stokes/comass interface for the oriented case.
+1. Riemannian eikonal and parameter-integral differentiation;
+2. globalization of the planar area formula through surface charts;
+3. a global differential-form Stokes/comass interface for the oriented case.
 
 The repository keeps these foundations visible. It does not replace them with
 project axioms or encode an open target as a hypothesis and call the result a

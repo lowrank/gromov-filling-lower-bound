@@ -2,7 +2,10 @@ import GromovFilling.BoundaryActionSeries
 import GromovFilling.BoundaryCertificate
 import GromovFilling.BoundaryDegree
 import GromovFilling.BoundaryDegreeComponents
+import GromovFilling.BoundaryLocusClassification
 import GromovFilling.BoundarySubdivisionDegree
+import GromovFilling.CanonicalBoundaryConnectedness
+import GromovFilling.CanonicalBoundaryLocus
 import GromovFilling.Certificates
 import GromovFilling.CircleDegree
 import GromovFilling.ClosedOneForm
@@ -27,8 +30,10 @@ import GromovFilling.GivensDisk
 import GromovFilling.GivensDiskArea
 import GromovFilling.JacobianBudget
 import GromovFilling.JordanBoundary
+import GromovFilling.Lemma54
 import GromovFilling.MetricPlanarCoverage
 import GromovFilling.ModTwoDegree
+import GromovFilling.NormalFormBoundaryObstruction
 import GromovFilling.Numerics
 import GromovFilling.OneHighLeg
 import GromovFilling.Oriented
@@ -39,6 +44,10 @@ import GromovFilling.PositiveLogSineKernel
 import GromovFilling.ProfileFourier
 import GromovFilling.RadialDegreeStability
 import GromovFilling.RadialProjection
+import GromovFilling.RadoAmbientBoundary
+import GromovFilling.RadoBoundaryLocus
 import GromovFilling.ResonanceTrace
+import GromovFilling.SurfaceClassificationFoundation
 import GromovFilling.SurfaceCoverage
+import GromovFilling.SurfaceTriangulationFoundation
 import GromovFilling.Universal
