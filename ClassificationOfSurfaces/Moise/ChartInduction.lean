@@ -5730,13 +5730,14 @@ theorem moise_induction_step (c : MoiseChart S) (hc : c.BoundaryFaithful)
 
 omit [T2Space S] [ConnectedSpace S]
   [IsManifold (modelWithCornersEuclideanHalfSpace 2) 0 S] in
-/-- Shared finite Radó induction assembler.  It turns any clean one-chart absorption step with the
-full `RadoInvariant` conclusion into an end-to-end geometric triangulation. -/
-theorem moise_triangulation_of_induction
+/-- Shared finite Radó induction assembler retaining the complete final invariant.  In
+particular, the returned full-support partial triangulation still records edge valence and
+facewise regularity along the ambient manifold boundary. -/
+theorem moise_radoInvariant_univ_of_induction
     (hstep : ∀ (c : MoiseChart S), c.BoundaryFaithful →
       ∀ {T : PartialTriangulation S} {A : Set S}, RadoInvariant T A →
         ∃ T' : PartialTriangulation S, RadoInvariant T' (A ∪ c.core)) :
-    Nonempty (GeometricTriangulation S) := by
+    ∃ T : PartialTriangulation S, RadoInvariant T Set.univ := by
   classical
   obtain ⟨m, charts, hcover, hbd⟩ := moise_finite_chart_cover S
   -- Absorb the first `k` cores.
@@ -5799,12 +5800,28 @@ theorem moise_triangulation_of_induction
       exact ⟨i, hx⟩
     · rintro ⟨i, hx⟩
       exact ⟨i, i.isLt, hx⟩
-  have hsupport : T.support = Set.univ := by
-    have huniv : (Set.univ : Set S) ⊆ T.support := by
-      rw [← hall]
-      exact hT.coresCovered
-    exact Set.eq_univ_of_univ_subset huniv
+  refine ⟨T, ?_⟩
+  rw [← hall]
+  exact hT
+
+omit [T2Space S] [ConnectedSpace S]
+  [IsManifold (modelWithCornersEuclideanHalfSpace 2) 0 S] in
+/-- Compatibility wrapper which forgets the final Radó invariant and retains only the resulting
+geometric triangulation. -/
+theorem moise_triangulation_of_induction
+    (hstep : ∀ (c : MoiseChart S), c.BoundaryFaithful →
+      ∀ {T : PartialTriangulation S} {A : Set S}, RadoInvariant T A →
+        ∃ T' : PartialTriangulation S, RadoInvariant T' (A ∪ c.core)) :
+    Nonempty (GeometricTriangulation S) := by
+  obtain ⟨T, hT⟩ := moise_radoInvariant_univ_of_induction S hstep
+  have hsupport : T.support = Set.univ :=
+    Set.eq_univ_of_univ_subset hT.coresCovered
   exact ⟨T.toGeometricTriangulation hsupport⟩
+
+/-- The bordered Radó induction with its full-support boundary-aware invariant retained. -/
+theorem moise_radoInvariant_univ_of_boundaries :
+    ∃ T : PartialTriangulation S, RadoInvariant T Set.univ :=
+  moise_radoInvariant_univ_of_induction S (moise_induction_step S)
 
 /-- The bordered Radó induction assembled from its boundary-preserving one-chart step. -/
 theorem moise_triangulation_of_boundaries :

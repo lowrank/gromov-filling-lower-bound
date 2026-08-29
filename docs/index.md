@@ -70,8 +70,8 @@ caller assumption.
 
 Four end-to-end bridges remain outside the verified scope:
 
-1. a boundary-aware refinement of the verified Radó triangulation, extracting
-   the unique simplicial boundary cycle up to a circle homeomorphism;
+1. extraction of the unique simplicial boundary cycle, up to a circle
+   homeomorphism, from the verified boundary-facewise-regular Radó output;
 2. Riemannian eikonal and parameter-integral differentiation;
 3. globalization of the planar area formula through surface charts;
 4. a global differential-form Stokes/comass interface for the oriented case.

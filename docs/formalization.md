@@ -80,10 +80,10 @@ presentation from the compact connected one-boundary manifold hypotheses.
 `GromovFilling.SurfaceTriangulationFoundation` now supplies the preceding
 finite-triangulability step unconditionally. It imports a pinned,
 Lean-4.29-compatible Radó source closure and proves
-`exists_geometricTriangulation_compact_connected_surface`. The returned
-`GeometricTriangulation` does not yet retain the boundary-facewise invariant
-maintained internally by the Radó induction, so the unique cyclic boundary
-component still has to be extracted before the relaxed handoff applies.
+`exists_full_support_boundary_facewise_regular_partial_triangulation`. The
+returned finite complex covers the surface, has edge valence at most two, and
+meets the ambient boundary facewise. The unique cyclic boundary component
+still has to be extracted before the relaxed handoff applies.
 
 ## Partial headline statements
 
@@ -91,8 +91,8 @@ The finite universal certificate and the nonlinear oriented certificate are
 kernel-verified deductions from named geometric inputs. The following bridges
 are not yet verified for every compact Riemannian surface:
 
-- boundary-aware output and cyclic-boundary extraction from the verified
-  finite surface triangulation;
+- cyclic-boundary extraction from the verified full-support
+  boundary-facewise-regular finite surface triangulation;
 - almost-everywhere eikonal differentiation and weak parameter integration;
 - intrinsic area measure and chartwise Jacobian globalization;
 - the global differential-form Stokes/comass inequality.
