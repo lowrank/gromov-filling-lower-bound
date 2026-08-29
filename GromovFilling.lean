@@ -41,4 +41,5 @@ import GromovFilling.RadialDegreeStability
 import GromovFilling.RadialProjection
 import GromovFilling.ResonanceTrace
 import GromovFilling.SurfaceCoverage
+import GromovFilling.SurfaceTriangulationFoundation
 import GromovFilling.Universal

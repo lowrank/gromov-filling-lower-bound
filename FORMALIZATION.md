@@ -23,7 +23,7 @@ Riemannian surfaces.
 | Lemma 5.1, Entries of the Givens product | **Verified** | Entry, orthogonality, and energy identities are proved in `Givens.lean`. |
 | Lemma 5.2, First-harmonic dominance | **Verified** | All rowwise strict dominance estimates are proved in `Givens.lean` and exposed by `BoundaryCertificate.lean`. |
 | Lemma 5.3, Dominant first harmonic | **Verified** | Injectivity, degree one, polynomial disk extension, Jordan-region identification, and exact Fourier area are proved across `DominantHarmonic*.lean`, `BoundaryDegree*.lean`, `GivensDisk*.lean`, and `JordanBoundary.lean`. |
-| Lemma 5.4, Jordan coverage without orientation | **Partial** | The finite mod-2 obstruction, arbitrary polygon-side pairing theorem, and glued-schema coverage deductions are verified. `hasOddBoundaryDegreeObstruction_of_exists_homeomorph_cylinderStripGluedPointBoundary_pairing` exposes the exact remaining output: a boundary-faithful polygon presentation for every compact connected one-boundary surface. |
+| Lemma 5.4, Jordan coverage without orientation | **Partial** | The finite mod-2 obstruction, arbitrary polygon-side pairing theorem, circle-homeomorphism reparametrization invariance, and glued-schema coverage deductions are verified. `exists_geometricTriangulation_compact_connected_surface` now proves finite geometric triangulability for the exact compact connected half-space-manifold hypotheses. The remaining topology output is to retain boundary-facewise regularity, extract the unique cyclic boundary component, and feed the relaxed reparametrized polygon-presentation handoff. |
 | Proposition 5.5, Finite universal certificate | **Partial** | `finite_universal_certificate` and its certificate wrappers verify the deduction from coverage plus Jacobian budgets. Those geometric budgets are not yet supplied for arbitrary Riemannian surfaces. |
 | Theorem 6.1, Antipodal defect | **Partial** | The pointwise defect budget and additive certificate propagation are verified on planar/chart interfaces. Intrinsic surface globalization remains unverified. |
 | Lemma 7.1, Hilbert-valued Stokes | **Partial** | `ClosedOneForm.lean` proves fixed-endpoint homotopy invariance and disk/square Stokes/comass interfaces in finite-dimensional Euclidean targets. The infinite-dimensional Hilbert-valued surface theorem is not formalized. |
@@ -45,10 +45,10 @@ Riemannian surfaces.
 
 The following are tracked formalization gaps rather than hidden hypotheses:
 
-1. a classification or compatible arbitrarily-fine cell-decomposition theorem
-   for every compact connected surface with one boundary component, producing
-   the boundary-faithful existential presentation consumed by
-   `hasOddBoundaryDegreeObstruction_of_exists_homeomorph_cylinderStripGluedPointBoundary_pairing`;
+1. a boundary-aware refinement of the verified Radó triangulation theorem:
+   retain boundary-facewise regularity, extract the unique cyclic boundary
+   component, and produce the presentation consumed by
+   `hasOddBoundaryDegreeObstruction_of_exists_homeomorph_cylinderStripGluedPointBoundary_pairing_reparametrized`;
 2. Rademacher/eikonal and parameter-integral differentiation on a
    two-dimensional Riemannian manifold with boundary;
 3. globalization of the planar area formula through Riemannian charts,
@@ -57,19 +57,21 @@ The following are tracked formalization gaps rather than hidden hypotheses:
    argument.
 
 The pinned mathlib revision contains Riemannian-manifold primitives but no
-surface triangulation/classification theorem or ready-made manifold area
-formula/Stokes package that closes these bridges. Introducing them as project
-assumptions would produce a conditional shell, not an end-to-end verification,
-so this project records them explicitly instead.
+surface triangulation theorem or ready-made manifold area formula/Stokes
+package. The project now vendors and audits the exact Radó source closure
+needed for finite triangulability, while keeping the boundary-preservation
+refinement and the analytic bridges explicit rather than introducing project
+assumptions.
 
-A read-only audit of
+The 81-module transitive closure of
 [`mccorvie/classification-of-surfaces`](https://github.com/mccorvie/classification-of-surfaces)
-at commit `e3c7230fe78d7b056a415d9ecae6f77887046b32` found a proof of the compact
-surface classification theorem for half-space-modeled two-manifolds. Its
-exported theorem classifies the underlying space, but does not yet identify a
-supplied boundary parametrization with the unique free boundary of the normal
-form. It is therefore a useful foundation candidate, not a proof of the
-remaining Lemma 5.4 bridge.
+at commit `e3c7230fe78d7b056a415d9ecae6f77887046b32` is vendored under
+`ClassificationOfSurfaces/`, with explicit Apache-2.0 provenance and Lean
+4.29 compatibility notices. Its Radó theorem proves the existence of a finite
+geometric triangulation. The exported structure discards the
+boundary-facewise invariant maintained during the proof, so this import does
+not yet identify the supplied boundary parametrization with the unique
+simplicial boundary cycle.
 
 ## Current trust evidence
 

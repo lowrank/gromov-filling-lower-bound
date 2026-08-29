@@ -20,6 +20,9 @@ jobs:
       - name: Check canonical umbrella
         run: ./scripts/check_umbrella.sh
 
+      - name: Check vendored surface foundation
+        run: ./scripts/check_surface_vendor.sh
+
       - name: Reject proof escapes
         run: ./scripts/check_no_proof_escapes.sh
 

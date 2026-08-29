@@ -18,6 +18,7 @@ The script runs:
 
 ```text
 ./scripts/check_umbrella.sh
+./scripts/check_surface_vendor.sh
 ./scripts/check_no_proof_escapes.sh
 ./scripts/test_proof_escape_gate.sh
 lake exe cache get
@@ -28,16 +29,19 @@ lake build
 
 Every pull request to `main` must pass:
 
-1. **Canonical umbrella check.** Every Lean source module must appear in the
-   generated umbrella import list.
-2. **Fail-closed source escape scan.** Project Lean files reject placeholder,
-   custom axiom, unsafe, and native reduction escape tokens; scanner errors are
-   failures rather than clean results.
-3. **Negative control.** A scratch source with an injected `sorry` must be
+1. **Canonical umbrella check.** Every Gromov Lean source module must appear
+   in the generated umbrella import list.
+2. **Pinned surface-vendor closure.** Metadata, license, Lean/mathlib target,
+   and all 81 modules must match the exact transitive closure of the Radó
+   entry module.
+3. **Fail-closed source escape scan.** Gromov and vendored surface-topology
+   Lean files reject placeholder, custom axiom, unsafe, and native reduction
+   escape tokens; scanner errors are failures rather than clean results.
+4. **Negative control.** A scratch source with an injected `sorry` must be
    rejected with the expected diagnostic and exit code.
-4. **Pinned full build.** The complete package elaborates with Lean `4.29.0`
+5. **Pinned full build.** The complete package elaborates with Lean `4.29.0`
    and the revisions in `lake-manifest.json`.
-5. **Live axiom audit.** Every declaration under `GromovFilling` is inspected
+6. **Live axiom audit.** Every declaration under `GromovFilling` is inspected
    in the compiled environment.
 
 The accepted logical infrastructure is exactly:

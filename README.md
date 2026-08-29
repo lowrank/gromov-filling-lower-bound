@@ -61,6 +61,9 @@ every compiled project declaration against the exact allowlist `propext`,
 - Jordan separation, bounded origin component, and polynomial disk area;
 - finite mod-2 cochain obstruction with internally constructed lifts, edge
   turns, and face cuts;
+- finite geometric triangulability of compact connected Hausdorff
+  topological two-manifolds with boundary under the exact half-space chart
+  hypotheses;
 - arbitrary fixed-point-free polygon-side pairings, including
   orientation-reversing identifications;
 - planar Lipschitz area inequalities and Jacobian budgets;
@@ -94,6 +97,7 @@ lower obstruction automatically. Callers no longer supply it as a field.
 | Path | Purpose |
 |---|---|
 | [`GromovFilling/`](GromovFilling/) | Lean definitions, lemmas, and certificate theorems |
+| [`ClassificationOfSurfaces/`](ClassificationOfSurfaces/) | pinned Apache-2.0 Radó triangulation source closure, adapted to Lean 4.29 |
 | [`GromovFilling.lean`](GromovFilling.lean) | canonical generated umbrella import |
 | [`fourier_resonant_filling_area_v3.tex`](fourier_resonant_filling_area_v3.tex) | companion manuscript source |
 | [`FORMALIZATION.md`](FORMALIZATION.md) | exact manuscript-to-Lean statement ledger |
@@ -123,9 +127,9 @@ scan fails closed.
 
 The end-to-end Riemannian statements still require:
 
-1. a classification or compatible arbitrarily-fine cell decomposition for
-   every compact connected surface with one boundary component, identifying
-   that component up to circle-homeomorphic reparametrization;
+1. refinement of the verified finite Radó triangulation so its
+   boundary-facewise invariant survives in the output, followed by extraction
+   of the unique boundary cycle up to circle-homeomorphic reparametrization;
 2. Riemannian eikonal and weak parameter-integral differentiation;
 3. globalization of the planar area formula through surface charts, including
    the intrinsic `J₂` density;
@@ -147,4 +151,7 @@ changes.
 
 ## License
 
-Released under the [MIT License](LICENSE).
+The Gromov-filling project is released under the [MIT License](LICENSE). The
+vendored Radó source closure retains its upstream
+[Apache-2.0 license](ClassificationOfSurfaces/LICENSE) and modification
+notices.
