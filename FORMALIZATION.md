@@ -23,7 +23,7 @@ Riemannian surfaces.
 | Lemma 5.1, Entries of the Givens product | **Verified** | Entry, orthogonality, and energy identities are proved in `Givens.lean`. |
 | Lemma 5.2, First-harmonic dominance | **Verified** | All rowwise strict dominance estimates are proved in `Givens.lean` and exposed by `BoundaryCertificate.lean`. |
 | Lemma 5.3, Dominant first harmonic | **Verified** | Injectivity, degree one, polynomial disk extension, Jordan-region identification, and exact Fourier area are proved across `DominantHarmonic*.lean`, `BoundaryDegree*.lean`, `GivensDisk*.lean`, and `JordanBoundary.lean`. |
-| Lemma 5.4, Jordan coverage without orientation | **Partial** | The finite mod-2 obstruction, arbitrary polygon-side pairing theorem, circle-homeomorphism reparametrization invariance, and glued-schema coverage deductions are verified. `exists_full_support_boundary_facewise_regular_partial_triangulation` retains the boundary-aware Radó output, while `exists_admissible_normalForm_boundaryRealizationEquivData` proves that every signed, unoriented, P1, P2, and composite Gallier--Xu normalization homeomorphism preserves the complete once-used-side locus. `image_canonicalOrientableRealizationHomeomorph_boundaryLocus_one` and its nonorientable analogue identify that locus exactly with the canonical obstruction loop in the raw quotient, where the odd boundary-degree obstruction is verified. The remaining topology output is to identify the Radó once-used-side locus with the ambient manifold boundary, deduce one canonical boundary block from the one-component hypothesis, and match the supplied parametrization with that loop up to a circle homeomorphism. |
+| Lemma 5.4, Jordan coverage without orientation | **Partial** | The finite mod-2 obstruction, arbitrary polygon-side pairing theorem, circle-homeomorphism reparametrization invariance, and glued-schema coverage deductions are verified. `exists_full_support_boundary_facewise_regular_partial_triangulation` retains the boundary-aware Radó output, while `image_polygonalBoundaryLocus_polygonalRealizationHomeomorph` identifies the finite-cyclic once-used-side locus exactly with the Radó triangulation's complete valence-one edge locus. `exists_admissible_normalForm_boundaryRealizationEquivData` preserves that locus through every normalization move, and `image_canonicalOrientableRealizationHomeomorph_boundaryLocus_one` and its nonorientable analogue identify the one-block endpoint exactly with the canonical obstruction loop in the raw quotient, where the odd boundary-degree obstruction is verified. The remaining topology output is to identify the valence-one edge locus with the ambient manifold boundary, deduce one canonical boundary block from the one-component hypothesis, and match the supplied parametrization with that loop up to a circle homeomorphism. |
 | Proposition 5.5, Finite universal certificate | **Partial** | `finite_universal_certificate` and its certificate wrappers verify the deduction from coverage plus Jacobian budgets. Those geometric budgets are not yet supplied for arbitrary Riemannian surfaces. |
 | Theorem 6.1, Antipodal defect | **Partial** | The pointwise defect budget and additive certificate propagation are verified on planar/chart interfaces. Intrinsic surface globalization remains unverified. |
 | Lemma 7.1, Hilbert-valued Stokes | **Partial** | `ClosedOneForm.lean` proves fixed-endpoint homotopy invariance and disk/square Stokes/comass interfaces in finite-dimensional Euclidean targets. The infinite-dimensional Hilbert-valued surface theorem is not formalized. |
@@ -45,7 +45,7 @@ Riemannian surfaces.
 
 The following are tracked formalization gaps rather than hidden hypotheses:
 
-1. identify the Radó realization's once-used-side locus with the ambient
+1. identify the Radó realization's valence-one edge locus with the ambient
    manifold boundary, use its one-component parametrization to force one
    canonical boundary block, and identify that parametrization with the
    resulting unique free loop up to a circle homeomorphism, producing the
@@ -74,10 +74,13 @@ geometric triangulation, and the strengthened wrapper retains the
 boundary-facewise invariant maintained during the proof. The new relative
 normalization theorem proves that the faithful polygonal homeomorphism carries
 the complete once-used-side locus to the canonical once-used-side locus.
+`RadoBoundaryLocus.lean` first identifies that finite-cyclic locus exactly with
+the complete valence-one edge locus of the original geometric triangulation.
 `CanonicalBoundaryLocus.lean` carries that complete locus through the raw
 representative quotient and, for one boundary block, identifies it exactly
 with the canonical orientable or nonorientable obstruction loop. The remaining
-relative endpoint is the identification with the ambient manifold boundary
+relative endpoint is the identification of the valence-one edge locus with the
+ambient manifold boundary
 and the deduction that its supplied one-component parametrization forces and
 parametrizes that unique block.
 

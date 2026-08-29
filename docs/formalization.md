@@ -93,6 +93,13 @@ returned finite complex covers the surface, has edge valence at most two, and
 meets the ambient boundary facewise. The unique cyclic boundary component
 still has to be extracted before the relaxed handoff applies.
 
+`GromovFilling.RadoBoundaryLocus` proves the exact combinatorial bridge out of
+that triangulation. Geometric edge valence equals finite-cyclic occurrence
+multiplicity, and the faithful polygonal-realization homeomorphism maps the
+complete once-used-side locus exactly onto the complete valence-one edge
+locus. Thus the remaining Radó endpoint is specifically the equality of that
+valence-one locus with the ambient manifold boundary.
+
 `GromovFilling.SurfaceClassificationFoundation` also exposes the vendored
 classification theorem. Every compact connected surface under the same
 half-space-manifold hypotheses is homeomorphic to the sphere or to a faithful
@@ -114,7 +121,7 @@ free `h` side, computes the final adapter on those sides, and proves equality
 between the image of the full polygonal boundary locus and the raw quotient's
 full free-side locus. With one boundary block this set is exactly the range of
 the orientable or nonorientable canonical obstruction loop. What remains is to
-identify the Radó realization's once-used-side locus with the ambient manifold
+identify the Radó realization's valence-one edge locus with the ambient manifold
 boundary, use the supplied one-component parametrization to force one
 canonical boundary block, and identify the parametrization with that loop up
 to a circle homeomorphism. That geometric endpoint statement is still
