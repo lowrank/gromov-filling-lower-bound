@@ -18,9 +18,10 @@ The script runs:
 
 ```text
 ./scripts/check_umbrella.sh
+./scripts/check_no_proof_escapes.sh
+./scripts/test_proof_escape_gate.sh
 lake exe cache get
 lake build
-rg -n "proof escape tokens" GromovFilling GromovFilling.lean
 ```
 
 ## Continuous integration gates
@@ -29,11 +30,14 @@ Every pull request to `main` must pass:
 
 1. **Canonical umbrella check.** Every Lean source module must appear in the
    generated umbrella import list.
-2. **Pinned full build.** The complete package elaborates with Lean `4.29.0`
+2. **Fail-closed source escape scan.** Project Lean files reject placeholder,
+   custom axiom, unsafe, and native reduction escape tokens; scanner errors are
+   failures rather than clean results.
+3. **Negative control.** A scratch source with an injected `sorry` must be
+   rejected with the expected diagnostic and exit code.
+4. **Pinned full build.** The complete package elaborates with Lean `4.29.0`
    and the revisions in `lake-manifest.json`.
-3. **Source escape scan.** Project Lean files reject placeholder, custom axiom,
-   unsafe, and native reduction escape tokens.
-4. **Live axiom audit.** Every declaration under `GromovFilling` is inspected
+5. **Live axiom audit.** Every declaration under `GromovFilling` is inspected
    in the compiled environment.
 
 The accepted logical infrastructure is exactly:
@@ -44,8 +48,10 @@ Classical.choice
 Quot.sound
 ```
 
-The first hardened receipt audited 3,965 project declarations with no other
-axioms.
+The latest hardened receipt, run
+[`33222433335`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33222433335)
+on merge commit `24a89cc64c589f1f8895e19697b37fdf56e674bd`, audited
+4,002 project declarations with no other axioms.
 
 ## What a pass means
 

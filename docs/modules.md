@@ -16,6 +16,7 @@ module list and fails if any source file is missing from the umbrella.
 | Planar area | `EuclideanAreaFormula`, `ComplexAreaFormula`, `JacobianBudget`, `ComplexJacobianBudget` | area formula and determinant budgets |
 | Coverage | `SurfaceCoverage`, `MetricPlanarCoverage` | Jordan-region coverage for abstract and metric Fourier maps |
 | Oriented argument | `ClosedOneForm`, `Oriented`, `GeometricClosedOneForm` | Stokes interfaces and scalar nonlinear optimization |
+| Barrier identities | `PositiveLogSineKernel`, `PolynomialDiskArea`, `DeSitterProfile` | off-diagonal log-sine positivity, holomorphic disk areas, de Sitter algebra |
 | Final assembly | `Certificates`, `PlanarCertificate`, `GeometricCertificates` | reusable finite and infinite certificate endpoints |
 
 ## Trust-sensitive files
@@ -24,9 +25,8 @@ module list and fails if any source file is missing from the umbrella.
 - `lakefile.lean` pins mathlib and the Jordan curve package.
 - `lake-manifest.json` records the exact dependency revisions.
 - `.github/workflows/ci.yml` enforces the package build, umbrella check,
-  source scan, and live axiom audit.
+  fail-closed source scan with negative control, and live axiom audit.
 - `scripts/verify.sh` is the one-command local reproduction path.
 
 Browse the complete source tree in the
 [GitHub repository](https://github.com/lowrank/conj-gromov-filling/tree/main/GromovFilling).
-
