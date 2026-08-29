@@ -36,10 +36,11 @@ import GromovFilling.Lemma54
 import GromovFilling.Lemma54Area
 import GromovFilling.MetricPlanarCoverage
 import GromovFilling.ModTwoDegree
+import GromovFilling.NonlinearCorrelationBounds
+import GromovFilling.NonlinearProfileFourierBridge
+import GromovFilling.NonlinearSymplecticCalculus
 import GromovFilling.NormalFormBoundaryObstruction
 import GromovFilling.Numerics
-import GromovFilling.NonlinearCorrelationBounds
-import GromovFilling.NonlinearSymplecticCalculus
 import GromovFilling.OneHighLeg
 import GromovFilling.Oriented
 import GromovFilling.PlanarCertificate
