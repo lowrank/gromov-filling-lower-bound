@@ -1,5 +1,6 @@
 import GromovFilling.RiemannianChartDensity
 import Mathlib.Geometry.Manifold.IsManifold.InteriorBoundary
+import Mathlib.Geometry.Manifold.Riemannian.Basic
 
 /-!
 # Complex parametrizations of manifold-interior chart pieces
@@ -17,11 +18,15 @@ interior itself need not be compact.
 -/
 
 open Bundle MeasureTheory Set
-open scoped Bundle Manifold
+open Manifold Metric
+open scoped Bundle ENNReal Manifold NNReal
 
 namespace GromovFilling
 
 noncomputable section
+
+attribute [local instance] normedAddCommGroupTangentSpaceVectorSpace
+attribute [local instance] normedSpaceTangentSpaceVectorSpace
 
 /-- The complex coordinate domain obtained by pulling back the interior of
 an extended chart target along a linear isometry `ℂ ≃ E`. -/
@@ -213,6 +218,77 @@ theorem exists_fin_interiorComplexExtChart_cover
   refine Set.mem_iUnion.mpr ⟨t.equivFin ⟨x, hxt⟩, ?_⟩
   rw [image_interiorComplexExtChartDomain I e]
   simpa using And.intro hyx hy
+
+/-- A bounded derivative of an inverse extended chart on a convex set gives
+a Lipschitz complex parametrization there.  The proof pulls the line segment
+between two coordinate points back to the manifold and bounds its
+Riemannian path length. -/
+theorem lipschitzOnWith_interiorComplexExtChart_of_convex
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (e : ℂ ≃ₗᵢ[ℝ] E) (x : M) (t : Set E)
+    (ht : Convex ℝ t) (htarget : t ⊆ (extChartAt I x).target)
+    {C : ℝ≥0}
+    (hderiv : ∀ y ∈ t,
+      ‖mfderiv[range I] (extChartAt I x).symm y‖ₑ ≤ C) :
+    LipschitzOnWith C (interiorComplexExtChart I e x) (e ⁻¹' t) := by
+  intro z hz w hw
+  change e z ∈ t at hz
+  change e w ∈ t at hw
+  rw [IsRiemannianManifold.out]
+  rw [← e.edist_map z w]
+  let η := ContinuousAffineMap.lineMap (R := ℝ) (e z) (e w)
+  set γ := (extChartAt I x).symm ∘ η
+  have hη : Icc (0 : ℝ) 1 ⊆ ⇑η ⁻¹' t := by
+    simp only [← image_subset_iff, ContinuousAffineMap.coe_lineMap_eq,
+      ← segment_eq_image_lineMap, η]
+    exact ht.segment_subset hz hw
+  have hηtarget : Icc (0 : ℝ) 1 ⊆
+      ⇑η ⁻¹' (extChartAt I x).target :=
+    hη.trans (preimage_mono htarget)
+  have η_smooth : CMDiff[Icc (0 : ℝ) 1] 1 η := by
+    apply ContMDiff.contMDiffOn
+    rw [contMDiff_iff_contDiff]
+    exact ContinuousAffineMap.contDiff _
+  have hpath : riemannianEDist I
+      (interiorComplexExtChart I e x z)
+      (interiorComplexExtChart I e x w) ≤ pathELength I γ 0 1 := by
+    apply riemannianEDist_le_pathELength _ _ _ zero_le_one
+    · exact (contMDiffOn_extChartAt_symm x).comp η_smooth hηtarget
+    · simp [γ, η, interiorComplexExtChart,
+        ContinuousAffineMap.coe_lineMap_eq]
+    · simp [γ, η, interiorComplexExtChart,
+        ContinuousAffineMap.coe_lineMap_eq]
+  apply hpath.trans
+  rw [← lintegral_fderiv_lineMap_eq_edist,
+    pathELength_eq_lintegral_mfderivWithin_Icc,
+    ← lintegral_const_mul' _ _ ENNReal.coe_ne_top]
+  apply setLIntegral_mono' measurableSet_Icc
+  intro a ha
+  have hcomp : mfderiv[Icc (0 : ℝ) 1] γ a =
+      (mfderiv[range I] (extChartAt I x).symm (η a)) ∘L
+        (mfderiv[Icc (0 : ℝ) 1] η a) := by
+    apply mfderivWithin_comp
+    · exact mdifferentiableWithinAt_extChartAt_symm (hηtarget ha)
+    · exact η_smooth.mdifferentiableOn one_ne_zero a ha
+    · exact hηtarget.trans
+        (preimage_mono (extChartAt_target_subset_range x))
+    · rw [uniqueMDiffWithinAt_iff_uniqueDiffWithinAt]
+      exact uniqueDiffOn_Icc zero_lt_one a ha
+  have happly : mfderiv[Icc (0 : ℝ) 1] γ a 1 =
+      (mfderiv[range I] (extChartAt I x).symm (η a))
+        (mfderiv[Icc (0 : ℝ) 1] η a 1) :=
+    congr($hcomp 1)
+  rw [happly]
+  apply (ContinuousLinearMap.le_opNorm_enorm _ _).trans
+  gcongr
+  · exact hderiv (η a) (hη ha)
+  · simp only [mfderivWithin_eq_fderivWithin]
+    exact le_of_eq rfl
 
 end
 
