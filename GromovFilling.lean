@@ -59,6 +59,7 @@ import GromovFilling.RiemannianChartTransition
 import GromovFilling.RiemannianInteriorAtlasArea
 import GromovFilling.RiemannianInteriorChart
 import GromovFilling.RiemannianInteriorCoverage
+import GromovFilling.RiemannianJacobianBudget
 import GromovFilling.RiemannianLipschitzDerivative
 import GromovFilling.RiemannianStandardChart
 import GromovFilling.RiemannianTwoJacobian
