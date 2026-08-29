@@ -1,4 +1,5 @@
 import Mathlib.Analysis.InnerProductSpace.Orientation
+import Mathlib.Analysis.InnerProductSpace.TwoDim
 import Mathlib.Geometry.Manifold.Riemannian.Basic
 import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 
@@ -12,7 +13,7 @@ orthonormal bases and proved independent of those bases.  Consequently the
 definition does not require either vector space to be oriented.
 -/
 
-open scoped Bundle Manifold
+open scoped Bundle InnerProductSpace Manifold
 open Bundle
 
 namespace GromovFilling
@@ -105,6 +106,80 @@ theorem twoJacobian_nonneg
     0 ≤ twoJacobian L := by
   unfold twoJacobian metricJacobianWithBases
   positivity
+
+/-- In any orthonormal source basis, the intrinsic two-Jacobian is the
+absolute target area of the two image vectors.  The target orientation is
+arbitrary because of the absolute value. -/
+theorem twoJacobian_eq_abs_areaForm
+    {E F : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    [NormedAddCommGroup F] [InnerProductSpace ℝ F]
+    [Fact (Module.finrank ℝ E = 2)]
+    [Fact (Module.finrank ℝ F = 2)]
+    (e : OrthonormalBasis (Fin 2) ℝ E)
+    (o : Orientation ℝ F (Fin 2)) (L : E →L[ℝ] F) :
+    twoJacobian L =
+      |o.areaForm (L (e 0)) (L (e 1))| := by
+  let f := canonicalOrthonormalBasisTwo F
+  calc
+    twoJacobian L =
+        |(LinearMap.toMatrix e.toBasis f.toBasis L.toLinearMap).det| := by
+      rw [twoJacobian_eq_metricJacobianWithBases e f]
+      rfl
+    _ = |f.toBasis.det (fun i ↦ L (e i))| := by
+      apply congrArg abs
+      rw [Module.Basis.det_apply]
+      apply congrArg Matrix.det
+      ext i j
+      rw [LinearMap.toMatrix_apply, Module.Basis.toMatrix_apply]
+      rfl
+    _ = |o.volumeForm (fun i ↦ L (e i))| :=
+      (o.volumeForm_robust' f (fun i ↦ L (e i))).symm
+    _ = |o.areaForm (L (e 0)) (L (e 1))| := by
+      rw [o.areaForm_to_volumeForm]
+      apply congrArg abs
+      apply congrArg o.volumeForm
+      funext i
+      fin_cases i <;> rfl
+
+/-- Orientation-free Gram-determinant formula for the square of the
+intrinsic two-Jacobian.  This presentation contains no chosen target basis
+and is the key to measurability in a varying Riemannian tangent bundle. -/
+theorem twoJacobian_sq_eq_gram
+    {E F : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    [NormedAddCommGroup F] [InnerProductSpace ℝ F]
+    [Fact (Module.finrank ℝ E = 2)]
+    [Fact (Module.finrank ℝ F = 2)]
+    (e : OrthonormalBasis (Fin 2) ℝ E)
+    (o : Orientation ℝ F (Fin 2)) (L : E →L[ℝ] F) :
+    twoJacobian L ^ 2 =
+      ‖L (e 0)‖ ^ 2 * ‖L (e 1)‖ ^ 2 -
+        ⟪L (e 0), L (e 1)⟫_ℝ ^ 2 := by
+  rw [twoJacobian_eq_abs_areaForm e o, sq_abs]
+  nlinarith [o.inner_sq_add_areaForm_sq (L (e 0)) (L (e 1))]
+
+/-- Square-root form of the orientation-free Gram formula. -/
+theorem twoJacobian_eq_sqrt_gram
+    {E F : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    [NormedAddCommGroup F] [InnerProductSpace ℝ F]
+    [Fact (Module.finrank ℝ E = 2)]
+    [Fact (Module.finrank ℝ F = 2)]
+    (e : OrthonormalBasis (Fin 2) ℝ E)
+    (o : Orientation ℝ F (Fin 2)) (L : E →L[ℝ] F) :
+    twoJacobian L =
+      √(‖L (e 0)‖ ^ 2 * ‖L (e 1)‖ ^ 2 -
+        ⟪L (e 0), L (e 1)⟫_ℝ ^ 2) := by
+  calc
+    twoJacobian L = |o.areaForm (L (e 0)) (L (e 1))| :=
+      twoJacobian_eq_abs_areaForm e o L
+    _ = √(o.areaForm (L (e 0)) (L (e 1)) ^ 2) :=
+      (Real.sqrt_sq_eq_abs _).symm
+    _ = √(‖L (e 0)‖ ^ 2 * ‖L (e 1)‖ ^ 2 -
+        ⟪L (e 0), L (e 1)⟫_ℝ ^ 2) := by
+      congr 1
+      nlinarith [o.inner_sq_add_areaForm_sq (L (e 0)) (L (e 1))]
 
 /-- The intrinsic two-dimensional metric Jacobian is multiplicative under
 composition. -/
@@ -220,7 +295,7 @@ theorem twoJacobian_complex_eq_abs_det (L : ℂ →L[ℝ] ℂ) :
     Complex.finrank_real_complex_fact
   exact twoJacobian_eq_abs_det L
 
-private theorem tangentSpace_finrank_eq_two
+theorem tangentSpace_finrank_eq_two
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [TopologicalSpace M] [ChartedSpace H M]
