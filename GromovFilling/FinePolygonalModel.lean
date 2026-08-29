@@ -1812,6 +1812,40 @@ def HasOddBoundaryDegreeObstruction
   ∀ (H : X → UnitAddCircle), Continuous H →
     ∀ d : ℤ, HasCircleDegree (H ∘ boundary) d → Odd d → False
 
+/-- Reparametrizing a boundary by a circle homeomorphism preserves the
+odd-degree extension obstruction.  Composing a hypothetical odd-degree
+extension with the inverse reparametrization gives another odd degree on the
+original boundary because every circle homeomorphism has degree `1` or `-1`. -/
+theorem HasOddBoundaryDegreeObstruction.comp_circleHomeomorph
+    {X : Type*} [TopologicalSpace X]
+    {boundary : UnitAddCircle → X}
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary)
+    (e : UnitAddCircle ≃ₜ UnitAddCircle) :
+    HasOddBoundaryDegreeObstruction (boundary ∘ e) := by
+  intro H hH d hdegree hodd
+  obtain ⟨dInv, hdegreeInv, hoddInv⟩ :=
+    exists_odd_hasCircleDegree_circleHomeomorph e.symm
+  have hcomposed :
+      HasCircleDegree ((H ∘ (boundary ∘ e)) ∘ e.symm) (d * dInv) :=
+    hdegree.comp hdegreeInv
+  have horiginal : HasCircleDegree (H ∘ boundary) (d * dInv) := by
+    convert hcomposed using 1
+    funext t
+    simp [Function.comp_def]
+  exact hobstruction H hH (d * dInv) horiginal (hodd.mul hoddInv)
+
+/-- Equality-facing form of invariance under a circle-homeomorphic boundary
+reparametrization. -/
+theorem hasOddBoundaryDegreeObstruction_of_circleHomeomorph_reparametrization
+    {X : Type*} [TopologicalSpace X]
+    {boundary boundary' : UnitAddCircle → X}
+    (e : UnitAddCircle ≃ₜ UnitAddCircle)
+    (hboundary : boundary' = boundary ∘ e)
+    (hobstruction : HasOddBoundaryDegreeObstruction boundary) :
+    HasOddBoundaryDegreeObstruction boundary' := by
+  rw [hboundary]
+  exact hobstruction.comp_circleHomeomorph e
+
 /-- The odd boundary-degree obstruction transports across any
 boundary-respecting continuous map by precomposing the test map. -/
 theorem hasOddBoundaryDegreeObstruction_of_comp_continuous

@@ -61,14 +61,20 @@ Consequently, the free boundary has the odd-degree obstruction for every
 polygon schema, and the existing continuous-map and homeomorphism interfaces
 derive their lower obstruction automatically.
 
+`GromovFilling.CircleDegree` now also proves existence and multiplicativity of
+the lift-defined degree.  Applying multiplicativity to a circle homeomorphism
+and its inverse shows that every circle homeomorphism has degree `1` or `-1`.
+Thus the odd-degree obstruction is invariant under arbitrary
+circle-homeomorphic boundary reparametrization.
+
 The theorem
-`hasOddBoundaryDegreeObstruction_of_exists_homeomorph_cylinderStripGluedPointBoundary_pairing`
-now states the precise classification handoff without asking the caller to
-supply any obstruction: it needs only an arbitrary side pairing and a
-homeomorphism that carries the schema's free loop to the given boundary. The
-remaining Lemma 5.4 topology task is to produce that boundary-faithful
-existential presentation from the compact connected one-boundary manifold
-hypotheses.
+`hasOddBoundaryDegreeObstruction_of_exists_homeomorph_cylinderStripGluedPointBoundary_pairing_reparametrized`
+states the relaxed classification handoff without asking the caller to supply
+an obstruction or preserve a chosen parameter pointwise. It needs an arbitrary
+side pairing, a surface homeomorphism, and any circle homeomorphism relating
+the schema's free loop to the supplied boundary. The remaining Lemma 5.4
+topology task is to produce this boundary-component-preserving existential
+presentation from the compact connected one-boundary manifold hypotheses.
 
 ## Partial headline statements
 

@@ -124,7 +124,8 @@ scan fails closed.
 The end-to-end Riemannian statements still require:
 
 1. a classification or compatible arbitrarily-fine cell decomposition for
-   every compact connected surface with one boundary component;
+   every compact connected surface with one boundary component, identifying
+   that component up to circle-homeomorphic reparametrization;
 2. Riemannian eikonal and weak parameter-integral differentiation;
 3. globalization of the planar area formula through surface charts, including
    the intrinsic `J₂` density;
