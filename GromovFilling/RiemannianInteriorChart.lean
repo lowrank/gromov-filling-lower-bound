@@ -19,7 +19,7 @@ interior itself need not be compact.
 
 open Bundle MeasureTheory Set
 open Manifold Metric
-open scoped Bundle ENNReal Manifold NNReal
+open scoped Bundle ENNReal Manifold NNReal Topology
 
 namespace GromovFilling
 
@@ -94,6 +94,48 @@ theorem mdifferentiableAt_interiorComplexExtChart
   exact ((contMDiffOn_interiorComplexExtChart I e x z hz).contMDiffAt
     ((isOpen_interiorComplexExtChartDomain I e x).mem_nhds hz)).mdifferentiableAt
       one_ne_zero
+
+/-- Differentiability of a map in an interior inverse-chart coordinate
+system implies manifold differentiability of the original map.  This is the
+local inverse step that transfers planar Rademacher differentiability back to
+the surface. -/
+theorem mdifferentiableAt_of_differentiableAt_comp_interiorComplexExtChart
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    (e : ℂ ≃ₗᵢ[ℝ] E) (x : M) (G : M → ℂ) {z : ℂ}
+    (hz : z ∈ interiorComplexExtChartDomain I e x)
+    (hG : DifferentiableAt ℝ
+      (G ∘ interiorComplexExtChart I e x) z) :
+    MDifferentiableAt I 𝓘(ℝ, ℂ) G
+      (interiorComplexExtChart I e x z) := by
+  let F : ℂ → M := interiorComplexExtChart I e x
+  let coord : M → ℂ := e.symm ∘ extChartAt I x
+  have htarget : e z ∈ (extChartAt I x).target := interior_subset hz
+  have hySourceExt : F z ∈ (extChartAt I x).source :=
+    (extChartAt I x).map_target htarget
+  have hySource : F z ∈ (chartAt H x).source := by
+    simpa only [extChartAt_source] using hySourceExt
+  have hcoordValue : coord (F z) = z := by
+    change e.symm (extChartAt I x ((extChartAt I x).symm (e z))) = z
+    rw [(extChartAt I x).right_inv htarget, e.symm_apply_apply]
+  have hcoord : MDifferentiableAt I 𝓘(ℝ, ℂ) coord (F z) := by
+    exact e.symm.toContinuousLinearEquiv.differentiableAt.comp_mdifferentiableAt
+      (mdifferentiableAt_extChartAt hySource)
+  have hGcoord : MDifferentiableAt 𝓘(ℝ, ℂ) 𝓘(ℝ, ℂ)
+      (G ∘ F) (coord (F z)) := by
+    rw [hcoordValue]
+    exact hG.mdifferentiableAt
+  have hcomp : MDifferentiableAt I 𝓘(ℝ, ℂ)
+      ((G ∘ F) ∘ coord) (F z) :=
+    hGcoord.comp (F z) hcoord
+  have hlocal : ((G ∘ F) ∘ coord) =ᶠ[𝓝 (F z)] G := by
+    filter_upwards [(chartAt H x).open_source.mem_nhds hySource] with y hy
+    change G ((extChartAt I x).symm
+      (e (e.symm (extChartAt I x y)))) = G y
+    rw [e.apply_symm_apply, (extChartAt I x).left_inv (by
+      simpa only [extChartAt_source] using hy)]
+  exact hcomp.congr_of_eventuallyEq hlocal.symm
 
 /-- The image of an interior complex inverse chart is precisely the part of
 the original chart source lying in the manifold interior. -/

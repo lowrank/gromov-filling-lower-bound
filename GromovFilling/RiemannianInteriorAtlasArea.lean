@@ -46,6 +46,10 @@ structure ControlledInteriorAtlas
     ∀ i, ContinuousOn (parametrization i) (domain i)
   contMDiffOn_parametrization :
     ∀ i, ContMDiffOn 𝓘(ℝ, ℂ) I 1 (parametrization i) (domain i)
+  mdifferentiableAt_of_differentiableAt_comp :
+    ∀ i (G : M → ℂ) z, z ∈ domain i →
+      DifferentiableAt ℝ (G ∘ parametrization i) z →
+        MDifferentiableAt I 𝓘(ℝ, ℂ) G (parametrization i z)
   isOpen_image : ∀ i, IsOpen (parametrization i '' domain i)
   lipschitzOnWith_parametrization :
     ∀ i, LipschitzOnWith (lipschitzConstant i)
@@ -124,6 +128,7 @@ def controlledInteriorAtlasOfFinCover
       isOpen_domain := ?_
       continuousOn_parametrization := ?_
       contMDiffOn_parametrization := ?_
+      mdifferentiableAt_of_differentiableAt_comp := ?_
       isOpen_image := ?_
       lipschitzOnWith_parametrization := ?_
       interior_subset_iUnion_image := ?_
@@ -156,6 +161,22 @@ def controlledInteriorAtlasOfFinCover
           hsubset
     · simp [F, domains, finControlledInteriorParametrization,
         finControlledInteriorDomain, hi]
+  · intro i G z hz hdiff
+    by_cases hi : i < n
+    · have hzControlled : z ∈
+          chosenControlledInteriorComplexChartDomain I e (centers ⟨i, hi⟩) := by
+        simpa [domains, finControlledInteriorDomain, hi] using hz
+      have hzFull : z ∈
+          interiorComplexExtChartDomain I e (centers ⟨i, hi⟩) :=
+        controlledInteriorComplexChartDomain_subset_interiorComplexExtChartDomain
+          I e (chosenInteriorChartControl I (centers ⟨i, hi⟩)) hzControlled
+      have hdiff' : DifferentiableAt ℝ
+          (G ∘ interiorComplexExtChart I e (centers ⟨i, hi⟩)) z := by
+        simpa [F, finControlledInteriorParametrization, hi] using hdiff
+      simpa [F, finControlledInteriorParametrization, hi] using
+        mdifferentiableAt_of_differentiableAt_comp_interiorComplexExtChart
+          I e (centers ⟨i, hi⟩) G hzFull hdiff'
+    · simp [domains, finControlledInteriorDomain, hi] at hz
   · intro i
     by_cases hi : i < n
     · rw [show F i = interiorComplexExtChart I e (centers ⟨i, hi⟩) by
@@ -301,12 +322,45 @@ def areaMeasure
     (A : ControlledInteriorAtlas I M) : Measure M :=
   riemannianAtlasAreaMeasure I A.parametrization (A.piece I)
 
+/-- A globally Lipschitz surface map is manifold-differentiable almost
+everywhere along every disjoint controlled chart piece.  Rademacher is
+applied to the planar pullback and the local inverse-chart field transfers
+the result back to the manifold. -/
+theorem ae_mdifferentiableAt_of_lipschitzWith
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [MeasurableSpace M] [BorelSpace M]
+    [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A : ControlledInteriorAtlas I M) (G : M → ℂ)
+    {KG : ℝ≥0} (hG : LipschitzWith KG G) (i : ℕ) :
+    ∀ᵐ z ∂volume.restrict (A.piece I i),
+      MDifferentiableAt I 𝓘(ℝ, ℂ) G (A.parametrization i z) := by
+  have hLipschitz : LipschitzOnWith
+      (KG * A.lipschitzConstant i) (G ∘ A.parametrization i)
+      (A.domain i) :=
+    hG.comp_lipschitzOnWith (A.lipschitzOnWith_parametrization i)
+  have hdiffWithin := hLipschitz.ae_differentiableWithinAt (μ := volume)
+    (A.isOpen_domain i).measurableSet
+  have hdiffDomain : ∀ᵐ z ∂volume.restrict (A.domain i),
+      MDifferentiableAt I 𝓘(ℝ, ℂ) G (A.parametrization i z) := by
+    filter_upwards [ae_restrict_mem (A.isOpen_domain i).measurableSet,
+      hdiffWithin] with z hz hdiff
+    exact A.mdifferentiableAt_of_differentiableAt_comp i G z hz
+      (hdiff.differentiableAt ((A.isOpen_domain i).mem_nhds hz))
+  exact ae_mono
+    (Measure.restrict_mono (A.piece_subset_domain I i) le_rfl)
+      hdiffDomain
+
 end ControlledInteriorAtlas
 
 /-- The analytic area conclusion for a globally Lipschitz surface map and a
-controlled disjoint atlas.  The two remaining regularity inputs are stated
-exactly where Rademacher must supply them: manifold differentiability and
-measurability of the intrinsic Jacobian on each chart contribution. -/
+controlled disjoint atlas.  Planar Rademacher now supplies manifold
+differentiability automatically; the remaining explicit regularity input is
+almost-everywhere measurability of the intrinsic Jacobian on each chart
+contribution. -/
 theorem complex_volume_le_lintegral_riemannianTwoJacobian_of_controlledInteriorAtlas
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
@@ -320,8 +374,6 @@ theorem complex_volume_le_lintegral_riemannianTwoJacobian_of_controlledInteriorA
     (hJacobianMeas : ∀ i, AEMeasurable
       (fun x ↦ ENNReal.ofReal (riemannianTwoJacobian I G x))
       (riemannianChartAreaMeasure I (A.parametrization i) (A.piece I i)))
-    (hGdiff : ∀ i, ∀ᵐ z ∂volume.restrict (A.piece I i),
-      MDifferentiableAt I 𝓘(ℝ, ℂ) G (A.parametrization i z))
     (hcoverage : omega ⊆ G '' I.interior M) :
     volume omega ≤
       ∫⁻ x, ENNReal.ofReal (riemannianTwoJacobian I G x)
@@ -346,7 +398,7 @@ theorem complex_volume_le_lintegral_riemannianTwoJacobian_of_controlledInteriorA
   · exact hJacobianMeas
   · intro i
     filter_upwards [ae_restrict_mem (A.measurableSet_piece I i),
-      hGdiff i] with z hzPiece hzG
+      A.ae_mdifferentiableAt_of_lipschitzWith I G hG i] with z hzPiece hzG
     have hzDomain : z ∈ A.domain i := A.piece_subset_domain I i hzPiece
     exact ⟨((A.contMDiffOn_parametrization i z hzDomain).contMDiffAt
       ((A.isOpen_domain i).mem_nhds hzDomain)).mdifferentiableAt
