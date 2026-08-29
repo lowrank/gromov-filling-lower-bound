@@ -111,9 +111,9 @@ The project is pinned to:
   `e442525a662e9e3beb8205b9fa1fc99509076ded`.
 
 The latest hardened CI receipt, run
-[`33224380893`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33224380893)
-on merge commit `3669b2dd9b6ea5845266438ee7a3837e4010a9e8`, audited
-**4,030 declarations** under `GromovFilling`; every declaration stayed within
+[`33226422322`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33226422322)
+on merge commit `ecad55ca15d4bda1f73c59969d7dc9f8809736fa`, audited
+**4,134 declarations** under `GromovFilling`; every declaration stayed within
 the standard logical allowlist. CI also fails if the umbrella omits a source
 module or if project Lean source contains placeholder, custom axiom, unsafe,
 or native reduction escape tokens, and a negative control confirms that this
