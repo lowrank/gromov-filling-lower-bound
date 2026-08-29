@@ -290,6 +290,251 @@ theorem lipschitzOnWith_interiorComplexExtChart_of_convex
   · simp only [mfderivWithin_eq_fderivWithin]
     exact le_of_eq rfl
 
+/-- Quantitative local data for an inverse extended chart: on a small ball
+inside the model range, the inverse chart stays in its target and its
+derivative has a uniform bound. -/
+structure InteriorChartControl
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)] (x : M) where
+  C : ℝ≥0
+  C_pos : 0 < C
+  r : ℝ
+  r_pos : 0 < r
+  controlled :
+    ball (extChartAt I x x) r ∩ range I ⊆
+      (extChartAt I x).target ∩
+        {y | ‖mfderiv[range I] (extChartAt I x).symm y‖ₑ < C}
+
+/-- Every point has quantitative inverse-chart control data. -/
+theorem nonempty_interiorChartControl
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    (x : M) : Nonempty (InteriorChartControl I x) := by
+  rcases eventually_enorm_mfderivWithin_symm_extChartAt_lt I x with
+    ⟨C, C_pos, hC⟩
+  obtain ⟨r, r_pos, hr⟩ : ∃ r > 0,
+      ball (extChartAt I x x) r ∩ range I ⊆
+        (extChartAt I x).target ∩
+          {y | ‖mfderiv[range I] (extChartAt I x).symm y‖ₑ < C} :=
+    mem_nhdsWithin_iff.1
+      (inter_mem (extChartAt_target_mem_nhdsWithin x) hC)
+  exact ⟨⟨C, C_pos, r, r_pos, hr⟩⟩
+
+/-- The convex interior model set on which a controlled inverse chart will
+be used. -/
+def controlledInteriorChartSet
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    {x : M} (c : InteriorChartControl I x) : Set E :=
+  ball (extChartAt I x x) c.r ∩ interior (range I)
+
+/-- The controlled complex coordinate domain. -/
+def controlledInteriorComplexChartDomain
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    (e : ℂ ≃ₗᵢ[ℝ] E) {x : M} (c : InteriorChartControl I x) : Set ℂ :=
+  e ⁻¹' controlledInteriorChartSet I c
+
+/-- The ambient manifold neighborhood whose interior part is parametrized
+by the controlled complex chart. -/
+def controlledInteriorChartNeighborhood
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    {x : M} (c : InteriorChartControl I x) : Set M :=
+  (extChartAt I x).source ∩
+    extChartAt I x ⁻¹' ball (extChartAt I x x) c.r
+
+/-- A controlled model set is open. -/
+theorem isOpen_controlledInteriorChartSet
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    {x : M} (c : InteriorChartControl I x) :
+    IsOpen (controlledInteriorChartSet I c) :=
+  isOpen_ball.inter isOpen_interior
+
+/-- A controlled model set is convex. -/
+theorem convex_controlledInteriorChartSet
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    {x : M} (c : InteriorChartControl I x) :
+    Convex ℝ (controlledInteriorChartSet I c) :=
+  (convex_ball _ _).inter I.convex_range.interior
+
+/-- A controlled model set lies in the inverse extended chart target. -/
+theorem controlledInteriorChartSet_subset_target
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    {x : M} (c : InteriorChartControl I x) :
+    controlledInteriorChartSet I c ⊆ (extChartAt I x).target := by
+  intro y hy
+  exact (c.controlled ⟨hy.1, interior_subset hy.2⟩).1
+
+/-- The controlled complex coordinate domain is open. -/
+theorem isOpen_controlledInteriorComplexChartDomain
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    (e : ℂ ≃ₗᵢ[ℝ] E) {x : M} (c : InteriorChartControl I x) :
+    IsOpen (controlledInteriorComplexChartDomain I e c) :=
+  (isOpen_controlledInteriorChartSet I c).preimage e.continuous
+
+/-- The ambient controlled chart neighborhood is open. -/
+theorem isOpen_controlledInteriorChartNeighborhood
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    {x : M} (c : InteriorChartControl I x) :
+    IsOpen (controlledInteriorChartNeighborhood I c) := by
+  exact isOpen_extChartAt_preimage' x isOpen_ball
+
+/-- The center belongs to its ambient controlled chart neighborhood. -/
+theorem mem_controlledInteriorChartNeighborhood
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    {x : M} (c : InteriorChartControl I x) :
+    x ∈ controlledInteriorChartNeighborhood I c :=
+  ⟨mem_extChartAt_source x, mem_ball_self c.r_pos⟩
+
+/-- A controlled inverse chart is Lipschitz on its complex coordinate
+domain, with the derivative-bound constant stored in the control data. -/
+theorem lipschitzOnWith_controlledInteriorComplexChart
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (e : ℂ ≃ₗᵢ[ℝ] E) {x : M} (c : InteriorChartControl I x) :
+    LipschitzOnWith c.C (interiorComplexExtChart I e x)
+      (controlledInteriorComplexChartDomain I e c) := by
+  apply lipschitzOnWith_interiorComplexExtChart_of_convex I e x
+    (controlledInteriorChartSet I c)
+    (convex_controlledInteriorChartSet I c)
+    (controlledInteriorChartSet_subset_target I c)
+  intro y hy
+  exact (c.controlled ⟨hy.1, interior_subset hy.2⟩).2.le
+
+/-- The controlled complex chart image is exactly the interior part of its
+ambient controlled neighborhood. -/
+theorem image_controlledInteriorComplexChartDomain
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    (e : ℂ ≃ₗᵢ[ℝ] E) {x : M} (c : InteriorChartControl I x) :
+    interiorComplexExtChart I e x ''
+        controlledInteriorComplexChartDomain I e c =
+      controlledInteriorChartNeighborhood I c ∩ I.interior M := by
+  rw [interiorComplexExtChart, controlledInteriorComplexChartDomain,
+    ← Set.image_image, e.surjective.image_preimage]
+  rw [(extChartAt I x).symm_image_eq_source_inter_preimage
+    (controlledInteriorChartSet_subset_target I c)]
+  ext y
+  simp only [controlledInteriorChartSet,
+    controlledInteriorChartNeighborhood, mem_inter_iff, mem_preimage]
+  constructor
+  · rintro ⟨hsource, hball, hrange⟩
+    have hchartSource : y ∈ (chartAt H x).source := by
+      simpa only [extChartAt_source] using hsource
+    refine ⟨⟨hsource, hball⟩, ?_⟩
+    change I.IsInteriorPoint y
+    apply (I.isInteriorPoint_iff_of_mem_atlas one_ne_zero
+      (chart_mem_atlas H x) hchartSource).mpr
+    exact interior_maximal (controlledInteriorChartSet_subset_target I c)
+      (isOpen_controlledInteriorChartSet I c) ⟨hball, hrange⟩
+  · rintro ⟨⟨hsource, hball⟩, hinterior⟩
+    have hchartSource : y ∈ (chartAt H x).source := by
+      simpa only [extChartAt_source] using hsource
+    refine ⟨hsource, hball, ?_⟩
+    change I.IsInteriorPoint y at hinterior
+    exact interior_mono (extChartAt_target_subset_range x)
+      ((I.isInteriorPoint_iff_of_mem_atlas one_ne_zero
+        (chart_mem_atlas H x) hchartSource).mp hinterior)
+
+/-- A canonical local choice of controlled inverse-chart data at each
+manifold point. -/
+def chosenInteriorChartControl
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    (x : M) : InteriorChartControl I x :=
+  Classical.choice (nonempty_interiorChartControl I x)
+
+/-- The chosen controlled complex coordinate domain at a point. -/
+def chosenControlledInteriorComplexChartDomain
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    (e : ℂ ≃ₗᵢ[ℝ] E) (x : M) : Set ℂ :=
+  controlledInteriorComplexChartDomain I e (chosenInteriorChartControl I x)
+
+/-- The chosen ambient controlled chart neighborhood at a point. -/
+def chosenControlledInteriorChartNeighborhood
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    (x : M) : Set M :=
+  controlledInteriorChartNeighborhood I (chosenInteriorChartControl I x)
+
+/-- Compactness selects finitely many controlled inverse charts whose
+images cover the manifold interior. -/
+theorem exists_fin_controlledInteriorComplexExtChart_cover
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [CompactSpace M] (e : ℂ ≃ₗᵢ[ℝ] E) :
+    ∃ n : ℕ, ∃ centers : Fin n → M,
+      I.interior M ⊆ ⋃ i, interiorComplexExtChart I e (centers i) ''
+        chosenControlledInteriorComplexChartDomain I e (centers i) := by
+  classical
+  obtain ⟨t, ht⟩ : ∃ t : Finset M,
+      (Set.univ : Set M) ⊆
+        ⋃ x ∈ t, chosenControlledInteriorChartNeighborhood I x := by
+    refine isCompact_univ.elim_finite_subcover
+      (chosenControlledInteriorChartNeighborhood I)
+      (fun x ↦ isOpen_controlledInteriorChartNeighborhood I
+        (chosenInteriorChartControl I x)) ?_
+    intro x _hx
+    exact Set.mem_iUnion.mpr ⟨x,
+      mem_controlledInteriorChartNeighborhood I
+        (chosenInteriorChartControl I x)⟩
+  refine ⟨t.card, fun j ↦ t.equivFin.symm j, ?_⟩
+  intro y hy
+  obtain ⟨x, hxt, hyx⟩ := Set.mem_iUnion₂.mp (ht (Set.mem_univ y))
+  refine Set.mem_iUnion.mpr ⟨t.equivFin ⟨x, hxt⟩, ?_⟩
+  rw [chosenControlledInteriorComplexChartDomain,
+    image_controlledInteriorComplexChartDomain I e]
+  simpa using And.intro hyx hy
+
 end
 
 end GromovFilling
