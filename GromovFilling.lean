@@ -38,6 +38,7 @@ import GromovFilling.MetricPlanarCoverage
 import GromovFilling.ModTwoDegree
 import GromovFilling.NormalFormBoundaryObstruction
 import GromovFilling.Numerics
+import GromovFilling.NonlinearSymplecticCalculus
 import GromovFilling.OneHighLeg
 import GromovFilling.Oriented
 import GromovFilling.PlanarCertificate
