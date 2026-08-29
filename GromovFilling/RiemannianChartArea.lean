@@ -97,6 +97,35 @@ theorem lintegral_riemannianChartAreaMeasure_of_aemeasurable
   rw [lintegral_withDensity_eq_lintegral_mul₀ hDensity hqF]
   rfl
 
+/-- Integration against a chart-area measure when the integrand is only
+almost everywhere measurable for that measure.  This is the natural
+regularity available for the intrinsic Jacobian of a Lipschitz map. -/
+theorem lintegral_riemannianChartAreaMeasure_of_aemeasurable_integrand
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [MeasurableSpace M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)]
+    (F : ℂ → M) (s : Set ℂ)
+    (hF : AEMeasurable F (volume.restrict s))
+    (hDensity : AEMeasurable
+      (riemannianChartDensity I F) (volume.restrict s))
+    (q : M → ℝ≥0∞)
+    (hq : AEMeasurable q (riemannianChartAreaMeasure I F s)) :
+    ∫⁻ y, q y ∂riemannianChartAreaMeasure I F s =
+      ∫⁻ z in s, riemannianChartDensity I F z * q (F z) ∂volume := by
+  rw [riemannianChartAreaMeasure] at hq ⊢
+  have hFweighted : AEMeasurable F
+      ((volume.restrict s).withDensity (riemannianChartDensity I F)) :=
+    hF.mono_ac (withDensity_absolutelyContinuous _ _)
+  rw [lintegral_map' hq hFweighted]
+  have hqF : AEMeasurable (fun z ↦ q (F z))
+      ((volume.restrict s).withDensity (riemannianChartDensity I F)) :=
+    hq.comp_aemeasurable hFweighted
+  rw [lintegral_withDensity_eq_lintegral_mul₀' hDensity hqF]
+  rfl
+
 /-- Measurable-data specialization of
 `lintegral_riemannianChartAreaMeasure_of_aemeasurable`. -/
 theorem lintegral_riemannianChartAreaMeasure
@@ -234,6 +263,82 @@ theorem complex_volume_image_image_le_lintegral_riemannianChartAreaMeasure_of_ae
       symm
       exact lintegral_riemannianChartAreaMeasure_of_aemeasurable
         I F s hFmeas hDensityMeas _ hJacobianMeas
+
+/-- The one-chart area inequality from an almost-everywhere intrinsic chain
+rule.  This is the bridge used for Lipschitz maps: Rademacher supplies the
+chain identity almost everywhere, rather than pointwise differentiability
+on the whole chart piece. -/
+theorem complex_volume_image_image_le_lintegral_riemannianChartAreaMeasure_of_ae_chain
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [MeasurableSpace M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)]
+    (F : ℂ → M) (G : M → ℂ) (s U : Set ℂ)
+    (hs : MeasurableSet s) (hU : IsOpen U) (hsU : s ⊆ U)
+    {K : ℝ≥0} (hLipschitz : LipschitzOnWith K (G ∘ F) U)
+    (hFmeas : AEMeasurable F (volume.restrict s))
+    (hDensityMeas : AEMeasurable
+      (riemannianChartDensity I F) (volume.restrict s))
+    (q : M → ℝ≥0∞)
+    (hq : AEMeasurable q (riemannianChartAreaMeasure I F s))
+    (hchain : ∀ᵐ z ∂volume.restrict s,
+      ENNReal.ofReal
+          (riemannianTwoJacobian 𝓘(ℝ, ℂ) (G ∘ F) z) =
+        riemannianChartDensity I F z * q (F z)) :
+    volume (G '' (F '' s)) ≤
+      ∫⁻ x, q x ∂riemannianChartAreaMeasure I F s := by
+  rw [Set.image_image]
+  calc
+    volume ((fun z ↦ G (F z)) '' s) ≤
+        ∫⁻ z in s,
+          ENNReal.ofReal
+            (riemannianTwoJacobian 𝓘(ℝ, ℂ) (G ∘ F) z) ∂volume := by
+      exact
+        complex_volume_image_le_lintegral_riemannianTwoJacobian_of_measurableSet_subset_isOpen
+          (G ∘ F) s U hs hU hsU hLipschitz
+    _ = ∫⁻ z in s,
+          riemannianChartDensity I F z * q (F z) ∂volume :=
+      lintegral_congr_ae hchain
+    _ = ∫⁻ x, q x ∂riemannianChartAreaMeasure I F s := by
+      symm
+      exact lintegral_riemannianChartAreaMeasure_of_aemeasurable_integrand
+        I F s hFmeas hDensityMeas q hq
+
+/-- The almost-everywhere differentiability specialization of
+`complex_volume_image_image_le_lintegral_riemannianChartAreaMeasure_of_ae_chain`.
+It exposes precisely the two remaining Lipschitz tasks: prove manifold
+differentiability almost everywhere and prove local almost-everywhere
+measurability of the intrinsic Jacobian. -/
+theorem complex_volume_image_image_le_lintegral_riemannianChartAreaMeasure_of_ae_mdifferentiable
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [MeasurableSpace M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)]
+    (F : ℂ → M) (G : M → ℂ) (s U : Set ℂ)
+    (hs : MeasurableSet s) (hU : IsOpen U) (hsU : s ⊆ U)
+    {K : ℝ≥0} (hLipschitz : LipschitzOnWith K (G ∘ F) U)
+    (hFmeas : AEMeasurable F (volume.restrict s))
+    (hDensityMeas : AEMeasurable
+      (riemannianChartDensity I F) (volume.restrict s))
+    (hJacobianMeas : AEMeasurable
+      (fun x ↦ ENNReal.ofReal (riemannianTwoJacobian I G x))
+      (riemannianChartAreaMeasure I F s))
+    (hDiff : ∀ᵐ z ∂volume.restrict s,
+      MDifferentiableAt 𝓘(ℝ, ℂ) I F z ∧
+        MDifferentiableAt I 𝓘(ℝ, ℂ) G (F z)) :
+    volume (G '' (F '' s)) ≤
+      ∫⁻ x, ENNReal.ofReal (riemannianTwoJacobian I G x)
+        ∂riemannianChartAreaMeasure I F s := by
+  apply
+    complex_volume_image_image_le_lintegral_riemannianChartAreaMeasure_of_ae_chain
+      I F G s U hs hU hsU hLipschitz hFmeas hDensityMeas _ hJacobianMeas
+  filter_upwards [hDiff] with z hz
+  exact ofReal_riemannianTwoJacobian_comp_eq_chartDensity_mul
+    I F G z hz.1 hz.2
 
 /-- Measurable-data specialization of
 `complex_volume_image_image_le_lintegral_riemannianChartAreaMeasure_of_aemeasurable`. -/
