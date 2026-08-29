@@ -21,6 +21,10 @@ namespace GromovFilling
 
 noncomputable section
 
+local instance complexFinrankTwoFactAtlasArea :
+    Fact (Module.finrank ℝ ℂ = 2) :=
+  Complex.finrank_real_complex_fact
+
 /-- The sum of the Jacobian-weighted area measures contributed by a family of
 parametrized complex-plane chart pieces.  Overlaps are deliberately retained,
 so this definition is immediately useful for upper bounds without asserting

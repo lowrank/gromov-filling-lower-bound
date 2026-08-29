@@ -92,7 +92,13 @@ theorem measurableSet_disjointChartPiece
       domains n ∩
         g ⁻¹' disjointed (fun i ↦ F i '' domains i) n := by
     ext x
-    simp [disjointChartPiece, g]
+    constructor
+    · rintro ⟨hx, hFx⟩
+      refine ⟨hx, ?_⟩
+      simpa [g, hx] using hFx
+    · rintro ⟨hx, hgx⟩
+      refine ⟨hx, ?_⟩
+      simpa [g, hx] using hgx
   rw [heq]
   exact (hdomains n).inter hpreimage
 

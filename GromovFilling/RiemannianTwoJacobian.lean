@@ -295,13 +295,45 @@ theorem twoJacobian_complex_eq_abs_det (L : ℂ →L[ℝ] ℂ) :
     Complex.finrank_real_complex_fact
   exact twoJacobian_eq_abs_det L
 
-private theorem tangentSpace_finrank_eq_two
+theorem tangentSpace_finrank_eq_two
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [TopologicalSpace M] [ChartedSpace H M]
     [hE : Fact (Module.finrank ℝ E = 2)] (x : M) :
     Module.finrank ℝ (TangentSpace I x) = 2 := by
   simpa only [TangentSpace] using hE.out
+
+/-- The manifold differential, bundled with the Riemannian norms on its
+source and target tangent fibers.  Naming this map lets downstream formulas
+reuse exactly the same norm instances without rebuilding them. -/
+def riemannianMFDerivBetween
+    {E₁ H₁ M₁ E₂ H₂ M₂ : Type*}
+    [NormedAddCommGroup E₁] [NormedSpace ℝ E₁]
+    [TopologicalSpace H₁] (I₁ : ModelWithCorners ℝ E₁ H₁)
+    [TopologicalSpace M₁] [ChartedSpace H₁ M₁]
+    [RiemannianBundle (fun x : M₁ ↦ TangentSpace I₁ x)]
+    [NormedAddCommGroup E₂] [NormedSpace ℝ E₂]
+    [TopologicalSpace H₂] (I₂ : ModelWithCorners ℝ E₂ H₂)
+    [TopologicalSpace M₂] [ChartedSpace H₂ M₂]
+    [RiemannianBundle (fun x : M₂ ↦ TangentSpace I₂ x)]
+    (G : M₁ → M₂) (x : M₁) :
+    TangentSpace I₁ x →L[ℝ] TangentSpace I₂ (G x) :=
+  mfderiv I₁ I₂ G x
+
+@[simp]
+theorem riemannianMFDerivBetween_apply
+    {E₁ H₁ M₁ E₂ H₂ M₂ : Type*}
+    [NormedAddCommGroup E₁] [NormedSpace ℝ E₁]
+    [TopologicalSpace H₁] (I₁ : ModelWithCorners ℝ E₁ H₁)
+    [TopologicalSpace M₁] [ChartedSpace H₁ M₁]
+    [RiemannianBundle (fun x : M₁ ↦ TangentSpace I₁ x)]
+    [NormedAddCommGroup E₂] [NormedSpace ℝ E₂]
+    [TopologicalSpace H₂] (I₂ : ModelWithCorners ℝ E₂ H₂)
+    [TopologicalSpace M₂] [ChartedSpace H₂ M₂]
+    [RiemannianBundle (fun x : M₂ ↦ TangentSpace I₂ x)]
+    (G : M₁ → M₂) (x : M₁) (v : TangentSpace I₁ x) :
+    riemannianMFDerivBetween I₁ I₂ G x v = mfderiv I₁ I₂ G x v := by
+  rfl
 
 /-- The pointwise intrinsic `J₂` of a map between two two-dimensional
 Riemannian manifolds.  Both norms are the Riemannian norms on the respective
@@ -323,7 +355,40 @@ def riemannianTwoJacobianBetween
     ⟨tangentSpace_finrank_eq_two I₁ x⟩
   letI : Fact (Module.finrank ℝ (TangentSpace I₂ (G x)) = 2) :=
     ⟨tangentSpace_finrank_eq_two I₂ (G x)⟩
-  exact twoJacobian (mfderiv I₁ I₂ G x)
+  exact twoJacobian (riemannianMFDerivBetween I₁ I₂ G x)
+
+/-- The intrinsic Riemannian two-Jacobian in an arbitrary orthonormal
+source basis, expressed without choosing a target basis.  Keeping this
+bridge next to `riemannianTwoJacobianBetween` preserves the exact scoped
+Riemannian fiber instances and avoids forcing downstream clients to unfold
+their implementation. -/
+theorem riemannianTwoJacobianBetween_eq_sqrt_gram
+    {E₁ H₁ M₁ E₂ H₂ M₂ : Type*}
+    [NormedAddCommGroup E₁] [NormedSpace ℝ E₁]
+    [TopologicalSpace H₁] (I₁ : ModelWithCorners ℝ E₁ H₁)
+    [TopologicalSpace M₁] [ChartedSpace H₁ M₁]
+    [RiemannianBundle (fun x : M₁ ↦ TangentSpace I₁ x)]
+    [Fact (Module.finrank ℝ E₁ = 2)]
+    [NormedAddCommGroup E₂] [NormedSpace ℝ E₂]
+    [TopologicalSpace H₂] (I₂ : ModelWithCorners ℝ E₂ H₂)
+    [TopologicalSpace M₂] [ChartedSpace H₂ M₂]
+    [RiemannianBundle (fun x : M₂ ↦ TangentSpace I₂ x)]
+    [Fact (Module.finrank ℝ E₂ = 2)]
+    (G : M₁ → M₂) (x : M₁)
+    (e : OrthonormalBasis (Fin 2) ℝ (TangentSpace I₁ x))
+    (o : Orientation ℝ (TangentSpace I₂ (G x)) (Fin 2)) :
+    riemannianTwoJacobianBetween I₁ I₂ G x =
+      √(⟪mfderiv I₁ I₂ G x (e 0), mfderiv I₁ I₂ G x (e 0)⟫_ℝ *
+          ⟪mfderiv I₁ I₂ G x (e 1), mfderiv I₁ I₂ G x (e 1)⟫_ℝ -
+        ⟪mfderiv I₁ I₂ G x (e 0), mfderiv I₁ I₂ G x (e 1)⟫_ℝ ^ 2) := by
+  letI : Fact (Module.finrank ℝ (TangentSpace I₁ x) = 2) :=
+    ⟨tangentSpace_finrank_eq_two I₁ x⟩
+  letI : Fact (Module.finrank ℝ (TangentSpace I₂ (G x)) = 2) :=
+    ⟨tangentSpace_finrank_eq_two I₂ (G x)⟩
+  unfold riemannianTwoJacobianBetween
+  simpa only [riemannianMFDerivBetween_apply, real_inner_self_eq_norm_sq] using
+    (twoJacobian_eq_sqrt_gram e o
+      (riemannianMFDerivBetween I₁ I₂ G x))
 
 theorem riemannianTwoJacobianBetween_nonneg
     {E₁ H₁ M₁ E₂ H₂ M₂ : Type*}
@@ -339,7 +404,7 @@ theorem riemannianTwoJacobianBetween_nonneg
     [Fact (Module.finrank ℝ E₂ = 2)]
     (G : M₁ → M₂) (x : M₁) :
     0 ≤ riemannianTwoJacobianBetween I₁ I₂ G x := by
-  simp only [riemannianTwoJacobianBetween, twoJacobian,
+  simp only [riemannianTwoJacobianBetween, riemannianMFDerivBetween, twoJacobian,
     metricJacobianWithBases]
   positivity
 
@@ -353,7 +418,7 @@ theorem riemannianTwoJacobianBetween_id
     [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
     [Fact (Module.finrank ℝ E = 2)] (x : M) :
     riemannianTwoJacobianBetween I I (id : M → M) x = 1 := by
-  simp only [riemannianTwoJacobianBetween]
+  simp only [riemannianTwoJacobianBetween, riemannianMFDerivBetween]
   letI : Fact (Module.finrank ℝ (TangentSpace I x) = 2) :=
     ⟨tangentSpace_finrank_eq_two I x⟩
   rw [mfderiv_id]
@@ -393,7 +458,7 @@ theorem riemannianTwoJacobianBetween_comp
   letI : Fact
       (Module.finrank ℝ (TangentSpace I₃ ((G ∘ F) x)) = 2) :=
     ⟨tangentSpace_finrank_eq_two I₃ ((G ∘ F) x)⟩
-  simp only [riemannianTwoJacobianBetween]
+  simp only [riemannianTwoJacobianBetween, riemannianMFDerivBetween]
   rw [mfderiv_comp x hG hF]
   exact twoJacobian_comp _ _
 
@@ -449,7 +514,7 @@ theorem riemannianTwoJacobian_eq_between_complex
     riemannianTwoJacobian I G x =
       riemannianTwoJacobianBetween I 𝓘(ℝ, ℂ) G x := by
   simp only [riemannianTwoJacobian,
-    riemannianTwoJacobianBetween]
+    riemannianTwoJacobianBetween, riemannianMFDerivBetween]
   letI : Fact (Module.finrank ℝ (TangentSpace I x) = 2) :=
     ⟨tangentSpace_finrank_eq_two I x⟩
   letI : Fact
