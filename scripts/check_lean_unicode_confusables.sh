@@ -16,7 +16,8 @@ pattern='⟦|⟧|𝓈|𝑍'
 
 set +e
 grep -RInE --include='*.lean' "$pattern" -- \
-  ClassificationOfSurfaces GromovFilling GromovFilling.lean >"$matches"
+  ClassificationOfSurfaces GromovFilling SchoenfliesCompat Wikipedia \
+  GromovFilling.lean >"$matches"
 scan_rc=$?
 set -e
 
