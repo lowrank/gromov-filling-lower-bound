@@ -53,8 +53,10 @@ variable {S : Type*} [TopologicalSpace S]
 variable [ChartedSpace (EuclideanHalfSpace 2) S]
 
 /-- Two triangles meeting along an edge give an open neighborhood of the embedded edge midpoint
-whose realizations have no weight away from the four vertices of those two triangles. -/
-private theorem exists_pair_pages_open_neighborhood
+whose realizations have no weight away from the four vertices of those two triangles.  The
+midpoint is an ambient interior point: the two pages provide a planar chart, translated into the
+positive part of the manifold half-space model. -/
+theorem exists_pair_pages_open_neighborhood
     {V : Type*} [Fintype V] [DecidableEq V]
     (F : Finset (Finset V)) (ι : GeometricRealization V F → S)
     (hι : _root_.Topology.IsEmbedding ι) (t u : Finset V) (htF : t ∈ F) (huF : u ∈ F)
@@ -66,8 +68,9 @@ private theorem exists_pair_pages_open_neighborhood
         edgeMid.1 =
           (1 / 2 : ℝ) • (Pi.single a (1 : ℝ) : V → ℝ) +
             (1 / 2 : ℝ) • (Pi.single b (1 : ℝ) : V → ℝ) ∧
-        ∀ y : GeometricRealization V F, ι y ∈ W → ∀ k : V,
-          k ≠ a → k ≠ b → k ≠ c → k ≠ d → y.1 k = 0 := by
+        (∀ y : GeometricRealization V F, ι y ∈ W → ∀ k : V,
+          k ≠ a → k ≠ b → k ≠ c → k ≠ d → y.1 k = 0) ∧
+        ¬(modelWithCornersEuclideanHalfSpace 2).IsBoundaryPoint (ι edgeMid) := by
   let O : Set Plane := {x | |x 0| < 1 / 4 ∧ |x 1| < 1 / 4}
   have hOopen : IsOpen O := by
     have h0 : Continuous (fun x : Plane ↦ |x 0|) := by fun_prop
@@ -168,10 +171,12 @@ private theorem exists_pair_pages_open_neighborhood
       linarith [max_pos_sub_max_neg_eq_self (x.1 1),
         max_pos_sub_max_neg_eq_self (y.1 1)]
   let pairMap : O → S := fun x ↦ ι (fan x)
-  have pairOpen : IsOpen (Set.range pairMap) :=
-    isOpen_range_of_isOpen_of_continuous_injective
+  have pairOpenEmbedding : _root_.Topology.IsOpenEmbedding pairMap :=
+    isOpenEmbedding_of_isOpen_of_continuous_injective
       (modelWithCornersEuclideanHalfSpace 2) hOopen pairMap
         (hι.continuous.comp fan_continuous) (hι.injective.comp fan_injective)
+  have pairOpen : IsOpen (Set.range pairMap) :=
+    pairOpenEmbedding.isOpen_range
   let zeroO : O := ⟨0, by simp [O]⟩
   have midpoint_weight : weight zeroO.1 =
       (1 / 2 : ℝ) • (Pi.single a (1 : ℝ) : V → ℝ) +
@@ -185,7 +190,7 @@ private theorem exists_pair_pages_open_neighborhood
       simp [weight, zeroO, hab, hbd]
     simp [weight, zeroO, hza, hzb]
   let edgeMid : GeometricRealization V F := fan zeroO
-  refine ⟨edgeMid, Set.range pairMap, pairOpen.mem_nhds ⟨zeroO, rfl⟩, ?_, ?_⟩
+  refine ⟨edgeMid, Set.range pairMap, pairOpen.mem_nhds ⟨zeroO, rfl⟩, ?_, ?_, ?_⟩
   · exact midpoint_weight
   · intro y hy k hka hkb hkc hkd
     obtain ⟨x, hx⟩ := hy
@@ -194,6 +199,74 @@ private theorem exists_pair_pages_open_neighborhood
     change weight x.1 k = y.1 k at hk
     rw [weight_other _ hka hkb hkc hkd] at hk
     exact hk.symm
+  · let offset : Plane :=
+      WithLp.toLp 2 (fun i => if i = 0 then (1 : ℝ) else 0)
+    let shift : Plane ≃ₜ Plane := Homeomorph.addRight offset
+    have offset_zero : offset 0 = 1 := by simp [offset]
+    have shifted_pos (x : O) : 0 ≤ (shift x.1) 0 := by
+      have hx := (abs_lt.mp x.2.1).1
+      rw [Homeomorph.coe_addRight]
+      change 0 ≤ x.1 0 + offset 0
+      rw [offset_zero]
+      linarith
+    let toHalf : O → EuclideanHalfSpace 2 := fun x =>
+      ⟨shift x.1, shifted_pos x⟩
+    have shiftOpenEmbedding : _root_.Topology.IsOpenEmbedding
+        (fun x : O => shift x.1) :=
+      shift.isOpenEmbedding.comp hOopen.isOpenEmbedding_subtypeVal
+    have toHalfEmbedding : _root_.Topology.IsEmbedding toHalf :=
+      shiftOpenEmbedding.isEmbedding.codRestrict _ shifted_pos
+    have toHalfRange : Set.range toHalf =
+        Subtype.val ⁻¹' Set.range (fun x : O => shift x.1) := by
+      ext z
+      constructor
+      · rintro ⟨x, rfl⟩
+        exact ⟨x, rfl⟩
+      · rintro ⟨x, hx⟩
+        refine ⟨x, ?_⟩
+        exact EuclideanHalfSpace.ext _ _ hx
+    have toHalfOpenEmbedding : _root_.Topology.IsOpenEmbedding toHalf := by
+      refine ⟨toHalfEmbedding, ?_⟩
+      rw [toHalfRange]
+      exact shiftOpenEmbedding.isOpen_range.preimage continuous_subtype_val
+    letI : Nonempty O := ⟨zeroO⟩
+    let page : OpenPartialHomeomorph O S :=
+      pairOpenEmbedding.toOpenPartialHomeomorph pairMap
+    let intoHalf : OpenPartialHomeomorph O (EuclideanHalfSpace 2) :=
+      toHalfOpenEmbedding.toOpenPartialHomeomorph toHalf
+    let chart : OpenPartialHomeomorph S (EuclideanHalfSpace 2) :=
+      page.symm.trans intoHalf
+    have hpageZero : page zeroO = ι edgeMid := by
+      change pairMap zeroO = ι edgeMid
+      rfl
+    have hmidSource : ι edgeMid ∈ chart.source := by
+      change ι edgeMid ∈ page.symm.source ∩ page.symm ⁻¹' intoHalf.source
+      constructor
+      · have hzSource : zeroO ∈ page.source := by simp [page]
+        have hzTarget : page zeroO ∈ page.target := page.map_source hzSource
+        rw [hpageZero] at hzTarget
+        simpa using hzTarget
+      · change page.symm (ι edgeMid) ∈ Set.univ
+        trivial
+    intro hboundary
+    have hfrontier :=
+      (isBoundaryPoint_iff_any_chart
+        (modelWithCornersEuclideanHalfSpace 2) hmidSource).mp hboundary
+    rw [frontier_range_modelWithCornersEuclideanHalfSpace] at hfrontier
+    have hpage : page.symm (ι edgeMid) = zeroO := by
+      rw [← hpageZero]
+      exact page.left_inv (by simp [page])
+    have hcoord : (chart (ι edgeMid)).1 0 = 1 := by
+      change (toHalf (page.symm (ι edgeMid))).1 0 = 1
+      rw [hpage]
+      change (shift zeroO.1) 0 = 1
+      rw [Homeomorph.coe_addRight]
+      change zeroO.1 0 + offset 0 = 1
+      rw [offset_zero]
+      simp [zeroO]
+    change 0 = (chart (ι edgeMid)).1 0 at hfrontier
+    rw [hcoord] at hfrontier
+    norm_num at hfrontier
 
 /-- A finite family of abstract triangles carried by an embedded barycentric realization in a
 surface has edge valence at most two. -/
@@ -280,7 +353,7 @@ theorem edge_valence_le_two_of_isEmbedding
     · simp
     · intro z hz
       exact Pi.single_eq_of_ne hz 1
-  obtain ⟨edgeMid, W, hedgeOpen, midpoint_weight, hWsupport⟩ :=
+  obtain ⟨edgeMid, W, hedgeOpen, midpoint_weight, hWsupport, _hmidInterior⟩ :=
     exists_pair_pages_open_neighborhood F ι hι t u htF huF a b c d hab hac hbc had hbd
       hcd (by simpa [he] using htc) (by simpa [he] using hud)
   let thirdWeight (r : Set.Icc (0 : ℝ) 1) : V → ℝ :=
