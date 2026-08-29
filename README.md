@@ -130,10 +130,10 @@ in `GromovFilling.Lemma54`. The remaining end-to-end Riemannian statements
 require:
 
 1. Riemannian eikonal and weak parameter-integral differentiation;
-2. a Riemannian area measure and chartwise globalization of the planar area
-   formula. The intrinsic pointwise `J₂` between arbitrary two-dimensional
-   Riemannian manifolds, its multiplicative chain rule, and its exact
-   agreement with the planar absolute determinant are now verified;
+2. a canonical global Riemannian area measure and compatible-atlas
+   globalization of the planar area formula. Intrinsic `J₂`, its chain rule,
+   and the exact weighted measure/integral transfer and area inequality on one
+   parametrized chart are now verified;
 3. a global differential-form Stokes/comass interface for the oriented case.
 
 These are tracked gaps, not project axioms. The repository does not encode an

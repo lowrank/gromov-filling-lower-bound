@@ -94,8 +94,11 @@ budget. The pointwise two-dimensional Riemannian Jacobian is now defined
 intrinsically between arbitrary Riemannian surfaces, proved independent of
 orthonormal bases and multiplicative under the manifold chain rule, and
 identified exactly with this planar absolute-determinant density. What remains
-is construction of the area measure and the chart-integration/change-of-
-variables globalization theorem for a general Riemannian surface.
+is no longer the one-chart calculation: the chart-induced area measure, its
+exact weighted `lintegral` transfer, and the resulting local surface area
+inequality are verified. The remaining step is to prove the standard smooth
+charts satisfy those measurable interfaces, establish invariance on overlaps,
+and glue them into the canonical global area measure.
 
 The orientation-free constant is
 
