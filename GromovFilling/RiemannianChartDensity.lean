@@ -19,7 +19,7 @@ measurability hypothesis used by the chart-area and transition theorems.
 -/
 
 open Bundle MeasureTheory Set
-open scoped Bundle ENNReal InnerProductSpace Manifold NNReal
+open scoped Bundle ENNReal InnerProductSpace Manifold NNReal Topology
 
 namespace GromovFilling
 
@@ -111,6 +111,68 @@ theorem riemannianChartDensity_eq_ofReal_sqrt_gram
   rw [riemannianTwoJacobianBetween_eq_sqrt_gram
     𝓘(ℝ, ℂ) I F z e o]
   rfl
+
+/-- The Gram determinant, and hence the chart density, depends only on the
+local germ of a parametrization.  The two derivative vectors are packaged in
+one tangent-fiber pair so the varying Riemannian inner product is transported
+along the equality of the target points. -/
+theorem riemannianChartGramDet_congr_of_eventuallyEq
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    (F G : ℂ → M) (z : ℂ) (h : F =ᶠ[𝓝 z] G) :
+    riemannianChartGramDet I F z =
+      riemannianChartGramDet I G z := by
+  have hvalue : F z = G z := h.self_of_nhds
+  have hderiv : mfderiv 𝓘(ℝ, ℂ) I F z =
+      mfderiv 𝓘(ℝ, ℂ) I G z :=
+    h.mfderiv_eq
+  have hvector (k : Fin 2) :
+      riemannianChartGramVector I F k z =
+        riemannianChartGramVector I G k z := by
+    unfold riemannianChartGramVector
+    exact DFunLike.congr_fun hderiv _
+  let pF : Σ x : M, TangentSpace I x × TangentSpace I x :=
+    ⟨F z, riemannianChartGramVector I F 0 z,
+      riemannianChartGramVector I F 1 z⟩
+  let pG : Σ x : M, TangentSpace I x × TangentSpace I x :=
+    ⟨G z, riemannianChartGramVector I G 0 z,
+      riemannianChartGramVector I G 1 z⟩
+  have hp : pF = pG := by
+    apply Sigma.ext hvalue
+    simp only [pF, pG]
+    rw [hvector 0, hvector 1]
+    exact HEq.rfl
+  rcases
+      (inferInstance : IsContinuousRiemannianBundle E
+        (fun x : M ↦ TangentSpace I x)).exists_continuous with
+    ⟨g, _hgcont, hg⟩
+  let gram : (Σ x : M, TangentSpace I x × TangentSpace I x) → ℝ :=
+    fun p ↦ g p.1 p.2.1 p.2.1 * g p.1 p.2.2 p.2.2 -
+      (g p.1 p.2.1 p.2.2) ^ 2
+  calc
+    riemannianChartGramDet I F z = gram pF := by
+      simp only [riemannianChartGramDet, gram, pF, hg]
+    _ = gram pG := congrArg gram hp
+    _ = riemannianChartGramDet I G z := by
+      simp only [riemannianChartGramDet, gram, pG, hg]
+
+/-- The intrinsic chart density depends only on the local germ of its
+parametrization. -/
+theorem riemannianChartDensity_congr_of_eventuallyEq
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)]
+    (F G : ℂ → M) (z : ℂ) (h : F =ᶠ[𝓝 z] G) :
+    riemannianChartDensity I F z = riemannianChartDensity I G z := by
+  rw [riemannianChartDensity_eq_ofReal_sqrt_gram I F z,
+    riemannianChartDensity_eq_ofReal_sqrt_gram I G z,
+    riemannianChartGramDet_congr_of_eventuallyEq I F G z h]
 
 /-- A `C¹` map on an open complex set has continuous Gram-vector
 sections there. -/
