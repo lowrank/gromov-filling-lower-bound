@@ -127,7 +127,7 @@ scan fails closed.
 
 The end-to-end Riemannian statements still require:
 
-1. identification of the Radó once-used-side locus with the ambient boundary,
+1. identification of the Radó valence-one edge locus with the ambient boundary,
    followed by the deduction that the supplied one-boundary parametrization
    selects the unique free loop in the verified polygonal classification
    normal form, up to a circle homeomorphism;

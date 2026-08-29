@@ -267,6 +267,13 @@ private theorem sum_boundaryEdgeCount_eq_edgeOccurrenceCount
     _ = ((Finset.univ : Finset T.BoundaryPosition).filter fun o => o.edge = e).card := by
       rw [hall]
 
+/-- Counting the boundary occurrences of an edge is the same as summing its
+per-face boundary counts. -/
+theorem edgeOccurrenceCount_eq_sum_boundaryEdgeCount
+    (T : FiniteSurfaceTriangulation S) (e : T.Edge) :
+    T.edgeOccurrenceCount e = ∑ f : T.Triangle, T.boundaryEdgeCount f e :=
+  (T.sum_boundaryEdgeCount_eq_edgeOccurrenceCount e).symm
+
 /-- The total multiplicity of an enumerated edge is the cardinality of its original boundary
 position fiber. -/
 theorem toFiniteCyclicPresentation_edgeMultiplicity
@@ -404,10 +411,64 @@ namespace GeometricTriangulation
 
 variable {S : Type*} [TopologicalSpace S]
 
+/-- A geometric triangle uses each of its three underlying edges exactly
+once, so its contribution to an edge-occurrence count is the indicator that
+the edge is a face of the triangle. -/
+theorem boundaryEdgeCount_eq_ite
+    (T : GeometricTriangulation S) (f : T.Triangle) (e : T.Edge) :
+    T.toFiniteSurfaceTriangulation.boundaryEdgeCount f e =
+      if e.1 ⊆ f.1 then 1 else 0 := by
+  classical
+  unfold FiniteSurfaceTriangulation.boundaryEdgeCount
+  have hnodup :
+      ((T.triangleBoundary f).map OrientedEdge.edge).Nodup := by
+    rw [List.nodup_iff_injective_get]
+    intro i j hij
+    apply T.triangleBoundary_edge_get_injective f
+    simpa using hij
+  by_cases hef : e.1 ⊆ f.1
+  · rw [if_pos hef]
+    exact List.count_eq_one_of_mem hnodup
+      ((T.mem_map_edge_triangleBoundary_iff f e).mpr hef)
+  · rw [if_neg hef]
+    apply List.count_eq_zero.mpr
+    exact fun he ↦ hef ((T.mem_map_edge_triangleBoundary_iff f e).mp he)
+
+/-- The boundary-position multiplicity of a geometric edge is exactly the
+number of geometric triangles incident to that edge. -/
+theorem edgeOccurrenceCount_eq_faceValence
+    (T : GeometricTriangulation S) (e : T.Edge) :
+    T.toFiniteSurfaceTriangulation.edgeOccurrenceCount e =
+      (T.faces.filter fun t ↦ e.1 ⊆ t).card := by
+  classical
+  rw [T.toFiniteSurfaceTriangulation.edgeOccurrenceCount_eq_sum_boundaryEdgeCount]
+  simp_rw [T.boundaryEdgeCount_eq_ite]
+  have huniv : (Finset.univ : Finset T.Triangle) = T.faces.attach := by
+    ext f
+    simp
+  change (∑ f ∈ (Finset.univ : Finset T.Triangle),
+      if e.1 ⊆ f.1 then 1 else 0) = _
+  rw [huniv]
+  rw [Finset.sum_boole]
+  rw [Finset.filter_attach]
+  simp
+
 /-- The finite cyclic presentation underlying a geometric triangulation. -/
 @[reducible] noncomputable def toFiniteCyclicPresentation (T : GeometricTriangulation S) :
     FiniteCyclicPresentation :=
   T.toFiniteSurfaceTriangulation.toFiniteCyclicPresentation
+
+/-- Enumeration into a finite cyclic presentation preserves the exact
+boundary-edge predicate of a geometric triangulation. -/
+theorem toFiniteCyclicPresentation_isBoundaryEdge_edgeEquiv_iff
+    (T : GeometricTriangulation S) (e : T.Edge) :
+    T.toFiniteCyclicPresentation.IsBoundaryEdge
+        (T.toFiniteSurfaceTriangulation.finiteCyclicEdgeEquiv e) ↔
+      T.IsBoundaryEdge e := by
+  rw [FiniteCyclicPresentation.IsBoundaryEdge,
+    T.toFiniteSurfaceTriangulation.toFiniteCyclicPresentation_edgeMultiplicity,
+    T.edgeOccurrenceCount_eq_faceValence]
+  rfl
 
 /-- Surface incidence makes the cyclic presentation of a geometric triangulation valid. -/
 theorem toFiniteCyclicPresentation_isSurfaceValid
