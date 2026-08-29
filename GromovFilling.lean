@@ -30,6 +30,7 @@ import GromovFilling.JordanBoundary
 import GromovFilling.MetricPlanarCoverage
 import GromovFilling.ModTwoDegree
 import GromovFilling.Numerics
+import GromovFilling.OneHighLeg
 import GromovFilling.Oriented
 import GromovFilling.PlanarCertificate
 import GromovFilling.PolygonalSurfaceObstruction

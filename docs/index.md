@@ -25,8 +25,8 @@ The kernel-checked development includes exact Fourier coefficients, the Givens
 mixing matrix, dominant-harmonic Jordan curves, integer circle degree, finite
 mod-2 surface obstruction, planar area and Jacobian inequalities, rigorous
 constant evaluation, off-diagonal logarithmic-sine-kernel positivity, de
-Sitter profile identities, exact scalar resonance-trace arithmetic, and
-conditional certificate assembly.
+Sitter profile identities, finite one-high-leg Gram/Rayleigh algebra, exact
+scalar resonance-trace arithmetic, and conditional certificate assembly.
 
 The general glued-polygon theorem now handles every fixed-point-free
 involutive side pairing, including orientation-reversing identifications. The

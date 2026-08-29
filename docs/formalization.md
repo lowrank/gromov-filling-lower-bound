@@ -17,6 +17,7 @@ manuscript ledger is maintained in
 | Certificate logic | finite-to-infinite universal deduction, defect propagation, scalar optimization |
 | Rigorous numerics | rational bounds for `π`, `ζ(3)`, and the displayed constants |
 | Logarithmic sine kernel | squared-sine gap, positive sine quotient, strict off-diagonal positivity, symmetry |
+| Finite one-high-leg algebra | odd high-mode witness, exact resonance matrix, Gram positivity, Rayleigh ceiling |
 | Resonance trace arithmetic | nonnegative double-series summability, Tonelli/antidiagonal regrouping, exact scalar value |
 | De Sitter profile algebra | quadric membership, formal-velocity speed, pairwise Lorentz product, Züst kernel identity |
 
@@ -32,6 +33,16 @@ Proposition 15.1 is verified at an explicit denominator interface:
 and requires the relevant sine denominators to be nonzero. It does not claim a
 separate almost-everywhere differentiability theorem for arbitrary Lipschitz
 profiles.
+
+Lemma 14.1 and Theorem 14.2 are partial at a precise analytic interface.
+`OneHighLeg.lean` proves that the explicit odd mode `m = 2J+1` is unit norm
+and anti-periodic, computes its occupied-coordinate symplectic cost exactly,
+defines the displayed finite resonance matrix and boundary series, proves
+their quadratic-form identity and weighted-Gram positivity, and derives the
+finite Rayleigh ceiling. What remains is to identify the modeled output
+coordinates with the derivative of the full normalized nonlinear deformation
+on its infinite coefficient space and to connect the exhibited plane to the
+global ambient comass.
 
 Lemma 14.3 is partial. `ResonanceTrace.lean` proves convergence of the
 manuscript's nonnegative scalar double series, its Tonelli/antidiagonal

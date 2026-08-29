@@ -68,6 +68,8 @@ every compiled project declaration against the exact allowlist `propext`,
   kernel at interior off-diagonal points;
 - summability, Tonelli/antidiagonal reindexing, and the exact closed form of
   the scalar double series underlying the Lemma 14.3 trace calculation;
+- the finite one-high-leg odd-mode witness, exact boundary-action/resonance-
+  matrix identity, weighted-Gram positivity, and Rayleigh ceiling;
 - the de Sitter quadric, formal-velocity, Lorentz-product, and Züst-kernel
   identities from Proposition 15.1;
 - finite and infinite certificate deductions, boundary-action series, and
@@ -109,8 +111,8 @@ The project is pinned to:
   `e442525a662e9e3beb8205b9fa1fc99509076ded`.
 
 The latest hardened CI receipt, run
-[`33223947651`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33223947651)
-on merge commit `f865cada856fe51367c73daa07cbd61497dc52e0`, audited
+[`33224380893`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33224380893)
+on merge commit `3669b2dd9b6ea5845266438ee7a3837e4010a9e8`, audited
 **4,030 declarations** under `GromovFilling`; every declaration stayed within
 the standard logical allowlist. CI also fails if the umbrella omits a source
 module or if project Lean source contains placeholder, custom axiom, unsafe,
