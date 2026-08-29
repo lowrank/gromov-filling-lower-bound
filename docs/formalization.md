@@ -77,6 +77,14 @@ the schema's free loop to the supplied boundary. The remaining Lemma 5.4
 topology task is to produce this boundary-component-preserving existential
 presentation from the compact connected one-boundary manifold hypotheses.
 
+`GromovFilling.NormalFormBoundaryObstruction` now proves the canonical target
+of that presentation. It enumerates every side except the unique free `h`
+side, constructs the induced fixed-point-free involutive pairing, verifies the
+carrier quotient identifications, and applies the arbitrary-pairing parity
+theorem. A disk homotopy and circle reversal then give the odd boundary-degree
+obstruction for the free loop in every orientable one-boundary normal form and
+every admissible nonorientable one-boundary normal form.
+
 `GromovFilling.SurfaceTriangulationFoundation` now supplies the preceding
 finite-triangulability step unconditionally. It imports a pinned,
 Lean-4.29-compatible Radó source closure and proves
@@ -89,9 +97,10 @@ still has to be extracted before the relaxed handoff applies.
 classification theorem. Every compact connected surface under the same
 half-space-manifold hypotheses is homeomorphic to the sphere or to a faithful
 orientable or nonorientable polygonal normal-form quotient. This removes the
-absolute classification gap, but the theorem does not identify the supplied
-boundary parametrization with a designated free loop of the normal form. That
-relative-boundary statement is still required for Lemma 5.4.
+absolute classification gap, and the designated canonical free loop now has
+the required obstruction. The theorem still does not identify the supplied
+boundary parametrization with that free loop. That relative-boundary statement
+is still required for Lemma 5.4.
 
 ## Partial headline statements
 
