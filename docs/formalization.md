@@ -73,9 +73,9 @@ The theorem
 states the relaxed classification handoff without asking the caller to supply
 an obstruction or preserve a chosen parameter pointwise. It needs an arbitrary
 side pairing, a surface homeomorphism, and any circle homeomorphism relating
-the schema's free loop to the supplied boundary. The remaining Lemma 5.4
-topology task is to produce this boundary-component-preserving existential
-presentation from the compact connected one-boundary manifold hypotheses.
+the schema's free loop to the supplied boundary. `GromovFilling.Lemma54` now
+produces the required relative presentation and reparametrization directly
+from the compact connected one-boundary manifold hypotheses.
 
 `GromovFilling.NormalFormBoundaryObstruction` now proves the canonical target
 of that presentation. It enumerates every side except the unique free `h`
@@ -90,15 +90,16 @@ finite-triangulability step unconditionally. It imports a pinned,
 Lean-4.29-compatible Radó source closure and proves
 `exists_full_support_boundary_facewise_regular_partial_triangulation`. The
 returned finite complex covers the surface, has edge valence at most two, and
-meets the ambient boundary facewise. The unique cyclic boundary component
-still has to be extracted before the relaxed handoff applies.
+meets the ambient boundary facewise. The unique cyclic boundary component is
+extracted in `CanonicalBoundaryConnectedness.lean` and used by the final
+Lemma 5.4 assembly.
 
 `GromovFilling.RadoBoundaryLocus` proves the exact combinatorial bridge out of
 that triangulation. Geometric edge valence equals finite-cyclic occurrence
 multiplicity, and the faithful polygonal-realization homeomorphism maps the
 complete once-used-side locus exactly onto the complete valence-one edge
-locus. Thus the remaining Radó endpoint is specifically the equality of that
-valence-one locus with the ambient manifold boundary.
+locus. `GromovFilling.RadoAmbientBoundary` closes the topological endpoint by
+proving that this locus maps exactly onto the ambient manifold boundary.
 
 `GromovFilling.SurfaceClassificationFoundation` also exposes the vendored
 classification theorem. Every compact connected surface under the same
@@ -120,12 +121,19 @@ chain. It classifies every once-used side of the canonical presentations as a
 free `h` side, computes the final adapter on those sides, and proves equality
 between the image of the full polygonal boundary locus and the raw quotient's
 full free-side locus. With one boundary block this set is exactly the range of
-the orientable or nonorientable canonical obstruction loop. What remains is to
-identify the Radó realization's valence-one edge locus with the ambient manifold
-boundary, use the supplied one-component parametrization to force one
-canonical boundary block, and identify the parametrization with that loop up
-to a circle homeomorphism. That geometric endpoint statement is still
-required for Lemma 5.4.
+the orientable or nonorientable canonical obstruction loop.
+
+`GromovFilling.CanonicalBoundaryConnectedness` proves that the free-side
+components are pairwise disjoint compact sets, so connectedness forces exactly
+one block. It also proves that both resulting canonical loops are injective by
+showing that no polygon-gluing generator touches a free-side interior point.
+Finally, `GromovFilling.Lemma54` composes the entire chain. Its theorem
+`hasOddBoundaryDegreeObstruction_of_compact_connected_surface_boundary`
+starts from the exact compact connected Hausdorff half-space-manifold
+hypotheses and a continuous injective parametrization of the whole boundary,
+eliminates the sphere endpoint, handles both orientability branches, and
+transports the canonical parity obstruction through the unique same-range
+circle homeomorphism.
 
 ## Partial headline statements
 
@@ -133,8 +141,6 @@ The finite universal certificate and the nonlinear oriented certificate are
 kernel-verified deductions from named geometric inputs. The following bridges
 are not yet verified for every compact Riemannian surface:
 
-- identification of the supplied one-boundary parametrization with the unique
-  free loop in the verified polygonal normal form;
 - almost-everywhere eikonal differentiation and weak parameter integration;
 - intrinsic area measure and chartwise Jacobian globalization;
 - the global differential-form Stokes/comass inequality.

@@ -125,16 +125,14 @@ scan fails closed.
 
 ## Current frontier
 
-The end-to-end Riemannian statements still require:
+The Lemma 5.4 compact-surface boundary obstruction is now end-to-end verified
+in `GromovFilling.Lemma54`. The remaining end-to-end Riemannian statements
+require:
 
-1. identification of the Radó valence-one edge locus with the ambient boundary,
-   followed by the deduction that the supplied one-boundary parametrization
-   selects the unique free loop in the verified polygonal classification
-   normal form, up to a circle homeomorphism;
-2. Riemannian eikonal and weak parameter-integral differentiation;
-3. globalization of the planar area formula through surface charts, including
+1. Riemannian eikonal and weak parameter-integral differentiation;
+2. globalization of the planar area formula through surface charts, including
    the intrinsic `J₂` density;
-4. a global differential-form Stokes/comass interface for the oriented case.
+3. a global differential-form Stokes/comass interface for the oriented case.
 
 These are tracked gaps, not project axioms. The repository does not encode an
 open target as an assumption and call the resulting implication a proof.

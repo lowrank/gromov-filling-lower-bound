@@ -70,15 +70,13 @@ caller assumption.
 
 ## Current frontier
 
-Four end-to-end bridges remain outside the verified scope:
+The Lemma 5.4 compact-surface boundary obstruction is now end-to-end verified
+in `GromovFilling.Lemma54`. Three analytic bridges remain outside the verified
+scope:
 
-1. identification of the Radó valence-one edge locus with the ambient boundary,
-   followed by the deduction that the supplied one-boundary parametrization
-   selects the unique free loop in the verified polygonal classification
-   normal form, up to a circle homeomorphism;
-2. Riemannian eikonal and parameter-integral differentiation;
-3. globalization of the planar area formula through surface charts;
-4. a global differential-form Stokes/comass interface for the oriented case.
+1. Riemannian eikonal and parameter-integral differentiation;
+2. globalization of the planar area formula through surface charts;
+3. a global differential-form Stokes/comass interface for the oriented case.
 
 The repository keeps these foundations visible. It does not replace them with
 project axioms or encode an open target as a hypothesis and call the result a
