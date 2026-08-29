@@ -61,6 +61,7 @@ import GromovFilling.RiemannianInteriorChart
 import GromovFilling.RiemannianInteriorCoverage
 import GromovFilling.RiemannianJacobianBudget
 import GromovFilling.RiemannianLipschitzDerivative
+import GromovFilling.RiemannianProfileFourierEnergy
 import GromovFilling.RiemannianStandardChart
 import GromovFilling.RiemannianTwoJacobian
 import GromovFilling.SurfaceClassificationFoundation
