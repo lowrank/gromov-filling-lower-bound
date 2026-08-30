@@ -140,8 +140,9 @@ theorem finiteSymplecticFDerivPrimitiveError_comp_parametrization
     finiteComplexRiemannianChartPrimitiveErrorDensity
     finiteComplexRiemannianPrimitive
     orientedRiemannianChartVector riemannianRealMFDeriv
-  rw [fromTangentSpace_real_toContinuousLinearMap,
-    ContinuousLinearMap.id_comp]
+  rw [fromTangentSpace_real_toContinuousLinearMap]
+  simp only [ContinuousLinearMap.comp_apply,
+    ContinuousLinearMap.id_apply]
   rw [he0, he1, hρ0, hρ1, hG0, hG1]
   rfl
 
