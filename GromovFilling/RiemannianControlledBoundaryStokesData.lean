@@ -131,6 +131,88 @@ theorem ControlledBoundaryChartWeakStokesData.chartMap_eq_of_cutoff_ne_zero
       (P.center i) ⟨hzInner, hzRight⟩
   simpa only [Function.comp_apply] using D.chartMap_eq hzOuter
 
+/-- In the open half-plane part of the inverse-chart domain, the extended
+cutoff agrees locally with the genuine partition function in surface
+coordinates. -/
+theorem ControlledBoundaryChartWeakStokesData.cutoff_eventuallyEq_partition
+    {ι : Type uι} [Fintype ι]
+    {P : FiniteControlledBoundaryChartPartition M} {i : P.ι}
+    {G : M → ι → ℂ}
+    (D : ControlledBoundaryChartWeakStokesData P i G) {z : ℂ}
+    (hz : z ∈ halfSpaceComplexExtChartDomain (P.center i) ∩
+      complexRightOpenHalfPlane) :
+    D.cutoff =ᶠ[𝓝 z]
+      P.partition i ∘ halfSpaceComplexExtChart (P.center i) := by
+  filter_upwards
+      [(isOpen_halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane
+        (P.center i)).mem_nhds hz] with w hw
+  rw [D.cutoff_eq
+      (halfSpaceComplexExtChartDomain_subset_rightClosedHalfPlane
+        (P.center i) hw.1),
+    controlledBoundaryChartCutoff_eq_of_mem P i hw.1]
+  rfl
+
+/-- A nonzero cutoff point lies in the annular margin where the extended
+finite map agrees locally with the genuine chart pullback. -/
+theorem ControlledBoundaryChartWeakStokesData.chartMap_eventuallyEq_of_cutoff_ne_zero
+    {ι : Type uι} [Fintype ι]
+    {P : FiniteControlledBoundaryChartPartition M} {i : P.ι}
+    {G : M → ι → ℂ}
+    (D : ControlledBoundaryChartWeakStokesData P i G) {z : ℂ}
+    (hzRight : z ∈ complexRightOpenHalfPlane)
+    (hzCutoff : controlledBoundaryChartCutoff P i z ≠ 0) :
+    D.chartMap =ᶠ[𝓝 z]
+      G ∘ halfSpaceComplexExtChart (P.center i) := by
+  have hzRightClosed : z ∈ complexRightClosedHalfPlane := by
+    change 0 ≤ z.re
+    change 0 < z.re at hzRight
+    exact hzRight.le
+  have hzInner : z ∈
+      closedBall (controlledHalfSpaceComplexChartCenter (P.center i))
+        (controlledHalfSpaceInnerRadius (P.center i)) :=
+    support_controlledBoundaryChartCutoff_inter_rightClosedHalfPlane_subset
+      P i ⟨hzCutoff, hzRightClosed⟩
+  have hzOuter : z ∈
+      controlledHalfSpaceOuterOpenHalfBall (P.center i) :=
+    controlledHalfSpaceInnerClosedBall_inter_rightOpen_subset_outerOpen
+      (P.center i) ⟨hzInner, hzRight⟩
+  filter_upwards
+      [(isOpen_controlledHalfSpaceOuterOpenHalfBall
+        (P.center i)).mem_nhds hzOuter] with w hw
+  exact D.chartMap_eq
+    (controlledHalfSpaceOuterOpenHalfBall_subset_closed
+      (P.center i) hw)
+
+/-- Local equality of cutoff extensions gives equality of their ordinary
+Fréchet derivatives at interior chart points. -/
+theorem ControlledBoundaryChartWeakStokesData.fderiv_cutoff_eq_partition
+    {ι : Type uι} [Fintype ι]
+    {P : FiniteControlledBoundaryChartPartition M} {i : P.ι}
+    {G : M → ι → ℂ}
+    (D : ControlledBoundaryChartWeakStokesData P i G) {z : ℂ}
+    (hz : z ∈ halfSpaceComplexExtChartDomain (P.center i) ∩
+      complexRightOpenHalfPlane) :
+    fderiv ℝ D.cutoff z =
+      fderiv ℝ
+        (P.partition i ∘ halfSpaceComplexExtChart (P.center i)) z :=
+  (D.cutoff_eventuallyEq_partition hz).fderiv_eq
+
+/-- Wherever the cutoff is nonzero, the derivative density of the extended
+map is the derivative density of the genuine surface-map pullback. -/
+theorem ControlledBoundaryChartWeakStokesData.finiteSymplecticFDerivDensity_eq_of_cutoff_ne_zero
+    {ι : Type uι} [Fintype ι]
+    {P : FiniteControlledBoundaryChartPartition M} {i : P.ι}
+    {G : M → ι → ℂ}
+    (D : ControlledBoundaryChartWeakStokesData P i G) {z : ℂ}
+    (hzRight : z ∈ complexRightOpenHalfPlane)
+    (hzCutoff : controlledBoundaryChartCutoff P i z ≠ 0) :
+    finiteSymplecticFDerivDensity D.chartMap z =
+      finiteSymplecticFDerivDensity
+        (G ∘ halfSpaceComplexExtChart (P.center i)) z := by
+  unfold finiteSymplecticFDerivDensity
+  rw [(D.chartMap_eventuallyEq_of_cutoff_ne_zero
+    hzRight hzCutoff).fderiv_eq]
+
 /-- The packaged extensions satisfy localized weak Stokes on the complex
 right half-plane, with the increasing-imaginary-axis boundary convention. -/
 theorem ControlledBoundaryChartWeakStokesData.integral_eq
@@ -157,6 +239,14 @@ theorem ControlledBoundaryChartWeakStokesData.integral_eq
   ControlledBoundaryChartWeakStokesData.cutoff_on_imaginaryAxis
 #print axioms
   ControlledBoundaryChartWeakStokesData.chartMap_eq_of_cutoff_ne_zero
+#print axioms
+  ControlledBoundaryChartWeakStokesData.cutoff_eventuallyEq_partition
+#print axioms
+  ControlledBoundaryChartWeakStokesData.chartMap_eventuallyEq_of_cutoff_ne_zero
+#print axioms
+  ControlledBoundaryChartWeakStokesData.fderiv_cutoff_eq_partition
+#print axioms
+  ControlledBoundaryChartWeakStokesData.finiteSymplecticFDerivDensity_eq_of_cutoff_ne_zero
 #print axioms ControlledBoundaryChartWeakStokesData.integral_eq
 
 end
