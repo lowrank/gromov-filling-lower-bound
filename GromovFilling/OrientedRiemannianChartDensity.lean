@@ -121,8 +121,8 @@ theorem fderiv_comp_parametrization_eq_riemannianComplexMFDeriv
     (NormedSpace.fromTangentSpace (G (F z)))
       (mfderiv I 𝓘(ℝ, ℂ) G (F z)
         (mfderiv 𝓘(ℝ, ℂ) I F z v))
-  rw [← mfderiv_eq_fderiv, mfderiv_comp z hG hF]
-  rfl
+  simpa only [mfderiv_eq_fderiv] using
+    (mfderiv_comp_apply z hG hF v)
 
 /-- Coordinatewise manifold chain rule for a finite complex-valued map. -/
 theorem fderiv_finiteComplex_comp_parametrization
@@ -141,12 +141,15 @@ theorem fderiv_finiteComplex_comp_parametrization
   have hcoord : ∀ i : ι,
       DifferentiableAt ℝ ((fun x ↦ G x i) ∘ F) z :=
     fun i ↦ ((hG i).comp z hF).differentiableAt
+  apply ContinuousLinearMap.ext
+  intro v
+  funext i
+  change (fderiv ℝ (G ∘ F) z v) i =
+    riemannianComplexMFDeriv I (fun x ↦ G x i) (F z)
+      (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z v)
   rw [show G ∘ F =
       (fun w i ↦ ((fun x ↦ G x i) ∘ F) w) from rfl,
     fderiv_pi hcoord]
-  ext v i
-  simp only [ContinuousLinearMap.pi_apply,
-    finiteComplexRiemannianDerivative]
   exact fderiv_comp_parametrization_eq_riemannianComplexMFDeriv
     I (fun x ↦ G x i) F z v hF (hG i)
 
