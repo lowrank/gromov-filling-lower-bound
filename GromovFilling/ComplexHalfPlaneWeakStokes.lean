@@ -68,7 +68,8 @@ theorem lineDeriv_comp_complexOfRealProd_one
   unfold lineDeriv
   congr 1
   funext t
-  rw [map_add, map_smul, complexOfRealProd_one_zero]
+  simp only [Function.comp_apply, map_add, map_smul,
+    complexOfRealProd_one_zero]
 
 /-- Real-product motion in the second coordinate becomes complex motion in
 the imaginary direction. -/
@@ -80,7 +81,8 @@ theorem lineDeriv_comp_complexOfRealProd_I
   unfold lineDeriv
   congr 1
   funext t
-  rw [map_add, map_smul, complexOfRealProd_zero_one]
+  simp only [Function.comp_apply, map_add, map_smul,
+    complexOfRealProd_zero_one]
 
 /-- Weak finite complex derivative in the real product direction agrees
 with weak differentiation in the complex real direction. -/
@@ -150,6 +152,7 @@ theorem finiteComplexWeakPrimitiveError_comp_complexOfRealProd
     lineDeriv_comp_complexOfRealProd_I,
     finiteComplexWeakLineDerivative_comp_complexOfRealProd_one,
     finiteComplexWeakLineDerivative_comp_complexOfRealProd_I]
+  rfl
 
 /-- Boundary action density on the imaginary axis with increasing imaginary
 coordinate. -/
@@ -207,6 +210,12 @@ theorem integral_complexRightHalfPlane_cutoff_mul_finiteComplexWeakSymplecticDen
     rw [preimage_complexRightOpenHalfPlane]
     apply setIntegral_congr_fun measurableSet_planarRightOpenHalfPlane
     intro p _hp
+    change ρ (complexOfRealProd p) *
+        finiteComplexWeakSymplecticDensity
+          (F ∘ complexOfRealProd) p =
+      ρ (complexOfRealProd p) *
+        finiteComplexWeakSymplecticDensityComplex
+          F (complexOfRealProd p)
     rw [finiteComplexWeakSymplecticDensity_comp_complexOfRealProd]
   have herror :
       (∫ p in planarRightOpenHalfPlane,
@@ -224,7 +233,7 @@ theorem integral_complexRightHalfPlane_cutoff_mul_finiteComplexWeakSymplecticDen
     setIntegral_comp_complexOfRealProd_preimage
       (finiteComplexWeakPrimitiveErrorComplex ρ F)
       complexRightOpenHalfPlane] at hproduct
-  simpa only [
+  simpa only [e,
     finiteComplexWeakBoundaryActionDensity_comp_complexOfRealProd] using hproduct
 
 #print axioms lineDeriv_comp_complexOfRealProd_one
