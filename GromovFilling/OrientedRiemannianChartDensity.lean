@@ -62,6 +62,8 @@ theorem standardComplexSymplectic_eq_areaForm_mul_density
   have h := congrArg
     (fun η : V [⋀^Fin 2]→ₗ[ℝ] ℝ ↦ η ![u, v])
     (finiteComplexSymplecticPullback_eq_density_smul_volumeForm L o e he)
+  change finiteComplexSymplecticPullback L ![u, v] =
+    (finiteComplexSymplecticDensityInFrame L e • o.volumeForm) ![u, v] at h
   rw [finiteComplexSymplecticPullback_apply,
     AlternatingMap.smul_apply, smul_eq_mul,
     ← o.areaForm_to_volumeForm] at h
@@ -71,7 +73,7 @@ set_option backward.isDefEq.respectTransparency false in
 /-- The canonical norm-preserving identification of the complex plane with
 its Riemannian tangent space at a point. -/
 def orientedComplexTangentLinearIsometry (z : ℂ) :
-    ℂ ≃ₗᵢ[ℝ] TangentSpace 𝒘(ℝ, ℂ) z :=
+    ℂ ≃ₗᵢ[ℝ] TangentSpace 𝓘(ℝ, ℂ) z :=
   LinearIsometryEquiv.mk
     (NormedSpace.fromTangentSpace z).symm.toLinearEquiv
     (fun v ↦ by
@@ -82,7 +84,7 @@ def orientedComplexTangentLinearIsometry (z : ℂ) :
 /-- The standard complex orthonormal basis transported to the source
 tangent space of a complex chart. -/
 def orientedComplexTangentOrthonormalBasis (z : ℂ) :
-    OrthonormalBasis (Fin 2) ℝ (TangentSpace 𝒘(ℝ, ℂ) z) :=
+    OrthonormalBasis (Fin 2) ℝ (TangentSpace 𝓘(ℝ, ℂ) z) :=
   Complex.orthonormalBasisOneI.map (orientedComplexTangentLinearIsometry z)
 
 @[simp] theorem orientedComplexTangentOrthonormalBasis_apply
@@ -102,9 +104,9 @@ def orientedRiemannianChartJacobian
     (o : RiemannianTangentPlaneOrientation I M)
     (F : ℂ → M) (z : ℂ) : ℝ :=
   (o.orientation (F z)).areaForm
-    (riemannianMFDerivBetween 𝒘(ℝ, ℂ) I F z
+    (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z
       (orientedComplexTangentOrthonormalBasis z 0))
-    (riemannianMFDerivBetween 𝒘(ℝ, ℂ) I F z
+    (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z
       (orientedComplexTangentOrthonormalBasis z 1))
 
 /-- The absolute signed chart Jacobian is the intrinsic metric
@@ -118,10 +120,10 @@ theorem abs_orientedRiemannianChartJacobian_eq_twoJacobian
     (o : RiemannianTangentPlaneOrientation I M)
     (F : ℂ → M) (z : ℂ) :
     |orientedRiemannianChartJacobian I o F z| =
-      riemannianTwoJacobianBetween 𝒘(ℝ, ℂ) I F z := by
+      riemannianTwoJacobianBetween 𝓘(ℝ, ℂ) I F z := by
   letI : Fact (Module.finrank ℝ
-      (TangentSpace 𝒘(ℝ, ℂ) z) = 2) :=
-    ⟨tangentSpace_finrank_eq_two 𝒘(ℝ, ℂ) z⟩
+      (TangentSpace 𝓘(ℝ, ℂ) z) = 2) :=
+    ⟨tangentSpace_finrank_eq_two 𝓘(ℝ, ℂ) z⟩
   letI : Fact (Module.finrank ℝ (TangentSpace I (F z)) = 2) :=
     ⟨tangentSpace_finrank_eq_two I (F z)⟩
   unfold orientedRiemannianChartJacobian riemannianTwoJacobianBetween
@@ -129,7 +131,7 @@ theorem abs_orientedRiemannianChartJacobian_eq_twoJacobian
     (twoJacobian_eq_abs_areaForm
       (orientedComplexTangentOrthonormalBasis z)
       (o.orientation (F z))
-      (riemannianMFDerivBetween 𝒘(ℝ, ℂ) I F z)).symm
+      (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z)).symm
 
 /-- The `ENNReal` area density forgets exactly the sign of the oriented
 chart Jacobian. -/
@@ -157,10 +159,10 @@ def finiteComplexRiemannianChartPullbackDensity
     (G : M → ι → ℂ) (F : ℂ → M) (z : ℂ) : ℝ :=
   standardComplexSymplectic
     (finiteComplexRiemannianDerivative I G (F z)
-      (riemannianMFDerivBetween 𝒘(ℝ, ℂ) I F z
+      (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z
         (orientedComplexTangentOrthonormalBasis z 0)))
     (finiteComplexRiemannianDerivative I G (F z)
-      (riemannianMFDerivBetween 𝒘(ℝ, ℂ) I F z
+      (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z
         (orientedComplexTangentOrthonormalBasis z 1)))
 
 /-- In an oriented Riemannian chart, the signed planar pullback density is
@@ -176,6 +178,8 @@ theorem finiteComplexRiemannianChartPullbackDensity_eq_jacobian_mul
     finiteComplexRiemannianChartPullbackDensity I G F z =
       orientedRiemannianChartJacobian I o F z *
         orientedFiniteComplexRiemannianSymplecticDensity I o G (F z) := by
+  letI : Fact (Module.finrank ℝ (TangentSpace I (F z)) = 2) :=
+    ⟨tangentSpace_finrank_eq_two I (F z)⟩
   let e := o.positiveOrthonormalBasis I (F z)
   simpa only [finiteComplexRiemannianChartPullbackDensity,
     orientedRiemannianChartJacobian,
@@ -185,9 +189,9 @@ theorem finiteComplexRiemannianChartPullbackDensity_eq_jacobian_mul
       (finiteComplexRiemannianDerivative I G (F z))
       (o.orientation (F z)) e
       (o.positiveOrthonormalBasis_orientation I (F z))
-      (riemannianMFDerivBetween 𝒘(ℝ, ℂ) I F z
+      (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z
         (orientedComplexTangentOrthonormalBasis z 0))
-      (riemannianMFDerivBetween 𝒘(ℝ, ℂ) I F z
+      (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z
         (orientedComplexTangentOrthonormalBasis z 1)))
 
 /-- Absolute planar pullback density factors into the metric chart
@@ -201,7 +205,7 @@ theorem abs_finiteComplexRiemannianChartPullbackDensity_eq_twoJacobian_mul
     (o : RiemannianTangentPlaneOrientation I M)
     (G : M → ι → ℂ) (F : ℂ → M) (z : ℂ) :
     |finiteComplexRiemannianChartPullbackDensity I G F z| =
-      riemannianTwoJacobianBetween 𝒘(ℝ, ℂ) I F z *
+      riemannianTwoJacobianBetween 𝓘(ℝ, ℂ) I F z *
         |orientedFiniteComplexRiemannianSymplecticDensity I o G (F z)| := by
   rw [finiteComplexRiemannianChartPullbackDensity_eq_jacobian_mul,
     abs_mul, abs_orientedRiemannianChartJacobian_eq_twoJacobian]
