@@ -81,6 +81,7 @@ import GromovFilling.ResonanceTrace
 import GromovFilling.RiemannianAreaFormula
 import GromovFilling.RiemannianAtlasArea
 import GromovFilling.RiemannianBoundaryPartition
+import GromovFilling.RiemannianControlledBoundaryPartition
 import GromovFilling.RiemannianChartArea
 import GromovFilling.RiemannianChartDensity
 import GromovFilling.RiemannianChartDisjointification
