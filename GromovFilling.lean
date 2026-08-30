@@ -42,6 +42,7 @@ import GromovFilling.JordanSchoenfliesCoverage
 import GromovFilling.JordanSchoenfliesFoundation
 import GromovFilling.Lemma54
 import GromovFilling.Lemma54Area
+import GromovFilling.LipschitzWeakStokes
 import GromovFilling.MetricPlanarCoverage
 import GromovFilling.ModTwoDegree
 import GromovFilling.NonlinearCorrelationBounds
