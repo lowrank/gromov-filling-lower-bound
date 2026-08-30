@@ -58,7 +58,6 @@ theorem tendsto_comassPositiveExcess_zero_of_abs_le_add_error
     apply max_le
     · linarith [hbound n]
     · exact abs_nonneg (e n)
-  · exact heabs
 
 /-- Dominated convergence for the positive comass excess.  The assumptions
 are phrased almost everywhere so the theorem applies directly to weak
