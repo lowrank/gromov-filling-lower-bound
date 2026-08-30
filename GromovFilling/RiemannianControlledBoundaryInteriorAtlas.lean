@@ -13,7 +13,7 @@ the same chart family.
 -/
 
 open Bundle Manifold MeasureTheory Set
-open scoped Bundle Manifold
+open scoped Bundle Manifold NNReal
 
 namespace GromovFilling
 
@@ -89,6 +89,7 @@ differentiable almost everywhere on each controlled interior domain carried
 by a boundary partition. -/
 theorem FiniteControlledBoundaryChartPartition.ae_mdifferentiableAt_comp_halfSpace_of_lipschitzWith
     (P : FiniteControlledBoundaryChartPartition M) (fallback : M)
+    [MeasurableSpace M] [BorelSpace M]
     {ι : Type uι} [Fintype ι] (G : M → ι → ℂ)
     {CG : ℝ≥0} (hG : LipschitzWith CG G) (i : P.ι) :
     ∀ᵐ z ∂volume.restrict
