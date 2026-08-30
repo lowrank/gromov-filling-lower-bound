@@ -24,6 +24,7 @@ import GromovFilling.FiniteResonantRiemannian
 import GromovFilling.FiniteResonantRiemannianProfileBounds
 import GromovFilling.FiniteResonantStokes
 import GromovFilling.FiniteSymplecticChartTransition
+import GromovFilling.FiniteSymplecticPrimitiveTransition
 import GromovFilling.FiniteSymplecticWeakStokes
 import GromovFilling.FourierArea
 import GromovFilling.FourierBessel
