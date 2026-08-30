@@ -36,10 +36,10 @@ theorem exists_orientedFiniteResonantRiemannian_comass_error
     (x : M) (hx : I.IsInteriorPoint x)
     (hprofileDiff : ∀ᵐ t : ℝ ∂volume.restrict
       (Set.Ioc (-Real.pi) Real.pi),
-      MDifferentiableAt I 𝒘(ℝ, ℝ)
+      MDifferentiableAt I 𝓘(ℝ, ℝ)
         (oddDistanceProfile boundary (angleToUnitAddCircle t)) x)
     (hFourierDiff : ∀ k : ℕ,
-      MDifferentiableAt I 𝒘(ℝ, ℂ)
+      MDifferentiableAt I 𝓘(ℝ, ℂ)
         (oddProfileFourierMap boundary (oddMode k)) x) :
     ∃ error : ℕ → ℝ,
       Tendsto error atTop (nhds 0) ∧
