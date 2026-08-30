@@ -82,8 +82,8 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
       (∑ j : κ, mfderiv I 𝓘(ℝ, ℝ) (ρ j) x) := by
     have hfinite : ∀ s : Finset κ,
         HasMFDerivAt I 𝓘(ℝ, ℝ)
-          (∑ j in s, ρ j) x
-          (∑ j in s,
+          (∑ j ∈ s, ρ j) x
+          (∑ j ∈ s,
             (mfderiv I 𝓘(ℝ, ℝ) (ρ j) x :
               TangentSpace I x →L[ℝ] ℝ)) := by
       intro s
