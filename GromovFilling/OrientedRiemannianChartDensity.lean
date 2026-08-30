@@ -103,11 +103,11 @@ theorem fderiv_comp_parametrization_eq_riemannianComplexMFDeriv
     [TopologicalSpace M] [ChartedSpace H M]
     [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
     (G : M → ℂ) (F : ℂ → M) (z v : ℂ)
-    (hF : MDifferentiableAt 𝒘(ℝ, ℂ) I F z)
-    (hG : MDifferentiableAt I 𝒘(ℝ, ℂ) G (F z)) :
+    (hF : MDifferentiableAt 𝓘(ℝ, ℂ) I F z)
+    (hG : MDifferentiableAt I 𝓘(ℝ, ℂ) G (F z)) :
     fderiv ℝ (G ∘ F) z v =
       riemannianComplexMFDeriv I G (F z)
-        (riemannianMFDerivBetween 𝒘(ℝ, ℂ) I F z v) := by
+        (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z v) := by
   have hcomp := mfderiv_comp_apply z hG hF v
   simpa only [riemannianComplexMFDeriv,
     riemannianMFDerivBetween_apply, ContinuousLinearMap.comp_apply,
@@ -121,12 +121,12 @@ theorem fderiv_finiteComplex_comp_parametrization
     [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
     [Fintype ι] [Finite ι]
     (G : M → ι → ℂ) (F : ℂ → M) (z : ℂ)
-    (hF : MDifferentiableAt 𝒘(ℝ, ℂ) I F z)
+    (hF : MDifferentiableAt 𝓘(ℝ, ℂ) I F z)
     (hG : ∀ i : ι,
-      MDifferentiableAt I 𝒘(ℝ, ℂ) (fun x ↦ G x i) (F z)) :
+      MDifferentiableAt I 𝓘(ℝ, ℂ) (fun x ↦ G x i) (F z)) :
     fderiv ℝ (G ∘ F) z =
       (finiteComplexRiemannianDerivative I G (F z)).comp
-        (riemannianMFDerivBetween 𝒘(ℝ, ℂ) I F z) := by
+        (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z) := by
   have hcoord : ∀ i : ι,
       DifferentiableAt ℝ ((fun x ↦ G x i) ∘ F) z :=
     fun i ↦ ((hG i).comp z hF).differentiableAt
@@ -220,9 +220,9 @@ theorem finiteSymplecticFDerivDensity_comp_parametrization
     [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
     [Fact (Module.finrank ℝ E = 2)] [Fintype ι] [Finite ι]
     (G : M → ι → ℂ) (F : ℂ → M) (z : ℂ)
-    (hF : MDifferentiableAt 𝒘(ℝ, ℂ) I F z)
+    (hF : MDifferentiableAt 𝓘(ℝ, ℂ) I F z)
     (hG : ∀ i : ι,
-      MDifferentiableAt I 𝒘(ℝ, ℂ) (fun x ↦ G x i) (F z)) :
+      MDifferentiableAt I 𝓘(ℝ, ℂ) (fun x ↦ G x i) (F z)) :
     finiteSymplecticFDerivDensity (G ∘ F) z =
       finiteComplexRiemannianChartPullbackDensity I G F z := by
   have h0 : orientedComplexTangentOrthonormalBasis z 0 = (1 : ℂ) := by
@@ -277,9 +277,9 @@ theorem finiteSymplecticFDerivDensity_comp_parametrization_eq_jacobian_mul
     [Fact (Module.finrank ℝ E = 2)] [Fintype ι] [Finite ι]
     (o : RiemannianTangentPlaneOrientation I M)
     (G : M → ι → ℂ) (F : ℂ → M) (z : ℂ)
-    (hF : MDifferentiableAt 𝒘(ℝ, ℂ) I F z)
+    (hF : MDifferentiableAt 𝓘(ℝ, ℂ) I F z)
     (hG : ∀ i : ι,
-      MDifferentiableAt I 𝒘(ℝ, ℂ) (fun x ↦ G x i) (F z)) :
+      MDifferentiableAt I 𝓘(ℝ, ℂ) (fun x ↦ G x i) (F z)) :
     finiteSymplecticFDerivDensity (G ∘ F) z =
       orientedRiemannianChartJacobian I o F z *
         orientedFiniteComplexRiemannianSymplecticDensity I o G (F z) := by
