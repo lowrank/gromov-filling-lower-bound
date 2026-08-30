@@ -124,9 +124,9 @@ theorem fderiv_comp_parametrization_eq_riemannianComplexMFDeriv
         (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z v) := by
   rw [riemannianComplexMFDeriv, riemannianMFDerivBetween,
     fromTangentSpace_complex_toContinuousLinearMap,
-    ContinuousLinearMap.comp_apply, ContinuousLinearMap.id_apply,
-    ← mfderiv_eq_fderiv]
-  exact mfderiv_comp_apply z hG hF v
+    ContinuousLinearMap.comp_apply]
+  simpa only [ContinuousLinearMap.id_apply, mfderiv_eq_fderiv] using
+    (mfderiv_comp_apply z hG hF v)
 
 /-- Coordinatewise manifold chain rule for a finite complex-valued map. -/
 theorem fderiv_finiteComplex_comp_parametrization
