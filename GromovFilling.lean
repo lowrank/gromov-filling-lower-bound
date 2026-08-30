@@ -39,6 +39,7 @@ import GromovFilling.GivensDiskArea
 import GromovFilling.HalfPlaneWeakStokes
 import GromovFilling.InfiniteCorrelationBounds
 import GromovFilling.InfiniteResonantComass
+import GromovFilling.InfiniteResonantComassLimit
 import GromovFilling.InfiniteResonantComassOrientation
 import GromovFilling.InfiniteResonantVariation
 import GromovFilling.JacobianBudget
