@@ -70,6 +70,7 @@ theorem lineDeriv_comp_complexOfRealProd_one
   funext t
   simp only [Function.comp_apply, map_add, map_smul,
     complexOfRealProd_one_zero]
+  rfl
 
 /-- Real-product motion in the second coordinate becomes complex motion in
 the imaginary direction. -/
@@ -83,6 +84,7 @@ theorem lineDeriv_comp_complexOfRealProd_I
   funext t
   simp only [Function.comp_apply, map_add, map_smul,
     complexOfRealProd_zero_one]
+  rfl
 
 /-- Weak finite complex derivative in the real product direction agrees
 with weak differentiation in the complex real direction. -/
