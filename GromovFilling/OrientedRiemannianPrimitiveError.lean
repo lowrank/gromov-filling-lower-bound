@@ -68,7 +68,8 @@ def orientedFiniteComplexRiemannianPrimitiveErrorDensity
 /-- The Riemannian differentials of finitely many differentiable real
 cutoffs sum to zero when the cutoffs add pointwise to one. -/
 theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
-    {E H M κ : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E H M : Type*} {κ : Type}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [TopologicalSpace M] [ChartedSpace H M]
     [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
@@ -100,7 +101,8 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
 /-- The intrinsic primitive-error densities of a finite differentiable
 partition of unity cancel pointwise. -/
 theorem sum_orientedFiniteComplexRiemannianPrimitiveErrorDensity_eq_zero
-    {E H M κ ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E H M ι : Type*} {κ : Type}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [TopologicalSpace M] [ChartedSpace H M]
     [RiemannianBundle (fun x : M ↦ TangentSpace I x)]

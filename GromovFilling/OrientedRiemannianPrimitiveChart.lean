@@ -111,11 +111,24 @@ theorem finiteSymplecticFDerivPrimitiveError_comp_parametrization
   have hρ1 :=
     fderiv_real_comp_parametrization_eq_riemannianRealMFDeriv
       I ρ F z Complex.I hF hρ
-  have hderiv :=
-    fderiv_finiteComplex_comp_parametrization I G F z hF hG
-  have hG0 := congrArg (fun L : ℂ →L[ℝ] (ι → ℂ) ↦ L 1) hderiv
-  have hG1 :=
-    congrArg (fun L : ℂ →L[ℝ] (ι → ℂ) ↦ L Complex.I) hderiv
+  have hG0 : (fderiv ℝ (G ∘ F) z) 1 =
+      finiteComplexRiemannianDerivative I G (F z)
+        (mfderiv 𝓘(ℝ, ℂ) I F z (1 : ℂ)) := by
+    funext i
+    rw [finiteComplexRiemannianDerivative,
+      ContinuousLinearMap.pi_apply,
+      riemannianComplexMFDeriv_apply_eq_mfderiv]
+    exact fderiv_finite_comp_parametrization_apply_eq_mfderiv
+      I G F z (1 : ℂ) i hF hG
+  have hG1 : (fderiv ℝ (G ∘ F) z) Complex.I =
+      finiteComplexRiemannianDerivative I G (F z)
+        (mfderiv 𝓘(ℝ, ℂ) I F z Complex.I) := by
+    funext i
+    rw [finiteComplexRiemannianDerivative,
+      ContinuousLinearMap.pi_apply,
+      riemannianComplexMFDeriv_apply_eq_mfderiv]
+    exact fderiv_finite_comp_parametrization_apply_eq_mfderiv
+      I G F z Complex.I i hF hG
   have he0 : orientedComplexTangentOrthonormalBasis z 0 = (1 : ℂ) := by
     rw [orientedComplexTangentOrthonormalBasis_apply]
     simpa using congrFun Complex.coe_orthonormalBasisOneI (0 : Fin 2)
