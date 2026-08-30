@@ -159,6 +159,60 @@ theorem chartAxis_eventuallyEq_boundary_controlledBoundaryChartParameter
   exact (boundary_controlledBoundaryChartParameter_of_cutoff_ne_zero
     boundary hboundaryRange P i t ht).symm
 
+/-- The canonical circle parameter is continuous at every nonzero controlled
+boundary trace.  The inverse of the boundary parametrization is continuous on
+its image because an isometric circle boundary is a closed embedding; the
+chart-axis representative is continuous while it remains in the extended
+chart domain. -/
+theorem continuousAt_controlledBoundaryChartParameter_of_cutoff_ne_zero
+    (boundary : UnitAddCircle → M)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hboundaryRange : Set.range boundary =
+      (modelWithCornersEuclideanHalfSpace 2).boundary M)
+    (P : FiniteControlledBoundaryChartPartition M) (i : P.ι) (y : ℝ)
+    (hyCutoff : controlledBoundaryChartCutoff P i
+      (y * Complex.I) ≠ 0) :
+    ContinuousAt (controlledBoundaryChartParameter boundary P i) y := by
+  have hboundaryEmbedding : IsClosedEmbedding boundary :=
+    hboundary.lipschitzWith.continuous.isClosedEmbedding hboundary.injective
+  apply hboundaryEmbedding.isInducing.continuousAt_iff.mpr
+  have hyDomain : (y * Complex.I : ℂ) ∈
+      halfSpaceComplexExtChartDomain (P.center i) := by
+    by_contra hyDomain
+    exact hyCutoff
+      (controlledBoundaryChartCutoff_eq_zero_of_not_mem P i hyDomain)
+  have hne : ∀ᶠ t : ℝ in nhds y,
+      controlledBoundaryChartCutoff P i (t * Complex.I) ≠ 0 :=
+    (continuous_controlledBoundaryChartCutoff_real_mul_I P i).continuousAt.eventually_ne
+      hyCutoff
+  have haxisDomain : ∀ᶠ t : ℝ in nhds y,
+      (t * Complex.I : ℂ) ∈
+        halfSpaceComplexExtChartDomain (P.center i) := by
+    filter_upwards [hne] with t ht
+    by_contra htDomain
+    exact ht
+      (controlledBoundaryChartCutoff_eq_zero_of_not_mem P i htDomain)
+  have hcoordWithin :
+      Tendsto (fun t : ℝ ↦ (t * Complex.I : ℂ)) (nhds y)
+        (nhdsWithin (y * Complex.I)
+          (halfSpaceComplexExtChartDomain (P.center i))) :=
+    tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within _
+      (show ContinuousAt (fun t : ℝ ↦ (t * Complex.I : ℂ)) y by
+        fun_prop)
+      haxisDomain
+  have haxis : ContinuousAt
+      (fun t : ℝ ↦
+        halfSpaceComplexExtChart (P.center i) (t * Complex.I)) y :=
+    (continuousOn_halfSpaceComplexExtChart (P.center i) _ hyDomain).tendsto.comp
+      hcoordWithin
+  have hboundaryParameter : ContinuousAt
+      (fun t : ℝ ↦
+        boundary (controlledBoundaryChartParameter boundary P i t)) y :=
+    haxis.congr_of_eventuallyEq
+      (chartAxis_eventuallyEq_boundary_controlledBoundaryChartParameter
+        boundary hboundaryRange P i y hyCutoff).symm
+  simpa only [Function.comp_apply] using hboundaryParameter
+
 #print axioms halfSpaceComplexExtChart_real_mul_I_mem_boundary
 #print axioms
   halfSpaceComplexExtChart_real_mul_I_mem_boundary_of_cutoff_ne_zero
@@ -167,6 +221,8 @@ theorem chartAxis_eventuallyEq_boundary_controlledBoundaryChartParameter
 #print axioms continuous_controlledBoundaryChartCutoff_real_mul_I
 #print axioms
   chartAxis_eventuallyEq_boundary_controlledBoundaryChartParameter
+#print axioms
+  continuousAt_controlledBoundaryChartParameter_of_cutoff_ne_zero
 
 end
 
