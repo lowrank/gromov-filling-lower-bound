@@ -12,7 +12,7 @@ annular margin and also retains the imaginary-axis boundary trace.
 -/
 
 open Bundle Function Manifold Metric Set
-open scoped Manifold NNReal Topology
+open scoped ContDiff Manifold NNReal Topology
 
 namespace GromovFilling
 
