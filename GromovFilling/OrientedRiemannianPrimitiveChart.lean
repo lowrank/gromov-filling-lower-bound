@@ -1,3 +1,4 @@
+import GromovFilling.FiniteSymplecticPrimitiveTransition
 import GromovFilling.OrientedRiemannianChartDensity
 import GromovFilling.OrientedRiemannianPrimitiveError
 
@@ -53,25 +54,20 @@ theorem alternatingContinuousLinearPair_eq_areaForm_mul
   rw [hpair (e 0) (e 1)] at h
   exact h
 
-/-- The ordinary derivative of a real-valued manifold map after a complex
-parametrization is its intrinsic Riemannian differential along the chart
-vector. -/
-theorem fderiv_real_comp_parametrization_eq_riemannianRealMFDeriv
+/-- Real scalar manifold chain rule exposed before any Riemannian bundle
+instances are introduced. -/
+theorem fderiv_real_comp_parametrization_apply_eq_mfderiv
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [TopologicalSpace M] [ChartedSpace H M]
-    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
     (ρ : M → ℝ) (F : ℂ → M) (z v : ℂ)
     (hF : MDifferentiableAt 𝓘(ℝ, ℂ) I F z)
     (hρ : MDifferentiableAt I 𝓘(ℝ, ℝ) ρ (F z)) :
     fderiv ℝ (ρ ∘ F) z v =
-      riemannianRealMFDeriv I ρ (F z)
-        (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z v) := by
-  rw [riemannianRealMFDeriv, riemannianMFDerivBetween,
-    fromTangentSpace_real_toContinuousLinearMap,
-    ContinuousLinearMap.comp_apply]
-  simpa only [ContinuousLinearMap.id_apply, mfderiv_eq_fderiv] using
-    (mfderiv_comp_apply z hρ hF v)
+      mfderiv I 𝓘(ℝ, ℝ) ρ (F z)
+        (mfderiv 𝓘(ℝ, ℂ) I F z v) := by
+  rw [← mfderiv_eq_fderiv]
+  exact mfderiv_comp_apply z hρ hF v
 
 /-- The cutoff-primitive error evaluated on the two oriented chart vectors. -/
 def finiteComplexRiemannianChartPrimitiveErrorDensity
@@ -105,11 +101,15 @@ theorem finiteSymplecticFDerivPrimitiveError_comp_parametrization
       MDifferentiableAt I 𝓘(ℝ, ℂ) (fun x ↦ G x i) (F z)) :
     finiteSymplecticFDerivPrimitiveError (ρ ∘ F) (G ∘ F) z =
       finiteComplexRiemannianChartPrimitiveErrorDensity I ρ G F z := by
-  have hρ0 :=
-    fderiv_real_comp_parametrization_eq_riemannianRealMFDeriv
+  have hρ0 : fderiv ℝ (ρ ∘ F) z 1 =
+      mfderiv I 𝓘(ℝ, ℝ) ρ (F z)
+        (mfderiv 𝓘(ℝ, ℂ) I F z (1 : ℂ)) :=
+    fderiv_real_comp_parametrization_apply_eq_mfderiv
       I ρ F z 1 hF hρ
-  have hρ1 :=
-    fderiv_real_comp_parametrization_eq_riemannianRealMFDeriv
+  have hρ1 : fderiv ℝ (ρ ∘ F) z Complex.I =
+      mfderiv I 𝓘(ℝ, ℝ) ρ (F z)
+        (mfderiv 𝓘(ℝ, ℂ) I F z Complex.I) :=
+    fderiv_real_comp_parametrization_apply_eq_mfderiv
       I ρ F z Complex.I hF hρ
   have hG0 : (fderiv ℝ (G ∘ F) z) 1 =
       finiteComplexRiemannianDerivative I G (F z)
@@ -139,7 +139,9 @@ theorem finiteSymplecticFDerivPrimitiveError_comp_parametrization
   unfold finiteSymplecticFDerivPrimitiveError
     finiteComplexRiemannianChartPrimitiveErrorDensity
     finiteComplexRiemannianPrimitive
-    orientedRiemannianChartVector
+    orientedRiemannianChartVector riemannianRealMFDeriv
+  rw [fromTangentSpace_real_toContinuousLinearMap,
+    ContinuousLinearMap.id_comp]
   rw [he0, he1, hρ0, hρ1, hG0, hG1]
   rfl
 
@@ -193,7 +195,7 @@ theorem finiteSymplecticFDerivPrimitiveError_comp_parametrization_eq_jacobian_mu
     finiteComplexRiemannianChartPrimitiveErrorDensity_eq_jacobian_mul]
 
 #print axioms alternatingContinuousLinearPair_eq_areaForm_mul
-#print axioms fderiv_real_comp_parametrization_eq_riemannianRealMFDeriv
+#print axioms fderiv_real_comp_parametrization_apply_eq_mfderiv
 #print axioms finiteSymplecticFDerivPrimitiveError_comp_parametrization
 #print axioms
   finiteComplexRiemannianChartPrimitiveErrorDensity_eq_jacobian_mul
