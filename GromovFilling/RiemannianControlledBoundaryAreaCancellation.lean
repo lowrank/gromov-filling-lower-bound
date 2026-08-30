@@ -329,8 +329,13 @@ theorem controlledBoundaryChartAreaPrimitiveErrorDensity_eq_zero_of_mem_rightOpe
         controlledInteriorComplexChartDomain_subset_interiorComplexExtChartDomain
           I e (chosenInteriorChartControl I (P.center i))
     have hzInterior : F z ∈ I.interior M := by
-      exact (image_interiorComplexExtChartDomain I e (P.center i) ▸
-        ⟨z, hzFull, rfl⟩).2
+      have hzImage :
+          interiorComplexExtChart I e (P.center i) z ∈
+            interiorComplexExtChart I e (P.center i) ''
+              interiorComplexExtChartDomain I e (P.center i) :=
+        ⟨z, hzFull, rfl⟩
+      rw [image_interiorComplexExtChartDomain I e (P.center i)] at hzImage
+      simpa only [F] using hzImage.2
     have hzNotS : z ∉ s := by
       simpa only [s, I, e] using hzControlled
     have hzNotImage : F z ∉ F '' s := by
@@ -491,7 +496,7 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaPrimit
   let q : M → ℝ := fun x ↦
     orientedFiniteComplexRiemannianPrimitiveErrorDensity
       I O.tangentOrientation (P.partition i) G x
-  let μ := riemannianSurfaceAreaMeasure I
+  let μ : Measure M := riemannianSurfaceAreaMeasure I
   let A : ControlledInteriorAtlas I M :=
     P.toControlledInteriorAtlas (Classical.choice inferInstance)
   let k : ℕ := (Fintype.equivFin P.ι i : Fin (Fintype.card P.ι))
@@ -579,6 +584,8 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaPrimit
       FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas_domain]
       using h
   have hμInterior : ∀ᵐ x ∂μ, x ∈ I.interior M := by
+    change ∀ᵐ x ∂riemannianSurfaceAreaMeasure I,
+      x ∈ I.interior M
     rw [← riemannianSurfaceAreaMeasure_restrict_interior I]
     exact ae_restrict_mem (I.isOpen_interior one_ne_zero).measurableSet
   have hqzero : ∀ᵐ x ∂μ, x ∉ U → q x = 0 := by
@@ -604,8 +611,13 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaPrimit
       hsFullMeas hsSubsetFull
     rintro z ⟨hzFull, hzs⟩
     have hzInterior : F z ∈ I.interior M := by
-      exact (image_interiorComplexExtChartDomain I e (P.center i) ▸
-        ⟨z, hzFull, rfl⟩).2
+      have hzImage :
+          interiorComplexExtChart I e (P.center i) z ∈
+            interiorComplexExtChart I e (P.center i) ''
+              interiorComplexExtChartDomain I e (P.center i) :=
+        ⟨z, hzFull, rfl⟩
+      rw [image_interiorComplexExtChartDomain I e (P.center i)] at hzImage
+      simpa only [F] using hzImage.2
     have hzNotImage : F z ∉ U := by
       rintro ⟨w, hw, hwz⟩
       have hwFull : w ∈ sFull := hsSubsetFull hw
@@ -613,9 +625,12 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaPrimit
         injOn_interiorComplexExtChart I e (P.center i)
           hzFull hwFull hwz.symm
       exact hzs (hzw ▸ hw)
-    rw [P.primitiveErrorDensity_eq_zero_of_interior_of_not_mem_image
-      O i G (F z) hzInterior (by simpa only [U, F, s, I, e] using hzNotImage),
-      mul_zero]
+    have hqzero : q (F z) = 0 := by
+      simpa only [q] using
+        P.primitiveErrorDensity_eq_zero_of_interior_of_not_mem_image
+          O i G (F z) hzInterior
+            (by simpa only [U, F, s, I, e] using hzNotImage)
+    rw [hqzero, mul_zero]
   have hrightToFull :
       (∫ z in complexRightOpenHalfPlane,
           controlledBoundaryChartAreaPrimitiveErrorDensity P O i G z) =
