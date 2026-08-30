@@ -39,7 +39,7 @@ finite complex-valued map at the base point. -/
 theorem finiteComplexWeakLineDerivative_eq_of_eventuallyEq
     {E ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [Fintype ι] {F H : E → ι → ℂ} {x p : E}
-    (h : F =ᶠ[𝒩 x] H) :
+    (h : F =ᶠ[nhds x] H) :
     finiteComplexWeakLineDerivative F x p =
       finiteComplexWeakLineDerivative H x p := by
   funext j
@@ -63,7 +63,7 @@ theorem ControlledBoundaryChartWeakStokesData.chartMap_imaginaryAxis_eventuallyE
     (D : ControlledBoundaryChartWeakStokesData P i G) {y : ℝ}
     (hyCutoff : controlledBoundaryChartCutoff P i
       (y * Complex.I) ≠ 0) :
-    (fun t : ℝ ↦ D.chartMap (t * Complex.I)) =ᶠ[𝒩 y]
+    (fun t : ℝ ↦ D.chartMap (t * Complex.I)) =ᶠ[nhds y]
       fun t : ℝ ↦
         G (halfSpaceComplexExtChart (P.center i) (t * Complex.I)) := by
   have hyInner : (y * Complex.I : ℂ) ∈
@@ -78,7 +78,7 @@ theorem ControlledBoundaryChartWeakStokesData.chartMap_imaginaryAxis_eventuallyE
       (controlledHalfSpaceInnerRadius_lt_outer (P.center i)) hyInner
   have haxis : Continuous (fun t : ℝ ↦ (t * Complex.I : ℂ)) :=
     Complex.continuous_ofReal.mul continuous_const
-  have hball : ∀ᶠ t in 𝒩 y,
+  have hball : ∀ᶠ t in nhds y,
       (t * Complex.I : ℂ) ∈
         ball (controlledHalfSpaceComplexChartCenter (P.center i))
           (controlledHalfSpaceOuterRadius (P.center i)) :=
