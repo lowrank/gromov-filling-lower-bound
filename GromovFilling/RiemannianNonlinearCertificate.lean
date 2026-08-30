@@ -52,14 +52,18 @@ theorem ControlledBoundaryAtlasBoundaryPhase.nonlinearCertificate_le_surfaceArea
     (B : ControlledBoundaryAtlasBoundaryPhase P O boundary)
     (hboundary : IsometricCircleBoundary boundary)
     (lam : ℝ) (hlam0 : 0 ≤ lam) (hlam : lam < Real.pi ^ 2 / 32) :
+    letI : Nonempty (ControlledInteriorAtlas
+        (modelWithCornersEuclideanHalfSpace 2) M) :=
+      nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartition P
+        (Classical.choice inferInstance)
     ENNReal.ofReal (nonlinearCertificate lam) ≤
       riemannianSurfaceAreaMeasure
         (modelWithCornersEuclideanHalfSpace 2) (Set.univ : Set M) := by
   let I := modelWithCornersEuclideanHalfSpace 2
-  let μ : Measure M := riemannianSurfaceAreaMeasure I
   letI : Nonempty (ControlledInteriorAtlas I M) :=
     nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartition
       P (Classical.choice inferInstance)
+  let μ : Measure M := riemannianSurfaceAreaMeasure I
   change ENNReal.ofReal (nonlinearCertificate lam) ≤ μ Set.univ
   by_cases hμtop : μ Set.univ = ∞
   · rw [hμtop]
