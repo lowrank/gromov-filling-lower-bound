@@ -12,14 +12,14 @@ the boundary Stokes cover and the canonical Riemannian area measure can use
 the same chart family.
 -/
 
-open Bundle Manifold Set
+open Bundle Manifold MeasureTheory Set
 open scoped Bundle Manifold
 
 namespace GromovFilling
 
 noncomputable section
 
-universe uM
+universe uM uι
 
 variable {M : Type uM} [PseudoEMetricSpace M]
   [ChartedSpace (EuclideanHalfSpace 2) M]
@@ -84,6 +84,37 @@ theorem nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartiti
         (modelWithCornersEuclideanHalfSpace 2) M) :=
   ⟨P.toControlledInteriorAtlas fallback⟩
 
+/-- A globally Lipschitz finite complex map is coordinatewise manifold
+differentiable almost everywhere on each controlled interior domain carried
+by a boundary partition. -/
+theorem FiniteControlledBoundaryChartPartition.ae_mdifferentiableAt_comp_halfSpace_of_lipschitzWith
+    (P : FiniteControlledBoundaryChartPartition M) (fallback : M)
+    {ι : Type uι} [Fintype ι] (G : M → ι → ℂ)
+    {CG : ℝ≥0} (hG : LipschitzWith CG G) (i : P.ι) :
+    ∀ᵐ z ∂volume.restrict
+        (chosenControlledInteriorComplexChartDomain
+          (modelWithCornersEuclideanHalfSpace 2)
+          Complex.orthonormalBasisOneI.repr (P.center i)),
+      ∀ j : ι, MDifferentiableAt
+        (modelWithCornersEuclideanHalfSpace 2) 𝓘(ℝ, ℂ)
+        (fun x ↦ G x j)
+        (halfSpaceComplexExtChart (P.center i) z) := by
+  let A : ControlledInteriorAtlas
+      (modelWithCornersEuclideanHalfSpace 2) M :=
+    P.toControlledInteriorAtlas fallback
+  let k : ℕ := (Fintype.equivFin P.ι i : Fin (Fintype.card P.ι))
+  rw [ae_all_iff]
+  intro j
+  have hGj : LipschitzWith CG (fun x ↦ G x j) := by
+    simpa only [Function.comp_apply, one_mul] using
+      ((LipschitzWith.eval j).comp hG)
+  simpa only [A, k,
+    FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas_parametrization,
+    FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas_domain,
+    halfSpaceComplexExtChart, interiorComplexExtChart] using
+    (A.ae_mdifferentiableAt_of_lipschitzWith_on_domain
+      (modelWithCornersEuclideanHalfSpace 2) (fun x ↦ G x j) hGj k)
+
 #print axioms
   FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas
 #print axioms
@@ -92,6 +123,8 @@ theorem nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartiti
   FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas_domain
 #print axioms
   nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartition
+#print axioms
+  FiniteControlledBoundaryChartPartition.ae_mdifferentiableAt_comp_halfSpace_of_lipschitzWith
 
 end
 
