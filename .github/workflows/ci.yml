@@ -40,6 +40,7 @@ jobs:
           build: true
           build-args: GromovFilling.RiemannianControlledBoundaryOrientation
           use-mathlib-cache: true
+          use-github-cache: false
           axiom-audit: false
 
       - name: Build Lean project
