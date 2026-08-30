@@ -1,6 +1,7 @@
 import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 import Mathlib.Analysis.Calculus.ContDiff.RCLike
 import Mathlib.Analysis.Normed.Module.FiniteDimension
+import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 
 /-!
 # Compactly supported Lipschitz extensions
@@ -36,7 +37,7 @@ theorem LipschitzWith.mul_real_of_abs_le_one
           congr 1
           ring
     _ ≤ |f x * (g x - g y)| + |(f x - f y) * g y| :=
-      abs_add _ _
+      abs_add_le _ _
     _ = |f x| * |g x - g y| + |f x - f y| * |g y| := by
       rw [abs_mul, abs_mul]
     _ ≤ 1 * ((Kg : ℝ) * dist x y) +
