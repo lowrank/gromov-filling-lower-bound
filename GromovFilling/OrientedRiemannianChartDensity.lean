@@ -21,8 +21,6 @@ namespace GromovFilling
 
 noncomputable section
 
-attribute [local instance] normedAddCommGroupTangentSpaceVectorSpace
-attribute [local instance] normedSpaceTangentSpaceVectorSpace
 attribute [local instance] Complex.finrank_real_complex_fact
 
 /-- A top-degree finite symplectic pullback is its value in a positive
@@ -102,8 +100,10 @@ def orientedRiemannianChartJacobian
     [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
     [Fact (Module.finrank ℝ E = 2)]
     (o : RiemannianTangentPlaneOrientation I M)
-    (F : ℂ → M) (z : ℂ) : ℝ :=
-  (o.orientation (F z)).areaForm
+    (F : ℂ → M) (z : ℂ) : ℝ := by
+  letI : Fact (Module.finrank ℝ (TangentSpace I (F z)) = 2) :=
+    ⟨tangentSpace_finrank_eq_two I (F z)⟩
+  exact (o.orientation (F z)).areaForm
     (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z
       (orientedComplexTangentOrthonormalBasis z 0))
     (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z
