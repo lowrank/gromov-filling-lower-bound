@@ -36,7 +36,7 @@ theorem abs_le_comass_add_positiveExcess (C r : ℝ) :
   calc
     |r| = C + (|r| - C) := by ring
     _ ≤ C + max (|r| - C) 0 := by
-      exact add_le_add_left (le_max_left _ _) C
+      exact add_le_add le_rfl (le_max_left _ _)
 
 /-- A pointwise comass estimate up to an error tending to zero makes the
 positive excess of the finite densities tend to zero.  This formulation
@@ -49,7 +49,9 @@ theorem tendsto_comassPositiveExcess_zero_of_abs_le_add_error
       atTop (nhds 0) := by
   have heabs : Tendsto (fun n ↦ |e n|) atTop (nhds 0) := by
     simpa only [abs_zero] using (continuous_abs.tendsto 0).comp he
-  apply squeeze_zero
+  refine squeeze_zero
+    (f := fun n ↦ comassPositiveExcess C (f n))
+    (g := fun n ↦ |e n|) ?_ ?_ heabs
   · exact fun n ↦ comassPositiveExcess_nonneg C (f n)
   · intro n
     unfold comassPositiveExcess
@@ -126,7 +128,7 @@ theorem calibration_le_comass_mul_area_of_dominated_positiveExcess
         rw [integral_add hC (hExcessInt n)]
       _ ≤ C * area +
           ∫ x, comassPositiveExcess C (F n x) ∂μ := by
-        exact add_le_add_right harea _
+        exact add_le_add harea le_rfl
   have hupper : Tendsto
       (fun n ↦ C * area +
         ∫ x, comassPositiveExcess C (F n x) ∂μ)
