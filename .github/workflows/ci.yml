@@ -38,7 +38,7 @@ jobs:
         with:
           auto-config: false
           build: true
-          build-args: GromovFilling.RiemannianControlledBoundaryResonantAction
+          build-args: GromovFilling.RiemannianFiniteResonantAE
           use-mathlib-cache: true
           use-github-cache: false
           axiom-audit: false
