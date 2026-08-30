@@ -21,6 +21,7 @@ import GromovFilling.DominantHarmonicDisk
 import GromovFilling.EuclideanAreaFormula
 import GromovFilling.FinePolygonalModel
 import GromovFilling.FiniteResonantRiemannian
+import GromovFilling.FiniteResonantRiemannianComassLimit
 import GromovFilling.FiniteResonantRiemannianProfileBounds
 import GromovFilling.FiniteResonantStokes
 import GromovFilling.FiniteSymplecticChartTransition
