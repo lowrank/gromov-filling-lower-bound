@@ -128,7 +128,8 @@ theorem ControlledBoundaryAtlasBoundaryPhaseSubstitutionData.chart_signed_windin
     · intro y hy
       apply S.hasDerivAt_phase i y
       simpa [Set.uIcc_of_le (S.lower_lt_upper i).le] using hy
-    · exact S.continuousOn_phaseVelocity i
+    · simpa [Set.uIcc_of_le (S.lower_lt_upper i).le] using
+        S.continuousOn_phaseVelocity i
     · exact hf
   calc
     O.chartSign i *
@@ -168,7 +169,7 @@ def ControlledBoundaryAtlasBoundaryPhaseSubstitutionData.toLocalData
   hasDerivAt_phase_of_cutoff_ne_zero i y hy := by
     apply S.hasDerivAt_phase i y
     have hyInterval := S.support_cutoff_subset i hy
-    exact ⟨hyInterval.1.le, hyInterval.2.le⟩
+    exact ⟨hyInterval.1.le, hyInterval.2⟩
   chartAxis_eventuallyEq_boundary_of_cutoff_ne_zero :=
     S.chartAxis_eventuallyEq_boundary_of_cutoff_ne_zero
   chart_signed_winding_eq_boundary_partition i :=
