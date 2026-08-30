@@ -93,6 +93,20 @@ theorem ae_lineDeriv_mul_eq_of_differentiable_lipschitzWith
   filter_upwards [hg.ae_differentiableAt (μ := mu)] with x hx
   exact lineDeriv_mul_eq_of_differentiableAt (hf x) hx
 
+/-- The line-derivative product rule holds almost everywhere for two
+globally Lipschitz scalar factors. -/
+theorem ae_lineDeriv_mul_eq_of_lipschitzWith
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E]
+    (mu : Measure E) [mu.IsAddHaarMeasure]
+    {f g : E → ℝ} {Cf Cg : ℝ≥0}
+    (hf : LipschitzWith Cf f) (hg : LipschitzWith Cg g) (q : E) :
+    ∀ᵐ x ∂mu, lineDeriv ℝ (fun y ↦ f y * g y) x q =
+      f x * lineDeriv ℝ g x q + g x * lineDeriv ℝ f x q := by
+  filter_upwards [hf.ae_differentiableAt (μ := mu),
+    hg.ae_differentiableAt (μ := mu)] with x hfx hgx
+  exact lineDeriv_mul_eq_of_differentiableAt hfx hgx
+
 /-- A compactly supported continuous scalar can multiply two bounded
 Rademacher line derivatives without losing integrability. -/
 theorem integrable_compactlySupported_mul_lineDeriv_mul_lineDeriv
@@ -164,8 +178,7 @@ theorem integral_cutoff_mul_lipschitz_jacobian_eq
     [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E]
     (mu : Measure E) [mu.IsAddHaarMeasure]
     {ρ u v : E → ℝ} {Cρ Cu Cv : ℝ≥0}
-    (hρ : LipschitzWith Cρ ρ) (hρDiff : Differentiable ℝ ρ)
-    (hρCompact : HasCompactSupport ρ)
+    (hρ : LipschitzWith Cρ ρ) (hρCompact : HasCompactSupport ρ)
     (hu : LipschitzWith Cu u) (hv : LipschitzWith Cv v)
     (p q : E) :
     (∫ x : E, ρ x *
@@ -181,9 +194,9 @@ theorem integral_cutoff_mul_lipschitz_jacobian_eq
   have hzero := integral_lipschitz_lipschitz_jacobian_eq_zero
     mu hu hρv hρvCompact p q
   have hprodP :=
-    ae_lineDeriv_mul_eq_of_differentiable_lipschitzWith mu hρDiff hv p
+    ae_lineDeriv_mul_eq_of_lipschitzWith mu hρ hv p
   have hprodQ :=
-    ae_lineDeriv_mul_eq_of_differentiable_lipschitzWith mu hρDiff hv q
+    ae_lineDeriv_mul_eq_of_lipschitzWith mu hρ hv q
   have hlocalizedZero :
       (∫ x : E,
         ρ x *
@@ -234,8 +247,7 @@ theorem integral_cutoff_mul_lipschitz_jacobian_eq_symmetric
     [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E]
     (mu : Measure E) [mu.IsAddHaarMeasure]
     {ρ u v : E → ℝ} {Cρ Cu Cv : ℝ≥0}
-    (hρ : LipschitzWith Cρ ρ) (hρDiff : Differentiable ℝ ρ)
-    (hρCompact : HasCompactSupport ρ)
+    (hρ : LipschitzWith Cρ ρ) (hρCompact : HasCompactSupport ρ)
     (hu : LipschitzWith Cu u) (hv : LipschitzWith Cv v)
     (p q : E) :
     (∫ x : E, ρ x *
@@ -259,9 +271,9 @@ theorem integral_cutoff_mul_lipschitz_jacobian_eq_symmetric
       lineDeriv ℝ ρ x q * lineDeriv ℝ v x p)
   have hAB : ∫ x : E, A x ∂mu = ∫ x : E, B x ∂mu := by
     exact integral_cutoff_mul_lipschitz_jacobian_eq
-      mu hρ hρDiff hρCompact hu hv p q
+      mu hρ hρCompact hu hv p q
   have hSwap := integral_cutoff_mul_lipschitz_jacobian_eq
-    mu hρ hρDiff hρCompact hv hu p q
+    mu hρ hρCompact hv hu p q
   have hNegAD : -(∫ x : E, A x ∂mu) = ∫ x : E, D x ∂mu := by
     calc
       -(∫ x : E, A x ∂mu) = ∫ x : E, -A x ∂mu := by
@@ -354,8 +366,8 @@ theorem integral_cutoff_mul_standardComplexSymplectic_weak_eq
     [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E]
     [Fintype ι] (mu : Measure E) [mu.IsAddHaarMeasure]
     {ρ : E → ℝ} {F : E → ι → ℂ} {Cρ CF : ℝ≥0}
-    (hρ : LipschitzWith Cρ ρ) (hρDiff : Differentiable ℝ ρ)
-    (hρCompact : HasCompactSupport ρ) (hF : LipschitzWith CF F)
+    (hρ : LipschitzWith Cρ ρ) (hρCompact : HasCompactSupport ρ)
+    (hF : LipschitzWith CF F)
     (p q : E) :
     (∫ x : E, ρ x *
         standardComplexSymplectic
@@ -439,7 +451,7 @@ theorem integral_cutoff_mul_standardComplexSymplectic_weak_eq
       apply Finset.sum_congr rfl
       intro i _
       exact integral_cutoff_mul_lipschitz_jacobian_eq_symmetric
-        mu hρ hρDiff hρCompact (hRe i) (hIm i) p q
+        mu hρ hρCompact (hRe i) (hIm i) p q
     _ = ∫ x : E, ∑ i : ι, (1 / 2 : ℝ) *
           ((F x i).im *
               (lineDeriv ℝ ρ x p *
@@ -473,8 +485,8 @@ theorem integral_cutoff_mul_standardComplexSymplectic_fderiv_eq
     [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E]
     [Fintype ι] (mu : Measure E) [mu.IsAddHaarMeasure]
     {ρ : E → ℝ} {F : E → ι → ℂ} {Cρ CF : ℝ≥0}
-    (hρ : LipschitzWith Cρ ρ) (hρDiff : Differentiable ℝ ρ)
-    (hρCompact : HasCompactSupport ρ) (hF : LipschitzWith CF F)
+    (hρ : LipschitzWith Cρ ρ) (hρCompact : HasCompactSupport ρ)
+    (hF : LipschitzWith CF F)
     (p q : E) :
     (∫ x : E, ρ x *
         standardComplexSymplectic
@@ -505,16 +517,17 @@ theorem integral_cutoff_mul_standardComplexSymplectic_fderiv_eq
               standardComplexSymplecticPrimitive
                 (F x) (finiteComplexWeakLineDerivative F x q) ∂mu :=
       integral_cutoff_mul_standardComplexSymplectic_weak_eq
-        mu hρ hρDiff hρCompact hF p q
+        mu hρ hρCompact hF p q
     _ = ∫ x : E,
           (fderiv ℝ ρ x) q *
               standardComplexSymplecticPrimitive (F x) ((fderiv ℝ F x) p) -
             (fderiv ℝ ρ x) p *
               standardComplexSymplecticPrimitive (F x) ((fderiv ℝ F x) q) ∂mu := by
       apply integral_congr_ae
-      filter_upwards [hF.ae_differentiableAt (μ := mu)] with x hx
-      rw [(hρDiff x).lineDeriv_eq_fderiv (v := q),
-        (hρDiff x).lineDeriv_eq_fderiv (v := p),
+      filter_upwards [hρ.ae_differentiableAt (μ := mu),
+        hF.ae_differentiableAt (μ := mu)] with x hρx hx
+      rw [hρx.lineDeriv_eq_fderiv (v := q),
+        hρx.lineDeriv_eq_fderiv (v := p),
         finiteComplexWeakLineDerivative_eq_lineDeriv F hx p,
         finiteComplexWeakLineDerivative_eq_lineDeriv F hx q,
         hx.lineDeriv_eq_fderiv, hx.lineDeriv_eq_fderiv]
@@ -522,6 +535,7 @@ theorem integral_cutoff_mul_standardComplexSymplectic_fderiv_eq
 #print axioms exists_lipschitzWith_mul_of_hasCompactSupport
 #print axioms lineDeriv_mul_eq_of_differentiableAt
 #print axioms ae_lineDeriv_mul_eq_of_differentiable_lipschitzWith
+#print axioms ae_lineDeriv_mul_eq_of_lipschitzWith
 #print axioms integrable_compactlySupported_mul_lineDeriv_mul_lineDeriv
 #print axioms integrable_mul_lineDeriv_mul_lineDeriv_of_compact_middle
 #print axioms integral_cutoff_mul_lipschitz_jacobian_eq

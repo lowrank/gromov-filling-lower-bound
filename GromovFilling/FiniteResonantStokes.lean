@@ -304,6 +304,39 @@ theorem continuous_finiteResonantProfileMap
   exact (contDiff_finiteResonantNonlinearMap (N := N) lam ⊤).continuous.comp
     hprofile
 
+/-- On a compact metric filling, every finite resonant profile map admits a
+global Lipschitz constant.  The finite odd-profile vector is already
+globally Lipschitz coordinatewise; the polynomial resonant deformation is
+locally Lipschitz, and compactness upgrades the composite to one global
+constant. -/
+theorem exists_lipschitzWith_finiteResonantProfileMap
+    {X : Type*} [PseudoMetricSpace X] [CompactSpace X]
+    {boundary : UnitAddCircle → X}
+    (hboundary : IsometricCircleBoundary boundary)
+    (N : ℕ) (lam : ℝ) :
+    ∃ C : NNReal, LipschitzWith C
+      (finiteResonantProfileMap boundary N lam) := by
+  let P : X → Fin (N + 1) → ℂ := fun x k ↦
+    oddProfileFourierMap boundary (oddMode k) x
+  have hP : LipschitzWith (4 : NNReal) P := by
+    apply LipschitzWith.of_dist_le_mul
+    intro x y
+    apply (dist_pi_le_iff (mul_nonneg (by norm_num) dist_nonneg)).2
+    intro k
+    exact
+      (oddProfileFourierMap_lipschitzWith hboundary (oddMode k)).dist_le_mul
+        x y
+  have hnonlinear : LocallyLipschitz
+      (finiteResonantNonlinearMap (N := N) lam) :=
+    (contDiff_finiteResonantNonlinearMap (N := N) lam 1).locallyLipschitz
+  have hlocal : LocallyLipschitz
+      (finiteResonantProfileMap boundary N lam) := by
+    change LocallyLipschitz (finiteResonantNonlinearMap lam ∘ P)
+    exact hnonlinear.comp hP.locallyLipschitz
+  obtain ⟨C, hC⟩ :=
+    hlocal.locallyLipschitzOn.exists_lipschitzOnWith_of_compact isCompact_univ
+  exact ⟨C, lipschitzOnWith_univ.mp hC⟩
+
 private lemma star_complex_exp_mul_I (t : ℝ) :
     star (Complex.exp ((t : ℂ) * Complex.I)) =
       Complex.exp ((-t : ℂ) * Complex.I) := by
@@ -543,6 +576,7 @@ theorem finiteResonantSymplecticBoundaryAction_eq_fourierGreenArea
 #print axioms fderiv_finiteResonantNonlinearMap
 #print axioms contDiff_finiteResonantNonlinearMap
 #print axioms continuous_finiteResonantProfileMap
+#print axioms exists_lipschitzWith_finiteResonantProfileMap
 #print axioms finiteResonantProfileMap_on_boundary
 #print axioms finiteResonantProfileMap_boundary_eq_curve
 #print axioms hasDerivAt_finiteResonantBoundaryCurve
