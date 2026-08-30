@@ -34,6 +34,7 @@ import GromovFilling.GeometricClosedOneForm
 import GromovFilling.Givens
 import GromovFilling.GivensDisk
 import GromovFilling.GivensDiskArea
+import GromovFilling.HalfPlaneWeakStokes
 import GromovFilling.InfiniteCorrelationBounds
 import GromovFilling.InfiniteResonantComass
 import GromovFilling.InfiniteResonantComassOrientation
