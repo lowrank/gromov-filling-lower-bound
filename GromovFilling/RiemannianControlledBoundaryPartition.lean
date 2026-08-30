@@ -12,7 +12,7 @@ cutoffs, controlled half-space charts on the whole surface, and controlled
 complex charts on the interior.
 -/
 
-open Bundle Function Manifold Set
+open Bundle Function Manifold Metric Set
 open scoped BigOperators ContDiff Manifold
 
 namespace GromovFilling
@@ -20,6 +20,75 @@ namespace GromovFilling
 noncomputable section
 
 universe uM
+
+/-- The chosen controlled chart neighborhood with its radius halved.  Its
+closure has quantitative room inside the full controlled chart, which is
+the annular margin needed for compactly supported coordinate extensions. -/
+def chosenShrunkControlledInteriorChartNeighborhood
+    {M : Type uM} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace
+      (modelWithCornersEuclideanHalfSpace 2) x)]
+    [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))
+      (fun x : M ↦ TangentSpace
+        (modelWithCornersEuclideanHalfSpace 2) x)]
+    (x : M) : Set M :=
+  (extChartAt (modelWithCornersEuclideanHalfSpace 2) x).source ∩
+    extChartAt (modelWithCornersEuclideanHalfSpace 2) x ⁻¹'
+      ball
+        (extChartAt (modelWithCornersEuclideanHalfSpace 2) x x)
+        ((chosenInteriorChartControl
+          (modelWithCornersEuclideanHalfSpace 2) x).r / 2)
+
+/-- The half-radius controlled neighborhood is open. -/
+theorem isOpen_chosenShrunkControlledInteriorChartNeighborhood
+    {M : Type uM} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace
+      (modelWithCornersEuclideanHalfSpace 2) x)]
+    [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))
+      (fun x : M ↦ TangentSpace
+        (modelWithCornersEuclideanHalfSpace 2) x)]
+    (x : M) : IsOpen (chosenShrunkControlledInteriorChartNeighborhood x) := by
+  exact isOpen_extChartAt_preimage' x isOpen_ball
+
+/-- Every center lies in its half-radius controlled neighborhood. -/
+theorem mem_chosenShrunkControlledInteriorChartNeighborhood
+    {M : Type uM} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace
+      (modelWithCornersEuclideanHalfSpace 2) x)]
+    [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))
+      (fun x : M ↦ TangentSpace
+        (modelWithCornersEuclideanHalfSpace 2) x)]
+    (x : M) : x ∈ chosenShrunkControlledInteriorChartNeighborhood x := by
+  refine ⟨mem_extChartAt_source x, mem_ball_self ?_⟩
+  exact half_pos
+    (chosenInteriorChartControl
+      (modelWithCornersEuclideanHalfSpace 2) x).r_pos
+
+/-- The half-radius neighborhood lies in the full controlled neighborhood. -/
+theorem chosenShrunkControlledInteriorChartNeighborhood_subset_chosen
+    {M : Type uM} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace
+      (modelWithCornersEuclideanHalfSpace 2) x)]
+    [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))
+      (fun x : M ↦ TangentSpace
+        (modelWithCornersEuclideanHalfSpace 2) x)]
+    (x : M) :
+    chosenShrunkControlledInteriorChartNeighborhood x ⊆
+      chosenControlledInteriorChartNeighborhood
+        (modelWithCornersEuclideanHalfSpace 2) x := by
+  rintro y ⟨hySource, hyBall⟩
+  refine ⟨hySource, ball_subset_ball ?_ hyBall⟩
+  exact half_le_self
+    (chosenInteriorChartControl
+      (modelWithCornersEuclideanHalfSpace 2) x).r_pos.le
 
 /-- A finite smooth partition of unity whose closed supports lie in the chosen
 controlled inverse-chart neighborhoods. -/
@@ -37,6 +106,8 @@ structure FiniteControlledBoundaryChartPartition
   center : ι → M
   partition : SmoothPartitionOfUnity ι
     (modelWithCornersEuclideanHalfSpace 2) M Set.univ
+  shrunkSubordinate : partition.IsSubordinate fun i ↦
+    chosenShrunkControlledInteriorChartNeighborhood (center i)
   controlledSubordinate : partition.IsSubordinate fun i ↦
     chosenControlledInteriorChartNeighborhood
       (modelWithCornersEuclideanHalfSpace 2) (center i)
@@ -88,24 +159,21 @@ theorem nonempty_finiteControlledBoundaryChartPartition
   obtain ⟨ι, f, hf⟩ := SmoothBumpCovering.exists_isSubordinate
     (modelWithCornersEuclideanHalfSpace 2)
     (s := (Set.univ : Set M)) isClosed_univ
-    (U := chosenControlledInteriorChartNeighborhood
-      (modelWithCornersEuclideanHalfSpace 2))
+    (U := chosenShrunkControlledInteriorChartNeighborhood)
     (fun x _hx ↦
-      (isOpen_controlledInteriorChartNeighborhood
-        (modelWithCornersEuclideanHalfSpace 2)
-        (chosenInteriorChartControl
-          (modelWithCornersEuclideanHalfSpace 2) x)).mem_nhds
-        (mem_controlledInteriorChartNeighborhood
-          (modelWithCornersEuclideanHalfSpace 2)
-          (chosenInteriorChartControl
-            (modelWithCornersEuclideanHalfSpace 2) x)))
+      (isOpen_chosenShrunkControlledInteriorChartNeighborhood x).mem_nhds
+        (mem_chosenShrunkControlledInteriorChartNeighborhood x))
   letI : Fintype ι := f.fintype
   exact ⟨{
     ι := ι
     fintype := inferInstance
     center := f.c
     partition := f.toSmoothPartitionOfUnity
-    controlledSubordinate := hf.toSmoothPartitionOfUnity
+    shrunkSubordinate := hf.toSmoothPartitionOfUnity
+    controlledSubordinate := fun i ↦
+      (hf.toSmoothPartitionOfUnity i).trans
+        (chosenShrunkControlledInteriorChartNeighborhood_subset_chosen
+          (f.c i))
   }⟩
 
 variable {M : Type uM} [TopologicalSpace M]
@@ -146,6 +214,14 @@ theorem FiniteControlledBoundaryChartPartition.tsupport_partition_subset_extChar
       (extChartAt (modelWithCornersEuclideanHalfSpace 2)
         (P.center i)).source :=
   P.toFiniteBoundaryChartPartition.tsupport_partition_subset_extChart_source i
+
+/-- The closed support of every controlled cutoff lies in the half-radius
+chart neighborhood, leaving a fixed annular margin inside the full chart. -/
+theorem FiniteControlledBoundaryChartPartition.tsupport_partition_subset_shrunk
+    (P : FiniteControlledBoundaryChartPartition M) (i : P.ι) :
+    tsupport (P.partition i) ⊆
+      chosenShrunkControlledInteriorChartNeighborhood (P.center i) :=
+  P.shrunkSubordinate i
 
 /-- The closed support of a controlled cutoff lies in the corresponding
 controlled complex half-space chart image. -/
@@ -208,7 +284,11 @@ theorem FiniteControlledBoundaryChartPartition.interior_subset_iUnion_controlled
   exact ⟨hxi, hx⟩
 
 #print axioms nonempty_finiteControlledBoundaryChartPartition
+#print axioms
+  chosenShrunkControlledInteriorChartNeighborhood_subset_chosen
 #print axioms FiniteControlledBoundaryChartPartition.sum_partition_eq_one
+#print axioms
+  FiniteControlledBoundaryChartPartition.tsupport_partition_subset_shrunk
 #print axioms
   FiniteControlledBoundaryChartPartition.tsupport_partition_subset_controlledHalfSpace_image
 #print axioms
