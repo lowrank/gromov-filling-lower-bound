@@ -46,12 +46,14 @@ theorem finiteComplexWeakLineDerivative_eq_of_eventuallyEq
   apply Complex.ext
   · change lineDeriv ℝ (fun y ↦ (F y j).re) x p =
       lineDeriv ℝ (fun y ↦ (H y j).re) x p
-    exact (h.mono fun _y hy ↦
-      congrArg (fun v : ι → ℂ ↦ (v j).re) hy).lineDeriv_eq
+    exact Filter.EventuallyEq.lineDeriv_eq (𝕜 := ℝ) (v := p)
+      (h.mono fun _y hy ↦
+        congrArg (fun v : ι → ℂ ↦ (v j).re) hy)
   · change lineDeriv ℝ (fun y ↦ (F y j).im) x p =
       lineDeriv ℝ (fun y ↦ (H y j).im) x p
-    exact (h.mono fun _y hy ↦
-      congrArg (fun v : ι → ℂ ↦ (v j).im) hy).lineDeriv_eq
+    exact Filter.EventuallyEq.lineDeriv_eq (𝕜 := ℝ) (v := p)
+      (h.mono fun _y hy ↦
+        congrArg (fun v : ι → ℂ ↦ (v j).im) hy)
 
 /-- At a nonzero boundary cutoff point, the extended chart map and the
 genuine chart pullback agree on a neighborhood in the imaginary-axis
@@ -78,8 +80,8 @@ theorem ControlledBoundaryChartWeakStokesData.chartMap_imaginaryAxis_eventuallyE
       (controlledHalfSpaceInnerRadius_lt_outer (P.center i)) hyInner
   have haxis : Continuous (fun t : ℝ ↦ (t * Complex.I : ℂ)) :=
     Complex.continuous_ofReal.mul continuous_const
-  have hball : ∀ᶠ t in nhds y,
-      (t * Complex.I : ℂ) ∈
+  have hball : ∀ᶠ t : ℝ in nhds y,
+      ((t : ℂ) * Complex.I) ∈
         ball (controlledHalfSpaceComplexChartCenter (P.center i))
           (controlledHalfSpaceOuterRadius (P.center i)) :=
     haxis.continuousAt.eventually_mem (isOpen_ball.mem_nhds hyOuter)
