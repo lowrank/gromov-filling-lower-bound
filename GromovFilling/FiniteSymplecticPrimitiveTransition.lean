@@ -89,6 +89,71 @@ theorem finiteComplexWeakPrimitiveErrorComplex_eq_fderiv
     finiteComplexWeakLineDerivative_eq_lineDeriv F hF Complex.I,
     hF.lineDeriv_eq_fderiv, hF.lineDeriv_eq_fderiv]
 
+/-- At a differentiability point, the weak complex symplectic density is
+the ordinary Fréchet pullback density. -/
+theorem finiteComplexWeakSymplecticDensityComplex_eq_fderiv
+    {ι : Type*} [Fintype ι]
+    (F : ℂ → ι → ℂ) (z : ℂ) (hF : DifferentiableAt ℝ F z) :
+    finiteComplexWeakSymplecticDensityComplex F z =
+      finiteSymplecticFDerivDensity F z := by
+  unfold finiteComplexWeakSymplecticDensityComplex
+    finiteSymplecticFDerivDensity
+  rw [finiteComplexWeakLineDerivative_eq_lineDeriv F hF 1,
+    finiteComplexWeakLineDerivative_eq_lineDeriv F hF Complex.I,
+    hF.lineDeriv_eq_fderiv, hF.lineDeriv_eq_fderiv]
+
+/-- The complex half-plane weak-Stokes theorem in Fréchet-density form.
+Only the one-dimensional boundary trace remains expressed through its
+Rademacher derivative, which is the natural regularity of a Lipschitz trace. -/
+theorem integral_complexRightHalfPlane_cutoff_mul_finiteSymplecticFDerivDensity_eq
+    {ι : Type*} [Fintype ι]
+    {ρ : ℂ → ℝ} {F : ℂ → ι → ℂ}
+    {Cρ CF : ℝ≥0} (hρ : LipschitzWith Cρ ρ)
+    (hρCompact : HasCompactSupport ρ) (hF : LipschitzWith CF F) :
+    (∫ z in complexRightOpenHalfPlane,
+        ρ z * finiteSymplecticFDerivDensity F z) =
+      (∫ z in complexRightOpenHalfPlane,
+        finiteSymplecticFDerivPrimitiveError ρ F z) -
+        ∫ y : ℝ, finiteComplexWeakBoundaryActionDensityComplex ρ F y := by
+  have hFae : ∀ᵐ z ∂(volume.restrict complexRightOpenHalfPlane),
+      DifferentiableAt ℝ F z :=
+    ae_restrict_of_ae (hF.ae_differentiableAt (μ := volume))
+  have hρae : ∀ᵐ z ∂(volume.restrict complexRightOpenHalfPlane),
+      DifferentiableAt ℝ ρ z :=
+    ae_restrict_of_ae (hρ.ae_differentiableAt (μ := volume))
+  have hdensity :
+      (∫ z in complexRightOpenHalfPlane,
+          ρ z * finiteComplexWeakSymplecticDensityComplex F z) =
+        ∫ z in complexRightOpenHalfPlane,
+          ρ z * finiteSymplecticFDerivDensity F z := by
+    apply setIntegral_congr_ae
+    filter_upwards [hFae] with z hz
+    rw [finiteComplexWeakSymplecticDensityComplex_eq_fderiv F z hz]
+  have herror :
+      (∫ z in complexRightOpenHalfPlane,
+          finiteComplexWeakPrimitiveErrorComplex ρ F z) =
+        ∫ z in complexRightOpenHalfPlane,
+          finiteSymplecticFDerivPrimitiveError ρ F z := by
+    apply setIntegral_congr_ae
+    filter_upwards [hρae, hFae] with z hρz hFz
+    exact finiteComplexWeakPrimitiveErrorComplex_eq_fderiv
+      ρ F z hρz hFz
+  calc
+    (∫ z in complexRightOpenHalfPlane,
+        ρ z * finiteSymplecticFDerivDensity F z) =
+        ∫ z in complexRightOpenHalfPlane,
+          ρ z * finiteComplexWeakSymplecticDensityComplex F z :=
+      hdensity.symm
+    _ = (∫ z in complexRightOpenHalfPlane,
+          finiteComplexWeakPrimitiveErrorComplex ρ F z) -
+        ∫ y : ℝ, finiteComplexWeakBoundaryActionDensityComplex ρ F y :=
+      integral_complexRightHalfPlane_cutoff_mul_finiteComplexWeakSymplecticDensity_eq
+        hρ hρCompact hF
+    _ = (∫ z in complexRightOpenHalfPlane,
+          finiteSymplecticFDerivPrimitiveError ρ F z) -
+        ∫ y : ℝ, finiteComplexWeakBoundaryActionDensityComplex ρ F y := by
+      rw [herror]
+
 /-- The weak primitive-error density therefore has the signed determinant
 law wherever the cutoff, map, and coordinate change are differentiable. -/
 theorem finiteComplexWeakPrimitiveErrorComplex_comp
@@ -141,6 +206,8 @@ theorem integral_finiteSymplecticFDerivPrimitiveError_comp
 #print axioms alternatingContinuousLinearPair_comp_eq_det_mul
 #print axioms finiteSymplecticFDerivPrimitiveError_comp
 #print axioms finiteComplexWeakPrimitiveErrorComplex_eq_fderiv
+#print axioms finiteComplexWeakSymplecticDensityComplex_eq_fderiv
+#print axioms integral_complexRightHalfPlane_cutoff_mul_finiteSymplecticFDerivDensity_eq
 #print axioms finiteComplexWeakPrimitiveErrorComplex_comp
 #print axioms integral_finiteSymplecticFDerivPrimitiveError_comp
 
