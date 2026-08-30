@@ -1,4 +1,5 @@
 import GromovFilling.RiemannianControlledBoundaryPrimitive
+import GromovFilling.RiemannianControlledBoundaryInteriorAtlas
 
 /-!
 # Orientation signs for controlled boundary charts
@@ -127,16 +128,18 @@ def controlledBoundaryChartAreaPrimitiveErrorDensity
           (halfSpaceComplexExtChart (P.center i) z)
     else 0
 
-/-- Multiplying a genuine chart symplectic density by its chart-orientation
-sign converts it to the canonical chart-area density. -/
-theorem ControlledBoundaryAtlasOrientation.chartSign_mul_symplecticDensity_eq_area
+/-- At a differentiability point, multiplying a genuine chart symplectic
+density by its chart-orientation sign converts it to the canonical chart-area
+density. -/
+theorem ControlledBoundaryAtlasOrientation.chartSign_mul_symplecticDensity_eq_area_of_mdifferentiableAt
     {ι : Type uι} [Fintype ι]
     {P : FiniteControlledBoundaryChartPartition M}
     (O : ControlledBoundaryAtlasOrientation P) (i : P.ι)
-    (G : M → ι → ℂ)
-    (hG : ∀ j : ι, MDifferentiable
+    (G : M → ι → ℂ) {z : ℂ}
+    (hG : ∀ j : ι, MDifferentiableAt
       (modelWithCornersEuclideanHalfSpace 2) 𝓘(ℝ, ℂ)
-      (fun x ↦ G x j)) {z : ℂ}
+      (fun x ↦ G x j)
+      (halfSpaceComplexExtChart (P.center i) z))
     (hzRight : z ∈ complexRightOpenHalfPlane) :
     O.chartSign i * controlledBoundaryChartSymplecticDensity P i G z =
       controlledBoundaryChartAreaSymplecticDensity P O i G z := by
@@ -157,7 +160,7 @@ theorem ControlledBoundaryAtlasOrientation.chartSign_mul_symplecticDensity_eq_ar
         (halfSpaceComplexExtChart (P.center i)) z
         (mdifferentiableAt_halfSpaceComplexExtChart
           (P.center i) ⟨hzDomain, hzRight⟩)
-        (fun j ↦ (hG j) _)
+        hG
     have hsign := O.chartSign_mul_jacobian_eq_abs i z
       ⟨hzDomain, hzRight⟩
     have hdensity :=
@@ -203,6 +206,22 @@ theorem ControlledBoundaryAtlasOrientation.chartSign_mul_symplecticDensity_eq_ar
       controlledBoundaryChartCutoff_eq_zero_of_not_mem P i hzDomain,
       controlledBoundaryChartAreaSymplecticDensity, if_neg hzDomain]
     simp
+
+/-- Everywhere manifold differentiability is a convenience wrapper around
+the pointwise chart-sign identity. -/
+theorem ControlledBoundaryAtlasOrientation.chartSign_mul_symplecticDensity_eq_area
+    {ι : Type uι} [Fintype ι]
+    {P : FiniteControlledBoundaryChartPartition M}
+    (O : ControlledBoundaryAtlasOrientation P) (i : P.ι)
+    (G : M → ι → ℂ)
+    (hG : ∀ j : ι, MDifferentiable
+      (modelWithCornersEuclideanHalfSpace 2) 𝓘(ℝ, ℂ)
+      (fun x ↦ G x j)) {z : ℂ}
+    (hzRight : z ∈ complexRightOpenHalfPlane) :
+    O.chartSign i * controlledBoundaryChartSymplecticDensity P i G z =
+      controlledBoundaryChartAreaSymplecticDensity P O i G z := by
+  exact O.chartSign_mul_symplecticDensity_eq_area_of_mdifferentiableAt
+    i G (fun j ↦ (hG j) _) hzRight
 
 /-- The same sign converts the genuine chart primitive error to its canonical
 chart-area form. -/
@@ -280,6 +299,93 @@ theorem ControlledBoundaryAtlasOrientation.chartSign_mul_integral_symplecticDens
       [ae_restrict_mem isOpen_complexRightOpenHalfPlane.measurableSet] with z hz
   exact O.chartSign_mul_symplecticDensity_eq_area i G hG hz
 
+/-- The genuine weighted symplectic density vanishes in the open half-plane
+outside the controlled interior domain containing the cutoff support. -/
+theorem controlledBoundaryChartSymplecticDensity_eq_zero_of_mem_rightOpen_of_not_mem_chosenInteriorDomain
+    {ι : Type uι} [Fintype ι]
+    (P : FiniteControlledBoundaryChartPartition M) (i : P.ι)
+    (G : M → ι → ℂ) {z : ℂ}
+    (hzRight : z ∈ complexRightOpenHalfPlane)
+    (hzDomain : z ∉ chosenControlledInteriorComplexChartDomain
+      (modelWithCornersEuclideanHalfSpace 2)
+      Complex.orthonormalBasisOneI.repr (P.center i)) :
+    controlledBoundaryChartSymplecticDensity P i G z = 0 := by
+  rw [controlledBoundaryChartSymplecticDensity,
+    controlledBoundaryChartCutoff_eq_zero_of_mem_rightOpen_of_not_mem_chosenInteriorDomain
+      P i hzRight hzDomain, zero_mul]
+
+/-- The corresponding canonical chart-area density has the same support. -/
+theorem controlledBoundaryChartAreaSymplecticDensity_eq_zero_of_mem_rightOpen_of_not_mem_chosenInteriorDomain
+    {ι : Type uι} [Fintype ι]
+    (P : FiniteControlledBoundaryChartPartition M)
+    (O : ControlledBoundaryAtlasOrientation P) (i : P.ι)
+    (G : M → ι → ℂ) {z : ℂ}
+    (hzRight : z ∈ complexRightOpenHalfPlane)
+    (hzControlled : z ∉ chosenControlledInteriorComplexChartDomain
+      (modelWithCornersEuclideanHalfSpace 2)
+      Complex.orthonormalBasisOneI.repr (P.center i)) :
+    controlledBoundaryChartAreaSymplecticDensity P O i G z = 0 := by
+  classical
+  by_cases hzDomain : z ∈ halfSpaceComplexExtChartDomain (P.center i)
+  · have hcutoff :=
+      controlledBoundaryChartCutoff_eq_zero_of_mem_rightOpen_of_not_mem_chosenInteriorDomain
+        P i hzRight hzControlled
+    have hpartition :
+        P.partition i (halfSpaceComplexExtChart (P.center i) z) = 0 := by
+      rw [controlledBoundaryChartCutoff_eq_of_mem P i hzDomain] at hcutoff
+      exact hcutoff
+    simp only [controlledBoundaryChartAreaSymplecticDensity,
+      if_pos hzDomain, hpartition, zero_mul, mul_zero]
+  · simp only [controlledBoundaryChartAreaSymplecticDensity,
+      if_neg hzDomain]
+
+/-- For a Lipschitz finite complex map, Rademacher on the controlled chart
+domain supplies the chart-sign conversion almost everywhere. -/
+theorem ControlledBoundaryAtlasOrientation.chartSign_mul_integral_symplecticDensity_eq_area_of_lipschitzWith
+    [Nonempty M]
+    {ι : Type uι} [Fintype ι]
+    {P : FiniteControlledBoundaryChartPartition M}
+    (O : ControlledBoundaryAtlasOrientation P) (i : P.ι)
+    (G : M → ι → ℂ) {CG : ℝ≥0} (hG : LipschitzWith CG G) :
+    O.chartSign i *
+        (∫ z in complexRightOpenHalfPlane,
+          controlledBoundaryChartSymplecticDensity P i G z) =
+      ∫ z in complexRightOpenHalfPlane,
+        controlledBoundaryChartAreaSymplecticDensity P O i G z := by
+  let s : Set ℂ :=
+    chosenControlledInteriorComplexChartDomain
+      (modelWithCornersEuclideanHalfSpace 2)
+      Complex.orthonormalBasisOneI.repr (P.center i)
+  have hsMeas : MeasurableSet s := by
+    exact (isOpen_controlledInteriorComplexChartDomain
+      (modelWithCornersEuclideanHalfSpace 2)
+      Complex.orthonormalBasisOneI.repr
+      (chosenInteriorChartControl
+        (modelWithCornersEuclideanHalfSpace 2) (P.center i))).measurableSet
+  have hGdiff : ∀ᵐ z ∂volume.restrict s, ∀ j : ι,
+      MDifferentiableAt
+        (modelWithCornersEuclideanHalfSpace 2) 𝓘(ℝ, ℂ)
+        (fun x ↦ G x j)
+        (halfSpaceComplexExtChart (P.center i) z) := by
+    simpa only [s] using
+      (P.ae_mdifferentiableAt_comp_halfSpace_of_lipschitzWith
+        (Classical.choice inferInstance) G hG i)
+  rw [← integral_const_mul]
+  apply integral_congr_ae
+  rw [Filter.EventuallyEq,
+    ae_restrict_iff' (μ := volume)
+      isOpen_complexRightOpenHalfPlane.measurableSet]
+  rw [ae_restrict_iff' (μ := volume) hsMeas] at hGdiff
+  filter_upwards [hGdiff] with z hGz hzRight
+  by_cases hz : z ∈ s
+  · exact O.chartSign_mul_symplecticDensity_eq_area_of_mdifferentiableAt
+      i G (hGz hz) hzRight
+  · rw [controlledBoundaryChartSymplecticDensity_eq_zero_of_mem_rightOpen_of_not_mem_chosenInteriorDomain
+        P i G hzRight (by simpa only [s] using hz),
+      controlledBoundaryChartAreaSymplecticDensity_eq_zero_of_mem_rightOpen_of_not_mem_chosenInteriorDomain
+        P O i G hzRight (by simpa only [s] using hz),
+      mul_zero]
+
 /-- Integral form of the chart-sign conversion for the primitive error. -/
 theorem ControlledBoundaryAtlasOrientation.chartSign_mul_integral_primitiveErrorDensity_eq_area
     {ι : Type uι} [Fintype ι]
@@ -350,11 +456,19 @@ theorem ControlledBoundaryChartWeakStokesData.integral_areaSymplecticDensity_eq_
 #print axioms controlledBoundaryChartAreaSymplecticDensity
 #print axioms controlledBoundaryChartAreaPrimitiveErrorDensity
 #print axioms
+  ControlledBoundaryAtlasOrientation.chartSign_mul_symplecticDensity_eq_area_of_mdifferentiableAt
+#print axioms
   ControlledBoundaryAtlasOrientation.chartSign_mul_symplecticDensity_eq_area
 #print axioms
   ControlledBoundaryAtlasOrientation.chartSign_mul_primitiveErrorDensity_eq_area
 #print axioms
   ControlledBoundaryAtlasOrientation.chartSign_mul_integral_symplecticDensity_eq_area
+#print axioms
+  controlledBoundaryChartSymplecticDensity_eq_zero_of_mem_rightOpen_of_not_mem_chosenInteriorDomain
+#print axioms
+  controlledBoundaryChartAreaSymplecticDensity_eq_zero_of_mem_rightOpen_of_not_mem_chosenInteriorDomain
+#print axioms
+  ControlledBoundaryAtlasOrientation.chartSign_mul_integral_symplecticDensity_eq_area_of_lipschitzWith
 #print axioms
   ControlledBoundaryAtlasOrientation.chartSign_mul_integral_primitiveErrorDensity_eq_area
 #print axioms
