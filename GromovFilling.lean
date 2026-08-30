@@ -69,6 +69,7 @@ import GromovFilling.OrientedRiemannianChartDensity
 import GromovFilling.OrientedRiemannianDensity
 import GromovFilling.OrientedRiemannianDensityMeasurable
 import GromovFilling.OrientedRiemannianPrimitiveError
+import GromovFilling.OrientedRiemannianPrimitiveChart
 import GromovFilling.PlanarCertificate
 import GromovFilling.PolygonalSurfaceObstruction
 import GromovFilling.PolynomialDiskArea
