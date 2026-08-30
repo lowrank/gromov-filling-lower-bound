@@ -95,7 +95,7 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
           convert (hρ j).hasMFDerivAt.add ih using 1
           · funext y
             simp [Finset.sum_insert, hjs]
-          · rfl
+          · exact Finset.sum_insert hjs
     simpa using hhasFinset Finset.univ
   have hfun : (∑ j : κ, ρ j) = fun _y : M ↦ (1 : ℝ) := by
     funext y
