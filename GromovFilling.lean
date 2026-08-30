@@ -22,6 +22,7 @@ import GromovFilling.FinePolygonalModel
 import GromovFilling.FiniteResonantRiemannian
 import GromovFilling.FiniteResonantRiemannianProfileBounds
 import GromovFilling.FiniteResonantStokes
+import GromovFilling.FiniteSymplecticWeakStokes
 import GromovFilling.FourierArea
 import GromovFilling.FourierBessel
 import GromovFilling.FourierBoundary
