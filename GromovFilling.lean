@@ -19,6 +19,7 @@ import GromovFilling.DominantHarmonicDegree
 import GromovFilling.DominantHarmonicDisk
 import GromovFilling.EuclideanAreaFormula
 import GromovFilling.FinePolygonalModel
+import GromovFilling.FiniteResonantStokes
 import GromovFilling.FourierArea
 import GromovFilling.FourierBessel
 import GromovFilling.FourierBoundary
