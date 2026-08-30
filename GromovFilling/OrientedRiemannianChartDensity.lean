@@ -103,10 +103,10 @@ def orientedRiemannianChartVector
   mfderiv 𝓘(ℝ, ℂ) I F z
     (orientedComplexTangentOrthonormalBasis z i)
 
+set_option maxHeartbeats 800000 in
 /-- The Riemannian differential of a complex-valued manifold map, applied
 after a differentiable complex parametrization, is the ordinary derivative
 of the coordinate pullback. -/
-set_option maxHeartbeats 800000 in
 theorem fderiv_comp_parametrization_eq_riemannianComplexMFDeriv
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
@@ -125,8 +125,8 @@ theorem fderiv_comp_parametrization_eq_riemannianComplexMFDeriv
   simpa only [mfderiv_eq_fderiv] using
     (mfderiv_comp_apply z hG hF v)
 
-/-- Coordinatewise manifold chain rule for a finite complex-valued map. -/
 set_option maxHeartbeats 800000 in
+/-- Coordinatewise manifold chain rule for a finite complex-valued map. -/
 theorem fderiv_finiteComplex_comp_parametrization
     {E H M ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
@@ -223,9 +223,9 @@ def finiteComplexRiemannianChartPullbackDensity
     (finiteComplexRiemannianDerivative I G (F z)
       (orientedRiemannianChartVector I F z 1))
 
+set_option maxHeartbeats 800000 in
 /-- At a differentiability point, the ordinary planar `fderiv` density of
 the coordinate pullback is exactly the Riemannian chart pullback density. -/
-set_option maxHeartbeats 800000 in
 theorem finiteSymplecticFDerivDensity_comp_parametrization
     {E H M ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
