@@ -126,7 +126,7 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaSymple
       P.partition i x *
         orientedFiniteComplexRiemannianSymplecticDensity
           (modelWithCornersEuclideanHalfSpace 2) O.tangentOrientation G x
-    let μ := riemannianSurfaceAreaMeasure
+    let μ : Measure M := riemannianSurfaceAreaMeasure
       (modelWithCornersEuclideanHalfSpace 2)
     Integrable q μ ∧
       (∫ z in complexRightOpenHalfPlane,
@@ -143,7 +143,7 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaSymple
     P.partition i x *
       orientedFiniteComplexRiemannianSymplecticDensity
         I O.tangentOrientation G x
-  let μ := riemannianSurfaceAreaMeasure I
+  let μ : Measure M := riemannianSurfaceAreaMeasure I
   let A : ControlledInteriorAtlas I M :=
     P.toControlledInteriorAtlas (Classical.choice inferInstance)
   let k : ℕ := (Fintype.equivFin P.ι i : Fin (Fintype.card P.ι))
@@ -342,7 +342,7 @@ theorem sum_integral_controlledBoundaryChartAreaSymplecticDensity_eq_surface
     let q : M → ℝ := fun x ↦
       orientedFiniteComplexRiemannianSymplecticDensity
         (modelWithCornersEuclideanHalfSpace 2) O.tangentOrientation G x
-    let μ := riemannianSurfaceAreaMeasure
+    let μ : Measure M := riemannianSurfaceAreaMeasure
       (modelWithCornersEuclideanHalfSpace 2)
     Integrable q μ ∧
       (∑ i, ∫ z in complexRightOpenHalfPlane,
@@ -359,7 +359,7 @@ theorem sum_integral_controlledBoundaryChartAreaSymplecticDensity_eq_surface
     orientedFiniteComplexRiemannianSymplecticDensity
       I O.tangentOrientation G x
   let qi : P.ι → M → ℝ := fun i x ↦ P.partition i x * q x
-  let μ := riemannianSurfaceAreaMeasure I
+  let μ : Measure M := riemannianSurfaceAreaMeasure I
   have htransfer (i : P.ι) :=
     (D i).integrable_and_integral_areaSymplecticDensity_eq_surface O hG
   have hqi (i : P.ι) : Integrable (qi i) μ := by
