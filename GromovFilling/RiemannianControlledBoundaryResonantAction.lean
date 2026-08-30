@@ -31,7 +31,7 @@ local instance controlledBoundaryResonantActionEuclideanFinrankTwo :
     Fact (Module.finrank ℝ (EuclideanSpace ℝ (Fin 2)) = 2) :=
   ⟨by simp⟩
 
-variable {M : Type uM} [PseudoEMetricSpace M] [T2Space M]
+variable {M : Type uM} [PseudoMetricSpace M] [T2Space M]
   [MeasurableSpace M] [BorelSpace M]
   [ChartedSpace (EuclideanHalfSpace 2) M]
   [IsManifold (modelWithCornersEuclideanHalfSpace 2) ∞ M]
@@ -53,10 +53,10 @@ structure ControlledBoundaryAtlasBoundaryPhase
   phase : P.ι → ℝ → ℝ
   phaseVelocity : P.ι → ℝ → ℝ
   hasDerivAt_phase_of_cutoff_ne_zero :
-    ∀ i y, controlledBoundaryChartCutoff P i (y * Complex.I) ≠ 0 →
+    ∀ i (y : ℝ), controlledBoundaryChartCutoff P i (y * Complex.I) ≠ 0 →
       HasDerivAt (phase i) (phaseVelocity i y) y
   chartAxis_eventuallyEq_boundary_of_cutoff_ne_zero :
-    ∀ i y, controlledBoundaryChartCutoff P i (y * Complex.I) ≠ 0 →
+    ∀ i (y : ℝ), controlledBoundaryChartCutoff P i (y * Complex.I) ≠ 0 →
       (fun t : ℝ ↦
           halfSpaceComplexExtChart (P.center i) (t * Complex.I)) =ᶠ[nhds y]
         fun t : ℝ ↦ boundary (angleToUnitAddCircle (phase i t))
@@ -77,6 +77,8 @@ theorem finiteComplexWeakLineDerivative_finiteResonantBoundaryCurve_comp
       (finiteResonantBoundaryCurve N lam ∘ phase)
       (phaseVelocity • finiteResonantBoundaryVelocity N lam (phase y)) y :=
     (hasDerivAt_finiteResonantBoundaryCurve N lam (phase y)).scomp y hphase
+  change finiteComplexWeakLineDerivative
+      (finiteResonantBoundaryCurve N lam ∘ phase) y 1 = _
   rw [finiteComplexWeakLineDerivative_eq_lineDeriv _
     hcomp.differentiableAt]
   have hline :=
@@ -253,6 +255,7 @@ theorem finiteResonantSymplecticBoundaryAction_eq_two_pi_mul
   unfold finiteResonantSymplecticBoundaryAction
   simp_rw [standardComplexSymplecticPrimitive_resonantBoundary]
   rw [intervalIntegral.integral_const]
+  simp only [smul_eq_mul]
   ring
 
 /-- Global weak Stokes plus oriented phase gluing identifies the intrinsic
