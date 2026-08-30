@@ -261,6 +261,10 @@ theorem ControlledBoundaryAtlasBoundaryPhase.integral_orientedFiniteResonantRiem
     (B : ControlledBoundaryAtlasBoundaryPhase P O boundary)
     (hboundary : IsometricCircleBoundary boundary)
     (N : ℕ) (lam : ℝ) :
+    letI : Nonempty (ControlledInteriorAtlas
+        (modelWithCornersEuclideanHalfSpace 2) M) :=
+      nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartition P
+        (Classical.choice inferInstance)
     (∫ x,
         orientedFiniteResonantRiemannianSymplecticDensity
           (modelWithCornersEuclideanHalfSpace 2)
@@ -268,6 +272,10 @@ theorem ControlledBoundaryAtlasBoundaryPhase.integral_orientedFiniteResonantRiem
         ∂riemannianSurfaceAreaMeasure
           (modelWithCornersEuclideanHalfSpace 2)) =
       finiteResonantSymplecticBoundaryAction N lam := by
+  letI : Nonempty (ControlledInteriorAtlas
+      (modelWithCornersEuclideanHalfSpace 2) M) :=
+    nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartition P
+      (Classical.choice inferInstance)
   obtain ⟨C, hG⟩ :=
     exists_lipschitzWith_finiteResonantProfileMap hboundary N lam
   have hstokes :=
