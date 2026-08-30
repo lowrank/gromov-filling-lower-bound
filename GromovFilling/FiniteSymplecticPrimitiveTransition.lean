@@ -116,15 +116,15 @@ theorem integral_complexRightHalfPlane_cutoff_mul_finiteSymplecticFDerivDensity_
       (∫ z in complexRightOpenHalfPlane,
         finiteSymplecticFDerivPrimitiveError ρ F z) -
         ∫ y : ℝ, finiteComplexWeakBoundaryActionDensityComplex ρ F y := by
-  have hFae : ∀ᵐ z ∂(volume.restrict complexRightOpenHalfPlane),
-      DifferentiableAt ℝ F z :=
-    ae_restrict_of_ae (hF.ae_differentiableAt (μ := volume))
-  have hρae : ∀ᵐ z ∂(volume.restrict complexRightOpenHalfPlane),
-      DifferentiableAt ℝ ρ z :=
-    ae_restrict_of_ae (hρ.ae_differentiableAt (μ := volume))
+  have hFae : ∀ᵐ z ∂volume, DifferentiableAt ℝ F z :=
+    hF.ae_differentiableAt (μ := volume)
+  have hρae : ∀ᵐ z ∂volume, DifferentiableAt ℝ ρ z :=
+    hρ.ae_differentiableAt (μ := volume)
   have hhalfMeas : MeasurableSet complexRightOpenHalfPlane := by
-    simpa [complexRightOpenHalfPlane] using
-      measurableSet_Ioi.preimage Complex.continuous_re.measurable
+    simpa only [complexRightOpenHalfPlane] using
+      (isOpen_lt
+        (continuous_const : Continuous (fun _ : ℂ ↦ (0 : ℝ)))
+        Complex.continuous_re).measurableSet
   have hdensity :
       (∫ z in complexRightOpenHalfPlane,
           ρ z * finiteComplexWeakSymplecticDensityComplex F z) =
