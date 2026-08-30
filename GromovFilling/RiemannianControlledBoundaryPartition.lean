@@ -86,7 +86,8 @@ theorem nonempty_finiteControlledBoundaryChartPartition
         (modelWithCornersEuclideanHalfSpace 2) x)] :
     Nonempty (FiniteControlledBoundaryChartPartition M) := by
   obtain ⟨ι, f, hf⟩ := SmoothBumpCovering.exists_isSubordinate
-    (modelWithCornersEuclideanHalfSpace 2) isClosed_univ
+    (modelWithCornersEuclideanHalfSpace 2)
+    (s := (Set.univ : Set M)) isClosed_univ
     (U := chosenControlledInteriorChartNeighborhood
       (modelWithCornersEuclideanHalfSpace 2))
     (fun x _hx ↦
