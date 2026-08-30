@@ -235,6 +235,35 @@ theorem orientedFiniteComplexRiemannianSymplecticDensity_eq_frame
     (o.positiveOrthonormalBasis I x) e
     ((o.positiveOrthonormalBasis_orientation I x).trans he.symm)
 
+/-- The absolute intrinsic finite symplectic density can be computed in any
+orthonormal tangent frame.  Thus its magnitude is canonical even when the
+chosen fiberwise orientation is used only to fix the Stokes sign. -/
+theorem abs_orientedFiniteComplexRiemannianSymplecticDensity_eq_frame
+    {E H M ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)] [Fintype ι] [Finite ι]
+    (o : RiemannianTangentPlaneOrientation I M)
+    (F : M → ι → ℂ) (x : M)
+    (e : OrthonormalBasis (Fin 2) ℝ (TangentSpace I x)) :
+    |orientedFiniteComplexRiemannianSymplecticDensity I o F x| =
+      |finiteComplexRiemannianSymplecticDensityInFrame I F x e| := by
+  by_cases he : e.toBasis.orientation = o.orientation x
+  · rw [orientedFiniteComplexRiemannianSymplecticDensity_eq_frame
+      I o F x e he]
+  · unfold orientedFiniteComplexRiemannianSymplecticDensity
+      finiteComplexRiemannianSymplecticDensityInFrame
+    have hne :
+        (o.positiveOrthonormalBasis I x).toBasis.orientation ≠
+          e.toBasis.orientation := by
+      intro h
+      exact he (h.symm.trans
+        (o.positiveOrthonormalBasis_orientation I x))
+    rw [finiteComplexSymplecticDensityInFrame_eq_neg_of_opposite_orientation
+      (finiteComplexRiemannianDerivative I F x)
+      (o.positiveOrthonormalBasis I x) e hne, abs_neg]
+
 /-- The intrinsic signed finite resonant density determined by a fiberwise
 tangent-plane orientation. -/
 def orientedFiniteResonantRiemannianSymplecticDensity
@@ -268,11 +297,35 @@ theorem orientedFiniteResonantRiemannianSymplecticDensity_eq_frame
       (fun u n ↦ finiteResonantProfileMap boundary N lam u n) x e he]
   rfl
 
+/-- The absolute intrinsic finite resonant density is independent of the
+orthonormal tangent frame used to evaluate it. -/
+theorem abs_orientedFiniteResonantRiemannianSymplecticDensity_eq_frame
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoMetricSpace M] [ChartedSpace H M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)]
+    (o : RiemannianTangentPlaneOrientation I M)
+    (boundary : UnitAddCircle → M) (N : ℕ) (lam : ℝ) (x : M)
+    (e : OrthonormalBasis (Fin 2) ℝ (TangentSpace I x)) :
+    |orientedFiniteResonantRiemannianSymplecticDensity
+        I o boundary N lam x| =
+      |finiteResonantRiemannianSymplecticDensity
+        I boundary N lam x e| := by
+  rw [orientedFiniteResonantRiemannianSymplecticDensity,
+    abs_orientedFiniteComplexRiemannianSymplecticDensity_eq_frame
+      I o (fun u n ↦ finiteResonantProfileMap boundary N lam u n) x e]
+  rfl
+
 #print axioms finiteComplexSymplecticPullback_apply
 #print axioms finiteComplexSymplecticDensityInFrame_eq_of_same_orientation
 #print axioms finiteComplexSymplecticDensityInFrame_eq_neg_of_opposite_orientation
 #print axioms orientedFiniteComplexRiemannianSymplecticDensity_eq_frame
+#print axioms
+  abs_orientedFiniteComplexRiemannianSymplecticDensity_eq_frame
 #print axioms orientedFiniteResonantRiemannianSymplecticDensity_eq_frame
+#print axioms
+  abs_orientedFiniteResonantRiemannianSymplecticDensity_eq_frame
 
 end
 
