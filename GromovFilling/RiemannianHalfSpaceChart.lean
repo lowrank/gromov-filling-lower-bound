@@ -39,6 +39,24 @@ def halfSpaceComplexExtChart
   (extChartAt (modelWithCornersEuclideanHalfSpace 2) x).symm ∘
     Complex.orthonormalBasisOneI.repr
 
+/-- The interior of an extended-chart target is exactly the part of that
+target lying in the interior of the model range.  Extended-chart targets
+need not be open for manifolds with boundary, so this relative-interior
+identity is the correct bridge to ordinary open coordinate domains. -/
+theorem interior_extChartAt_target_eq_inter_interior_range
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M] (x : M) :
+    interior (extChartAt I x).target =
+      (extChartAt I x).target ∩ interior (Set.range I) := by
+  apply Set.Subset.antisymm
+  · intro y hy
+    exact ⟨interior_subset hy,
+      interior_mono (extChartAt_target_subset_range x) hy⟩
+  · rintro y ⟨hyTarget, hyInterior⟩
+    exact (extChartAt_target_eventuallyEq_of_mem hyTarget).symm.mem_interior
+      hyInterior
+
 @[simp] theorem mem_halfSpaceComplexExtChartDomain
     {M : Type*} [TopologicalSpace M]
     [ChartedSpace (EuclideanHalfSpace 2) M] (x : M) (z : ℂ) :
@@ -46,6 +64,54 @@ def halfSpaceComplexExtChart
       Complex.orthonormalBasisOneI.repr z ∈
         (extChartAt (modelWithCornersEuclideanHalfSpace 2) x).target :=
   Iff.rfl
+
+/-- The positive-real-part piece of a half-space extended-chart domain is
+precisely its ordinary open interior complex chart domain. -/
+theorem halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane
+    {M : Type*} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M] (x : M) :
+    halfSpaceComplexExtChartDomain x ∩ complexRightOpenHalfPlane =
+      interiorComplexExtChartDomain
+        (modelWithCornersEuclideanHalfSpace 2)
+        Complex.orthonormalBasisOneI.repr x := by
+  ext z
+  simp only [halfSpaceComplexExtChartDomain,
+    complexRightOpenHalfPlane, interiorComplexExtChartDomain,
+    Set.mem_inter_iff, Set.mem_preimage, Set.mem_setOf_eq,
+    interior_extChartAt_target_eq_inter_interior_range,
+    interior_range_modelWithCornersEuclideanHalfSpace,
+    Complex.orthonormalBasisOneI_repr_apply]
+  rfl
+
+/-- The interior part of a half-space complex chart domain is open in the
+ambient complex plane. -/
+theorem isOpen_halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane
+    {M : Type*} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M] (x : M) :
+    IsOpen
+      (halfSpaceComplexExtChartDomain x ∩ complexRightOpenHalfPlane) := by
+  rw [halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane]
+  exact isOpen_interiorComplexExtChartDomain
+    (modelWithCornersEuclideanHalfSpace 2)
+    Complex.orthonormalBasisOneI.repr x
+
+/-- On the positive-real-part piece, the half-space inverse chart is an
+ordinary manifold-differentiable interior parametrization. -/
+theorem mdifferentiableAt_halfSpaceComplexExtChart
+    {M : Type*} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) 1 M]
+    (x : M) {z : ℂ}
+    (hz : z ∈
+      halfSpaceComplexExtChartDomain x ∩ complexRightOpenHalfPlane) :
+    MDifferentiableAt 𝒘(ℝ, ℂ)
+      (modelWithCornersEuclideanHalfSpace 2)
+      (halfSpaceComplexExtChart x) z := by
+  rw [halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane] at hz
+  simpa only [halfSpaceComplexExtChart, interiorComplexExtChart] using
+    mdifferentiableAt_interiorComplexExtChart
+      (modelWithCornersEuclideanHalfSpace 2)
+      Complex.orthonormalBasisOneI.repr x hz
 
 /-- Every boundary-chart coordinate lies in the closed right half-plane. -/
 theorem halfSpaceComplexExtChartDomain_subset_rightClosedHalfPlane
@@ -107,11 +173,34 @@ theorem image_halfSpaceComplexExtChartDomain
       Complex.orthonormalBasisOneI.repr.surjective,
     (extChartAt (modelWithCornersEuclideanHalfSpace 2) x).symm_image_target_eq_source]
 
+/-- The positive-real-part coordinate piece maps exactly onto the manifold
+interior lying in the chosen boundary-chart source. -/
+theorem image_halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane
+    {M : Type*} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) 1 M] (x : M) :
+    halfSpaceComplexExtChart x ''
+        (halfSpaceComplexExtChartDomain x ∩ complexRightOpenHalfPlane) =
+      (extChartAt (modelWithCornersEuclideanHalfSpace 2) x).source ∩
+        (modelWithCornersEuclideanHalfSpace 2).interior M := by
+  rw [halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane]
+  simpa only [halfSpaceComplexExtChart, interiorComplexExtChart,
+    extChartAt_source] using
+    image_interiorComplexExtChartDomain
+      (modelWithCornersEuclideanHalfSpace 2)
+      Complex.orthonormalBasisOneI.repr x
+
+#print axioms interior_extChartAt_target_eq_inter_interior_range
+#print axioms halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane
+#print axioms isOpen_halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane
+#print axioms mdifferentiableAt_halfSpaceComplexExtChart
 #print axioms halfSpaceComplexExtChartDomain_subset_rightClosedHalfPlane
 #print axioms continuousOn_halfSpaceComplexExtChart
 #print axioms contMDiffOn_halfSpaceComplexExtChart
 #print axioms injOn_halfSpaceComplexExtChart
 #print axioms image_halfSpaceComplexExtChartDomain
+#print axioms
+  image_halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane
 
 end
 
