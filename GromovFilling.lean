@@ -84,6 +84,7 @@ import GromovFilling.RiemannianAreaFormula
 import GromovFilling.RiemannianAtlasArea
 import GromovFilling.RiemannianBoundaryPartition
 import GromovFilling.RiemannianChartArea
+import GromovFilling.RiemannianChartAreaLocality
 import GromovFilling.RiemannianChartDensity
 import GromovFilling.RiemannianChartDisjointification
 import GromovFilling.RiemannianChartIntegral
