@@ -69,7 +69,7 @@ theorem sum_integral_controlledBoundaryChartAreaSymplecticDensity_eq_neg_boundar
     _ = 0 - ∑ i, O.chartSign i *
           ∫ y : ℝ, controlledBoundaryChartActionDensity P i G y := by
       rw [sum_integral_controlledBoundaryChartAreaPrimitiveErrorDensity_eq_zero
-        P O G hGLipschitz hG]
+        P O G hGLipschitz]
     _ = -∑ i, O.chartSign i *
           ∫ y : ℝ, controlledBoundaryChartActionDensity P i G y := by
       rw [zero_sub]
