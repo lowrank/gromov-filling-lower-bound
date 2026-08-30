@@ -36,7 +36,7 @@ theorem integrable_finiteComplexWeakPrimitiveErrorComplex
     {Cρ CF : ℝ≥0} (hρ : LipschitzWith Cρ ρ)
     (hρCompact : HasCompactSupport ρ) (hF : LipschitzWith CF F) :
     Integrable (finiteComplexWeakPrimitiveErrorComplex ρ F) := by
-  let e : (ℝ × ℝ) ≣L[ℝ] ℂ := complexOfRealProd
+  let e : ContinuousLinearEquiv ℝ (ℝ × ℝ) ℂ := complexOfRealProd
   have hρe : LipschitzWith
       (Cρ * ‖e.toContinuousLinearMap‖₊) (ρ ∘ e) :=
     hρ.comp e.lipschitz
@@ -109,8 +109,15 @@ theorem riemannianRealMFDeriv_eq_zero_of_notMem_tsupport
     (ρ : M → ℝ) (x : M) (hx : x ∉ tsupport ρ) :
     riemannianRealMFDeriv I ρ x = 0 := by
   rw [notMem_tsupport_iff_eventuallyEq] at hx
+  have hzero : mfderiv I (modelWithCornersSelf ℝ ℝ) ρ x = 0 := by
+    calc
+      mfderiv I (modelWithCornersSelf ℝ ℝ) ρ x =
+          mfderiv I (modelWithCornersSelf ℝ ℝ)
+            (fun _ : M ↦ (0 : ℝ)) x :=
+        hx.mfderiv_eq
+      _ = 0 := mfderiv_const
   unfold riemannianRealMFDeriv
-  rw [hx.mfderiv_eq, mfderiv_const]
+  rw [hzero]
   simp
 
 /-- Consequently, the intrinsic oriented primitive-error density is
@@ -201,7 +208,7 @@ theorem sum_integral_orientedFiniteComplexRiemannianPrimitiveErrorDensity_eq_zer
     [Fintype κ]
     (o : RiemannianTangentPlaneOrientation I M)
     (ρ : κ → M → ℝ) (G : M → ι → ℂ) (μ : Measure M)
-    (hρ : ∀ j, MDifferentiable I 𝒘(ℝ, ℝ) (ρ j))
+    (hρ : ∀ j, MDifferentiable I (modelWithCornersSelf ℝ ℝ) (ρ j))
     (hsum : ∀ x, ∑ j, ρ j x = 1)
     (hint : ∀ j, Integrable (fun x ↦
       orientedFiniteComplexRiemannianPrimitiveErrorDensity
@@ -246,7 +253,7 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_areaPrimitiveErrorDensi
     (D : ControlledBoundaryChartWeakStokesData P i G)
     (O : ControlledBoundaryAtlasOrientation P)
     (hG : ∀ j : ι, MDifferentiable
-      (modelWithCornersEuclideanHalfSpace 2) 𝒘(ℝ, ℂ)
+      (modelWithCornersEuclideanHalfSpace 2) (modelWithCornersSelf ℝ ℂ)
       (fun x ↦ G x j)) :
     Integrable (controlledBoundaryChartAreaPrimitiveErrorDensity P O i G)
       (volume.restrict complexRightOpenHalfPlane) := by
@@ -284,7 +291,7 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaPrimit
     (D : ControlledBoundaryChartWeakStokesData P i G)
     (O : ControlledBoundaryAtlasOrientation P)
     (hG : ∀ j : ι, MDifferentiable
-      (modelWithCornersEuclideanHalfSpace 2) 𝒘(ℝ, ℂ)
+      (modelWithCornersEuclideanHalfSpace 2) (modelWithCornersSelf ℝ ℂ)
       (fun x ↦ G x j)) :
     let q : M → ℝ := fun x ↦
       orientedFiniteComplexRiemannianPrimitiveErrorDensity
@@ -462,7 +469,7 @@ theorem sum_integral_controlledBoundaryChartAreaPrimitiveErrorDensity_eq_zero
     (O : ControlledBoundaryAtlasOrientation P) (G : M → ι → ℂ)
     {CG : ℝ≥0} (hGLipschitz : LipschitzWith CG G)
     (hG : ∀ j : ι, MDifferentiable
-      (modelWithCornersEuclideanHalfSpace 2) 𝒘(ℝ, ℂ)
+      (modelWithCornersEuclideanHalfSpace 2) (modelWithCornersSelf ℝ ℂ)
       (fun x ↦ G x j)) :
     (∑ i, ∫ z in complexRightOpenHalfPlane,
       controlledBoundaryChartAreaPrimitiveErrorDensity P O i G z) = 0 := by
