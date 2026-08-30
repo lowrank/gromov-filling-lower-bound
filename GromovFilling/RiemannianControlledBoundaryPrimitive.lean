@@ -71,7 +71,7 @@ theorem finiteSymplecticFDerivPrimitiveError_eq_of_eventuallyEq
     finiteSymplecticFDerivPrimitiveError ρ F z =
       finiteSymplecticFDerivPrimitiveError σ H z := by
   unfold finiteSymplecticFDerivPrimitiveError
-  rw [hρ.self_of_nhds, hF.self_of_nhds,
+  rw [hF.self_of_nhds,
     Filter.EventuallyEq.fderiv_eq hρ,
     Filter.EventuallyEq.fderiv_eq hF]
 
@@ -125,15 +125,16 @@ def controlledBoundaryChartPrimitiveErrorDensity
     (o : RiemannianTangentPlaneOrientation
       (modelWithCornersEuclideanHalfSpace 2) M)
     (i : P.ι) {ι : Type uι} [Fintype ι]
-    (G : M → ι → ℂ) (z : ℂ) : ℝ :=
-  if z ∈ halfSpaceComplexExtChartDomain (P.center i) then
-    orientedRiemannianChartJacobian
-        (modelWithCornersEuclideanHalfSpace 2) o
-        (halfSpaceComplexExtChart (P.center i)) z *
-      orientedFiniteComplexRiemannianPrimitiveErrorDensity
-        (modelWithCornersEuclideanHalfSpace 2) o (P.partition i) G
-        (halfSpaceComplexExtChart (P.center i) z)
-  else 0
+    (G : M → ι → ℂ) (z : ℂ) : ℝ := by
+  classical
+  exact if z ∈ halfSpaceComplexExtChartDomain (P.center i) then
+      orientedRiemannianChartJacobian
+          (modelWithCornersEuclideanHalfSpace 2) o
+          (halfSpaceComplexExtChart (P.center i)) z *
+        orientedFiniteComplexRiemannianPrimitiveErrorDensity
+          (modelWithCornersEuclideanHalfSpace 2) o (P.partition i) G
+          (halfSpaceComplexExtChart (P.center i) z)
+    else 0
 
 /-- On the open half-plane, the extension-based primitive error is the
 genuine intrinsic chart density. -/
