@@ -57,8 +57,8 @@ theorem halfSpaceComplexExtChart_real_mul_I_mem_boundary
   change (modelWithCornersEuclideanHalfSpace 2).IsBoundaryPoint
     ((extChartAt (modelWithCornersEuclideanHalfSpace 2) x).symm
       (Complex.orthonormalBasisOneI.repr z))
-  rw [(modelWithCornersEuclideanHalfSpace 2).
-    isBoundaryPoint_iff_not_isInteriorPoint _]
+  rw [ModelWithCorners.isBoundaryPoint_iff_not_isInteriorPoint
+    (I := modelWithCornersEuclideanHalfSpace 2) _]
   intro hinterior
   have hcoord :
       extChartAt (modelWithCornersEuclideanHalfSpace 2) x
