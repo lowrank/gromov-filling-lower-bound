@@ -1,4 +1,4 @@
-import GromovFilling.RiemannianControlledBoundaryAreaCancellation
+import GromovFilling.RiemannianControlledBoundarySurfaceDensity
 
 /-!
 # Global controlled-atlas weak Stokes
@@ -71,8 +71,31 @@ theorem sum_integral_controlledBoundaryChartAreaSymplecticDensity_eq_neg_boundar
           ∫ y : ℝ, controlledBoundaryChartActionDensity P i G y := by
       rw [zero_sub]
 
+/-- The global controlled-atlas Stokes identity in intrinsic surface form.
+The only remaining boundary obligation is to identify the signed chart-axis
+sum with one globally oriented boundary parametrization. -/
+theorem integral_orientedFiniteComplexRiemannianSymplecticDensity_eq_neg_boundary
+    [Nonempty M]
+    {ι : Type uι} [Fintype ι]
+    (P : FiniteControlledBoundaryChartPartition M)
+    (O : ControlledBoundaryAtlasOrientation P) (G : M → ι → ℂ)
+    {CG : ℝ≥0} (hGLipschitz : LipschitzWith CG G) :
+    (∫ x,
+        orientedFiniteComplexRiemannianSymplecticDensity
+          (modelWithCornersEuclideanHalfSpace 2) O.tangentOrientation G x
+        ∂riemannianSurfaceAreaMeasure
+          (modelWithCornersEuclideanHalfSpace 2)) =
+      -∑ i, O.chartSign i *
+        ∫ y : ℝ, controlledBoundaryChartActionDensity P i G y := by
+  rw [← (sum_integral_controlledBoundaryChartAreaSymplecticDensity_eq_surface
+    P O G hGLipschitz).2]
+  exact sum_integral_controlledBoundaryChartAreaSymplecticDensity_eq_neg_boundary
+    P O G hGLipschitz
+
 #print axioms
   sum_integral_controlledBoundaryChartAreaSymplecticDensity_eq_neg_boundary
+#print axioms
+  integral_orientedFiniteComplexRiemannianSymplecticDensity_eq_neg_boundary
 
 end
 
