@@ -9,6 +9,7 @@ import GromovFilling.CanonicalBoundaryLocus
 import GromovFilling.Certificates
 import GromovFilling.CircleDegree
 import GromovFilling.ClosedOneForm
+import GromovFilling.CompactLipschitzExtension
 import GromovFilling.ComplexAreaFormula
 import GromovFilling.ComplexHalfPlaneWeakStokes
 import GromovFilling.ComplexJacobianBudget
@@ -84,8 +85,13 @@ import GromovFilling.RiemannianBoundaryPartition
 import GromovFilling.RiemannianChartArea
 import GromovFilling.RiemannianChartDensity
 import GromovFilling.RiemannianChartDisjointification
+import GromovFilling.RiemannianChartIntegral
 import GromovFilling.RiemannianChartTransition
+import GromovFilling.RiemannianControlledBoundaryCutoff
+import GromovFilling.RiemannianControlledBoundaryMapExtension
+import GromovFilling.RiemannianControlledBoundaryPartition
 import GromovFilling.RiemannianHalfSpaceChart
+import GromovFilling.RiemannianHalfSpaceChartControl
 import GromovFilling.RiemannianInteriorAtlasArea
 import GromovFilling.RiemannianInteriorChart
 import GromovFilling.RiemannianInteriorCoverage
