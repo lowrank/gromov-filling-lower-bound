@@ -32,7 +32,18 @@ jobs:
       - name: Prove proof-escape gate fails closed
         run: ./scripts/test_proof_escape_gate.sh
 
+      - name: Build changed Lean leaf
+        if: github.event_name == 'workflow_dispatch'
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: true
+          build-args: GromovFilling.RiemannianControlledBoundaryCutoff
+          use-mathlib-cache: true
+          axiom-audit: false
+
       - name: Build Lean project
+        if: github.event_name != 'workflow_dispatch'
         uses: leanprover/lean-action@v1
         with:
           axiom-audit: true
