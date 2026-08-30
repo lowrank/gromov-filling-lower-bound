@@ -14,6 +14,7 @@ derivative terms on overlaps of an oriented surface atlas.
 -/
 
 open Function MeasureTheory Set
+open scoped NNReal
 
 namespace GromovFilling
 
@@ -121,12 +122,15 @@ theorem integral_complexRightHalfPlane_cutoff_mul_finiteSymplecticFDerivDensity_
   have hρae : ∀ᵐ z ∂(volume.restrict complexRightOpenHalfPlane),
       DifferentiableAt ℝ ρ z :=
     ae_restrict_of_ae (hρ.ae_differentiableAt (μ := volume))
+  have hhalfMeas : MeasurableSet complexRightOpenHalfPlane := by
+    simpa [complexRightOpenHalfPlane] using
+      measurableSet_Ioi.preimage Complex.continuous_re.measurable
   have hdensity :
       (∫ z in complexRightOpenHalfPlane,
           ρ z * finiteComplexWeakSymplecticDensityComplex F z) =
         ∫ z in complexRightOpenHalfPlane,
           ρ z * finiteSymplecticFDerivDensity F z := by
-    apply setIntegral_congr_ae
+    apply setIntegral_congr_ae hhalfMeas
     filter_upwards [hFae] with z hz
     rw [finiteComplexWeakSymplecticDensityComplex_eq_fderiv F z hz]
   have herror :
@@ -134,7 +138,7 @@ theorem integral_complexRightHalfPlane_cutoff_mul_finiteSymplecticFDerivDensity_
           finiteComplexWeakPrimitiveErrorComplex ρ F z) =
         ∫ z in complexRightOpenHalfPlane,
           finiteSymplecticFDerivPrimitiveError ρ F z := by
-    apply setIntegral_congr_ae
+    apply setIntegral_congr_ae hhalfMeas
     filter_upwards [hρae, hFae] with z hρz hFz
     exact finiteComplexWeakPrimitiveErrorComplex_eq_fderiv
       ρ F z hρz hFz
