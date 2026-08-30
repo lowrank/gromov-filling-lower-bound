@@ -110,10 +110,11 @@ private theorem finiteComplexEnergy_finiteResonantTangentMap_le_uniform
           |lam| *
             (Real.sqrt Qstar * Real.sqrt (finiteComplexEnergy p))) ^ 2 :=
       (sq_le_sq₀ (by positivity) (by positivity)).2 hsum
+    _ = (1 + |lam| * Real.sqrt Qstar) ^ 2 *
+          (Real.sqrt (finiteComplexEnergy p)) ^ 2 := by ring
     _ = finiteResonantUniformDensityBound lam * finiteComplexEnergy p := by
       rw [Real.sq_sqrt hp0]
-      unfold finiteResonantUniformDensityBound
-      ring
+      rfl
 
 /-- Every coherent finite resonant truncation is bounded by one scalar
 envelope independent of the truncation index. -/
