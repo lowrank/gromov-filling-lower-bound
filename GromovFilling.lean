@@ -44,6 +44,7 @@ import GromovFilling.InfiniteResonantComass
 import GromovFilling.InfiniteResonantComassLimit
 import GromovFilling.InfiniteResonantComassOrientation
 import GromovFilling.InfiniteResonantVariation
+import GromovFilling.IntegratedComassLimit
 import GromovFilling.JacobianBudget
 import GromovFilling.JordanBoundary
 import GromovFilling.JordanSchoenfliesCoverage
