@@ -136,8 +136,48 @@ def controlledBoundaryChartPrimitiveErrorDensity
           (halfSpaceComplexExtChart (P.center i) z)
     else 0
 
-/-- On the open half-plane, the extension-based primitive error is the
-genuine intrinsic chart density. -/
+/-- At a differentiability point in the open half-plane, the
+extension-based primitive error is the genuine intrinsic chart density. -/
+theorem ControlledBoundaryChartWeakStokesData.primitiveError_eq_chartDensity_of_mdifferentiableAt
+    {ι : Type uι} [Fintype ι]
+    {P : FiniteControlledBoundaryChartPartition M} {i : P.ι}
+    {G : M → ι → ℂ}
+    (D : ControlledBoundaryChartWeakStokesData P i G)
+    (o : RiemannianTangentPlaneOrientation
+      (modelWithCornersEuclideanHalfSpace 2) M)
+    {z : ℂ}
+    (hG : ∀ j : ι, MDifferentiableAt
+      (modelWithCornersEuclideanHalfSpace 2) 𝓘(ℝ, ℂ)
+      (fun x ↦ G x j)
+      (halfSpaceComplexExtChart (P.center i) z))
+    (hzRight : z ∈ complexRightOpenHalfPlane) :
+    finiteSymplecticFDerivPrimitiveError D.cutoff D.chartMap z =
+      controlledBoundaryChartPrimitiveErrorDensity P o i G z := by
+  by_cases hzDomain : z ∈ halfSpaceComplexExtChartDomain (P.center i)
+  · rw [controlledBoundaryChartPrimitiveErrorDensity, if_pos hzDomain,
+      D.primitiveError_eq_comp ⟨hzDomain, hzRight⟩]
+    exact finiteSymplecticFDerivPrimitiveError_comp_parametrization_eq_jacobian_mul
+      (modelWithCornersEuclideanHalfSpace 2) o (P.partition i) G
+      (halfSpaceComplexExtChart (P.center i)) z
+      (mdifferentiableAt_halfSpaceComplexExtChart
+        (P.center i) ⟨hzDomain, hzRight⟩)
+      ((P.contMDiff_partition i).mdifferentiableAt (by simp))
+      hG
+  · have hzRightClosed : z ∈ complexRightClosedHalfPlane := by
+      change 0 ≤ z.re
+      change 0 < z.re at hzRight
+      exact hzRight.le
+    have hDzero : D.cutoff z = 0 := by
+      rw [D.cutoff_eq hzRightClosed,
+        controlledBoundaryChartCutoff_eq_zero_of_not_mem P i hzDomain]
+    rw [controlledBoundaryChartPrimitiveErrorDensity, if_neg hzDomain]
+    exact finiteSymplecticFDerivPrimitiveError_eq_zero_of_cutoff_eq_zero
+      D.cutoff D.chartMap z D.cutoff_nonneg hDzero
+
+/-- Everywhere manifold differentiability is a convenient wrapper around
+the pointwise primitive-error identification.  Later integration theorems
+use the sharper pointwise statement together with Rademacher almost
+everywhere. -/
 theorem ControlledBoundaryChartWeakStokesData.primitiveError_eq_chartDensity
     {ι : Type uι} [Fintype ι]
     {P : FiniteControlledBoundaryChartPartition M} {i : P.ι}
@@ -151,26 +191,8 @@ theorem ControlledBoundaryChartWeakStokesData.primitiveError_eq_chartDensity
     (hzRight : z ∈ complexRightOpenHalfPlane) :
     finiteSymplecticFDerivPrimitiveError D.cutoff D.chartMap z =
       controlledBoundaryChartPrimitiveErrorDensity P o i G z := by
-  by_cases hzDomain : z ∈ halfSpaceComplexExtChartDomain (P.center i)
-  · rw [controlledBoundaryChartPrimitiveErrorDensity, if_pos hzDomain,
-      D.primitiveError_eq_comp ⟨hzDomain, hzRight⟩]
-    exact finiteSymplecticFDerivPrimitiveError_comp_parametrization_eq_jacobian_mul
-      (modelWithCornersEuclideanHalfSpace 2) o (P.partition i) G
-      (halfSpaceComplexExtChart (P.center i)) z
-      (mdifferentiableAt_halfSpaceComplexExtChart
-        (P.center i) ⟨hzDomain, hzRight⟩)
-      ((P.contMDiff_partition i).mdifferentiableAt (by simp))
-      (fun j ↦ (hG j) _)
-  · have hzRightClosed : z ∈ complexRightClosedHalfPlane := by
-      change 0 ≤ z.re
-      change 0 < z.re at hzRight
-      exact hzRight.le
-    have hDzero : D.cutoff z = 0 := by
-      rw [D.cutoff_eq hzRightClosed,
-        controlledBoundaryChartCutoff_eq_zero_of_not_mem P i hzDomain]
-    rw [controlledBoundaryChartPrimitiveErrorDensity, if_neg hzDomain]
-    exact finiteSymplecticFDerivPrimitiveError_eq_zero_of_cutoff_eq_zero
-      D.cutoff D.chartMap z D.cutoff_nonneg hDzero
+  exact D.primitiveError_eq_chartDensity_of_mdifferentiableAt o
+    (fun j ↦ (hG j) _) hzRight
 
 /-- The primitive-error integral in controlled weak Stokes can therefore be
 written entirely with the genuine manifold partition, map, orientation, and
@@ -220,6 +242,8 @@ theorem ControlledBoundaryChartWeakStokesData.integral_controlledBoundaryChartSy
 #print axioms finiteSymplecticFDerivPrimitiveError_eq_of_eventuallyEq
 #print axioms ControlledBoundaryChartWeakStokesData.primitiveError_eq_comp
 #print axioms controlledBoundaryChartPrimitiveErrorDensity
+#print axioms
+  ControlledBoundaryChartWeakStokesData.primitiveError_eq_chartDensity_of_mdifferentiableAt
 #print axioms
   ControlledBoundaryChartWeakStokesData.primitiveError_eq_chartDensity
 #print axioms

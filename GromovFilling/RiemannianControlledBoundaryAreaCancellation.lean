@@ -279,8 +279,10 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_areaPrimitiveErrorDensi
       O.chartSign_mul_primitiveErrorDensity_eq_area i G hz
 
 /-- One chart-area primitive-error integral is exactly the integral of its
-intrinsic density against canonical Riemannian surface area.  The conclusion
-also records the integrability needed for finite summation. -/
+intrinsic density against canonical Riemannian surface area.  Lipschitz
+regularity supplies the coordinatewise manifold differentiability needed
+for the chart identity almost everywhere by Rademacher.  The conclusion also
+records the integrability needed for finite summation. -/
 theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaPrimitiveErrorDensity_eq_surface
     [Nonempty M]
     [Nonempty (ControlledInteriorAtlas
@@ -290,9 +292,7 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaPrimit
     {G : M → ι → ℂ}
     (D : ControlledBoundaryChartWeakStokesData P i G)
     (O : ControlledBoundaryAtlasOrientation P)
-    (hG : ∀ j : ι, MDifferentiable
-      (modelWithCornersEuclideanHalfSpace 2) (modelWithCornersSelf ℝ ℂ)
-      (fun x ↦ G x j)) :
+    {CG : ℝ≥0} (hG : LipschitzWith CG G) :
     let q : M → ℝ := fun x ↦
       orientedFiniteComplexRiemannianPrimitiveErrorDensity
         (modelWithCornersEuclideanHalfSpace 2) O.tangentOrientation
@@ -349,12 +349,43 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaPrimit
         (chosenInteriorChartControl I (P.center i)))
       ((contMDiffOn_interiorComplexExtChart I e (P.center i)).mono
         hsSubsetFull)
-  have hareaRight := D.integrable_areaPrimitiveErrorDensity O hG
+  have hGdiff : ∀ᵐ z ∂volume.restrict s, ∀ j : ι,
+      MDifferentiableAt I 𝓘(ℝ, ℂ) (fun x ↦ G x j) (F z) := by
+    rw [ae_all_iff]
+    intro j
+    have hGj : LipschitzWith CG (fun x ↦ G x j) := by
+      simpa only [Function.comp_apply, one_mul] using
+        ((LipschitzWith.eval j).comp hG)
+    simpa only [s, F, A, k,
+      FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas_parametrization,
+      FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas_domain,
+      halfSpaceComplexExtChart, interiorComplexExtChart] using
+      (A.ae_mdifferentiableAt_of_lipschitzWith_on_domain I
+        (fun x ↦ G x j) hGj k)
+  have hrawS : Integrable
+      (finiteSymplecticFDerivPrimitiveError D.cutoff D.chartMap)
+      (volume.restrict s) :=
+    D.integrable_primitiveError.mono_measure Measure.restrict_le_self
+  have hsignedS : Integrable (fun z ↦ O.chartSign i *
+      finiteSymplecticFDerivPrimitiveError D.cutoff D.chartMap z)
+      (volume.restrict s) :=
+    hrawS.const_mul (O.chartSign i)
   have hareaS : Integrable
       (controlledBoundaryChartAreaPrimitiveErrorDensity P O i G)
-      (volume.restrict s) :=
-    hareaRight.mono_measure
-      (Measure.restrict_mono hsSubsetRight le_rfl)
+      (volume.restrict s) := by
+    apply hsignedS.congr
+    filter_upwards [ae_restrict_mem hsMeas, hGdiff] with z hz hGz
+    have hzRight : z ∈ complexRightOpenHalfPlane := hsSubsetRight hz
+    calc
+      O.chartSign i *
+          finiteSymplecticFDerivPrimitiveError D.cutoff D.chartMap z =
+        O.chartSign i *
+          controlledBoundaryChartPrimitiveErrorDensity
+            P O.tangentOrientation i G z := by
+          rw [D.primitiveError_eq_chartDensity_of_mdifferentiableAt
+            O.tangentOrientation hGz hzRight]
+      _ = controlledBoundaryChartAreaPrimitiveErrorDensity P O i G z :=
+        O.chartSign_mul_primitiveErrorDensity_eq_area i G hzRight
   have hweightedS : Integrable (fun z ↦
       (riemannianChartDensity I F z).toReal * q (F z))
       (volume.restrict s) := by
@@ -467,10 +498,7 @@ theorem sum_integral_controlledBoundaryChartAreaPrimitiveErrorDensity_eq_zero
     {ι : Type uι} [Fintype ι]
     (P : FiniteControlledBoundaryChartPartition M)
     (O : ControlledBoundaryAtlasOrientation P) (G : M → ι → ℂ)
-    {CG : ℝ≥0} (hGLipschitz : LipschitzWith CG G)
-    (hG : ∀ j : ι, MDifferentiable
-      (modelWithCornersEuclideanHalfSpace 2) (modelWithCornersSelf ℝ ℂ)
-      (fun x ↦ G x j)) :
+    {CG : ℝ≥0} (hGLipschitz : LipschitzWith CG G) :
     (∑ i, ∫ z in complexRightOpenHalfPlane,
       controlledBoundaryChartAreaPrimitiveErrorDensity P O i G z) = 0 := by
   letI : Nonempty (ControlledInteriorAtlas
@@ -481,7 +509,8 @@ theorem sum_integral_controlledBoundaryChartAreaPrimitiveErrorDensity_eq_zero
     fun i ↦ Classical.choice
       (nonempty_controlledBoundaryChartWeakStokesData P i G hGLipschitz)
   have htransfer (i : P.ι) :=
-    (D i).integrable_and_integral_areaPrimitiveErrorDensity_eq_surface O hG
+    (D i).integrable_and_integral_areaPrimitiveErrorDensity_eq_surface
+      O hGLipschitz
   calc
     (∑ i, ∫ z in complexRightOpenHalfPlane,
         controlledBoundaryChartAreaPrimitiveErrorDensity P O i G z) =
