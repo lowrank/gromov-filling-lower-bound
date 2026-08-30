@@ -77,6 +77,7 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
     (hρ : ∀ j, MDifferentiableAt I 𝓘(ℝ, ℝ) (ρ j) x)
     (hsum : ∀ y, ∑ j, ρ j y = 1) :
     ∑ j, riemannianRealMFDeriv I (ρ j) x = 0 := by
+  classical
   have hhas : HasMFDerivAt I 𝓘(ℝ, ℝ)
       (∑ j : κ, ρ j) x
       (∑ j : κ, mfderiv I 𝓘(ℝ, ℝ) (ρ j) x) := by
