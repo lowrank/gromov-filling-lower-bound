@@ -317,7 +317,7 @@ theorem exists_coherentProfile_finiteResonantRiemannian_comass_limit
     finiteResonantRiemannianSymplecticDensity_eq_finiteTruncation
       I N lam x hx e (fun k ↦ hFourierDiff k) c
       (hcolumn₀ N) (hcolumn₁ N)
-  have hy : Summable (fun n ↦ Complex.normSq
+  have hy : Summable (fun n : ℕ ↦ Complex.normSq
       (oddProfileFourierMap boundary (oddMode n.succ) x)) :=
     summable_normSq_oddProfileFourierMap_tail hboundary x
   obtain ⟨hpos, hneg⟩ := summable_odd_fourierCoeffOn_energies f hf
