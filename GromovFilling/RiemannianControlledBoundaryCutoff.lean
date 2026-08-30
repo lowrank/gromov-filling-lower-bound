@@ -138,8 +138,9 @@ outside the actual extended-chart domain.  The zero branch is used only away
 from the coordinate domain; no zero-extension is made across the boundary
 axis. -/
 def controlledBoundaryChartCutoff
-    (P : FiniteControlledBoundaryChartPartition M) (i : P.ι) : ℂ → ℝ :=
-  fun z ↦ if z ∈ halfSpaceComplexExtChartDomain (P.center i) then
+    (P : FiniteControlledBoundaryChartPartition M) (i : P.ι) : ℂ → ℝ := by
+  classical
+  exact fun z ↦ if z ∈ halfSpaceComplexExtChartDomain (P.center i) then
     P.partition i (halfSpaceComplexExtChart (P.center i) z) else 0
 
 @[simp] theorem controlledBoundaryChartCutoff_eq_of_mem
@@ -195,7 +196,7 @@ theorem support_controlledBoundaryChartCutoff_inter_rightClosedHalfPlane_subset
           Complex.orthonormalBasisOneI.repr z := by
       simpa only [halfSpaceComplexExtChart, Function.comp_apply] using
         (extChartAt (modelWithCornersEuclideanHalfSpace 2)
-          (P.center i)).apply_symm_apply hzDomain
+          (P.center i)).right_inv hzDomain
     have hdist :
         dist (Complex.orthonormalBasisOneI.repr z)
             (extChartAt (modelWithCornersEuclideanHalfSpace 2)
@@ -260,8 +261,8 @@ theorem exists_controlledBoundaryChartCutoffExtension
           complexRightClosedHalfPlane ∧
         (∀ z, 0 ≤ ρ z) ∧ ∀ z, ρ z ≤ 1 := by
   obtain ⟨K, hK⟩ :=
-    (contDiffOn_controlledBoundaryChartCutoff_outerClosedHalfBall P i).
-      exists_lipschitzOnWith one_ne_zero
+    (contDiffOn_controlledBoundaryChartCutoff_outerClosedHalfBall P i).exists_lipschitzOnWith
+      one_ne_zero
         (convex_controlledHalfSpaceOuterClosedHalfBall (P.center i))
         (isCompact_controlledHalfSpaceOuterClosedHalfBall (P.center i))
   exact exists_lipschitzWith_hasCompactSupport_extension_Icc_of_support_subset
