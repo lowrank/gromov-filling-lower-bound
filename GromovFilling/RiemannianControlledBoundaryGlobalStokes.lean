@@ -38,10 +38,7 @@ theorem sum_integral_controlledBoundaryChartAreaSymplecticDensity_eq_neg_boundar
     {ι : Type uι} [Fintype ι]
     (P : FiniteControlledBoundaryChartPartition M)
     (O : ControlledBoundaryAtlasOrientation P) (G : M → ι → ℂ)
-    {CG : ℝ≥0} (hGLipschitz : LipschitzWith CG G)
-    (hG : ∀ j : ι, MDifferentiable
-      (modelWithCornersEuclideanHalfSpace 2) (modelWithCornersSelf ℝ ℂ)
-      (fun x ↦ G x j)) :
+    {CG : ℝ≥0} (hGLipschitz : LipschitzWith CG G) :
     (∑ i, ∫ z in complexRightOpenHalfPlane,
         controlledBoundaryChartAreaSymplecticDensity P O i G z) =
       -∑ i, O.chartSign i *
@@ -59,8 +56,8 @@ theorem sum_integral_controlledBoundaryChartAreaSymplecticDensity_eq_neg_boundar
       apply Finset.sum_congr rfl
       intro i _hi
       exact
-        (D i).integral_areaSymplecticDensity_eq_areaPrimitiveError_sub_signedBoundary
-          O hG
+        (D i).integral_areaSymplecticDensity_eq_areaPrimitiveError_sub_signedBoundary_of_lipschitzWith
+          O hGLipschitz
     _ = (∑ i, ∫ z in complexRightOpenHalfPlane,
           controlledBoundaryChartAreaPrimitiveErrorDensity P O i G z) -
         ∑ i, O.chartSign i *
@@ -69,7 +66,7 @@ theorem sum_integral_controlledBoundaryChartAreaSymplecticDensity_eq_neg_boundar
     _ = 0 - ∑ i, O.chartSign i *
           ∫ y : ℝ, controlledBoundaryChartActionDensity P i G y := by
       rw [sum_integral_controlledBoundaryChartAreaPrimitiveErrorDensity_eq_zero
-        P O G hGLipschitz hG]
+        P O G hGLipschitz]
     _ = -∑ i, O.chartSign i *
           ∫ y : ℝ, controlledBoundaryChartActionDensity P i G y := by
       rw [zero_sub]

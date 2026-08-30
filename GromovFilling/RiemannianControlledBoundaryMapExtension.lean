@@ -71,6 +71,72 @@ theorem controlledHalfSpaceInnerClosedBall_inter_rightOpen_subset_outerOpen
   exact lt_of_le_of_lt (mem_closedBall.mp hzBall)
     (controlledHalfSpaceInnerRadius_lt_outer x)
 
+/-- The closed inner support half-ball is contained in the controlled
+interior chart domain away from the boundary axis.  This is the common
+domain on which planar Rademacher can be transferred back to the surface. -/
+theorem controlledHalfSpaceInnerClosedBall_inter_rightOpen_subset_chosenInteriorDomain
+    (x : M) :
+    closedBall (controlledHalfSpaceComplexChartCenter x)
+          (controlledHalfSpaceInnerRadius x) ∩
+        complexRightOpenHalfPlane ⊆
+      chosenControlledInteriorComplexChartDomain
+        (modelWithCornersEuclideanHalfSpace 2)
+        Complex.orthonormalBasisOneI.repr x := by
+  rintro z ⟨hzBall, hzRight⟩
+  rw [chosenControlledInteriorComplexChartDomain,
+    controlledInteriorComplexChartDomain, controlledInteriorChartSet]
+  refine ⟨?_, ?_⟩
+  · rw [mem_ball]
+    have hdist :
+        dist (Complex.orthonormalBasisOneI.repr z)
+            (extChartAt (modelWithCornersEuclideanHalfSpace 2) x x) =
+          dist z (controlledHalfSpaceComplexChartCenter x) := by
+      simpa only [controlledHalfSpaceComplexChartCenter,
+        LinearIsometryEquiv.apply_symm_apply] using
+        Complex.orthonormalBasisOneI.repr.dist_map z
+          (controlledHalfSpaceComplexChartCenter x)
+    rw [hdist]
+    exact lt_of_le_of_lt (mem_closedBall.mp hzBall)
+      (half_lt_self
+        (chosenInteriorChartControl
+          (modelWithCornersEuclideanHalfSpace 2) x).r_pos)
+  · rw [interior_range_modelWithCornersEuclideanHalfSpace]
+    simpa only [complexRightOpenHalfPlane,
+      Complex.orthonormalBasisOneI_repr_apply] using hzRight
+
+/-- The nonzero part of a controlled cutoff in the open half-plane lies in
+the controlled interior chart domain used by the canonical atlas. -/
+theorem support_controlledBoundaryChartCutoff_inter_rightOpen_subset_chosenInteriorDomain
+    (P : FiniteControlledBoundaryChartPartition M) (i : P.ι) :
+    support (controlledBoundaryChartCutoff P i) ∩
+        complexRightOpenHalfPlane ⊆
+      chosenControlledInteriorComplexChartDomain
+        (modelWithCornersEuclideanHalfSpace 2)
+        Complex.orthonormalBasisOneI.repr (P.center i) := by
+  rintro z ⟨hzSupport, hzRight⟩
+  apply
+    controlledHalfSpaceInnerClosedBall_inter_rightOpen_subset_chosenInteriorDomain
+      (P.center i)
+  refine ⟨support_controlledBoundaryChartCutoff_inter_rightClosedHalfPlane_subset
+    P i ⟨hzSupport, ?_⟩, hzRight⟩
+  change 0 ≤ z.re
+  change 0 < z.re at hzRight
+  exact hzRight.le
+
+/-- Hence a controlled cutoff vanishes at every open-half-plane point
+outside its controlled interior chart domain. -/
+theorem controlledBoundaryChartCutoff_eq_zero_of_mem_rightOpen_of_not_mem_chosenInteriorDomain
+    (P : FiniteControlledBoundaryChartPartition M) (i : P.ι) {z : ℂ}
+    (hzRight : z ∈ complexRightOpenHalfPlane)
+    (hzDomain : z ∉ chosenControlledInteriorComplexChartDomain
+      (modelWithCornersEuclideanHalfSpace 2)
+      Complex.orthonormalBasisOneI.repr (P.center i)) :
+    controlledBoundaryChartCutoff P i z = 0 := by
+  by_contra hz
+  exact hzDomain
+    (support_controlledBoundaryChartCutoff_inter_rightOpen_subset_chosenInteriorDomain
+      P i ⟨hz, hzRight⟩)
+
 /-- Pulling a globally Lipschitz finite complex map back through a controlled
 inverse boundary chart is Lipschitz on the outer closed half-ball. -/
 theorem lipschitzOnWith_controlledBoundaryChartMap_outerClosedHalfBall
@@ -105,6 +171,12 @@ theorem exists_controlledBoundaryChartMapExtension
 #print axioms controlledHalfSpaceOuterOpenHalfBall_subset_closed
 #print axioms
   controlledHalfSpaceInnerClosedBall_inter_rightOpen_subset_outerOpen
+#print axioms
+  controlledHalfSpaceInnerClosedBall_inter_rightOpen_subset_chosenInteriorDomain
+#print axioms
+  support_controlledBoundaryChartCutoff_inter_rightOpen_subset_chosenInteriorDomain
+#print axioms
+  controlledBoundaryChartCutoff_eq_zero_of_mem_rightOpen_of_not_mem_chosenInteriorDomain
 #print axioms
   lipschitzOnWith_controlledBoundaryChartMap_outerClosedHalfBall
 #print axioms exists_controlledBoundaryChartMapExtension
