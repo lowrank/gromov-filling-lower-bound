@@ -75,12 +75,18 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
   have hhas : HasMFDerivAt I 𝓘(ℝ, ℝ)
       (∑ j : κ, ρ j) x
       (∑ j : κ, mfderiv I 𝓘(ℝ, ℝ) (ρ j) x) := by
-    exact HasMFDerivAt.sum fun j _hj ↦ (hρ j).hasMFDerivAt
+    apply HasMFDerivAt.sum
+    intro j _hj
+    exact (hρ j).hasMFDerivAt
   have hfun : (∑ j : κ, ρ j) = fun _y : M ↦ (1 : ℝ) := by
     funext y
-    exact hsum y
+    simpa only [Finset.sum_apply] using hsum y
   have hraw : (∑ j : κ, mfderiv I 𝓘(ℝ, ℝ) (ρ j) x) = 0 := by
-    rw [← hhas.mfderiv, hfun, mfderiv_const]
+    calc
+      (∑ j : κ, mfderiv I 𝓘(ℝ, ℝ) (ρ j) x) =
+          mfderiv I 𝓘(ℝ, ℝ) (∑ j : κ, ρ j) x := hhas.mfderiv.symm
+      _ = mfderiv I 𝓘(ℝ, ℝ) (fun _y : M ↦ (1 : ℝ)) x := by rw [hfun]
+      _ = 0 := mfderiv_const
   apply ContinuousLinearMap.ext
   intro v
   have hv := congrArg
@@ -119,8 +125,8 @@ theorem sum_orientedFiniteComplexRiemannianPrimitiveErrorDensity_eq_zero
       (fun L : TangentSpace I x →L[ℝ] ℝ ↦ L (e 1)) hD
     simpa only [ContinuousLinearMap.sum_apply,
       ContinuousLinearMap.zero_apply] using h
-  change (∑ j, riemannianRealMFDeriv I (ρ j) x (e 1) * A (e 0) -
-    riemannianRealMFDeriv I (ρ j) x (e 0) * A (e 1)) = 0
+  change (∑ j, (riemannianRealMFDeriv I (ρ j) x (e 1) * A (e 0) -
+    riemannianRealMFDeriv I (ρ j) x (e 0) * A (e 1))) = 0
   rw [Finset.sum_sub_distrib, ← Finset.sum_mul, ← Finset.sum_mul,
     hD1, hD0]
   ring
