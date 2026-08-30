@@ -75,13 +75,17 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
   have hhas : HasMFDerivAt I 𝓘(ℝ, ℝ)
       (∑ j : κ, ρ j) x
       (∑ j : κ, mfderiv I 𝓘(ℝ, ℝ) (ρ j) x) := by
-    apply HasMFDerivAt.sum
-    intro j _hj
-    exact (hρ j).hasMFDerivAt
+    simpa using
+      (HasMFDerivAt.sum (t := Finset.univ) (f := ρ)
+        (f' := fun j ↦
+          (mfderiv I 𝓘(ℝ, ℝ) (ρ j) x : TangentSpace I x →L[ℝ] ℝ))
+        (fun j _hj ↦ (hρ j).hasMFDerivAt))
   have hfun : (∑ j : κ, ρ j) = fun _y : M ↦ (1 : ℝ) := by
     funext y
     simpa only [Finset.sum_apply] using hsum y
-  have hraw : (∑ j : κ, mfderiv I 𝓘(ℝ, ℝ) (ρ j) x) = 0 := by
+  have hraw : (∑ j : κ,
+      (mfderiv I 𝓘(ℝ, ℝ) (ρ j) x : TangentSpace I x →L[ℝ] ℝ)) =
+      (0 : TangentSpace I x →L[ℝ] ℝ) := by
     calc
       (∑ j : κ, mfderiv I 𝓘(ℝ, ℝ) (ρ j) x) =
           mfderiv I 𝓘(ℝ, ℝ) (∑ j : κ, ρ j) x := hhas.mfderiv.symm
@@ -90,7 +94,7 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
   apply ContinuousLinearMap.ext
   intro v
   have hv := congrArg
-    (fun L : TangentSpace I x →L[ℝ] TangentSpace 𝓘(ℝ, ℝ) (1 : ℝ) ↦ L v)
+    (fun L : TangentSpace I x →L[ℝ] ℝ ↦ L v)
     hraw
   simpa only [riemannianRealMFDeriv,
     ContinuousLinearMap.sum_apply, ContinuousLinearMap.comp_apply,
