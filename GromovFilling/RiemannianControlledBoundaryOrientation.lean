@@ -342,7 +342,7 @@ theorem controlledBoundaryChartAreaSymplecticDensity_eq_zero_of_mem_rightOpen_of
 /-- For a Lipschitz finite complex map, Rademacher on the controlled chart
 domain supplies the chart-sign conversion almost everywhere. -/
 theorem ControlledBoundaryAtlasOrientation.chartSign_mul_integral_symplecticDensity_eq_area_of_lipschitzWith
-    [Nonempty M]
+    [Nonempty M] [MeasurableSpace M] [BorelSpace M]
     {ι : Type uι} [Fintype ι]
     {P : FiniteControlledBoundaryChartPartition M}
     (O : ControlledBoundaryAtlasOrientation P) (i : P.ι)
