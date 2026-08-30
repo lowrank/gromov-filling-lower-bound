@@ -230,6 +230,8 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaSymple
       FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas_domain]
       using h
   have hμInterior : ∀ᵐ x ∂μ, x ∈ I.interior M := by
+    change ∀ᵐ x ∂riemannianSurfaceAreaMeasure I,
+      x ∈ I.interior M
     rw [← riemannianSurfaceAreaMeasure_restrict_interior I]
     exact ae_restrict_mem (I.isOpen_interior one_ne_zero).measurableSet
   have hqzero : ∀ᵐ x ∂μ, x ∉ U → q x = 0 := by
@@ -238,6 +240,8 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaSymple
     · simp only [q, hpartition, zero_mul]
     · exfalso
       apply hxU
+      change x ∈ interiorComplexExtChart I e (P.center i) ''
+        chosenControlledInteriorComplexChartDomain I e (P.center i)
       rw [chosenControlledInteriorComplexChartDomain,
         image_controlledInteriorComplexChartDomain]
       exact ⟨P.controlledSubordinate i (subset_closure hpartition), hxInterior⟩
@@ -260,8 +264,13 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaSymple
       hsFullMeas hsSubsetFull
     rintro z ⟨hzFull, hzs⟩
     have hzInterior : F z ∈ I.interior M := by
-      exact (image_interiorComplexExtChartDomain I e (P.center i) ▸
-        ⟨z, hzFull, rfl⟩).2
+      have hzImage :
+          interiorComplexExtChart I e (P.center i) z ∈
+            interiorComplexExtChart I e (P.center i) ''
+              interiorComplexExtChartDomain I e (P.center i) :=
+        ⟨z, hzFull, rfl⟩
+      rw [image_interiorComplexExtChartDomain I e (P.center i)] at hzImage
+      simpa only [F] using hzImage.2
     have hzNotImage : F z ∉ U := by
       rintro ⟨w, hw, hwz⟩
       have hwFull : w ∈ sFull := hsSubsetFull hw
@@ -272,6 +281,8 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaSymple
     have hpartition : P.partition i (F z) = 0 := by
       by_contra hp
       apply hzNotImage
+      change F z ∈ interiorComplexExtChart I e (P.center i) ''
+        chosenControlledInteriorComplexChartDomain I e (P.center i)
       rw [chosenControlledInteriorComplexChartDomain,
         image_controlledInteriorComplexChartDomain]
       exact ⟨P.controlledSubordinate i (subset_closure hp), hzInterior⟩
@@ -339,6 +350,10 @@ theorem sum_integral_controlledBoundaryChartAreaSymplecticDensity_eq_surface
     (P : FiniteControlledBoundaryChartPartition M)
     (O : ControlledBoundaryAtlasOrientation P) (G : M → ι → ℂ)
     {CG : ℝ≥0} (hG : LipschitzWith CG G) :
+    letI : Nonempty (ControlledInteriorAtlas
+        (modelWithCornersEuclideanHalfSpace 2) M) :=
+      nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartition P
+        (Classical.choice inferInstance)
     let q : M → ℝ := fun x ↦
       orientedFiniteComplexRiemannianSymplecticDensity
         (modelWithCornersEuclideanHalfSpace 2) O.tangentOrientation G x
@@ -369,7 +384,7 @@ theorem sum_integral_controlledBoundaryChartAreaSymplecticDensity_eq_surface
   have hq : Integrable q μ := by
     apply (integrable_finset_sum Finset.univ fun i _hi ↦ hqi i).congr
     filter_upwards with x
-    exact (hsumPoint x).symm
+    exact hsumPoint x
   refine ⟨hq, ?_⟩
   calc
     (∑ i, ∫ z in complexRightOpenHalfPlane,
