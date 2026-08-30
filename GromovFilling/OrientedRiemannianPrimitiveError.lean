@@ -68,7 +68,7 @@ def orientedFiniteComplexRiemannianPrimitiveErrorDensity
 /-- The Riemannian differentials of finitely many differentiable real
 cutoffs sum to zero when the cutoffs add pointwise to one. -/
 theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
-    {E H M : Type*} {κ : Type}
+    {E H M κ : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [TopologicalSpace M] [ChartedSpace H M]
