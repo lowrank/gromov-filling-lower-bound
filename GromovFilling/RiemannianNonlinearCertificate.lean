@@ -143,9 +143,54 @@ theorem ControlledBoundaryAtlasBoundaryPhase.nonlinearCertificate_le_surfaceArea
       exact oriented_area_ge_nonlinearCertificate hlam0 hlam hcalibration
     exact ENNReal.ofReal_le_of_le_toReal hreal
 
+/-- The exact strict decimal endpoint of the nonlinear certificate once the
+oriented controlled atlas and its compatible boundary phases are supplied. -/
+theorem ControlledBoundaryAtlasBoundaryPhase.surfaceArea_gt_point_zero_three
+    {M : Type uM} [PseudoMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
+    [CompactSpace M] [Nonempty M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) ∞ M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace
+      (modelWithCornersEuclideanHalfSpace 2) x)]
+    [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))
+      (fun x : M ↦ TangentSpace
+        (modelWithCornersEuclideanHalfSpace 2) x)]
+    [IsRiemannianManifold (modelWithCornersEuclideanHalfSpace 2) M]
+    {P : FiniteControlledBoundaryChartPartition M}
+    {O : ControlledBoundaryAtlasOrientation P}
+    {boundary : UnitAddCircle → M}
+    (B : ControlledBoundaryAtlasBoundaryPhase P O boundary)
+    (hboundary : IsometricCircleBoundary boundary) :
+    letI : Nonempty (ControlledInteriorAtlas
+        (modelWithCornersEuclideanHalfSpace 2) M) :=
+      nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartition P
+        (Classical.choice inferInstance)
+    ENNReal.ofReal (538982446 / 100000000 : ℝ) <
+      riemannianSurfaceAreaMeasure
+        (modelWithCornersEuclideanHalfSpace 2) (Set.univ : Set M) := by
+  letI : Nonempty (ControlledInteriorAtlas
+      (modelWithCornersEuclideanHalfSpace 2) M) :=
+    nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartition P
+      (Classical.choice inferInstance)
+  have hcertificate :=
+    B.nonlinearCertificate_le_surfaceArea hboundary (3 / 100)
+      (by norm_num) lambda_point_zero_three_admissible
+  have hcertificatePos : 0 < nonlinearCertificate (3 / 100) :=
+    (by norm_num : (0 : ℝ) < 538982446 / 100000000).trans
+      nonlinearCertificate_point_zero_three_gt
+  have hnumeric :
+      ENNReal.ofReal (538982446 / 100000000 : ℝ) <
+        ENNReal.ofReal (nonlinearCertificate (3 / 100)) := by
+    rw [ENNReal.ofReal_lt_ofReal_iff hcertificatePos]
+    exact nonlinearCertificate_point_zero_three_gt
+  exact hnumeric.trans_le hcertificate
+
 end
 
 end GromovFilling
 
 #print axioms
   GromovFilling.ControlledBoundaryAtlasBoundaryPhase.nonlinearCertificate_le_surfaceArea
+#print axioms
+  GromovFilling.ControlledBoundaryAtlasBoundaryPhase.surfaceArea_gt_point_zero_three
