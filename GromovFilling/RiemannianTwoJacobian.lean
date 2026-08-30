@@ -374,6 +374,7 @@ theorem riemannianTwoJacobianBetween_eq_abs_areaForm
     [RiemannianBundle (fun x : M₂ ↦ TangentSpace I₂ x)]
     [Fact (Module.finrank ℝ E₂ = 2)]
     (G : M₁ → M₂) (x : M₁)
+    [Fact (Module.finrank ℝ (TangentSpace I₂ (G x)) = 2)]
     (e : OrthonormalBasis (Fin 2) ℝ (TangentSpace I₁ x))
     (o : Orientation ℝ (TangentSpace I₂ (G x)) (Fin 2)) :
     riemannianTwoJacobianBetween I₁ I₂ G x =
@@ -382,8 +383,6 @@ theorem riemannianTwoJacobianBetween_eq_abs_areaForm
         (mfderiv I₁ I₂ G x (e 1))| := by
   letI : Fact (Module.finrank ℝ (TangentSpace I₁ x) = 2) :=
     ⟨tangentSpace_finrank_eq_two I₁ x⟩
-  letI : Fact (Module.finrank ℝ (TangentSpace I₂ (G x)) = 2) :=
-    ⟨tangentSpace_finrank_eq_two I₂ (G x)⟩
   unfold riemannianTwoJacobianBetween
   simpa only [riemannianMFDerivBetween_apply] using
     twoJacobian_eq_abs_areaForm e o
