@@ -92,8 +92,10 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
           simpa using
             (hasMFDerivAt_const (I := I) (I' := 𝓘(ℝ, ℝ)) (0 : ℝ) x)
       | @insert j s hjs ih =>
-          simpa [Finset.sum_insert, hjs] using
-            (hρ j).hasMFDerivAt.add ih
+          convert (hρ j).hasMFDerivAt.add ih using 1
+          · funext y
+            simp [Finset.sum_insert, hjs]
+          · simp [Finset.sum_insert, hjs]
     simpa using hhasFinset Finset.univ
   have hfun : (∑ j : κ, ρ j) = fun _y : M ↦ (1 : ℝ) := by
     funext y
