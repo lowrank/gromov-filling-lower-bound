@@ -1,3 +1,4 @@
+import GromovFilling.FiniteSymplecticChartTransition
 import GromovFilling.OrientedRiemannianDensity
 import GromovFilling.RiemannianChartDensity
 
@@ -91,6 +92,51 @@ def orientedComplexTangentOrthonormalBasis (z : ℂ) :
       Complex.orthonormalBasisOneI i := by
   rfl
 
+/-- The Riemannian differential of a complex-valued manifold map, applied
+after a differentiable complex parametrization, is the ordinary derivative
+of the coordinate pullback. -/
+theorem fderiv_comp_parametrization_eq_riemannianComplexMFDeriv
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    (G : M → ℂ) (F : ℂ → M) (z v : ℂ)
+    (hF : MDifferentiableAt 𝒘(ℝ, ℂ) I F z)
+    (hG : MDifferentiableAt I 𝒘(ℝ, ℂ) G (F z)) :
+    fderiv ℝ (G ∘ F) z v =
+      riemannianComplexMFDeriv I G (F z)
+        (riemannianMFDerivBetween 𝒘(ℝ, ℂ) I F z v) := by
+  have hcomp := mfderiv_comp_apply z hG hF v
+  simpa only [riemannianComplexMFDeriv,
+    riemannianMFDerivBetween_apply, ContinuousLinearMap.comp_apply,
+    mfderiv_eq_fderiv] using hcomp
+
+/-- Coordinatewise manifold chain rule for a finite complex-valued map. -/
+theorem fderiv_finiteComplex_comp_parametrization
+    {E H M ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fintype ι] [Finite ι]
+    (G : M → ι → ℂ) (F : ℂ → M) (z : ℂ)
+    (hF : MDifferentiableAt 𝒘(ℝ, ℂ) I F z)
+    (hG : ∀ i : ι,
+      MDifferentiableAt I 𝒘(ℝ, ℂ) (fun x ↦ G x i) (F z)) :
+    fderiv ℝ (G ∘ F) z =
+      (finiteComplexRiemannianDerivative I G (F z)).comp
+        (riemannianMFDerivBetween 𝒘(ℝ, ℂ) I F z) := by
+  have hcoord : ∀ i : ι,
+      DifferentiableAt ℝ ((fun x ↦ G x i) ∘ F) z :=
+    fun i ↦ ((hG i).comp z hF).differentiableAt
+  rw [show G ∘ F =
+      (fun w i ↦ ((fun x ↦ G x i) ∘ F) w) from rfl,
+    fderiv_pi hcoord]
+  ext v i
+  simp only [ContinuousLinearMap.pi_apply, ContinuousLinearMap.comp_apply,
+    finiteComplexRiemannianDerivative]
+  exact fderiv_comp_parametrization_eq_riemannianComplexMFDeriv
+    I (fun x ↦ G x i) F z v hF (hG i)
+
 /-- The signed Riemannian Jacobian of a complex parametrization relative to
 the selected target orientation. -/
 def orientedRiemannianChartJacobian
@@ -163,6 +209,33 @@ def finiteComplexRiemannianChartPullbackDensity
       (riemannianMFDerivBetween 𝒘(ℝ, ℂ) I F z
         (orientedComplexTangentOrthonormalBasis z 1)))
 
+/-- At a differentiability point, the ordinary planar `fderiv` density of
+the coordinate pullback is exactly the Riemannian chart pullback density. -/
+theorem finiteSymplecticFDerivDensity_comp_parametrization
+    {E H M ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)] [Fintype ι] [Finite ι]
+    (G : M → ι → ℂ) (F : ℂ → M) (z : ℂ)
+    (hF : MDifferentiableAt 𝒘(ℝ, ℂ) I F z)
+    (hG : ∀ i : ι,
+      MDifferentiableAt I 𝒘(ℝ, ℂ) (fun x ↦ G x i) (F z)) :
+    finiteSymplecticFDerivDensity (G ∘ F) z =
+      finiteComplexRiemannianChartPullbackDensity I G F z := by
+  have h0 : orientedComplexTangentOrthonormalBasis z 0 = (1 : ℂ) := by
+    rw [orientedComplexTangentOrthonormalBasis_apply,
+      Complex.coe_orthonormalBasisOneI]
+    rfl
+  have h1 : orientedComplexTangentOrthonormalBasis z 1 = Complex.I := by
+    rw [orientedComplexTangentOrthonormalBasis_apply,
+      Complex.coe_orthonormalBasisOneI]
+    rfl
+  unfold finiteSymplecticFDerivDensity
+    finiteComplexRiemannianChartPullbackDensity
+  rw [fderiv_finiteComplex_comp_parametrization I G F z hF hG]
+  simp only [ContinuousLinearMap.comp_apply, h0, h1]
+
 /-- In an oriented Riemannian chart, the signed planar pullback density is
 the signed chart Jacobian times the intrinsic oriented density. -/
 theorem finiteComplexRiemannianChartPullbackDensity_eq_jacobian_mul
@@ -190,6 +263,25 @@ theorem finiteComplexRiemannianChartPullbackDensity_eq_jacobian_mul
       (riemannianMFDerivBetween 𝒘(ℝ, ℂ) I F z
         (orientedComplexTangentOrthonormalBasis z 1)))
 
+/-- The planar Fréchet-derivative density of a differentiable coordinate
+pullback factors into signed chart Jacobian and intrinsic oriented density. -/
+theorem finiteSymplecticFDerivDensity_comp_parametrization_eq_jacobian_mul
+    {E H M ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)] [Fintype ι] [Finite ι]
+    (o : RiemannianTangentPlaneOrientation I M)
+    (G : M → ι → ℂ) (F : ℂ → M) (z : ℂ)
+    (hF : MDifferentiableAt 𝒘(ℝ, ℂ) I F z)
+    (hG : ∀ i : ι,
+      MDifferentiableAt I 𝒘(ℝ, ℂ) (fun x ↦ G x i) (F z)) :
+    finiteSymplecticFDerivDensity (G ∘ F) z =
+      orientedRiemannianChartJacobian I o F z *
+        orientedFiniteComplexRiemannianSymplecticDensity I o G (F z) := by
+  rw [finiteSymplecticFDerivDensity_comp_parametrization I G F z hF hG,
+    finiteComplexRiemannianChartPullbackDensity_eq_jacobian_mul]
+
 /-- Absolute planar pullback density factors into the metric chart
 Jacobian and the absolute intrinsic symplectic density. -/
 theorem abs_finiteComplexRiemannianChartPullbackDensity_eq_twoJacobian_mul
@@ -211,6 +303,10 @@ theorem abs_finiteComplexRiemannianChartPullbackDensity_eq_twoJacobian_mul
 #print axioms abs_orientedRiemannianChartJacobian_eq_twoJacobian
 #print axioms ofReal_abs_orientedRiemannianChartJacobian_eq_chartDensity
 #print axioms finiteComplexRiemannianChartPullbackDensity_eq_jacobian_mul
+#print axioms fderiv_comp_parametrization_eq_riemannianComplexMFDeriv
+#print axioms fderiv_finiteComplex_comp_parametrization
+#print axioms finiteSymplecticFDerivDensity_comp_parametrization
+#print axioms finiteSymplecticFDerivDensity_comp_parametrization_eq_jacobian_mul
 #print axioms abs_finiteComplexRiemannianChartPullbackDensity_eq_twoJacobian_mul
 
 end
