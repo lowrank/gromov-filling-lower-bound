@@ -22,8 +22,6 @@ namespace GromovFilling
 
 noncomputable section
 
-attribute [local instance] normedAddCommGroupTangentSpaceVectorSpace
-attribute [local instance] normedSpaceTangentSpaceVectorSpace
 attribute [local instance] Complex.finrank_real_complex_fact
 
 /-- A top-degree finite symplectic pullback is its value in a positive
@@ -148,8 +146,10 @@ def orientedRiemannianChartJacobian
     [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
     [Fact (Module.finrank ℝ E = 2)]
     (o : RiemannianTangentPlaneOrientation I M)
-    (F : ℂ → M) (z : ℂ) : ℝ :=
-  (o.orientation (F z)).areaForm
+    (F : ℂ → M) (z : ℂ) : ℝ := by
+  letI : Fact (Module.finrank ℝ (TangentSpace I (F z)) = 2) :=
+    ⟨tangentSpace_finrank_eq_two I (F z)⟩
+  exact (o.orientation (F z)).areaForm
     (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z
       (orientedComplexTangentOrthonormalBasis z 0))
     (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z
@@ -226,13 +226,11 @@ theorem finiteSymplecticFDerivDensity_comp_parametrization
     finiteSymplecticFDerivDensity (G ∘ F) z =
       finiteComplexRiemannianChartPullbackDensity I G F z := by
   have h0 : orientedComplexTangentOrthonormalBasis z 0 = (1 : ℂ) := by
-    rw [orientedComplexTangentOrthonormalBasis_apply,
-      Complex.coe_orthonormalBasisOneI]
-    rfl
+    rw [orientedComplexTangentOrthonormalBasis_apply]
+    simpa using congrFun Complex.coe_orthonormalBasisOneI (0 : Fin 2)
   have h1 : orientedComplexTangentOrthonormalBasis z 1 = Complex.I := by
-    rw [orientedComplexTangentOrthonormalBasis_apply,
-      Complex.coe_orthonormalBasisOneI]
-    rfl
+    rw [orientedComplexTangentOrthonormalBasis_apply]
+    simpa using congrFun Complex.coe_orthonormalBasisOneI (1 : Fin 2)
   unfold finiteSymplecticFDerivDensity
     finiteComplexRiemannianChartPullbackDensity
   rw [fderiv_finiteComplex_comp_parametrization I G F z hF hG]
