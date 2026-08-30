@@ -927,9 +927,35 @@ theorem areaMeasure_eq
       exact (B.chartAreaMeasure_piece_eq_sum_restrict_imagePiece I A j).symm
 
 /-- A globally Lipschitz surface map is manifold-differentiable almost
-everywhere along every disjoint controlled chart piece.  Rademacher is
-applied to the planar pullback and the local inverse-chart field transfers
-the result back to the manifold. -/
+everywhere on each full controlled chart domain.  Rademacher is applied to
+the planar pullback and the local inverse-chart field transfers the result
+back to the manifold. -/
+theorem ae_mdifferentiableAt_of_lipschitzWith_on_domain
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [MeasurableSpace M] [BorelSpace M]
+    [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M]
+    (A : ControlledInteriorAtlas I M) (G : M → ℂ)
+    {KG : ℝ≥0} (hG : LipschitzWith KG G) (i : ℕ) :
+    ∀ᵐ z ∂volume.restrict (A.domain i),
+      MDifferentiableAt I 𝓘(ℝ, ℂ) G (A.parametrization i z) := by
+  have hLipschitz : LipschitzOnWith
+      (KG * A.lipschitzConstant i) (G ∘ A.parametrization i)
+      (A.domain i) :=
+    hG.comp_lipschitzOnWith (A.lipschitzOnWith_parametrization i)
+  have hdiffWithin := hLipschitz.ae_differentiableWithinAt (μ := volume)
+    (A.isOpen_domain i).measurableSet
+  filter_upwards [ae_restrict_mem (A.isOpen_domain i).measurableSet,
+    hdiffWithin] with z hz hdiff
+  exact A.mdifferentiableAt_of_differentiableAt_comp i G z hz
+    (hdiff.differentiableAt ((A.isOpen_domain i).mem_nhds hz))
+
+/-- Restricting the full-domain Rademacher statement gives manifold
+differentiability almost everywhere on every disjoint controlled chart
+piece. -/
 theorem ae_mdifferentiableAt_of_lipschitzWith
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
@@ -942,21 +968,9 @@ theorem ae_mdifferentiableAt_of_lipschitzWith
     {KG : ℝ≥0} (hG : LipschitzWith KG G) (i : ℕ) :
     ∀ᵐ z ∂volume.restrict (A.piece I i),
       MDifferentiableAt I 𝓘(ℝ, ℂ) G (A.parametrization i z) := by
-  have hLipschitz : LipschitzOnWith
-      (KG * A.lipschitzConstant i) (G ∘ A.parametrization i)
-      (A.domain i) :=
-    hG.comp_lipschitzOnWith (A.lipschitzOnWith_parametrization i)
-  have hdiffWithin := hLipschitz.ae_differentiableWithinAt (μ := volume)
-    (A.isOpen_domain i).measurableSet
-  have hdiffDomain : ∀ᵐ z ∂volume.restrict (A.domain i),
-      MDifferentiableAt I 𝓘(ℝ, ℂ) G (A.parametrization i z) := by
-    filter_upwards [ae_restrict_mem (A.isOpen_domain i).measurableSet,
-      hdiffWithin] with z hz hdiff
-    exact A.mdifferentiableAt_of_differentiableAt_comp i G z hz
-      (hdiff.differentiableAt ((A.isOpen_domain i).mem_nhds hz))
   exact ae_mono
     (Measure.restrict_mono (A.piece_subset_domain I i) le_rfl)
-      hdiffDomain
+      (A.ae_mdifferentiableAt_of_lipschitzWith_on_domain I G hG i)
 
 /-- The intrinsic two-Jacobian of a globally Lipschitz map is almost
 everywhere measurable for every controlled chart contribution.  The proof
