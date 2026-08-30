@@ -26,7 +26,7 @@ local instance controlledSurfaceOrientationEuclideanFinrankTwo :
 
 variable {M : Type uM} [PseudoEMetricSpace M]
   [ChartedSpace (EuclideanHalfSpace 2) M]
-  [IsManifold (modelWithCornersEuclideanHalfSpace 2) ∞ M]
+  [IsManifold (modelWithCornersEuclideanHalfSpace 2) (⊤ : WithTop ℕ∞) M]
   [RiemannianBundle (fun x : M ↦ TangentSpace
     (modelWithCornersEuclideanHalfSpace 2) x)]
   [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))
@@ -40,7 +40,7 @@ for one particular finite partition. -/
 structure ControlledRiemannianSurfaceOrientation (M : Type uM)
     [PseudoEMetricSpace M]
     [ChartedSpace (EuclideanHalfSpace 2) M]
-    [IsManifold (modelWithCornersEuclideanHalfSpace 2) ∞ M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) (⊤ : WithTop ℕ∞) M]
     [RiemannianBundle (fun x : M ↦ TangentSpace
       (modelWithCornersEuclideanHalfSpace 2) x)]
     [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))
