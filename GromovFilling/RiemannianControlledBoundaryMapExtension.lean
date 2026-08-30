@@ -53,8 +53,9 @@ theorem controlledHalfSpaceOuterOpenHalfBall_subset_closed (x : M) :
       controlledHalfSpaceOuterClosedHalfBall x := by
   rintro z ⟨hzBall, hzRight⟩
   refine ⟨mem_closedBall.mpr (mem_ball.mp hzBall).le, ?_⟩
-  simpa only [complexRightOpenHalfPlane,
-    complexRightClosedHalfPlane] using hzRight.le
+  change 0 ≤ z.re
+  change 0 < z.re at hzRight
+  exact hzRight.le
 
 /-- The closed inner support half-ball lies strictly inside the open outer
 half-ball away from the boundary axis. -/
@@ -99,7 +100,7 @@ theorem exists_controlledBoundaryChartMapExtension
   obtain ⟨F, hF, hEq⟩ :=
     (lipschitzOnWith_controlledBoundaryChartMap_outerClosedHalfBall
       G hG x).extend_finite_dimension
-  exact ⟨_, F, hF, hEq⟩
+  exact ⟨_, F, hF, hEq.symm⟩
 
 #print axioms controlledHalfSpaceOuterOpenHalfBall_subset_closed
 #print axioms
