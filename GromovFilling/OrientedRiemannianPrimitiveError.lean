@@ -81,9 +81,36 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
   have hhas : HasMFDerivAt I 𝓘(ℝ, ℝ)
       (∑ j : κ, ρ j) x
       (∑ j : κ, mfderiv I 𝓘(ℝ, ℝ) (ρ j) x) := by
-    apply HasMFDerivAt.sum
-    intro j _hj
-    exact (hρ j).hasMFDerivAt
+    have hfinite : ∀ s : Finset κ,
+        HasMFDerivAt I 𝓘(ℝ, ℝ)
+          (∑ j ∈ s, ρ j) x
+          (∑ j ∈ s,
+            (mfderiv I 𝓘(ℝ, ℝ) (ρ j) x :
+              TangentSpace I x →L[ℝ] ℝ)) := by
+      intro s
+      induction s using Finset.induction_on with
+      | empty =>
+          simpa using
+            (hasMFDerivAt_const (I := I) (I' := 𝓘(ℝ, ℝ))
+              (0 : ℝ) x)
+      | @insert j s hj ih =>
+          have hfun_insert :
+              (∑ k ∈ insert j s, ρ k) =
+                ρ j + ∑ k ∈ s, ρ k := by
+            rw [Finset.sum_insert hj]
+          have hderiv_insert :
+              (∑ k ∈ insert j s,
+                  (mfderiv I 𝓘(ℝ, ℝ) (ρ k) x :
+                    TangentSpace I x →L[ℝ] ℝ)) =
+                (mfderiv I 𝓘(ℝ, ℝ) (ρ j) x :
+                    TangentSpace I x →L[ℝ] ℝ) +
+                  ∑ k ∈ s,
+                    (mfderiv I 𝓘(ℝ, ℝ) (ρ k) x :
+                      TangentSpace I x →L[ℝ] ℝ) := by
+            rw [Finset.sum_insert hj]
+          rw [hfun_insert, hderiv_insert]
+          exact (hρ j).hasMFDerivAt.add ih
+    simpa using hfinite Finset.univ
   have hfun : (∑ j : κ, ρ j) = fun _y : M ↦ (1 : ℝ) := by
     funext y
     simpa only [Finset.sum_apply] using hsum y
