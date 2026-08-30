@@ -66,6 +66,7 @@ import GromovFilling.Oriented
 import GromovFilling.OrientedFiniteResonantComassLimit
 import GromovFilling.OrientedRiemannianChartDensity
 import GromovFilling.OrientedRiemannianDensity
+import GromovFilling.OrientedRiemannianDensityMeasurable
 import GromovFilling.PlanarCertificate
 import GromovFilling.PolygonalSurfaceObstruction
 import GromovFilling.PolynomialDiskArea
