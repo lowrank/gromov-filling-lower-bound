@@ -47,6 +47,34 @@ def FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas
   refine Set.mem_iUnion.mpr ⟨Fintype.equivFin P.ι i, ?_⟩
   simpa only [centers, Equiv.symm_apply_apply] using hi
 
+/-- The atlas chart indexed by the finite reindexing of a partition index is
+the interior inverse chart at the same center. -/
+@[simp] theorem FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas_parametrization
+    (P : FiniteControlledBoundaryChartPartition M) (fallback : M)
+    (i : P.ι) :
+    (P.toControlledInteriorAtlas fallback).parametrization
+        (Fintype.equivFin P.ι i) =
+      interiorComplexExtChart
+        (modelWithCornersEuclideanHalfSpace 2)
+        Complex.orthonormalBasisOneI.repr (P.center i) := by
+  simp [FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas,
+    controlledInteriorAtlasOfFinCover,
+    finControlledInteriorParametrization]
+
+/-- The corresponding reindexed atlas domain is exactly the chosen
+controlled interior coordinate domain at that center. -/
+@[simp] theorem FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas_domain
+    (P : FiniteControlledBoundaryChartPartition M) (fallback : M)
+    (i : P.ι) :
+    (P.toControlledInteriorAtlas fallback).domain
+        (Fintype.equivFin P.ι i) =
+      chosenControlledInteriorComplexChartDomain
+        (modelWithCornersEuclideanHalfSpace 2)
+        Complex.orthonormalBasisOneI.repr (P.center i) := by
+  simp [FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas,
+    controlledInteriorAtlasOfFinCover,
+    finControlledInteriorDomain]
+
 /-- In particular, every controlled boundary partition canonically supplies
 a nonempty controlled atlas of the manifold interior. -/
 theorem nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartition
@@ -58,6 +86,10 @@ theorem nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartiti
 
 #print axioms
   FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas
+#print axioms
+  FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas_parametrization
+#print axioms
+  FiniteControlledBoundaryChartPartition.toControlledInteriorAtlas_domain
 #print axioms
   nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartition
 

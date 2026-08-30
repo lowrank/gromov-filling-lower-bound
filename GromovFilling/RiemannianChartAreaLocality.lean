@@ -20,6 +20,35 @@ noncomputable section
 
 namespace ControlledInteriorAtlas
 
+/-- A controlled-atlas area measure is supported on the manifold interior. -/
+theorem areaMeasure_restrict_interior
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
+    [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M] [Fact (Module.finrank ℝ E = 2)]
+    (A : ControlledInteriorAtlas I M) :
+    (A.areaMeasure I).restrict (I.interior M) = A.areaMeasure I := by
+  change (Measure.sum fun i ↦
+    riemannianChartAreaMeasure I (A.parametrization i)
+      (A.piece I i)).restrict (I.interior M) = _
+  rw [Measure.restrict_sum _
+    (I.isOpen_interior one_ne_zero).measurableSet]
+  apply congrArg Measure.sum
+  funext i
+  exact restrict_riemannianChartAreaMeasure_of_image_subset
+    I (A.parametrization i) (A.piece I i)
+      (A.measurableSet_piece I i)
+      (I.interior M) (I.isOpen_interior one_ne_zero).measurableSet
+      (((A.continuousOn_parametrization i).mono
+        (A.piece_subset_domain I i)).aemeasurable
+          (A.measurableSet_piece I i))
+      ((image_mono (A.piece_subset_domain I i)).trans
+        (A.image_subset_interior i))
+
 /-- Restricting an arbitrary measurable subpiece of one controlled chart to
 an arbitrary measurable subpiece of a second chart can be computed on the
 open coordinate overlap. -/
@@ -181,10 +210,31 @@ theorem riemannianSurfaceAreaMeasure_restrict_chart_image
   rw [← A.areaMeasure_eq_riemannianSurfaceAreaMeasure I]
   exact A.areaMeasure_restrict_chart_image I i
 
+/-- Canonical Riemannian surface area is concentrated on the manifold
+interior; the boundary has zero canonical area by construction. -/
+theorem riemannianSurfaceAreaMeasure_restrict_interior
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [PseudoEMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
+    [ChartedSpace H M] [IsManifold I 1 M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContinuousRiemannianBundle E (fun x : M ↦ TangentSpace I x)]
+    [IsRiemannianManifold I M] [Fact (Module.finrank ℝ E = 2)]
+    [Nonempty (ControlledInteriorAtlas I M)] :
+    (riemannianSurfaceAreaMeasure I).restrict (I.interior M) =
+      riemannianSurfaceAreaMeasure I := by
+  let A : ControlledInteriorAtlas I M :=
+    Classical.choice (inferInstance : Nonempty (ControlledInteriorAtlas I M))
+  rw [← A.areaMeasure_eq_riemannianSurfaceAreaMeasure I]
+  exact A.areaMeasure_restrict_interior I
+
 #print axioms
   ControlledInteriorAtlas.restrict_chartAreaMeasure_subset_eq_restrict_overlap
+#print axioms ControlledInteriorAtlas.areaMeasure_restrict_interior
 #print axioms ControlledInteriorAtlas.areaMeasure_restrict_chart_image
 #print axioms riemannianSurfaceAreaMeasure_restrict_chart_image
+#print axioms riemannianSurfaceAreaMeasure_restrict_interior
 
 end
 
