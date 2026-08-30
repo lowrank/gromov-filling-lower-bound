@@ -329,8 +329,13 @@ theorem controlledBoundaryChartAreaPrimitiveErrorDensity_eq_zero_of_mem_rightOpe
         controlledInteriorComplexChartDomain_subset_interiorComplexExtChartDomain
           I e (chosenInteriorChartControl I (P.center i))
     have hzInterior : F z ∈ I.interior M := by
-      exact (image_interiorComplexExtChartDomain I e (P.center i) ▸
-        ⟨z, hzFull, rfl⟩).2
+      have hzImage :
+          interiorComplexExtChart I e (P.center i) z ∈
+            interiorComplexExtChart I e (P.center i) ''
+              interiorComplexExtChartDomain I e (P.center i) :=
+        ⟨z, hzFull, rfl⟩
+      rw [image_interiorComplexExtChartDomain I e (P.center i)] at hzImage
+      simpa only [F] using hzImage.2
     have hzNotS : z ∉ s := by
       simpa only [s, I, e] using hzControlled
     have hzNotImage : F z ∉ F '' s := by
@@ -491,7 +496,7 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaPrimit
   let q : M → ℝ := fun x ↦
     orientedFiniteComplexRiemannianPrimitiveErrorDensity
       I O.tangentOrientation (P.partition i) G x
-  let μ := riemannianSurfaceAreaMeasure I
+  let μ : Measure M := riemannianSurfaceAreaMeasure I
   let A : ControlledInteriorAtlas I M :=
     P.toControlledInteriorAtlas (Classical.choice inferInstance)
   let k : ℕ := (Fintype.equivFin P.ι i : Fin (Fintype.card P.ι))
