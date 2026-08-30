@@ -27,6 +27,10 @@ noncomputable section
 
 universe uM
 
+local instance controlledBoundaryResonantActionEuclideanFinrankTwo :
+    Fact (Module.finrank ℝ (EuclideanSpace ℝ (Fin 2)) = 2) :=
+  ⟨by simp⟩
+
 variable {M : Type uM} [PseudoEMetricSpace M] [T2Space M]
   [MeasurableSpace M] [BorelSpace M]
   [ChartedSpace (EuclideanHalfSpace 2) M]
