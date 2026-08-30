@@ -12,7 +12,7 @@ localized symplectic primitive errors after chartwise Stokes.
 -/
 
 open Bundle Function Manifold Set
-open scoped BigOperators Manifold
+open scoped BigOperators ContDiff Manifold
 
 namespace GromovFilling
 
@@ -107,7 +107,7 @@ theorem FiniteBoundaryChartPartition.tsupport_partition_subset_halfSpaceChart_im
 theorem FiniteBoundaryChartPartition.hasCompactSupport_partition
     [CompactSpace M] (P : FiniteBoundaryChartPartition M) (i : P.ι) :
     HasCompactSupport (P.partition i) :=
-  isClosed_tsupport.isCompact
+  (isClosed_tsupport (P.partition i)).isCompact
 
 /-- The derivative of a finite family of differentiable cutoffs adds to zero
 whenever the cutoffs add pointwise to one.  This is the exact cancellation
@@ -124,7 +124,8 @@ theorem sum_fderiv_eq_zero_of_sum_eq_one
   have hfun : (fun y ↦ ∑ i, ρ i y) = fun _y : E ↦ (1 : ℝ) := by
     funext y
     exact hsum y
-  rw [hfun, fderiv_const]
+  rw [hfun]
+  exact (hasFDerivAt_const (𝕜 := ℝ) (1 : ℝ) x).fderiv
 
 end
 
