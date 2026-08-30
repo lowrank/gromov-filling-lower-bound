@@ -357,6 +357,38 @@ def riemannianTwoJacobianBetween
     ⟨tangentSpace_finrank_eq_two I₂ (G x)⟩
   exact twoJacobian (riemannianMFDerivBetween I₁ I₂ G x)
 
+/-- The intrinsic Riemannian two-Jacobian is the absolute target area of the
+two derivative columns in any orthonormal source frame.  Keeping this
+specialization next to the definition avoids downstream unfolding of the
+Riemannian tangent-space instances. -/
+theorem riemannianTwoJacobianBetween_eq_abs_areaForm
+    {E₁ H₁ M₁ E₂ H₂ M₂ : Type*}
+    [NormedAddCommGroup E₁] [NormedSpace ℝ E₁]
+    [TopologicalSpace H₁] (I₁ : ModelWithCorners ℝ E₁ H₁)
+    [TopologicalSpace M₁] [ChartedSpace H₁ M₁]
+    [RiemannianBundle (fun x : M₁ ↦ TangentSpace I₁ x)]
+    [Fact (Module.finrank ℝ E₁ = 2)]
+    [NormedAddCommGroup E₂] [NormedSpace ℝ E₂]
+    [TopologicalSpace H₂] (I₂ : ModelWithCorners ℝ E₂ H₂)
+    [TopologicalSpace M₂] [ChartedSpace H₂ M₂]
+    [RiemannianBundle (fun x : M₂ ↦ TangentSpace I₂ x)]
+    [Fact (Module.finrank ℝ E₂ = 2)]
+    (G : M₁ → M₂) (x : M₁)
+    (e : OrthonormalBasis (Fin 2) ℝ (TangentSpace I₁ x))
+    (o : Orientation ℝ (TangentSpace I₂ (G x)) (Fin 2)) :
+    riemannianTwoJacobianBetween I₁ I₂ G x =
+      |o.areaForm
+        (mfderiv I₁ I₂ G x (e 0))
+        (mfderiv I₁ I₂ G x (e 1))| := by
+  letI : Fact (Module.finrank ℝ (TangentSpace I₁ x) = 2) :=
+    ⟨tangentSpace_finrank_eq_two I₁ x⟩
+  letI : Fact (Module.finrank ℝ (TangentSpace I₂ (G x)) = 2) :=
+    ⟨tangentSpace_finrank_eq_two I₂ (G x)⟩
+  unfold riemannianTwoJacobianBetween
+  simpa only [riemannianMFDerivBetween_apply] using
+    twoJacobian_eq_abs_areaForm e o
+      (riemannianMFDerivBetween I₁ I₂ G x)
+
 /-- The intrinsic Riemannian two-Jacobian in an arbitrary orthonormal
 source basis, expressed without choosing a target basis.  Keeping this
 bridge next to `riemannianTwoJacobianBetween` preserves the exact scoped

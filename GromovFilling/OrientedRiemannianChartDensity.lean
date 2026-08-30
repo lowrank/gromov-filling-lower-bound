@@ -181,13 +181,10 @@ theorem abs_orientedRiemannianChartJacobian_eq_twoJacobian
     ⟨tangentSpace_finrank_eq_two 𝓘(ℝ, ℂ) z⟩
   letI : Fact (Module.finrank ℝ (TangentSpace I (F z)) = 2) :=
     ⟨tangentSpace_finrank_eq_two I (F z)⟩
-  unfold orientedRiemannianChartJacobian riemannianTwoJacobianBetween
-  simpa only [orientedRiemannianChartVector,
-    riemannianMFDerivBetween_apply] using
-    (twoJacobian_eq_abs_areaForm
-      (orientedComplexTangentOrthonormalBasis z)
-      (o.orientation (F z))
-      (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z)).symm
+  rw [riemannianTwoJacobianBetween_eq_abs_areaForm
+    𝓘(ℝ, ℂ) I F z (orientedComplexTangentOrthonormalBasis z)
+      (o.orientation (F z))]
+  rfl
 
 /-- The `ENNReal` area density forgets exactly the sign of the oriented
 chart Jacobian. -/
