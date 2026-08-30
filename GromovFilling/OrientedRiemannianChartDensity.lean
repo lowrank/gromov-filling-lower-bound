@@ -313,6 +313,32 @@ theorem abs_finiteComplexRiemannianChartPullbackDensity_eq_twoJacobian_mul
   rw [finiteComplexRiemannianChartPullbackDensity_eq_jacobian_mul,
     abs_mul, abs_orientedRiemannianChartJacobian_eq_twoJacobian]
 
+/-- In multiplicative `ℝ≥0∞` form, the absolute planar pullback density is
+the chart-area density times the canonical absolute intrinsic symplectic
+density.  This is the weighted-measurability identity used by the global
+surface-area integral. -/
+theorem ofReal_abs_finiteSymplecticFDerivDensity_comp_parametrization_eq_chartDensity_mul
+    {E H M ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [Fact (Module.finrank ℝ E = 2)] [Fintype ι] [Finite ι]
+    (o : RiemannianTangentPlaneOrientation I M)
+    (G : M → ι → ℂ) (F : ℂ → M) (z : ℂ)
+    (hF : MDifferentiableAt 𝓘(ℝ, ℂ) I F z)
+    (hG : ∀ i : ι,
+      MDifferentiableAt I 𝓘(ℝ, ℂ) (fun x ↦ G x i) (F z)) :
+    ENNReal.ofReal |finiteSymplecticFDerivDensity (G ∘ F) z| =
+      riemannianChartDensity I F z *
+        ENNReal.ofReal
+          |orientedFiniteComplexRiemannianSymplecticDensity I o G (F z)| := by
+  rw [finiteSymplecticFDerivDensity_comp_parametrization
+      I G F z hF hG,
+    abs_finiteComplexRiemannianChartPullbackDensity_eq_twoJacobian_mul,
+    ENNReal.ofReal_mul
+      (riemannianTwoJacobianBetween_nonneg 𝓘(ℝ, ℂ) I F z)]
+  rfl
+
 #print axioms finiteComplexSymplecticPullback_eq_density_smul_volumeForm
 #print axioms standardComplexSymplectic_eq_areaForm_mul_density
 #print axioms orientedRiemannianChartVector
@@ -324,6 +350,8 @@ theorem abs_finiteComplexRiemannianChartPullbackDensity_eq_twoJacobian_mul
 #print axioms finiteSymplecticFDerivDensity_comp_parametrization
 #print axioms finiteSymplecticFDerivDensity_comp_parametrization_eq_jacobian_mul
 #print axioms abs_finiteComplexRiemannianChartPullbackDensity_eq_twoJacobian_mul
+#print axioms
+  ofReal_abs_finiteSymplecticFDerivDensity_comp_parametrization_eq_chartDensity_mul
 
 end
 
