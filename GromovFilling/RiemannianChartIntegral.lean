@@ -51,7 +51,6 @@ theorem integral_riemannianChartAreaMeasure_of_aestronglyMeasurable
     simp only [riemannianChartDensity, ENNReal.ofReal_lt_top]
   rw [integral_withDensity_eq_integral_toReal_smul₀
     hDensity hDensityTop]
-  rfl
 
 /-- Real-valued signed chart integration, written with multiplication rather
 than scalar action. -/
