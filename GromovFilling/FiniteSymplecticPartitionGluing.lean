@@ -58,8 +58,8 @@ theorem sum_finiteSymplecticFDerivPrimitiveError_eq_zero
     (F z) ((fderiv ℝ F z) 1)
   let B : ℝ := standardComplexSymplecticPrimitive
     (F z) ((fderiv ℝ F z) Complex.I)
-  change (∑ j, fderiv ℝ (ρ j) z Complex.I * A -
-    fderiv ℝ (ρ j) z 1 * B) = 0
+  change (∑ j, (fderiv ℝ (ρ j) z Complex.I * A -
+    fderiv ℝ (ρ j) z 1 * B)) = 0
   rw [Finset.sum_sub_distrib, ← Finset.sum_mul, ← Finset.sum_mul,
     hDI, hDOne]
   ring
