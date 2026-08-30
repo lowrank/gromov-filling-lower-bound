@@ -57,6 +57,7 @@ import GromovFilling.Numerics
 import GromovFilling.OddProfileParameterFourierBounds
 import GromovFilling.OneHighLeg
 import GromovFilling.Oriented
+import GromovFilling.OrientedRiemannianDensity
 import GromovFilling.PlanarCertificate
 import GromovFilling.PolygonalSurfaceObstruction
 import GromovFilling.PolynomialDiskArea
