@@ -36,7 +36,7 @@ theorem integrable_finiteComplexWeakPrimitiveErrorComplex
     {Cρ CF : ℝ≥0} (hρ : LipschitzWith Cρ ρ)
     (hρCompact : HasCompactSupport ρ) (hF : LipschitzWith CF F) :
     Integrable (finiteComplexWeakPrimitiveErrorComplex ρ F) := by
-  let e : ContinuousLinearEquiv ℝ (ℝ × ℝ) ℂ := complexOfRealProd
+  let e : (ℝ × ℝ) ≃L[ℝ] ℂ := complexOfRealProd
   have hρe : LipschitzWith
       (Cρ * ‖e.toContinuousLinearMap‖₊) (ρ ∘ e) :=
     hρ.comp e.lipschitz
@@ -233,7 +233,7 @@ theorem sum_integral_orientedFiniteComplexRiemannianPrimitiveErrorDensity_eq_zer
       exact sum_orientedFiniteComplexRiemannianPrimitiveErrorDensity_eq_zero
         I o ρ G x (fun j ↦ hρ j x) hsum
 
-variable {M : Type uM} [PseudoEMetricSpace M]
+variable {M : Type uM} [PseudoEMetricSpace M] [T2Space M]
   [MeasurableSpace M] [BorelSpace M]
   [ChartedSpace (EuclideanHalfSpace 2) M]
   [IsManifold (modelWithCornersEuclideanHalfSpace 2) ∞ M]
@@ -475,7 +475,7 @@ theorem sum_integral_controlledBoundaryChartAreaPrimitiveErrorDensity_eq_zero
       controlledBoundaryChartAreaPrimitiveErrorDensity P O i G z) = 0 := by
   letI : Nonempty (ControlledInteriorAtlas
       (modelWithCornersEuclideanHalfSpace 2) M) :=
-    P.nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartition
+    nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartition P
       (Classical.choice inferInstance)
   let D : ∀ i : P.ι, ControlledBoundaryChartWeakStokesData P i G :=
     fun i ↦ Classical.choice

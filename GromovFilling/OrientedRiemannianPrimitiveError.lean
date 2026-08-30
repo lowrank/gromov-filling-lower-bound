@@ -101,7 +101,7 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
 /-- The intrinsic primitive-error densities of a finite differentiable
 partition of unity cancel pointwise. -/
 theorem sum_orientedFiniteComplexRiemannianPrimitiveErrorDensity_eq_zero
-    {E H M ι : Type*} {κ : Type}
+    {E H M ι κ : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [TopologicalSpace M] [ChartedSpace H M]
