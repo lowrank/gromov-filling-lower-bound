@@ -20,6 +20,11 @@ namespace GromovFilling
 
 noncomputable section
 
+private theorem fromTangentSpace_real_toContinuousLinearMap (a : ℝ) :
+    (NormedSpace.fromTangentSpace a).toContinuousLinearMap =
+      ContinuousLinearMap.id ℝ ℝ := by
+  rfl
+
 /-- The manifold differential of a real-valued function, with the Euclidean
 target tangent fiber canonically identified with `ℝ`. -/
 def riemannianRealMFDeriv
@@ -75,11 +80,13 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
   have hhas : HasMFDerivAt I 𝓘(ℝ, ℝ)
       (∑ j : κ, ρ j) x
       (∑ j : κ, mfderiv I 𝓘(ℝ, ℝ) (ρ j) x) := by
-    simpa using
-      (HasMFDerivAt.sum (t := Finset.univ) (f := ρ)
-        (f' := fun j ↦
+    exact
+      HasMFDerivAt.sum (z := x) (t := (Finset.univ : Finset κ))
+        (f := fun j : κ ↦ ρ j)
+        (f' := fun j : κ ↦
           (mfderiv I 𝓘(ℝ, ℝ) (ρ j) x : TangentSpace I x →L[ℝ] ℝ))
-        (fun j _hj ↦ (hρ j).hasMFDerivAt))
+        (fun (j : κ) (_hj : j ∈ (Finset.univ : Finset κ)) ↦
+          (hρ j).hasMFDerivAt)
   have hfun : (∑ j : κ, ρ j) = fun _y : M ↦ (1 : ℝ) := by
     funext y
     simpa only [Finset.sum_apply] using hsum y
@@ -91,14 +98,9 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
           mfderiv I 𝓘(ℝ, ℝ) (∑ j : κ, ρ j) x := hhas.mfderiv.symm
       _ = mfderiv I 𝓘(ℝ, ℝ) (fun _y : M ↦ (1 : ℝ)) x := by rw [hfun]
       _ = 0 := mfderiv_const
-  apply ContinuousLinearMap.ext
-  intro v
-  have hv := congrArg
-    (fun L : TangentSpace I x →L[ℝ] ℝ ↦ L v)
-    hraw
   simpa only [riemannianRealMFDeriv,
-    ContinuousLinearMap.sum_apply, ContinuousLinearMap.comp_apply,
-    ContinuousLinearMap.zero_apply, NormedSpace.fromTangentSpace] using hv
+    fromTangentSpace_real_toContinuousLinearMap,
+    ContinuousLinearMap.id_comp] using hraw
 
 /-- The intrinsic primitive-error densities of a finite differentiable
 partition of unity cancel pointwise. -/
