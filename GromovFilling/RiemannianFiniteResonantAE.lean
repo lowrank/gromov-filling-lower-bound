@@ -60,7 +60,8 @@ theorem ae_riemannianChartAreaMeasure_of_ae_comp_of_continuousOn_injOn
     rw [show μs = Measure.comap ((↑) : s → ℂ) ν by rfl,
       map_comap_subtype_coe hs, hνrestrict]
   have hsourceSubtype : ∀ᵐ z : s ∂μs, p (F z) := by
-    apply (MeasurableEmbedding.subtype_coe hs).ae_map_iff.mp
+    apply ((MeasurableEmbedding.subtype_coe hs).ae_map_iff
+      (μ := μs) (p := fun z : ℂ ↦ p (F z))).mp
     rw [hcoeMap]
     simpa only [Function.comp_apply] using hsourceν
   have hFembed : MeasurableEmbedding (s.restrict F) :=
@@ -85,7 +86,7 @@ resonant comass limit. -/
 def FiniteResonantRegularPoint
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
-    [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 1 M]
+    [PseudoMetricSpace M] [ChartedSpace H M] [IsManifold I 1 M]
     (boundary : UnitAddCircle → M) (x : M) : Prop :=
   I.IsInteriorPoint x ∧
     (∀ᵐ t : ℝ ∂volume.restrict (Set.Ioc (-Real.pi) Real.pi),
