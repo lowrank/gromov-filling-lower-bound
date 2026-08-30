@@ -86,6 +86,7 @@ import GromovFilling.RiemannianChartDensity
 import GromovFilling.RiemannianChartDisjointification
 import GromovFilling.RiemannianChartTransition
 import GromovFilling.RiemannianHalfSpaceChart
+import GromovFilling.RiemannianHalfSpaceChartControl
 import GromovFilling.RiemannianInteriorAtlasArea
 import GromovFilling.RiemannianInteriorChart
 import GromovFilling.RiemannianInteriorCoverage
