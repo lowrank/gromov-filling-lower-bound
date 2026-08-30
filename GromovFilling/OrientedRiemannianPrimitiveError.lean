@@ -81,9 +81,10 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
   have hhas : HasMFDerivAt I 𝓘(ℝ, ℝ)
       (∑ j : κ, ρ j) x
       (∑ j : κ, mfderiv I 𝓘(ℝ, ℝ) (ρ j) x) := by
+    rw [← hasMFDerivWithinAt_univ]
     have hfinite : ∀ s : Finset κ,
-        HasMFDerivAt I 𝓘(ℝ, ℝ)
-          (∑ j ∈ s, ρ j) x
+        HasMFDerivWithinAt I 𝓘(ℝ, ℝ)
+          (∑ j ∈ s, ρ j) Set.univ x
           (∑ j ∈ s,
             (mfderiv I 𝓘(ℝ, ℝ) (ρ j) x :
               TangentSpace I x →L[ℝ] ℝ)) := by
@@ -91,10 +92,10 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
       induction s using Finset.induction_on with
       | empty =>
           simpa using
-            (hasMFDerivAt_const (I := I) (I' := 𝓘(ℝ, ℝ))
-              (0 : ℝ) x)
+            (hasMFDerivWithinAt_const (I := I) (I' := 𝓘(ℝ, ℝ))
+              (0 : ℝ) Set.univ x)
       | @insert j s hj ih =>
-          grind [HasMFDerivAt.add]
+          grind [HasMFDerivWithinAt.add]
     simpa using hfinite Finset.univ
   have hfun : (∑ j : κ, ρ j) = fun _y : M ↦ (1 : ℝ) := by
     funext y
