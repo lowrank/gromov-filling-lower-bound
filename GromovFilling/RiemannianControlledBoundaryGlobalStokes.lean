@@ -80,6 +80,10 @@ theorem integral_orientedFiniteComplexRiemannianSymplecticDensity_eq_neg_boundar
     (P : FiniteControlledBoundaryChartPartition M)
     (O : ControlledBoundaryAtlasOrientation P) (G : M → ι → ℂ)
     {CG : ℝ≥0} (hGLipschitz : LipschitzWith CG G) :
+    letI : Nonempty (ControlledInteriorAtlas
+        (modelWithCornersEuclideanHalfSpace 2) M) :=
+      nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartition P
+        (Classical.choice inferInstance)
     (∫ x,
         orientedFiniteComplexRiemannianSymplecticDensity
           (modelWithCornersEuclideanHalfSpace 2) O.tangentOrientation G x
@@ -87,6 +91,10 @@ theorem integral_orientedFiniteComplexRiemannianSymplecticDensity_eq_neg_boundar
           (modelWithCornersEuclideanHalfSpace 2)) =
       -∑ i, O.chartSign i *
         ∫ y : ℝ, controlledBoundaryChartActionDensity P i G y := by
+  letI : Nonempty (ControlledInteriorAtlas
+      (modelWithCornersEuclideanHalfSpace 2) M) :=
+    nonempty_controlledInteriorAtlas_of_finiteControlledBoundaryChartPartition P
+      (Classical.choice inferInstance)
   rw [← (sum_integral_controlledBoundaryChartAreaSymplecticDensity_eq_surface
     P O G hGLipschitz).2]
   exact sum_integral_controlledBoundaryChartAreaSymplecticDensity_eq_neg_boundary
