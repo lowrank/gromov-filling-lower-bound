@@ -119,7 +119,8 @@ private theorem riemannianComplexMFDeriv_apply_eq_mfderiv
       mfderiv I 𝓘(ℝ, ℂ) G x v := by
   rw [riemannianComplexMFDeriv,
     fromTangentSpace_complex_toContinuousLinearMap,
-    ContinuousLinearMap.comp_apply, ContinuousLinearMap.id_apply]
+    ContinuousLinearMap.comp_apply]
+  exact ContinuousLinearMap.id_apply ..
 
 set_option maxHeartbeats 800000 in
 /-- The Riemannian differential of a complex-valued manifold map, applied
@@ -285,11 +286,11 @@ theorem finiteSymplecticFDerivDensity_comp_parametrization
     simpa using congrFun Complex.coe_orthonormalBasisOneI (1 : Fin 2)
   have hv0 : (fderiv ℝ (G ∘ F) z) 1 =
       finiteComplexRiemannianDerivative I G (F z)
-        (mfderiv 𝓘(ℝ, ℂ) I F z 1) := by
+        (mfderiv 𝓘(ℝ, ℂ) I F z (1 : ℂ)) := by
     funext i
     simpa only [riemannianMFDerivBetween_apply] using
       (fderiv_finiteComplex_comp_parametrization_apply
-        I G F z 1 i hF hG)
+        I G F z (1 : ℂ) i hF hG)
   have hv1 : (fderiv ℝ (G ∘ F) z) Complex.I =
       finiteComplexRiemannianDerivative I G (F z)
         (mfderiv 𝓘(ℝ, ℂ) I F z Complex.I) := by
