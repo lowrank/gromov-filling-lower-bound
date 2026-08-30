@@ -38,7 +38,7 @@ jobs:
         with:
           auto-config: false
           build: true
-          build-args: GromovFilling.OrientedRiemannianPrimitiveError
+          build-args: GromovFilling.RiemannianControlledBoundaryInteriorAtlas
           use-mathlib-cache: true
           axiom-audit: false
 
