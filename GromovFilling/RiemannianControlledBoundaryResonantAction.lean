@@ -83,7 +83,7 @@ theorem finiteComplexWeakLineDerivative_finiteResonantBoundaryCurve_comp
     hcomp.differentiableAt]
   have hline :=
     (hcomp.hasFDerivAt.hasLineDerivAt (1 : ℝ)).lineDeriv
-  simpa only [Function.comp_apply, one_smul] using hline
+  simpa only [ContinuousLinearMap.toSpanSingleton_apply_one] using hline
 
 /-- On the nonzero-cutoff germ of a boundary chart, the finite resonant
 surface trace is the explicit resonant loop evaluated at the chart phase. -/
@@ -129,7 +129,11 @@ theorem ControlledBoundaryAtlasBoundaryPhase.controlledBoundaryChartActionDensit
   · have htrace :=
       B.finiteResonantProfileMap_chartAxis_eventuallyEq_curve
         hboundary N lam i hyCutoff
-    have hvalue := htrace.self_of_nhds
+    have hvalue :
+        finiteResonantProfileMap boundary N lam
+            (halfSpaceComplexExtChart (P.center i) (y * Complex.I)) =
+          finiteResonantBoundaryCurve N lam (B.phase i y) :=
+      htrace.self_of_nhds
     have hderiv :
         finiteComplexWeakLineDerivative
             (fun t : ℝ ↦
