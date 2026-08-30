@@ -117,16 +117,11 @@ theorem fderiv_comp_parametrization_eq_riemannianComplexMFDeriv
     fderiv ℝ (G ∘ F) z v =
       riemannianComplexMFDeriv I G (F z)
         (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z v) := by
-  calc
-    fderiv ℝ (G ∘ F) z v =
-        mfderiv 𝓘(ℝ, ℂ) 𝓘(ℝ, ℂ) (G ∘ F) z v := by
-      rw [mfderiv_eq_fderiv]
-    _ = mfderiv I 𝓘(ℝ, ℂ) G (F z)
-        (mfderiv 𝓘(ℝ, ℂ) I F z v) :=
-      mfderiv_comp_apply z hG hF v
-    _ = riemannianComplexMFDeriv I G (F z)
-        (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z v) := by
-      rfl
+  rw [show fderiv ℝ (G ∘ F) z v =
+      mfderiv 𝓘(ℝ, ℂ) 𝓘(ℝ, ℂ) (G ∘ F) z v by
+    rw [mfderiv_eq_fderiv]]
+  rw [mfderiv_comp_apply hG hF v]
+  rfl
 
 /-- Coordinatewise manifold chain rule for a finite complex-valued map. -/
 theorem fderiv_finiteComplex_comp_parametrization
@@ -244,10 +239,10 @@ theorem finiteSymplecticFDerivDensity_comp_parametrization
     simpa using congrFun Complex.coe_orthonormalBasisOneI (1 : Fin 2)
   unfold finiteSymplecticFDerivDensity
     finiteComplexRiemannianChartPullbackDensity
+    orientedRiemannianChartVector
   rw [fderiv_finiteComplex_comp_parametrization I G F z hF hG]
-  simp only [ContinuousLinearMap.comp_apply,
-    orientedRiemannianChartVector, riemannianMFDerivBetween_apply,
-    h0, h1]
+  rw [h0, h1]
+  rfl
 
 /-- In an oriented Riemannian chart, the signed planar pullback density is
 the signed chart Jacobian times the intrinsic oriented density. -/
