@@ -98,9 +98,8 @@ def orientedRiemannianChartVector
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [TopologicalSpace M] [ChartedSpace H M]
-    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
     (F : ℂ → M) (z : ℂ) (i : Fin 2) : TangentSpace I (F z) :=
-  riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z
+  mfderiv 𝓘(ℝ, ℂ) I F z
     (orientedComplexTangentOrthonormalBasis z i)
 
 /-- The signed Riemannian Jacobian of a complex parametrization relative to
