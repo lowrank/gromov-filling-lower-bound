@@ -50,8 +50,15 @@ theorem tendsto_finiteTruncationResonantBaseFirstError
       atTop (nhds 0) := by
   have hbaseFirst := tendsto_finiteTruncationResonantBaseFirst
     lam a y c hy hpos hneg
+  have hlimitConst : Tendsto
+      (fun _N : ℕ ↦ infiniteOddBaseDensity c +
+        lam * infiniteResonantFirstVariation a y c)
+      atTop
+      (nhds (infiniteOddBaseDensity c +
+        lam * infiniteResonantFirstVariation a y c)) :=
+    tendsto_const_nhds
   simpa only [finiteTruncationResonantBaseFirstError, sub_self] using
-    hbaseFirst.sub tendsto_const_nhds
+    hbaseFirst.sub hlimitConst
 
 /-- Abstract sharp finite-truncation estimate.  It only asks for the sharp
 infinite comass bound for every admissible quadratic value and the uniform
@@ -76,10 +83,10 @@ theorem abs_finiteTruncationResonantDensity_le_comassBound_add_error
       abs_add_le _ _
     _ ≤ comassBound lam +
           |finiteTruncationResonantBaseFirstError lam a y c N| :=
-      add_le_add_right
+      add_le_add
         (hinfinite
           (finiteTruncationResonantQuadraticVariation a y c N)
-          hquadratic) _
+          hquadratic) (le_refl _)
 
 /-- For genuine antiperiodic tangent-profile Fourier data, every finite
 resonant density obeys the sharp comass bound up to the explicit vanishing
