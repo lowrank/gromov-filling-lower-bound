@@ -108,8 +108,9 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
                     (mfderiv I 𝓘(ℝ, ℝ) (ρ k) x :
                       TangentSpace I x →L[ℝ] ℝ) := by
             rw [Finset.sum_insert hj]
-          rw [hfun_insert, hderiv_insert]
-          exact (hρ j).hasMFDerivAt.add ih
+          have hadd := (hρ j).hasMFDerivAt.add ih
+          rw [← hfun_insert, ← hderiv_insert] at hadd
+          exact hadd
     simpa using hfinite Finset.univ
   have hfun : (∑ j : κ, ρ j) = fun _y : M ↦ (1 : ℝ) := by
     funext y
