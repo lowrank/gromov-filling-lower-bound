@@ -95,7 +95,10 @@ theorem sum_riemannianRealMFDeriv_eq_zero_of_sum_eq_one
             (hasMFDerivWithinAt_const (I := I) (I' := 𝓘(ℝ, ℝ))
               (0 : ℝ) Set.univ x)
       | @insert j s hj ih =>
-          grind [HasMFDerivWithinAt.add]
+          have hj' : HasMFDerivWithinAt I 𝓘(ℝ, ℝ) (ρ j) Set.univ x
+              (mfderiv I 𝓘(ℝ, ℝ) (ρ j) x) :=
+            (hρ j).hasMFDerivAt.hasMFDerivWithinAt
+          simpa only [Finset.sum_insert hj] using hj'.add ih
     simpa using hfinite Finset.univ
   have hfun : (∑ j : κ, ρ j) = fun _y : M ↦ (1 : ℝ) := by
     funext y
