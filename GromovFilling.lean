@@ -20,6 +20,7 @@ import GromovFilling.DominantHarmonicDisk
 import GromovFilling.EuclideanAreaFormula
 import GromovFilling.FinePolygonalModel
 import GromovFilling.FiniteResonantRiemannian
+import GromovFilling.FiniteResonantRiemannianProfileBounds
 import GromovFilling.FiniteResonantStokes
 import GromovFilling.FourierArea
 import GromovFilling.FourierBessel
@@ -46,6 +47,7 @@ import GromovFilling.NonlinearProfileFourierBridge
 import GromovFilling.NonlinearSymplecticCalculus
 import GromovFilling.NormalFormBoundaryObstruction
 import GromovFilling.Numerics
+import GromovFilling.OddProfileParameterFourierBounds
 import GromovFilling.OneHighLeg
 import GromovFilling.Oriented
 import GromovFilling.PlanarCertificate
