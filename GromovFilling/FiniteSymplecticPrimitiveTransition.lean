@@ -132,6 +132,7 @@ theorem integral_complexRightHalfPlane_cutoff_mul_finiteSymplecticFDerivDensity_
           ρ z * finiteSymplecticFDerivDensity F z := by
     apply setIntegral_congr_ae hhalfMeas
     filter_upwards [hFae] with z hz
+    intro _hz
     rw [finiteComplexWeakSymplecticDensityComplex_eq_fderiv F z hz]
   have herror :
       (∫ z in complexRightOpenHalfPlane,
@@ -140,6 +141,7 @@ theorem integral_complexRightHalfPlane_cutoff_mul_finiteSymplecticFDerivDensity_
           finiteSymplecticFDerivPrimitiveError ρ F z := by
     apply setIntegral_congr_ae hhalfMeas
     filter_upwards [hρae, hFae] with z hρz hFz
+    intro _hz
     exact finiteComplexWeakPrimitiveErrorComplex_eq_fderiv
       ρ F z hρz hFz
   calc
