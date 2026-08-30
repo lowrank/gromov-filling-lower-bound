@@ -24,6 +24,11 @@ noncomputable section
 
 attribute [local instance] Complex.finrank_real_complex_fact
 
+private theorem fromTangentSpace_complex_toContinuousLinearMap (a : ℂ) :
+    (NormedSpace.fromTangentSpace a).toContinuousLinearMap =
+      ContinuousLinearMap.id ℝ ℂ := by
+  rfl
+
 /-- A top-degree finite symplectic pullback is its value in a positive
 orthonormal frame times the oriented volume form. -/
 theorem finiteComplexSymplecticPullback_eq_density_smul_volumeForm
@@ -117,14 +122,11 @@ theorem fderiv_comp_parametrization_eq_riemannianComplexMFDeriv
     fderiv ℝ (G ∘ F) z v =
       riemannianComplexMFDeriv I G (F z)
         (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z v) := by
-  calc
-    fderiv ℝ (G ∘ F) z v =
-        mfderiv 𝓘(ℝ, ℂ) 𝓘(ℝ, ℂ) (G ∘ F) z v := by
-      exact congrArg (fun L : ℂ →L[ℝ] ℂ ↦ L v)
-        (mfderiv_eq_fderiv (f := G ∘ F) (x := z)).symm
-    _ = riemannianComplexMFDeriv I G (F z)
-        (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z v) :=
-      mfderiv_comp_apply z hG hF v
+  rw [riemannianComplexMFDeriv, riemannianMFDerivBetween,
+    fromTangentSpace_complex_toContinuousLinearMap,
+    ContinuousLinearMap.comp_apply, ContinuousLinearMap.id_apply,
+    ← mfderiv_eq_fderiv]
+  exact mfderiv_comp_apply z hG hF v
 
 /-- Coordinatewise manifold chain rule for a finite complex-valued map. -/
 theorem fderiv_finiteComplex_comp_parametrization
