@@ -15,7 +15,7 @@ never created by zero-extension across that axis.
 -/
 
 open Bundle Function Manifold Metric Set
-open scoped Manifold NNReal Topology
+open scoped ContDiff Manifold NNReal Topology
 
 namespace GromovFilling
 
