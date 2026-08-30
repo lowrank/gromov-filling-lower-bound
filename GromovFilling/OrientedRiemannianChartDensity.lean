@@ -108,8 +108,24 @@ def orientedRiemannianChartVector
   mfderiv 𝓘(ℝ, ℂ) I F z
     (orientedComplexTangentOrthonormalBasis z i)
 
-set_option maxHeartbeats 800000 in
-private theorem riemannianComplexMFDeriv_apply_eq_mfderiv
+/-- Scalar manifold chain rule exposed before any Riemannian bundle
+instances are introduced. -/
+theorem fderiv_comp_parametrization_apply_eq_mfderiv
+    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+    [TopologicalSpace M] [ChartedSpace H M]
+    (G : M → ℂ) (F : ℂ → M) (z v : ℂ)
+    (hF : MDifferentiableAt 𝓘(ℝ, ℂ) I F z)
+    (hG : MDifferentiableAt I 𝓘(ℝ, ℂ) G (F z)) :
+    fderiv ℝ (G ∘ F) z v =
+      mfderiv I 𝓘(ℝ, ℂ) G (F z)
+        (mfderiv 𝓘(ℝ, ℂ) I F z v) := by
+  rw [← mfderiv_eq_fderiv]
+  exact mfderiv_comp_apply z hG hF v
+
+/-- Applying the Riemannian differential of a complex-valued map agrees with
+the underlying manifold differential. -/
+theorem riemannianComplexMFDeriv_apply_eq_mfderiv
     {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [TopologicalSpace M] [ChartedSpace H M]
@@ -122,78 +138,43 @@ private theorem riemannianComplexMFDeriv_apply_eq_mfderiv
     ContinuousLinearMap.comp_apply]
   exact ContinuousLinearMap.id_apply ..
 
-set_option maxHeartbeats 800000 in
-/-- The Riemannian differential of a complex-valued manifold map, applied
-after a differentiable complex parametrization, is the ordinary derivative
-of the coordinate pullback. -/
-theorem fderiv_comp_parametrization_eq_riemannianComplexMFDeriv
-    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
-    [TopologicalSpace M] [ChartedSpace H M]
-    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
-    (G : M → ℂ) (F : ℂ → M) (z v : ℂ)
-    (hF : MDifferentiableAt 𝓘(ℝ, ℂ) I F z)
-    (hG : MDifferentiableAt I 𝓘(ℝ, ℂ) G (F z)) :
-    fderiv ℝ (G ∘ F) z v =
-      riemannianComplexMFDeriv I G (F z)
-        (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z v) := by
-  rw [riemannianComplexMFDeriv_apply_eq_mfderiv,
-    riemannianMFDerivBetween_apply]
-  simpa only [ContinuousLinearMap.id_apply, mfderiv_eq_fderiv] using
-    (mfderiv_comp_apply z hG hF v)
+private theorem fderiv_pi_apply
+    {X ι : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
+    [Fintype ι] [Finite ι]
+    (φ : ι → X → ℂ) (x v : X) (i : ι)
+    (hφ : ∀ j : ι, DifferentiableAt ℝ (φ j) x) :
+    (fderiv ℝ (fun y j ↦ φ j y) x v) i =
+      fderiv ℝ (φ i) x v := by
+  exact congrArg
+    (fun L : X →L[ℝ] (ι → ℂ) ↦ (L v) i)
+    (fderiv_pi hφ)
 
-set_option maxHeartbeats 800000 in
-private theorem fderiv_finiteComplex_comp_parametrization_apply
+/-- Coordinatewise finite manifold chain rule with no Riemannian bundle
+instances in the statement. -/
+theorem fderiv_finite_comp_parametrization_apply_eq_mfderiv
     {E H M ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
     [TopologicalSpace M] [ChartedSpace H M]
-    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
     [Fintype ι] [Finite ι]
     (G : M → ι → ℂ) (F : ℂ → M) (z v : ℂ) (i : ι)
     (hF : MDifferentiableAt 𝓘(ℝ, ℂ) I F z)
     (hG : ∀ j : ι,
       MDifferentiableAt I 𝓘(ℝ, ℂ) (fun x ↦ G x j) (F z)) :
     (fderiv ℝ (G ∘ F) z v) i =
-      (finiteComplexRiemannianDerivative I G (F z)
-        (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z v)) i := by
+      mfderiv I 𝓘(ℝ, ℂ) (fun x ↦ G x i) (F z)
+        (mfderiv 𝓘(ℝ, ℂ) I F z v) := by
   have hcoord : ∀ j : ι,
       DifferentiableAt ℝ ((fun x ↦ G x j) ∘ F) z :=
     fun j ↦ ((hG j).comp z hF).differentiableAt
   calc
     (fderiv ℝ (G ∘ F) z v) i =
         fderiv ℝ ((fun x ↦ G x i) ∘ F) z v := by
-      exact congrArg (fun L : ℂ →L[ℝ] (ι → ℂ) ↦ (L v) i)
-        (fderiv_pi hcoord)
-    _ = riemannianComplexMFDeriv I (fun x ↦ G x i) (F z)
-        (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z v) :=
-      fderiv_comp_parametrization_eq_riemannianComplexMFDeriv
+      exact fderiv_pi_apply
+        (fun j x ↦ G (F x) j) z v i hcoord
+    _ = mfderiv I 𝓘(ℝ, ℂ) (fun x ↦ G x i) (F z)
+        (mfderiv 𝓘(ℝ, ℂ) I F z v) :=
+      fderiv_comp_parametrization_apply_eq_mfderiv
         I (fun x ↦ G x i) F z v hF (hG i)
-    _ = (finiteComplexRiemannianDerivative I G (F z)
-        (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z v)) i := by
-      rw [finiteComplexRiemannianDerivative,
-        ContinuousLinearMap.pi_apply]
-
-set_option maxHeartbeats 800000 in
-/-- Coordinatewise manifold chain rule for a finite complex-valued map. -/
-theorem fderiv_finiteComplex_comp_parametrization
-    {E H M ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
-    [TopologicalSpace M] [ChartedSpace H M]
-    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
-    [Fintype ι] [Finite ι]
-    (G : M → ι → ℂ) (F : ℂ → M) (z : ℂ)
-    (hF : MDifferentiableAt 𝓘(ℝ, ℂ) I F z)
-    (hG : ∀ i : ι,
-      MDifferentiableAt I 𝓘(ℝ, ℂ) (fun x ↦ G x i) (F z)) :
-    fderiv ℝ (G ∘ F) z =
-      (finiteComplexRiemannianDerivative I G (F z)).comp
-        (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z) := by
-  apply ContinuousLinearMap.ext
-  intro v
-  funext i
-  simpa only [ContinuousLinearMap.comp_apply] using
-    (fderiv_finiteComplex_comp_parametrization_apply
-      I G F z v i hF hG)
 
 /-- The signed Riemannian Jacobian of a complex parametrization relative to
 the selected target orientation. -/
@@ -288,16 +269,20 @@ theorem finiteSymplecticFDerivDensity_comp_parametrization
       finiteComplexRiemannianDerivative I G (F z)
         (mfderiv 𝓘(ℝ, ℂ) I F z (1 : ℂ)) := by
     funext i
-    simpa only [riemannianMFDerivBetween_apply] using
-      (fderiv_finiteComplex_comp_parametrization_apply
-        I G F z (1 : ℂ) i hF hG)
+    rw [finiteComplexRiemannianDerivative,
+      ContinuousLinearMap.pi_apply,
+      riemannianComplexMFDeriv_apply_eq_mfderiv]
+    exact fderiv_finite_comp_parametrization_apply_eq_mfderiv
+      I G F z (1 : ℂ) i hF hG
   have hv1 : (fderiv ℝ (G ∘ F) z) Complex.I =
       finiteComplexRiemannianDerivative I G (F z)
         (mfderiv 𝓘(ℝ, ℂ) I F z Complex.I) := by
     funext i
-    simpa only [riemannianMFDerivBetween_apply] using
-      (fderiv_finiteComplex_comp_parametrization_apply
-        I G F z Complex.I i hF hG)
+    rw [finiteComplexRiemannianDerivative,
+      ContinuousLinearMap.pi_apply,
+      riemannianComplexMFDeriv_apply_eq_mfderiv]
+    exact fderiv_finite_comp_parametrization_apply_eq_mfderiv
+      I G F z Complex.I i hF hG
   change standardComplexSymplectic ((fderiv ℝ (G ∘ F) z) 1)
       ((fderiv ℝ (G ∘ F) z) Complex.I) =
     standardComplexSymplectic
@@ -404,8 +389,8 @@ theorem ofReal_abs_finiteSymplecticFDerivDensity_comp_parametrization_eq_chartDe
 #print axioms abs_orientedRiemannianChartJacobian_eq_twoJacobian
 #print axioms ofReal_abs_orientedRiemannianChartJacobian_eq_chartDensity
 #print axioms finiteComplexRiemannianChartPullbackDensity_eq_jacobian_mul
-#print axioms fderiv_comp_parametrization_eq_riemannianComplexMFDeriv
-#print axioms fderiv_finiteComplex_comp_parametrization
+#print axioms fderiv_comp_parametrization_apply_eq_mfderiv
+#print axioms fderiv_finite_comp_parametrization_apply_eq_mfderiv
 #print axioms finiteSymplecticFDerivDensity_comp_parametrization
 #print axioms finiteSymplecticFDerivDensity_comp_parametrization_eq_jacobian_mul
 #print axioms abs_finiteComplexRiemannianChartPullbackDensity_eq_twoJacobian_mul
