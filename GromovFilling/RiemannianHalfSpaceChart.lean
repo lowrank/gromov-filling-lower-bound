@@ -104,7 +104,7 @@ theorem mdifferentiableAt_halfSpaceComplexExtChart
     (x : M) {z : ℂ}
     (hz : z ∈
       halfSpaceComplexExtChartDomain x ∩ complexRightOpenHalfPlane) :
-    MDifferentiableAt 𝒘(ℝ, ℂ)
+    MDifferentiableAt 𝓘(ℝ, ℂ)
       (modelWithCornersEuclideanHalfSpace 2)
       (halfSpaceComplexExtChart x) z := by
   rw [halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane] at hz
