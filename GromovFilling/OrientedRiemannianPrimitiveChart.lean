@@ -33,7 +33,8 @@ theorem alternatingContinuousLinearPair_eq_areaForm_mul
     a v * b u - a u * b v =
       o.areaForm u v * (a (e 1) * b (e 0) - a (e 0) * b (e 1)) := by
   let L₀ : V →L[ℝ] ℂ :=
-    Complex.equivRealProdCLM.symm.toContinuousLinearMap.comp (b.prod a)
+    Complex.ofRealCLM.comp b +
+      Complex.I • Complex.ofRealCLM.comp a
   let L : V →L[ℝ] (Fin 1 → ℂ) :=
     ContinuousLinearMap.pi fun _ : Fin 1 ↦ L₀
   have h := standardComplexSymplectic_eq_areaForm_mul_density
@@ -43,8 +44,8 @@ theorem alternatingContinuousLinearPair_eq_areaForm_mul
         a q * b p - a p * b q := by
     simp only [standardComplexSymplectic, L, L₀,
       ContinuousLinearMap.pi_apply, ContinuousLinearMap.comp_apply,
-      ContinuousLinearMap.prod_apply,
-      Complex.equivRealProdCLM_symm_apply]
+      ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+      Complex.ofRealCLM_apply]
     simp [Complex.mul_im]
     ring
   rw [hpair u v] at h
