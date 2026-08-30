@@ -9,6 +9,7 @@ import GromovFilling.CanonicalBoundaryLocus
 import GromovFilling.Certificates
 import GromovFilling.CircleDegree
 import GromovFilling.ClosedOneForm
+import GromovFilling.CompactLipschitzExtension
 import GromovFilling.ComplexAreaFormula
 import GromovFilling.ComplexHalfPlaneWeakStokes
 import GromovFilling.ComplexJacobianBudget
