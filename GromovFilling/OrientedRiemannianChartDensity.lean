@@ -117,10 +117,11 @@ theorem fderiv_comp_parametrization_eq_riemannianComplexMFDeriv
     fderiv ℝ (G ∘ F) z v =
       riemannianComplexMFDeriv I G (F z)
         (riemannianMFDerivBetween 𝓘(ℝ, ℂ) I F z v) := by
-  rw [show fderiv ℝ (G ∘ F) z v =
-      mfderiv 𝓘(ℝ, ℂ) 𝓘(ℝ, ℂ) (G ∘ F) z v by
-    rw [mfderiv_eq_fderiv]]
-  rw [mfderiv_comp_apply hG hF v]
+  change fderiv ℝ (G ∘ F) z v =
+    (NormedSpace.fromTangentSpace (G (F z)))
+      (mfderiv I 𝓘(ℝ, ℂ) G (F z)
+        (mfderiv 𝓘(ℝ, ℂ) I F z v))
+  rw [← mfderiv_eq_fderiv, mfderiv_comp_apply z hG hF v]
   rfl
 
 /-- Coordinatewise manifold chain rule for a finite complex-valued map. -/
