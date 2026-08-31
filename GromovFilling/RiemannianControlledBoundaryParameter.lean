@@ -1,5 +1,6 @@
 import GromovFilling.RiemannianControlledBoundaryPhaseSubstitution
 import Mathlib.Topology.ContinuousMap.Interval
+import Mathlib.Topology.Order.IntermediateValue
 
 /-!
 # Boundary parameters on controlled chart axes
@@ -216,6 +217,50 @@ theorem continuousAt_controlledBoundaryChartParameter_of_cutoff_ne_zero
         boundary hboundaryRange P i y hyCutoff).symm
   simpa only [Function.comp_apply] using hboundaryParameter
 
+/-- On any set where the controlled cutoff stays nonzero, the canonical
+circle parameter is injective.  Indeed, equal parameters give equal
+chart-axis points, and the extended chart is injective on its domain. -/
+theorem injOn_controlledBoundaryChartParameter_of_cutoff_ne_zero
+    (boundary : UnitAddCircle → M)
+    (hboundaryRange : Set.range boundary =
+      (modelWithCornersEuclideanHalfSpace 2).boundary M)
+    (P : FiniteControlledBoundaryChartPartition M) (i : P.ι)
+    (s : Set ℝ)
+    (hcutoff : ∀ y ∈ s,
+      controlledBoundaryChartCutoff P i (y * Complex.I) ≠ 0) :
+    Set.InjOn (controlledBoundaryChartParameter boundary P i) s := by
+  intro y hy z hz hyz
+  have hyCutoff := hcutoff y hy
+  have hzCutoff := hcutoff z hz
+  have hyDomain : (y * Complex.I : ℂ) ∈
+      halfSpaceComplexExtChartDomain (P.center i) := by
+    by_contra hyDomain
+    exact hyCutoff
+      (controlledBoundaryChartCutoff_eq_zero_of_not_mem P i hyDomain)
+  have hzDomain : (z * Complex.I : ℂ) ∈
+      halfSpaceComplexExtChartDomain (P.center i) := by
+    by_contra hzDomain
+    exact hzCutoff
+      (controlledBoundaryChartCutoff_eq_zero_of_not_mem P i hzDomain)
+  have haxis :
+      halfSpaceComplexExtChart (P.center i) (y * Complex.I) =
+        halfSpaceComplexExtChart (P.center i) (z * Complex.I) := by
+    calc
+      halfSpaceComplexExtChart (P.center i) (y * Complex.I) =
+          boundary (controlledBoundaryChartParameter boundary P i y) :=
+        (boundary_controlledBoundaryChartParameter_of_cutoff_ne_zero
+          boundary hboundaryRange P i y hyCutoff).symm
+      _ = boundary (controlledBoundaryChartParameter boundary P i z) :=
+        congrArg boundary hyz
+      _ = halfSpaceComplexExtChart (P.center i) (z * Complex.I) :=
+        boundary_controlledBoundaryChartParameter_of_cutoff_ne_zero
+          boundary hboundaryRange P i z hzCutoff
+  have hcoord : (y * Complex.I : ℂ) = z * Complex.I :=
+    injOn_halfSpaceComplexExtChart (P.center i)
+      hyDomain hzDomain haxis
+  have him := congrArg Complex.im hcoord
+  simpa only [Complex.mul_I_im, Complex.ofReal_re] using him
+
 /-- On every compact chart-axis interval where the controlled cutoff stays
 nonzero, the canonical circle parameter admits a continuous real lift.  The
 parameter is first extended continuously by clamping to the interval, after
@@ -263,6 +308,46 @@ theorem exists_continuous_real_lift_controlledBoundaryChartParameter_on_Icc
         controlledBoundaryChartParameter boundary P i y
       rw [Set.IccExtend_of_mem hab parameterIcc hy]
 
+/-- A continuous real lift of the canonical circle parameter on a compact
+nonzero chart-axis interval can be chosen strictly increasing or strictly
+decreasing there.  Injectivity follows from the chart, and continuity plus
+injectivity on a real interval forces one of the two orientations. -/
+theorem exists_continuous_real_lift_strictMonoOn_or_strictAntiOn_controlledBoundaryChartParameter_on_Icc
+    (boundary : UnitAddCircle → M)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hboundaryRange : Set.range boundary =
+      (modelWithCornersEuclideanHalfSpace 2).boundary M)
+    (P : FiniteControlledBoundaryChartPartition M) (i : P.ι)
+    (a b : ℝ) (hab : a ≤ b)
+    (hcutoff : ∀ y ∈ Set.Icc a b,
+      controlledBoundaryChartCutoff P i (y * Complex.I) ≠ 0) :
+    ∃ lift : ℝ → ℝ, Continuous lift ∧
+      (∀ y ∈ Set.Icc a b,
+        ((lift y : ℝ) : UnitAddCircle) =
+          controlledBoundaryChartParameter boundary P i y) ∧
+      (StrictMonoOn lift (Set.Icc a b) ∨
+        StrictAntiOn lift (Set.Icc a b)) := by
+  obtain ⟨lift, hliftContinuous, hliftProject⟩ :=
+    exists_continuous_real_lift_controlledBoundaryChartParameter_on_Icc
+      boundary hboundary hboundaryRange P i a b hab hcutoff
+  have hparameterInjective : Set.InjOn
+      (controlledBoundaryChartParameter boundary P i) (Set.Icc a b) :=
+    injOn_controlledBoundaryChartParameter_of_cutoff_ne_zero
+      boundary hboundaryRange P i (Set.Icc a b) hcutoff
+  have hliftInjective : Set.InjOn lift (Set.Icc a b) := by
+    intro y hy z hz hyz
+    apply hparameterInjective hy hz
+    calc
+      controlledBoundaryChartParameter boundary P i y =
+          ((lift y : ℝ) : UnitAddCircle) := (hliftProject y hy).symm
+      _ = ((lift z : ℝ) : UnitAddCircle) :=
+        congrArg (fun r : ℝ ↦ (r : UnitAddCircle)) hyz
+      _ = controlledBoundaryChartParameter boundary P i z :=
+        hliftProject z hz
+  refine ⟨lift, hliftContinuous, hliftProject, ?_⟩
+  exact hliftContinuous.continuousOn.strictMonoOn_of_injOn_Icc'
+    hab hliftInjective
+
 #print axioms halfSpaceComplexExtChart_real_mul_I_mem_boundary
 #print axioms
   halfSpaceComplexExtChart_real_mul_I_mem_boundary_of_cutoff_ne_zero
@@ -275,6 +360,10 @@ theorem exists_continuous_real_lift_controlledBoundaryChartParameter_on_Icc
   continuousAt_controlledBoundaryChartParameter_of_cutoff_ne_zero
 #print axioms
   exists_continuous_real_lift_controlledBoundaryChartParameter_on_Icc
+#print axioms
+  injOn_controlledBoundaryChartParameter_of_cutoff_ne_zero
+#print axioms
+  exists_continuous_real_lift_strictMonoOn_or_strictAntiOn_controlledBoundaryChartParameter_on_Icc
 
 end
 
