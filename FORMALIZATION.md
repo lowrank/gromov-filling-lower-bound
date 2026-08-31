@@ -1,30 +1,33 @@
 # Manuscript-to-Lean statement ledger
 
 This ledger records the formal status of every named mathematical item in
-`fourier_resonant_filling_area_v3.tex`. “Verified” means that the stated
-finite, algebraic, planar, or numerical claim has a Lean theorem in this
-repository and is covered by the package build and live axiom audit.
-“Partial” identifies the exact verified core and the unverified bridge.
+`fourier_resonant_filling_area_v3.tex`. “Verified” means that the stated claim
+has a kernel-checked Lean theorem in this repository and is covered by the
+package build and live axiom audit. “Partial” identifies the exact verified
+core and the unverified bridge.
 
 The ledger does **not** claim a proof of Gromov’s filling-area conjecture. The
-manuscript proves lower bounds strictly below the conjectural value `2π`, and
-its two headline lower bounds are not yet kernel-verified for arbitrary
-Riemannian surfaces.
+manuscript's two headline lower bounds are strictly below the conjectural value
+`2π`. Theorem 1.1 is kernel-verified at its stated interface. The
+all-parameter controlled-atlas core of Theorem 1.2 is kernel-verified, and
+its `λ = 0.03` corollary is exposed at the explicit controlled-orientation
+interface recorded below; the bridge from the manuscript's bare “oriented”
+hypothesis remains open.
 
 | Manuscript item | Status | Lean scope and remaining boundary |
 |---|---|---|
-| Theorem 1.1, Universal Fourier bound | **Partial** | `Universal.lean`, `Certificates.lean`, and `Numerics.lean` verify the finite-to-infinite deduction and exact constant. `RiemannianProfileFourierEnergy.lean` now proves the sharp pointwise finite odd-mode derivative-energy and intrinsic two-Jacobian budgets at every interior point satisfying the required angular and Fourier-map differentiability hypotheses. The remaining gap is to obtain those hypotheses almost everywhere on an arbitrary Riemannian filling surface and feed the resulting global Jacobian bound into the verified coverage/certificate chain. |
-| Theorem 1.2, Explicit nonlinear improvement | **Partial** | `Oriented.lean`, `BoundaryActionSeries.lean`, `Certificates.lean`, and `Numerics.lean` verify the scalar certificate, finite-to-infinite boundary-action limit, and strict decimal conclusion. `FiniteSymplecticChartTransition.lean` proves signed density transport under positive chart changes; `HalfPlaneWeakStokes.lean` proves localized Lipschitz weak Stokes with the exact oriented boundary sign; and `OrientedRiemannianDensity.lean` defines the intrinsic signed finite density and proves independence under positive orthonormal-frame changes (and sign reversal under opposite frames). The remaining gap is the finite oriented boundary-atlas/partition-of-unity gluing theorem and its global Riemannian comass integration. |
+| Theorem 1.1, Universal Fourier bound | **Verified** | `riemannian_universal_fourier_bound` in `RiemannianUniversalFourierBound.lean` proves the `14 ζ(3) / π` lower bound for every compact connected Riemannian isometric filling with the declaration's order-`1` half-space-manifold structure and a boundary parametrization whose range is the ambient boundary. It combines the controlled-atlas Fubini/almost-everywhere bridge in `RiemannianProfileFourierAE.lean`, full `lemma54_riemannian_area`, the Givens disk areas, and the finite-to-infinite certificate. No differentiability, coverage, Jacobian-budget, or area conclusion is an assumption of the theorem. |
+| Theorem 1.2, Explicit nonlinear improvement | **Partial** | The manuscript's numbered theorem is the all-parameter formula. `ControlledBoundaryAtlasBoundaryPhase.nonlinearCertificate_le_surfaceArea` in `RiemannianNonlinearCertificate.lean` proves `ENNReal.ofReal (nonlinearCertificate λ) ≤ Area(M)` for every `0 ≤ λ < π² / 32` once a finite controlled boundary atlas and its derived phase datum are supplied. `nonempty_controlledBoundaryAtlasBoundaryPhase_of_inducedBoundaryOrientation` derives that phase from `R : ControlledRiemannianSurfaceOrientation M` and `H : ControlledRiemannianInducedBoundaryOrientation R boundary`; the named theorem `riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling` is the following `λ = 0.03` corollary, `Area(M) > 5.38982446`. `R` supplies tangent orientation and signed canonical-chart compatibility; `H` supplies only outward-first local lift monotonicity, with no integral, winding, Stokes, comass, or area conclusion. No theorem derives this controlled data, or its boundary-parameter alignment, from the manuscript's bare conventional orientation hypothesis; the unqualified manuscript theorem is therefore not yet verified. |
 | Definition 2.1, odd profile and slack | **Verified** | Formalized in `DistanceProfile.lean` with antipodal, boundary, nonnegativity, and Lipschitz properties. |
-| Eikonal identity for boundary distance functions | **Partial** | The exact Euclidean derivative-norm identity used by the planar model is proved in `ProfileFourier.lean`. `RiemannianLipschitzDerivative.lean` proves the sharp intrinsic upper bound `‖D f‖ ≤ K` for every globally `K`-Lipschitz real-valued function at each interior differentiability point, and specializes it to boundary distance, odd profile, and antipodal slack. Riemannian Rademacher, the almost-everywhere norm equality for raw distance functions, and the product-measure bridge remain unformalized. |
-| Lemma 3.1, Differentiating the coefficients | **Partial** | `hasFDerivAt_oddProfile_weightedIntegral` and the Fourier-coordinate derivative theorems in `ProfileFourier.lean` prove weak differentiation on `ℂ`. `RiemannianProfileFourierEnergy.lean` constructs measurable angular derivative fields along clipped intrinsic tangent-chart lines and identifies each differentiable surface Fourier map derivative with its Fourier coefficient. The chartwise product-measure argument supplying the differentiability hypotheses almost everywhere on the surface remains unformalized. |
-| Proposition 3.2, Orthogonal Jacobian budget | **Partial** | The algebraic Bessel/Jacobian inequality and genuine planar metric-profile derivative budget are verified in `JacobianBudget.lean` and `ProfileFourier.lean`; `RiemannianLipschitzDerivative.lean` supplies the sharp intrinsic derivative-norm input; `RiemannianJacobianBudget.lean` proves the coordinate-free half-energy two-Jacobian bridge; and `RiemannianProfileFourierEnergy.lean` proves the exact pointwise total energy bound `≤ 2` and intrinsic Jacobian bound `≤ 1` for every finite odd-mode family under the natural differentiability hypotheses. Only the almost-everywhere surface globalization of those hypotheses remains. |
+| Eikonal identity for boundary distance functions | **Partial** | The exact Euclidean derivative-norm identity used by the planar model is proved in `ProfileFourier.lean`. `RiemannianLipschitzDerivative.lean` proves the sharp intrinsic upper bound `‖D f‖ ≤ K` at interior differentiability points. The broader raw-distance eikonal formulation remains open, but it is not a hypothesis of Theorem 1.1: `RiemannianProfileFourierAE.lean` proves the controlled-atlas Lipschitz/Fubini almost-everywhere route needed by that headline closure. |
+| Lemma 3.1, Differentiating the coefficients | **Partial** | `hasFDerivAt_oddProfile_weightedIntegral` and the Fourier-coordinate derivative theorems in `ProfileFourier.lean` prove weak differentiation on `ℂ`. The exact broader manuscript formulation remains partial, while `RiemannianProfileFourierAE.lean` supplies the controlled-atlas product-measure argument and Fourier differentiability needed for the verified Theorem 1.1 path. |
+| Proposition 3.2, Orthogonal Jacobian budget | **Partial** | The algebraic Bessel/Jacobian inequality and planar metric-profile derivative budget are verified in `JacobianBudget.lean` and `ProfileFourier.lean`; `RiemannianJacobianBudget.lean` proves the coordinate-free half-energy bridge. The named broader formulation remains partial, but the finite mixed-Givens Jacobian budget used by Theorem 1.1 is fully supplied in `RiemannianProfileFourierAE.lean`. |
 | Lemma 4.1, Triangle-wave coefficients | **Verified** | Exact boundary Fourier coefficients are proved in `FourierBoundary.lean` and `ProfileFourier.lean`. |
 | Lemma 5.1, Entries of the Givens product | **Verified** | Entry, orthogonality, and energy identities are proved in `Givens.lean`. |
 | Lemma 5.2, First-harmonic dominance | **Verified** | All rowwise strict dominance estimates are proved in `Givens.lean` and exposed by `BoundaryCertificate.lean`. |
 | Lemma 5.3, Dominant first harmonic | **Verified** | Injectivity, degree one, polynomial disk extension, Jordan-region identification, and exact Fourier area are proved across `DominantHarmonic*.lean`, `BoundaryDegree*.lean`, `GivensDisk*.lean`, and `JordanBoundary.lean`. |
 | Lemma 5.4, Jordan coverage without orientation | **Verified** | `Lemma54.lean` proves the odd boundary-degree obstruction from the exact compact connected Hausdorff half-space-manifold hypotheses and a continuous injective parametrization of the whole ambient boundary. `JordanSchoenfliesCoverage.lean` uses the pinned relative Jordan--Schönflies theorem to define the canonical bounded component `Ω_C`, proves that it is open, connected, bounded, and exactly a complement component, derives its odd radial degree internally, and proves `Ω_C ⊆ G(M)` for every continuous extension with embedded boundary trace. `Lemma54Area.lean` strengthens this to interior preimages and proves the manuscript's full Riemannian conclusion: Euclidean area of `Ω_C` is at most the integral of the intrinsic two-Jacobian against the canonical Riemannian surface-area measure. No orientation or caller-supplied winding-number hypothesis remains. |
-| Proposition 5.5, Finite universal certificate | **Partial** | `finite_universal_certificate` and its certificate wrappers verify the deduction from coverage plus Jacobian budgets. Those geometric budgets are not yet supplied for arbitrary Riemannian surfaces. |
+| Proposition 5.5, Finite universal certificate | **Verified** | `finite_universal_ennreal_of_givens_coverage_budget` gives the finite deduction. `RiemannianUniversalFourierBound.lean` supplies its coverage and Jacobian-budget hypotheses for every finite `N`; its stronger final theorem is `riemannian_universal_fourier_bound`. |
 | Theorem 6.1, Antipodal defect | **Partial** | The pointwise defect budget and additive certificate propagation are verified on planar/chart interfaces. Intrinsic surface globalization remains unverified. |
 | Lemma 7.1, Hilbert-valued Stokes | **Partial** | `ClosedOneForm.lean` proves fixed-endpoint homotopy invariance and disk/square Stokes/comass interfaces in finite-dimensional Euclidean targets. The infinite-dimensional Hilbert-valued surface theorem is not formalized. |
 | Proposition 8.1, Separable nonlinear barrier | **Partial** | `PositiveLogSineKernel.lean` proves the squared-sine gap identity, positivity of both sine factors, strict positivity of the logarithmic kernel, and symmetry for `0 < t, s < π` with the necessary off-diagonal hypothesis `t ≠ s`. The Fourier-series identity, its diagonal/integrability treatment, and the scalar and Hilbert-valued quadratic-form optimization remain unverified. |
@@ -32,8 +35,8 @@ Riemannian surfaces.
 | Proposition 9.1, Boundary action | **Verified** | Exact linear and quadratic odd-mode series are proved in `BoundaryActionSeries.lean`. |
 | Lemma 10.1, Exact first variation | **Partial** | `Oriented.lean` verifies the scalar profile estimates used in the final bound. The exact Hardy autocorrelation first-variation identity is not represented as a Lean theorem. |
 | Corollary 10.2, First-order stationarity | **Open feasible obligation** | Depends on the missing exact first-variation/autocorrelation theorem. |
-| Proposition 11.1, Nonlinear comass bound | **Partial** | `nonlinear_comass_optimization` and the explicit `Cstar`, `Dstar`, and `Qstar` scalar estimates are verified. The analytic passage from genuine surface profiles to its hypotheses is not formalized. |
-| Theorem 12.1, One-parameter nonlinear certificate | **Partial** | Boundary action, scalar comass division, and rigorous numerics are verified conditional on the global Stokes/comass inequality. |
+| Proposition 11.1, Nonlinear comass bound | **Partial** | `nonlinear_comass_optimization` and the explicit `Cstar`, `Dstar`, and `Qstar` scalar estimates are verified. Their controlled-boundary-atlas use in the all-parameter nonlinear certificate is verified; the conventional-orientation and boundary-alignment bridge remains open. |
+| Theorem 12.1, One-parameter nonlinear certificate | **Partial** | `ControlledBoundaryAtlasBoundaryPhase.nonlinearCertificate_le_surfaceArea` verifies the all-parameter finite-to-infinite certificate at `0 ≤ λ < π² / 32`, conditional only on its explicit finite controlled atlas and derived boundary phase. The bridge from a conventional oriented filling to that atlas/phase remains open. |
 | Proposition 13.1, Infinite family of stationary resonances | **Open feasible obligation** | No Lean declaration currently encodes the general hierarchy and stationarity proof. |
 | Lemma 14.1, High-mode test | **Partial** | `OneHighLeg.lean` exhibits the positive odd mode `m = 2J+1`, proves unit norm and anti-periodicity, and computes the exact symplectic value `1 + ∑ μⱼ²` of the occupied output coordinates. Identifying those coordinates with the differential of the full normalized nonlinear map, and hence with an arbitrary global ambient comass, remains unverified. |
 | Theorem 14.2, Finite one-high-leg ceiling | **Partial** | `OneHighLeg.lean` defines the exact finite resonance matrix and boundary-action series, proves their quadratic-form identity, summability and weighted-Gram positivity, realizes the largest Rayleigh value as an eigenvalue, and proves the finite ceiling at the explicit high-mode interface. The infinite coefficient-space differential and global ambient-comass bridge remain unverified. |
@@ -41,25 +44,34 @@ Riemannian surfaces.
 | Theorem 14.4, Rigorous one-high-leg spectral ceiling | **Open feasible obligation** | The required operator/spectral estimate and numerical enclosure are absent. |
 | Proposition 15.1, de Sitter identities | **Verified** | `DeSitterProfile.lean` proves the de Sitter quadric identity, the formal-velocity Lorentz speed, the pairwise Lorentz inner product, and Züst's coefficient-kernel identity. The interface takes the profile values and derivative value as explicit scalars and exposes every required nonzero sine denominator; it does not assert the separate almost-everywhere differentiability bridge for a Lipschitz profile. |
 
-## Remaining end-to-end foundations not supplied by the pinned libraries
+## Broader manuscript foundations outside the verified headline closures
 
-The following are tracked formalization gaps rather than hidden hypotheses:
+Theorem 1.1's closure and Theorem 1.2's controlled-atlas core have no unmet
+internal obligations beyond their explicit theorem-signature hypotheses.
+The following broader formulations remain tracked formalization gaps rather
+than hidden hypotheses:
 
-1. the chartwise product-measure/Rademacher globalization that supplies the
-   already-formalized intrinsic parameter-integral differentiation hypotheses
-   almost everywhere on a two-dimensional Riemannian manifold with boundary;
-2. the global differential-form/Stokes/comass interface for the oriented
-   argument.
+1. the general raw-distance eikonal/Rademacher formulation beyond the
+   controlled-atlas Lipschitz/Fubini route used by Theorem 1.1;
+2. a conventional manifold-with-boundary orientation, a theorem constructing
+   a finite controlled oriented boundary atlas from it, and the orientation
+   reversal/alignment step relating that atlas to the supplied boundary
+   parameter; these bridges are required for the manuscript's unqualified
+   Theorem 1.2 statement;
+3. a global differential-form/Stokes/comass API beyond the explicit controlled
+   orientation interface used by the Lean theorem.
 
 The pinned mathlib revision contains Riemannian-manifold primitives but no
-surface triangulation/classification theorem, relative Jordan--Schönflies
-theorem, or ready-made manifold Stokes package. The project vendors and audits
-the exact source closures needed for finite triangulability, faithful
-polygonal normal forms, and ambient Jordan straightening. The relative-boundary
-classification, bounded-component coverage, controlled interior atlas,
-canonical Riemannian area measure, and full Lemma 5.4 area inequality are now
-closed; the two remaining analytic bridges stay explicit rather than being
-introduced as project assumptions.
+conventional orientation API for manifolds with boundary, surface
+triangulation/classification theorem, relative Jordan--Schönflies theorem, or
+ready-made manifold Stokes package. The project vendors and audits the exact
+source closures needed for finite triangulability, faithful polygonal normal
+forms, ambient Jordan straightening, controlled-atlas Fubini, and controlled
+boundary Stokes. The relative-boundary classification, bounded-component
+coverage, canonical Riemannian area measure, full Lemma 5.4 area inequality,
+and Theorem 1.1 together with the controlled-interface nonlinear closure are
+therefore proved without introducing the broader formulations as project
+assumptions. The conventional-orientation bridge is not silently assumed.
 
 The 132-module transitive closure of
 [`mccorvie/classification-of-surfaces`](https://github.com/mccorvie/classification-of-surfaces)
@@ -88,11 +100,19 @@ intrinsic two-Jacobian inequality.
 
 ## Current trust evidence
 
-- Lean `4.29.0`, mathlib `v4.29.0`, JordanCurveTheorem
+- Lean `4.29.0`; mathlib `v4.29.0` at
+  `8a178386ffc0f5fef0b77738bb5449d50efeea95`; JordanCurveTheorem at
   `e442525a662e9e3beb8205b9fa1fc99509076ded`.
-- GitHub Actions run `33266848279` on merge commit
-  `7f2e341cb95f82d23e3106ce45a1169649ff8cb8`: canonical umbrella check,
-  fail-closed source scan, injected-`sorry` negative control, full package
-  build, and live axiom audit.
-- Live audit result: 5,019 declarations under `GromovFilling`; allowed axioms
+- Theorem 1.1 merged receipt: GitHub Actions run
+  [`33278266789`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33278266789)
+  on merge commit `2e91793aac506118d24eb15733227f3693701bf5`.
+- Theorem 1.2 controlled-interface exact-leaf receipt: GitHub Actions run
+  [`33361483612`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33361483612)
+  on receipt commit `171ceaa8ca2f086ddb481746e9769792b87b5578`.
+- Consolidated source-only receipt: GitHub Actions run
+  [`33363167477`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33363167477)
+  on exact source `7c19e1eb8e37b83a88190f15f9a65d4876797d74` passed the canonical
+  umbrella and vendor checks, fail-closed proof-escape scan and injected-
+  `sorry` negative control, full package build, and live audit.
+- Live audit result: 6,304 declarations under `GromovFilling`; allowed axioms
   exactly `propext`, `Classical.choice`, and `Quot.sound`.
