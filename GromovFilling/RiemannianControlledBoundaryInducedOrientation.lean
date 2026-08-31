@@ -58,7 +58,56 @@ structure ControlledRiemannianInducedBoundaryOrientation
         (R.chartSign (P.center i) = -1 ∧
           StrictMonoOn lift (Set.Icc a b))
 
+/-- The outward-first boundary convention for one finite oriented controlled
+atlas.  This is the local geometric input used by the boundary phase
+construction: it contains neither a phase nor a winding, integral, Stokes,
+or area conclusion. -/
+structure ControlledBoundaryAtlasInducedBoundaryOrientation
+    (P : FiniteControlledBoundaryChartPartition M)
+    (O : ControlledBoundaryAtlasOrientation P)
+    (boundary : UnitAddCircle → M) : Prop where
+  chart_lift_orientation :
+    ∀ (i : P.ι) (a b : ℝ) (lift : ℝ → ℝ),
+      a < b →
+      (∀ y ∈ Set.Icc a b, (y * Complex.I : ℂ) ∈
+        chosenControlledHalfSpaceComplexChartDomain (P.center i)) →
+      Continuous lift →
+      (∀ y ∈ Set.Icc a b,
+        ((lift y : ℝ) : UnitAddCircle) =
+          controlledBoundaryChartParameter boundary P i y) →
+      (O.chartSign i = 1 ∧ StrictAntiOn lift (Set.Icc a b)) ∨
+        (O.chartSign i = -1 ∧ StrictMonoOn lift (Set.Icc a b))
+
+/-- Restrict a global controlled induced-boundary orientation to one finite
+controlled atlas. -/
+def ControlledRiemannianInducedBoundaryOrientation.toBoundaryAtlasInducedOrientation
+    {R : ControlledRiemannianSurfaceOrientation M}
+    {boundary : UnitAddCircle → M}
+    (H : ControlledRiemannianInducedBoundaryOrientation R boundary)
+    (P : FiniteControlledBoundaryChartPartition M) :
+    ControlledBoundaryAtlasInducedBoundaryOrientation P
+      (R.toBoundaryAtlasOrientation P) boundary where
+  chart_lift_orientation := by
+    intro i a b lift hab hdomain hliftContinuous hliftProject
+    simpa only [ControlledRiemannianSurfaceOrientation.toBoundaryAtlasOrientation] using
+      H.chart_lift_orientation P i a b lift hab hdomain hliftContinuous
+        hliftProject
+
+/-- A finite oriented controlled boundary atlas together with the
+outward-first convention on its boundary coordinate lifts.  It is a geometric
+presentation, not a boundary-phase or nonlinear-certificate package. -/
+structure FiniteControlledOrientedBoundaryAtlas
+    (P : FiniteControlledBoundaryChartPartition M)
+    (boundary : UnitAddCircle → M) where
+  orientation : ControlledBoundaryAtlasOrientation P
+  inducedBoundary :
+    ControlledBoundaryAtlasInducedBoundaryOrientation P orientation boundary
+
 #print axioms ControlledRiemannianInducedBoundaryOrientation
+#print axioms ControlledBoundaryAtlasInducedBoundaryOrientation
+#print axioms
+  ControlledRiemannianInducedBoundaryOrientation.toBoundaryAtlasInducedOrientation
+#print axioms FiniteControlledOrientedBoundaryAtlas
 
 end
 

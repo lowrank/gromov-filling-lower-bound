@@ -12,12 +12,15 @@ complex coordinates and records the basic domain, image, smoothness, and
 injectivity facts needed by chartwise weak Stokes.
 -/
 
-open Bundle Function Manifold Set
-open scoped Manifold
+open Bundle Filter Function Manifold Set
+open scoped Manifold Topology
 
 namespace GromovFilling
 
 noncomputable section
+
+attribute [local instance] normedAddCommGroupTangentSpaceVectorSpace
+attribute [local instance] normedSpaceTangentSpaceVectorSpace
 
 /-- The closed complex right half-plane underlying Mathlib's two-dimensional
 manifold-with-boundary model. -/
@@ -113,6 +116,75 @@ theorem mdifferentiableAt_halfSpaceComplexExtChart
       (modelWithCornersEuclideanHalfSpace 2)
       Complex.orthonormalBasisOneI.repr x hz
 
+/-- On the interior of a half-space chart, the derivative of the inverse
+chart factors through the canonical tangent-bundle trivialization at the
+chart center. -/
+theorem mfderiv_halfSpaceComplexExtChart_eq_symmL_comp
+    {M : Type*} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) 1 M]
+    (x : M) {z : ℂ}
+    (hz : z ∈ halfSpaceComplexExtChartDomain x ∩ complexRightOpenHalfPlane) :
+    mfderiv 𝓘(ℝ, ℂ) (modelWithCornersEuclideanHalfSpace 2)
+        (halfSpaceComplexExtChart x) z =
+      ((trivializationAt (EuclideanSpace ℝ (Fin 2))
+          (TangentSpace (modelWithCornersEuclideanHalfSpace 2)) x).symmL ℝ
+          (halfSpaceComplexExtChart x z)).comp
+        Complex.orthonormalBasisOneI.repr.toContinuousLinearEquiv.toContinuousLinearMap := by
+  let I := modelWithCornersEuclideanHalfSpace 2
+  let e : ℂ ≃L[ℝ] EuclideanSpace ℝ (Fin 2) :=
+    Complex.orthonormalBasisOneI.repr.toContinuousLinearEquiv
+  have htarget : e z ∈ (extChartAt I x).target := by
+    change Complex.orthonormalBasisOneI.repr z ∈ (extChartAt I x).target
+    exact (mem_halfSpaceComplexExtChartDomain x z).mp hz.1
+  have hinterior : e z ∈ interior (Set.range I) := by
+    change Complex.orthonormalBasisOneI.repr z ∈
+      interior (Set.range (modelWithCornersEuclideanHalfSpace 2))
+    rw [interior_range_modelWithCornersEuclideanHalfSpace]
+    simpa [complexRightOpenHalfPlane,
+      Complex.orthonormalBasisOneI_repr_apply] using hz.2
+  have hrange : Set.range I ∈ 𝓝 (e z) :=
+    mem_of_superset (isOpen_interior.mem_nhds hinterior) interior_subset
+  have hsource :
+      halfSpaceComplexExtChart x z ∈
+        (chartAt (EuclideanHalfSpace 2) x).source := by
+    change (extChartAt I x).symm (e z) ∈
+      (chartAt (EuclideanHalfSpace 2) x).source
+    rw [← extChartAt_source (I := I)]
+    exact (extChartAt I x).map_target htarget
+  have hinv :
+      MDifferentiableAt 𝓘(ℝ, EuclideanSpace ℝ (Fin 2)) I
+        (extChartAt I x).symm (e z) :=
+    (mdifferentiableWithinAt_extChartAt_symm (I := I) htarget).mdifferentiableAt
+      hrange
+  have htriv :
+      (trivializationAt (EuclideanSpace ℝ (Fin 2))
+          (TangentSpace I) x).symmL ℝ (halfSpaceComplexExtChart x z) =
+        mfderiv 𝓘(ℝ, EuclideanSpace ℝ (Fin 2)) I
+          (extChartAt I x).symm (e z) := by
+    calc
+      _ = mfderiv[Set.range I] (extChartAt I x).symm
+          (extChartAt I x (halfSpaceComplexExtChart x z)) :=
+        TangentBundle.symmL_trivializationAt (I := I) hsource
+      _ = mfderiv[Set.range I] (extChartAt I x).symm (e z) := by
+        rw [show extChartAt I x (halfSpaceComplexExtChart x z) = e z by
+          change extChartAt I x ((extChartAt I x).symm (e z)) = e z
+          exact (extChartAt I x).right_inv htarget]
+      _ = mfderiv 𝓘(ℝ, EuclideanSpace ℝ (Fin 2)) I
+          (extChartAt I x).symm (e z) :=
+        mfderivWithin_of_mem_nhds hrange
+  change mfderiv 𝓘(ℝ, ℂ) I ((extChartAt I x).symm ∘ e) z =
+    ((trivializationAt (EuclideanSpace ℝ (Fin 2))
+        (TangentSpace I) x).symmL ℝ
+        (halfSpaceComplexExtChart x z)).comp e.toContinuousLinearMap
+  calc
+    _ = (mfderiv 𝓘(ℝ, EuclideanSpace ℝ (Fin 2)) I
+          (extChartAt I x).symm (e z)).comp
+        (mfderiv 𝓘(ℝ, ℂ) 𝓘(ℝ, EuclideanSpace ℝ (Fin 2)) e z) :=
+      mfderiv_comp z hinv e.mdifferentiableAt
+    _ = _ := by
+      rw [e.mfderiv_eq, ← htriv]
+
 /-- Every boundary-chart coordinate lies in the closed right half-plane. -/
 theorem halfSpaceComplexExtChartDomain_subset_rightClosedHalfPlane
     {M : Type*} [TopologicalSpace M]
@@ -194,6 +266,7 @@ theorem image_halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane
 #print axioms halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane
 #print axioms isOpen_halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane
 #print axioms mdifferentiableAt_halfSpaceComplexExtChart
+#print axioms mfderiv_halfSpaceComplexExtChart_eq_symmL_comp
 #print axioms halfSpaceComplexExtChartDomain_subset_rightClosedHalfPlane
 #print axioms continuousOn_halfSpaceComplexExtChart
 #print axioms contMDiffOn_halfSpaceComplexExtChart

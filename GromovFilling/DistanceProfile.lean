@@ -22,6 +22,46 @@ def IsometricCircleBoundary {X : Type*} [PseudoMetricSpace X]
   ∀ s t, dist (boundary s) (boundary t) =
     2 * Real.pi * dist s t
 
+/-- Reverse the direction of a parametrized additive circle.  This is the
+metric part of the possible boundary reparametrization used when comparing a
+circle parameter with an induced boundary orientation. -/
+def reverseCircleBoundary {X : Type*}
+    (boundary : UnitAddCircle → X) : UnitAddCircle → X :=
+  fun t ↦ boundary (-t)
+
+@[simp] theorem reverseCircleBoundary_apply {X : Type*}
+    (boundary : UnitAddCircle → X) (t : UnitAddCircle) :
+    reverseCircleBoundary boundary t = boundary (-t) :=
+  rfl
+
+@[simp] theorem reverseCircleBoundary_reverse {X : Type*}
+    (boundary : UnitAddCircle → X) :
+    reverseCircleBoundary (reverseCircleBoundary boundary) = boundary := by
+  funext t
+  simp [reverseCircleBoundary]
+
+/-- Reversing an isometric circle parametrization preserves its metric
+normalization. -/
+theorem IsometricCircleBoundary.reverse {X : Type*} [PseudoMetricSpace X]
+    {boundary : UnitAddCircle → X}
+    (hboundary : IsometricCircleBoundary boundary) :
+    IsometricCircleBoundary (reverseCircleBoundary boundary) := by
+  intro s t
+  simpa only [reverseCircleBoundary, dist_neg_neg] using hboundary (-s) (-t)
+
+/-- Reversal does not change the image of a circle parametrization. -/
+theorem range_reverseCircleBoundary {X : Type*}
+    (boundary : UnitAddCircle → X) :
+    Set.range (reverseCircleBoundary boundary) = Set.range boundary := by
+  ext x
+  constructor
+  · rintro ⟨t, ht⟩
+    refine ⟨-t, ?_⟩
+    simpa only [reverseCircleBoundary, neg_neg] using ht
+  · rintro ⟨t, ht⟩
+    refine ⟨-t, ?_⟩
+    simpa only [reverseCircleBoundary, neg_neg] using ht
+
 /-- Distance to a point on the parametrized boundary. -/
 def boundaryDistance {X : Type*} [PseudoMetricSpace X]
     (boundary : UnitAddCircle → X) (θ : UnitAddCircle) (x : X) : ℝ :=
