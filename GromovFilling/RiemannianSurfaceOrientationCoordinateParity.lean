@@ -161,7 +161,7 @@ theorem RiemannianSurfaceOrientation.controlledChartSign_eq_neg_coordChange_det_
     have hmap : Orientation.map (Fin 2) e.toLinearEquiv
         halfSpaceComplexCoordinateOrientation = -halfSpaceComplexCoordinateOrientation := by
       have hneg := congrArg (fun q => -q) htransport
-      simpa only [neg_neg] using hneg
+      simpa only [Pi.neg_apply, neg_neg] using hneg
     exact (Orientation.map_eq_neg_iff_det_neg halfSpaceComplexCoordinateOrientation
       e.toLinearEquiv (by simp)).mp hmap
   · rw [ha, hb] at hsign
