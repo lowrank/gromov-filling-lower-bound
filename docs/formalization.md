@@ -17,7 +17,7 @@ manuscript ledger is maintained in
 | Planar and Riemannian analysis | Lipschitz area inequality, intrinsic two-Jacobian and chain rule, controlled interior charts, disjoint countable-atlas coverage, chart-independence, canonical Riemannian surface area, exact planar determinant identity, half-energy and integrated Jacobian budgets |
 | Riemannian profile derivatives | sharp intrinsic `‖D f‖ ≤ K` at interior differentiability points for globally `K`-Lipschitz real functions, including boundary distance, odd profile, and antipodal slack |
 | Headline Theorem 1.1 | `riemannian_universal_fourier_bound`: the `14 ζ(3) / π` lower bound for every compact connected Riemannian isometric filling at the stated boundary interface |
-| Headline Theorem 1.2 | `riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling`: the strict `5.38982446` lower bound at an explicit `R`/`H` controlled-orientation interface |
+| Headline Theorem 1.2 core | `riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling`: the strict `5.38982446` lower bound at an explicit `R`/`H` controlled-orientation interface; the bridge from the manuscript's bare orientation hypothesis remains open |
 | Certificate logic | finite-to-infinite universal deduction, defect propagation, scalar optimization |
 | Rigorous numerics | rational bounds for `π`, `ζ(3)`, and the displayed constants |
 | Logarithmic sine kernel | squared-sine gap, positive sine quotient, strict off-diagonal positivity, symmetry |
@@ -160,7 +160,7 @@ Lemma 5.4 area inequality, finite Givens coverage, and the finite-to-infinite
 certificate.
 
 `GromovFilling.riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling`
-is the end-to-end formal Theorem 1.2. It proves the strict lower bound
+is the end-to-end controlled-interface nonlinear theorem. It proves the strict lower bound
 `538982446 / 100000000 = 5.38982446` for a compact connected Riemannian
 isometric filling with its `(⊤ : WithTop ℕ∞)` half-space-manifold structure,
 with `R : ControlledRiemannianSurfaceOrientation M` and
@@ -175,9 +175,17 @@ with `R : ControlledRiemannianSurfaceOrientation M` and
     Stokes, comass, or area conclusion. This is therefore an explicit formal
     interface, not a conditional shell around the target conclusion.
 
-Neither theorem claims Gromov's conjectural `2π` bound. Broader manuscript
-formulations that remain partial are recorded in the ledger; they are not
-dependencies of these two verified headline declarations.
+The manuscript's Theorem 1.2 instead quantifies over every compact connected
+**oriented** Riemannian isometric filling. The project does not yet contain a
+Lean theorem constructing `R` and `H` from that conventional orientation
+hypothesis. The controlled-interface theorem is therefore verified, but the
+unqualified manuscript statement remains an open formal bridge.
+
+Neither Lean theorem claims Gromov's conjectural `2π` bound. Broader manuscript
+formulations that remain partial are recorded in the ledger; the
+conventional-orientation bridge is a remaining dependency of the unqualified
+manuscript Theorem 1.2, rather than a dependency of the controlled-interface
+Lean declaration.
 
 ## Open feasible manuscript obligations
 

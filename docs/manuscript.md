@@ -27,16 +27,19 @@ certificates; it does not prove the conjecture.
 Lean verifies the finite Fourier algebra, exact boundary curves, orthogonal
 mixing, Jordan and degree arguments, finite mod-2 obstruction, Riemannian
 area inequalities, certificate deductions, and rigorous numerical conclusions.
-It also verifies the two headline statements: the orientation-free universal
-Fourier bound, and the strict nonlinear improvement at the explicit controlled
-surface-orientation and induced-boundary interface described in the
+It verifies the orientation-free universal Fourier bound and the strict
+nonlinear improvement at the explicit controlled surface-orientation and
+induced-boundary interface described in the
 [formalization boundary](formalization.md).
 
 That interface is necessary because the pinned manifold library has no
-conventional orientation API for manifolds with boundary. It does not claim
-Gromov's conjectural `2π` bound. Broader manuscript claims listed as partial
-in the ledger are independent future work, not unproved assumptions of the
-two verified headline theorems.
+conventional orientation API for manifolds with boundary. Lean does not yet
+derive the controlled interface from the manuscript's bare conventional
+orientation hypothesis, so the unqualified manuscript Theorem 1.2 remains an
+open bridge. It does not claim Gromov's conjectural `2π` bound. Broader
+manuscript claims listed as partial in the ledger are independent future work
+for Theorem 1.1 and the controlled-interface theorem; the orientation bridge
+is explicitly tracked rather than hidden.
 
 ## Source of record
 

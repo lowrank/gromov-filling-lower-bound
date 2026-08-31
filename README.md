@@ -143,12 +143,15 @@ scan fails closed.
 ## Verified headline boundary
 
 Lemma 5.4 and Theorem 1.1 are end-to-end verified without an orientability
-assumption. Theorem 1.2 is also end-to-end verified, at the explicit
+assumption. The controlled-interface version of Theorem 1.2 is end-to-end
+verified at the explicit
 `R : ControlledRiemannianSurfaceOrientation M` and
 `H : ControlledRiemannianInducedBoundaryOrientation R boundary` interface.
 Those structures make the missing standard library notion of an orientation
 with boundary visible rather than hiding it in an axiom or a conclusion-
-bearing hypothesis.
+bearing hypothesis. Lean does not yet derive that interface from the
+manuscript's bare conventional orientation assumption, so the unqualified
+manuscript Theorem 1.2 remains an open bridge.
 
 Broader manuscript items such as a raw-distance eikonal theorem, a general
 one-parameter nonlinear formula, and a conventional global manifold Stokes

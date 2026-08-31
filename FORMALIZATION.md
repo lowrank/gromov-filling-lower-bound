@@ -8,12 +8,15 @@ core and the unverified bridge.
 
 The ledger does **not** claim a proof of Gromov’s filling-area conjecture. The
 manuscript's two headline lower bounds are strictly below the conjectural value
-`2π`; both are now kernel-verified at the explicit interfaces recorded below.
+`2π`. Theorem 1.1 is kernel-verified at its stated interface, and the
+controlled-orientation version of Theorem 1.2 is kernel-verified at the
+explicit interface recorded below; the bridge from the manuscript's bare
+“oriented” hypothesis remains open.
 
 | Manuscript item | Status | Lean scope and remaining boundary |
 |---|---|---|
 | Theorem 1.1, Universal Fourier bound | **Verified** | `riemannian_universal_fourier_bound` in `RiemannianUniversalFourierBound.lean` proves the `14 ζ(3) / π` lower bound for every compact connected Riemannian isometric filling with the declaration's order-`1` half-space-manifold structure and a boundary parametrization whose range is the ambient boundary. It combines the controlled-atlas Fubini/almost-everywhere bridge in `RiemannianProfileFourierAE.lean`, full `lemma54_riemannian_area`, the Givens disk areas, and the finite-to-infinite certificate. No differentiability, coverage, Jacobian-budget, or area conclusion is an assumption of the theorem. |
-| Theorem 1.2, Explicit nonlinear improvement | **Verified** | `riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling` in `RiemannianExplicitNonlinearImprovement.lean` proves the strict bound `538982446 / 100000000 = 5.38982446` for compact connected Riemannian isometric fillings with its `(⊤ : WithTop ℕ∞)` half-space-manifold structure, at the explicit orientation interface `R : ControlledRiemannianSurfaceOrientation M` and `H : ControlledRiemannianInducedBoundaryOrientation R boundary`. `R` supplies a tangent-plane orientation and compatible `±1` canonical-chart signs whose signed chart Jacobian is its absolute value; `H` supplies only outward-first local lift monotonicity. In particular, `H` contains no integral, winding, Stokes, comass, or area conclusion. The pinned manifold library has no conventional orientation API for manifolds with boundary, so this is the transparent formal meaning of the manuscript's oriented case. |
+| Theorem 1.2, Explicit nonlinear improvement | **Partial** | `riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling` in `RiemannianExplicitNonlinearImprovement.lean` proves the strict bound `538982446 / 100000000 = 5.38982446` for compact connected Riemannian isometric fillings with its `(⊤ : WithTop ℕ∞)` half-space-manifold structure, **provided** `R : ControlledRiemannianSurfaceOrientation M` and `H : ControlledRiemannianInducedBoundaryOrientation R boundary`. `R` supplies a tangent-plane orientation and compatible `±1` canonical-chart signs whose signed chart Jacobian is its absolute value; `H` supplies only outward-first local lift monotonicity. In particular, `H` contains no integral, winding, Stokes, comass, or area conclusion. The Lean theorem is complete at that controlled interface, but no theorem yet derives `R` and `H` from the manuscript's bare conventional orientation hypothesis; the unqualified manuscript statement is therefore not yet verified. |
 | Definition 2.1, odd profile and slack | **Verified** | Formalized in `DistanceProfile.lean` with antipodal, boundary, nonnegativity, and Lipschitz properties. |
 | Eikonal identity for boundary distance functions | **Partial** | The exact Euclidean derivative-norm identity used by the planar model is proved in `ProfileFourier.lean`. `RiemannianLipschitzDerivative.lean` proves the sharp intrinsic upper bound `‖D f‖ ≤ K` at interior differentiability points. The broader raw-distance eikonal formulation remains open, but it is not a hypothesis of Theorem 1.1: `RiemannianProfileFourierAE.lean` proves the controlled-atlas Lipschitz/Fubini almost-everywhere route needed by that headline closure. |
 | Lemma 3.1, Differentiating the coefficients | **Partial** | `hasFDerivAt_oddProfile_weightedIntegral` and the Fourier-coordinate derivative theorems in `ProfileFourier.lean` prove weak differentiation on `ℂ`. The exact broader manuscript formulation remains partial, while `RiemannianProfileFourierAE.lean` supplies the controlled-atlas product-measure argument and Fourier differentiability needed for the verified Theorem 1.1 path. |
@@ -32,7 +35,7 @@ manuscript's two headline lower bounds are strictly below the conjectural value
 | Lemma 10.1, Exact first variation | **Partial** | `Oriented.lean` verifies the scalar profile estimates used in the final bound. The exact Hardy autocorrelation first-variation identity is not represented as a Lean theorem. |
 | Corollary 10.2, First-order stationarity | **Open feasible obligation** | Depends on the missing exact first-variation/autocorrelation theorem. |
 | Proposition 11.1, Nonlinear comass bound | **Partial** | `nonlinear_comass_optimization` and the explicit `Cstar`, `Dstar`, and `Qstar` scalar estimates are verified. The broader analytic passage remains partial; the finite controlled-atlas passage at `λ = 0.03` required for Theorem 1.2 is closed. |
-| Theorem 12.1, One-parameter nonlinear certificate | **Partial** | Boundary action, scalar comass division, and rigorous numerics are verified. The full one-parameter formulation remains partial, while its exact `λ = 0.03` controlled-orientation instance is closed by the verified Theorem 1.2 theorem. |
+| Theorem 12.1, One-parameter nonlinear certificate | **Partial** | Boundary action, scalar comass division, and rigorous numerics are verified. The full one-parameter formulation remains partial, while its exact `λ = 0.03` controlled-orientation instance is closed by the Lean theorem; the bridge to the manuscript's unqualified oriented formulation remains open. |
 | Proposition 13.1, Infinite family of stationary resonances | **Open feasible obligation** | No Lean declaration currently encodes the general hierarchy and stationarity proof. |
 | Lemma 14.1, High-mode test | **Partial** | `OneHighLeg.lean` exhibits the positive odd mode `m = 2J+1`, proves unit norm and anti-periodicity, and computes the exact symplectic value `1 + ∑ μⱼ²` of the occupied output coordinates. Identifying those coordinates with the differential of the full normalized nonlinear map, and hence with an arbitrary global ambient comass, remains unverified. |
 | Theorem 14.2, Finite one-high-leg ceiling | **Partial** | `OneHighLeg.lean` defines the exact finite resonance matrix and boundary-action series, proves their quadratic-form identity, summability and weighted-Gram positivity, realizes the largest Rayleigh value as an eigenvalue, and proves the finite ceiling at the explicit high-mode interface. The infinite coefficient-space differential and global ambient-comass bridge remain unverified. |
@@ -42,15 +45,18 @@ manuscript's two headline lower bounds are strictly below the conjectural value
 
 ## Broader manuscript foundations outside the verified headline closures
 
-The two headline closure proofs have no unmet internal obligations beyond their
-explicit theorem-signature hypotheses. The following broader formulations
-remain tracked formalization gaps rather than hidden hypotheses:
+Theorem 1.1's closure and Theorem 1.2's controlled-interface closure have no
+unmet internal obligations beyond their explicit theorem-signature hypotheses.
+The following broader formulations remain tracked formalization gaps rather
+than hidden hypotheses:
 
 1. the general raw-distance eikonal/Rademacher formulation beyond the
    controlled-atlas Lipschitz/Fubini route used by Theorem 1.1;
-2. a conventional manifold-with-boundary orientation and global
-   differential-form/Stokes/comass API beyond the explicit controlled
-   orientation interface used by Theorem 1.2.
+2. a conventional manifold-with-boundary orientation, together with a theorem
+   constructing the controlled `R`/`H` data from it; this bridge is required
+   for the manuscript's unqualified Theorem 1.2 statement;
+3. a global differential-form/Stokes/comass API beyond the explicit controlled
+   orientation interface used by the Lean theorem.
 
 The pinned mathlib revision contains Riemannian-manifold primitives but no
 conventional orientation API for manifolds with boundary, surface
@@ -60,8 +66,9 @@ source closures needed for finite triangulability, faithful polygonal normal
 forms, ambient Jordan straightening, controlled-atlas Fubini, and controlled
 boundary Stokes. The relative-boundary classification, bounded-component
 coverage, canonical Riemannian area measure, full Lemma 5.4 area inequality,
-and both headline theorem closures are therefore proved without introducing
-the broader formulations as project assumptions.
+and Theorem 1.1 together with the controlled-interface nonlinear closure are
+therefore proved without introducing the broader formulations as project
+assumptions. The conventional-orientation bridge is not silently assumed.
 
 The 132-module transitive closure of
 [`mccorvie/classification-of-surfaces`](https://github.com/mccorvie/classification-of-surfaces)
@@ -96,7 +103,7 @@ intrinsic two-Jacobian inequality.
 - Theorem 1.1 merged receipt: GitHub Actions run
   [`33278266789`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33278266789)
   on merge commit `2e91793aac506118d24eb15733227f3693701bf5`.
-- Theorem 1.2 exact-leaf receipt: GitHub Actions run
+- Theorem 1.2 controlled-interface exact-leaf receipt: GitHub Actions run
   [`33361483612`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33361483612)
   on receipt commit `171ceaa8ca2f086ddb481746e9769792b87b5578`.
 - Consolidated source-only receipt: GitHub Actions run
