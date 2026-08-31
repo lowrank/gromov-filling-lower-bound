@@ -71,7 +71,8 @@ theorem trivialization_coordChange_det_eq_fderivWithin_extChartAt_transition_det
         (trivializationAt E (TangentSpace I) b)
         ((extChartAt I a).symm z)).toLinearEquiv : E →ₗ[ℝ] E) =
       (tangentCoordChange I a b ((extChartAt I a).symm z) : E →ₗ[ℝ] E) := by
-    ext v
+    apply LinearMap.ext
+    intro v
     simpa only [I] using
       (trivialization_coordChange_apply_eq_tangentCoordChange
         a b ((extChartAt I a).symm z) hpa hpb v)

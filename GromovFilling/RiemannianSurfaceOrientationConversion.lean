@@ -215,6 +215,10 @@ def RiemannianSurfaceOrientation.toControlledRiemannianSurfaceOrientation
       ⟨tangentSpace_finrank_eq_two
         (modelWithCornersEuclideanHalfSpace 2)
         (halfSpaceComplexExtChart x z)⟩
+    letI : Fact (Module.finrank ℝ
+        (TangentSpace (modelWithCornersEuclideanHalfSpace 2) (y : M)) = 2) :=
+      ⟨tangentSpace_finrank_eq_two
+        (modelWithCornersEuclideanHalfSpace 2) (y : M)⟩
     have hJacobian :
         orientedRiemannianChartJacobian
           (modelWithCornersEuclideanHalfSpace 2)
