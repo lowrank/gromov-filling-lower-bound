@@ -64,6 +64,38 @@ def ControlledBoundaryActiveAxisLift.toAxisLift
   project_lift := L.project_lift
   direction := L.direction
 
+/-- Every continuous real lift of a controlled boundary-chart parameter on a
+nontrivial domain interval has one strict direction. -/
+theorem strictMonoOn_or_strictAntiOn_ofContinuousProjectedLift
+    (boundary : UnitAddCircle → M)
+    (hboundaryRange : Set.range boundary =
+      (modelWithCornersEuclideanHalfSpace 2).boundary M)
+    (P : FiniteControlledBoundaryChartPartition M) (i : P.ι)
+    (a b : ℝ) (hab : a < b)
+    (hdomain : ∀ y ∈ Set.Icc a b, (y * Complex.I : ℂ) ∈
+      chosenControlledHalfSpaceComplexChartDomain (P.center i))
+    (lift : ℝ → ℝ) (hliftContinuous : Continuous lift)
+    (hliftProject : ∀ y ∈ Set.Icc a b,
+      ((lift y : ℝ) : UnitAddCircle) =
+        controlledBoundaryChartParameter boundary P i y) :
+    StrictMonoOn lift (Set.Icc a b) ∨ StrictAntiOn lift (Set.Icc a b) := by
+  have hparameterInjective : Set.InjOn
+      (controlledBoundaryChartParameter boundary P i) (Set.Icc a b) :=
+    injOn_controlledBoundaryChartParameter_of_mem_controlledDomain
+      boundary hboundaryRange P i (Set.Icc a b) hdomain
+  have hliftInjective : Set.InjOn lift (Set.Icc a b) := by
+    intro y hy z hz hyz
+    apply hparameterInjective hy hz
+    calc
+      controlledBoundaryChartParameter boundary P i y =
+          ((lift y : ℝ) : UnitAddCircle) := (hliftProject y hy).symm
+      _ = ((lift z : ℝ) : UnitAddCircle) :=
+        congrArg (fun r : ℝ ↦ (r : UnitAddCircle)) hyz
+      _ = controlledBoundaryChartParameter boundary P i z :=
+        hliftProject z hz
+  exact hliftContinuous.continuousOn.strictMonoOn_of_injOn_Icc'
+    hab.le hliftInjective
+
 /-- Package any continuous real lift of a controlled boundary-chart
 parameter on a nontrivial domain interval.  Injectivity of the chart
 parameter forces one of the two strict directions, so no cutoff-activity
@@ -81,22 +113,9 @@ def ControlledBoundaryAxisLift.ofContinuousProjectedLift
       ((lift y : ℝ) : UnitAddCircle) =
         controlledBoundaryChartParameter boundary P i y) :
     ControlledBoundaryAxisLift boundary P i := by
-  have hparameterInjective : Set.InjOn
-      (controlledBoundaryChartParameter boundary P i) (Set.Icc a b) :=
-    injOn_controlledBoundaryChartParameter_of_mem_controlledDomain
-      boundary hboundaryRange P i (Set.Icc a b) hdomain
-  have hliftInjective : Set.InjOn lift (Set.Icc a b) := by
-    intro y hy z hz hyz
-    apply hparameterInjective hy hz
-    calc
-      controlledBoundaryChartParameter boundary P i y =
-          ((lift y : ℝ) : UnitAddCircle) := (hliftProject y hy).symm
-      _ = ((lift z : ℝ) : UnitAddCircle) :=
-        congrArg (fun r : ℝ ↦ (r : UnitAddCircle)) hyz
-      _ = controlledBoundaryChartParameter boundary P i z :=
-        hliftProject z hz
-  rcases hliftContinuous.continuousOn.strictMonoOn_of_injOn_Icc'
-      hab.le hliftInjective with hmono | hanti
+  rcases strictMonoOn_or_strictAntiOn_ofContinuousProjectedLift
+      boundary hboundaryRange P i a b hab hdomain lift hliftContinuous
+      hliftProject with hmono | hanti
   · exact {
       a := a
       b := b
@@ -425,6 +444,7 @@ theorem ControlledBoundaryAxisLift.outwardBit_eq_of_chartSigns_neg_one_one
 
 #print axioms ControlledBoundaryAxisLift
 #print axioms ControlledBoundaryActiveAxisLift.toAxisLift
+#print axioms strictMonoOn_or_strictAntiOn_ofContinuousProjectedLift
 #print axioms ControlledBoundaryAxisLift.ofContinuousProjectedLift
 #print axioms ControlledBoundaryAxisLift.monoBit
 #print axioms ControlledBoundaryAxisLift.outwardBit
