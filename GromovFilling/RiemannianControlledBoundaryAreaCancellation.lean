@@ -204,65 +204,6 @@ theorem ControlledBoundaryChartWeakStokesData.primitiveError_eq_zero_of_mem_righ
   exact finiteSymplecticFDerivPrimitiveError_eq_zero_of_cutoff_eq_zero
     D.cutoff D.chartMap z D.cutoff_nonneg hcutoff
 
-/-- The canonical primitive-error chart density has the same controlled
-interior support. -/
-theorem controlledBoundaryChartAreaPrimitiveErrorDensity_eq_zero_of_mem_rightOpen_of_not_mem_chosenInteriorDomain
-    {ι : Type uι} [Fintype ι]
-    (P : FiniteControlledBoundaryChartPartition M)
-    (O : ControlledBoundaryAtlasOrientation P) (i : P.ι)
-    (G : M → ι → ℂ) {z : ℂ}
-    (hzRight : z ∈ complexRightOpenHalfPlane)
-    (hzControlled : z ∉ chosenControlledInteriorComplexChartDomain
-      (modelWithCornersEuclideanHalfSpace 2)
-      Complex.orthonormalBasisOneI.repr (P.center i)) :
-    controlledBoundaryChartAreaPrimitiveErrorDensity P O i G z = 0 := by
-  classical
-  by_cases hzDomain : z ∈ halfSpaceComplexExtChartDomain (P.center i)
-  · let I := modelWithCornersEuclideanHalfSpace 2
-    let e := Complex.orthonormalBasisOneI.repr
-    let F : ℂ → M := interiorComplexExtChart I e (P.center i)
-    let s : Set ℂ :=
-      chosenControlledInteriorComplexChartDomain I e (P.center i)
-    have hzFull : z ∈ interiorComplexExtChartDomain I e (P.center i) := by
-      rw [← halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane]
-      exact ⟨hzDomain, hzRight⟩
-    have hsSubsetFull : s ⊆
-        interiorComplexExtChartDomain I e (P.center i) := by
-      exact
-        controlledInteriorComplexChartDomain_subset_interiorComplexExtChartDomain
-          I e (chosenInteriorChartControl I (P.center i))
-    have hzInterior : F z ∈ I.interior M := by
-      have hzImage :
-          interiorComplexExtChart I e (P.center i) z ∈
-            interiorComplexExtChart I e (P.center i) ''
-              interiorComplexExtChartDomain I e (P.center i) :=
-        ⟨z, hzFull, rfl⟩
-      rw [image_interiorComplexExtChartDomain I e (P.center i)] at hzImage
-      simpa only [F] using hzImage.2
-    have hzNotS : z ∉ s := by
-      simpa only [s, I, e] using hzControlled
-    have hzNotImage : F z ∉ F '' s := by
-      rintro ⟨w, hw, hwz⟩
-      have hwFull := hsSubsetFull hw
-      have hzw : z = w :=
-        injOn_interiorComplexExtChart I e (P.center i)
-          hzFull hwFull hwz.symm
-      exact hzNotS (hzw ▸ hw)
-    have hzero :=
-      P.primitiveErrorDensity_eq_zero_of_interior_of_not_mem_image
-        O.tangentOrientation i G (F z) hzInterior
-          (by simpa only [F, s, I, e] using hzNotImage)
-    rw [controlledBoundaryChartAreaPrimitiveErrorDensity, if_pos hzDomain]
-    rw [show orientedFiniteComplexRiemannianPrimitiveErrorDensity
-        (modelWithCornersEuclideanHalfSpace 2) O.tangentOrientation
-        (P.partition i) G
-        (halfSpaceComplexExtChart (P.center i) z) = 0 by
-      simpa only [F, I, e, halfSpaceComplexExtChart,
-        interiorComplexExtChart] using hzero,
-      mul_zero]
-  · simp only [controlledBoundaryChartAreaPrimitiveErrorDensity,
-      if_neg hzDomain]
-
 /-- For Lipschitz data, the signed extension-based primitive-error integral
 is the canonical chart-area primitive-error integral.  Rademacher is used
 only on the controlled interior support. -/

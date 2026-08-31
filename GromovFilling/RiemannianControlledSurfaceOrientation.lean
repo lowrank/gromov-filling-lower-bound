@@ -7,8 +7,9 @@ Mathlib's pinned manifold library does not yet provide an orientation structure
 for manifolds with boundary.  This file records the corresponding geometric
 datum at the canonical controlled charts used by the project: one global
 tangent-plane orientation and a compatible sign for every controlled inverse
-chart.  Restricting those choices to any finite controlled partition produces
-the chart-orientation datum used by the Stokes layer.
+chart on its chosen controlled interior domain.  Restricting those choices to
+any finite controlled partition produces the chart-orientation datum used by
+the Stokes layer.
 -/
 
 open Bundle Manifold Set
@@ -53,7 +54,9 @@ structure ControlledRiemannianSurfaceOrientation (M : Type uM)
     ∀ x, chartSign x = 1 ∨ chartSign x = -1
   chartSign_mul_jacobian_eq_abs :
     ∀ x z,
-      z ∈ halfSpaceComplexExtChartDomain x ∩ complexRightOpenHalfPlane →
+      z ∈ chosenControlledInteriorComplexChartDomain
+          (modelWithCornersEuclideanHalfSpace 2)
+          Complex.orthonormalBasisOneI.repr x →
         chartSign x *
             orientedRiemannianChartJacobian
               (modelWithCornersEuclideanHalfSpace 2) tangentOrientation
