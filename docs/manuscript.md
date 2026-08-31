@@ -27,9 +27,10 @@ certificates; it does not prove the conjecture.
 Lean verifies the finite Fourier algebra, exact boundary curves, orthogonal
 mixing, Jordan and degree arguments, finite mod-2 obstruction, Riemannian
 area inequalities, certificate deductions, and rigorous numerical conclusions.
-It verifies the orientation-free universal Fourier bound and the strict
-nonlinear improvement at the explicit controlled surface-orientation and
-induced-boundary interface described in the
+It verifies the orientation-free universal Fourier bound and the
+all-parameter nonlinear controlled-atlas core, with its strict decimal
+corollary at the explicit controlled surface-orientation and induced-boundary
+interface described in the
 [formalization boundary](formalization.md).
 
 That interface is necessary because the pinned manifold library has no

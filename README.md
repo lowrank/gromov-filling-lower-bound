@@ -17,7 +17,7 @@ Bounds for Gromov's Filling Area Problem*.
 > This repository does not prove Gromov's filling-area conjecture. The
 > manuscript proves lower bounds below the conjectural value `2π`. Lean
 > verifies Theorem 1.1 for the stated compact Riemannian isometric-filling
-> interface and Theorem 1.2 at its explicit controlled-orientation interface.
+> interface and the all-parameter controlled-atlas core of Theorem 1.2.
 > See [`FORMALIZATION.md`](FORMALIZATION.md) for the exact verified, partial,
 > and open claim boundary.
 
@@ -30,9 +30,11 @@ $$
 \frac{14\zeta(3)}{\pi}=5.3567723444\ldots
 $$
 
-`riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling`
-establishes the strict nonlinear bound at `λ = 0.03` for the explicit
-`R`/`H` controlled surface-orientation and induced-boundary interface
+`ControlledBoundaryAtlasBoundaryPhase.nonlinearCertificate_le_surfaceArea`
+establishes the nonlinear formula for every admissible `λ` at the explicit
+controlled boundary-atlas/phase interface. Its named `R`/`H` corollary,
+`riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling`,
+gives the strict bound at `λ = 0.03`
 
 $$
 5.38982446.
@@ -76,8 +78,9 @@ every declaration rooted at `GromovFilling` against the exact allowlist
   inequality;
 - Theorem 1.1: the universal Fourier lower bound for arbitrary compact
   connected Riemannian isometric fillings at the stated boundary interface;
-- Theorem 1.2: the strict nonlinear lower bound at the explicit controlled
-  surface-orientation and outward-first induced-boundary interface;
+- Theorem 1.2 core: the all-parameter nonlinear formula at an explicit
+  controlled boundary-atlas/phase interface, with the strict `λ = 0.03`
+  controlled-orientation corollary;
 - planar Lipschitz area inequalities and Jacobian budgets;
 - sharp interior Riemannian Lipschitz-to-derivative bounds for boundary
   distance, odd-profile, and antipodal-slack functions;
@@ -143,8 +146,8 @@ scan fails closed.
 ## Verified headline boundary
 
 Lemma 5.4 and Theorem 1.1 are end-to-end verified without an orientability
-assumption. The controlled-interface version of Theorem 1.2 is end-to-end
-verified at the explicit
+assumption. The controlled-atlas core of Theorem 1.2 and its decimal
+controlled-interface corollary are end-to-end verified at the explicit
 `R : ControlledRiemannianSurfaceOrientation M` and
 `H : ControlledRiemannianInducedBoundaryOrientation R boundary` interface.
 Those structures make the missing standard library notion of an orientation
@@ -153,10 +156,10 @@ bearing hypothesis. Lean does not yet derive that interface from the
 manuscript's bare conventional orientation assumption, so the unqualified
 manuscript Theorem 1.2 remains an open bridge.
 
-Broader manuscript items such as a raw-distance eikonal theorem, a general
-one-parameter nonlinear formula, and a conventional global manifold Stokes
-API remain independently partial. They are not open dependencies of the two
-headline declarations. Neither headline reaches the conjectural `2π` bound.
+Broader manuscript items such as a raw-distance eikonal theorem, the
+conventional orientation/boundary-alignment bridge, and a conventional global
+manifold Stokes API remain independently partial. Neither headline reaches the
+conjectural `2π` bound.
 
 ## Documentation development
 
