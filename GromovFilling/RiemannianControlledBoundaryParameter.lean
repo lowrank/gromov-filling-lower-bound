@@ -307,6 +307,7 @@ theorem exists_continuous_real_lift_controlledBoundaryChartParameter_on_Icc
       change Set.IccExtend hab parameterIcc y =
         controlledBoundaryChartParameter boundary P i y
       rw [Set.IccExtend_of_mem hab parameterIcc hy]
+      rfl
 
 /-- A continuous real lift of the canonical circle parameter on a compact
 nonzero chart-axis interval can be chosen strictly increasing or strictly
