@@ -1,16 +1,18 @@
 import GromovFilling.RiemannianHalfSpaceChart
+import Mathlib.Analysis.Calculus.LocalExtr.Basic
 
 /-!
 # Boundary axes under half-space chart transitions
 
 An extended-chart transition between two charts of a manifold with boundary
-preserves the model boundary face.  This elementary topological fact is the
-first local ingredient for comparing induced boundary directions with surface
-orientation signs; it contains no derivative or orientation assertion.
+preserves the model boundary face.  Its first derivative consequently
+preserves the tangent boundary line and is nondegenerate along that line.
+These are local ingredients for comparing induced boundary directions with
+surface-orientation signs; the file contains no global orientation assertion.
 -/
 
 open Manifold Set
-open scoped Manifold
+open scoped Manifold Topology
 
 namespace GromovFilling
 
@@ -79,7 +81,350 @@ theorem extChartAt_axis_maps_to_axis
   exact ((ModelWithCorners.isBoundaryPoint_iff_not_isInteriorPoint (I := I) _).mp
     hboundary) hinterior
 
+/-- A smooth extended-chart transition preserves the tangent boundary line to
+first order.  In the right-half-space model, its derivative sends the axis
+direction to a vector with zero normal component. -/
+theorem fderivWithin_extChartAt_axis_transition_tangent_normal_eq_zero
+    {M : Type*} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) 1 M]
+    (a b : M) {z : EuclideanSpace ℝ (Fin 2)}
+    (hz : z ∈ ((extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm ≫
+      extChartAt (modelWithCornersEuclideanHalfSpace 2) b).source)
+    (hzAxis : z 0 = 0) :
+    (fderivWithin ℝ
+      (extChartAt (modelWithCornersEuclideanHalfSpace 2) b ∘
+        (extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm)
+      ((extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm ≫
+        extChartAt (modelWithCornersEuclideanHalfSpace 2) b).source z
+      (EuclideanSpace.single 1 (1 : ℝ))) 0 = 0 := by
+  let I : ModelWithCorners ℝ (EuclideanSpace ℝ (Fin 2))
+      (EuclideanHalfSpace 2) := modelWithCornersEuclideanHalfSpace 2
+  let φ : PartialEquiv (EuclideanSpace ℝ (Fin 2))
+      (EuclideanSpace ℝ (Fin 2)) :=
+    (extChartAt I a).symm ≫ extChartAt I b
+  let s : Set (EuclideanSpace ℝ (Fin 2)) := φ.source
+  let T : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2) :=
+    extChartAt I b ∘ (extChartAt I a).symm
+  let e1 : EuclideanSpace ℝ (Fin 2) := EuclideanSpace.single 1 (1 : ℝ)
+  change z ∈ s at hz
+  change (fderivWithin ℝ T s z e1) 0 = 0
+  have sourceMem (w : EuclideanSpace ℝ (Fin 2)) :
+      w ∈ s ↔ w ∈ (extChartAt I a).target ∧
+        (extChartAt I a).symm w ∈ (extChartAt I b).source := by
+    simp only [s, φ, PartialEquiv.trans_source, PartialEquiv.symm_source,
+      Set.mem_inter_iff, Set.mem_preimage]
+  have hzSplit := (sourceMem z).mp hz
+  have hTaxis : (T z) 0 = 0 := by
+    simpa only [T, Function.comp_apply] using
+      extChartAt_axis_maps_to_axis a b hzSplit.1
+        (by simpa only [extChartAt_source] using hzSplit.2) hzAxis
+  have hnonneg : ∀ w ∈ s, 0 ≤ (T w) 0 := by
+    intro w hw
+    have hwSplit := (sourceMem w).mp hw
+    have htarget : extChartAt I b ((extChartAt I a).symm w) ∈
+        (extChartAt I b).target :=
+      (extChartAt I b).map_source hwSplit.2
+    have hrange : extChartAt I b ((extChartAt I a).symm w) ∈
+        Set.range I := extChartAt_target_subset_range b htarget
+    rw [range_modelWithCornersEuclideanHalfSpace] at hrange
+    simpa only [T, Function.comp_apply, mem_setOf_eq] using hrange
+  have hmin : IsLocalMinOn
+      (fun w : EuclideanSpace ℝ (Fin 2) ↦ (T w) 0) s z := by
+    apply IsMinOn.localize
+    intro w hw
+    rw [hTaxis]
+    exact hnonneg w hw
+  have hsNhds : s ∈ 𝓝[Set.range I] z := by
+    change (I.extendCoordChange (chartAt (EuclideanHalfSpace 2) a)
+      (chartAt (EuclideanHalfSpace 2) b)).source ∈ 𝓝[Set.range I] z
+    exact I.extendCoordChange_source_mem_nhdsWithin
+      (e := chartAt (EuclideanHalfSpace 2) a)
+      (e' := chartAt (EuclideanHalfSpace 2) b) hz
+  obtain ⟨ε, hε, hball⟩ := Metric.mem_nhdsWithin_iff.mp hsNhds
+  let δ : ℝ := ε / 2
+  have hδ : 0 < δ := by
+    dsimp only [δ]
+    linarith
+  have hδlt : δ < ε := by
+    dsimp only [δ]
+    linarith
+  have hzRange : z ∈ Set.range I := by
+    rw [range_modelWithCornersEuclideanHalfSpace]
+    simpa [hzAxis]
+  have hplusRange : z + δ • e1 ∈ Set.range I := by
+    rw [range_modelWithCornersEuclideanHalfSpace]
+    simp [e1, PiLp.add_apply, PiLp.smul_apply, hzAxis]
+  have hminusRange : z + (-δ) • e1 ∈ Set.range I := by
+    rw [range_modelWithCornersEuclideanHalfSpace]
+    simp [e1, PiLp.add_apply, PiLp.smul_apply, hzAxis]
+  have hplusBall : z + δ • e1 ∈ Metric.ball z ε := by
+    rw [Metric.mem_ball, dist_eq_norm, add_sub_cancel_left,
+      norm_smul, PiLp.norm_single]
+    simpa only [Real.norm_eq_abs, abs_of_pos hδ, norm_one, mul_one] using hδlt
+  have hminusBall : z + (-δ) • e1 ∈ Metric.ball z ε := by
+    rw [Metric.mem_ball, dist_eq_norm, add_sub_cancel_left,
+      norm_smul, PiLp.norm_single]
+    simpa only [Real.norm_eq_abs, abs_neg, abs_of_pos hδ, norm_one, mul_one] using hδlt
+  have hconvex : Convex ℝ (Metric.ball z ε ∩ Set.range I) :=
+    (convex_ball z ε).inter I.convex_range
+  have hsegmentPlus : segment ℝ z (z + δ • e1) ⊆ s :=
+    (hconvex.segment_subset ⟨mem_ball_self hε, hzRange⟩
+      ⟨hplusBall, hplusRange⟩).trans hball
+  have hsegmentMinus : segment ℝ z (z + (-δ) • e1) ⊆ s :=
+    (hconvex.segment_subset ⟨mem_ball_self hε, hzRange⟩
+      ⟨hminusBall, hminusRange⟩).trans hball
+  have hconePlus : δ • e1 ∈ posTangentConeAt s z := by
+    simpa only [add_sub_cancel_left] using
+      sub_mem_posTangentConeAt_of_segment_subset hsegmentPlus
+  have hconeMinus : -(δ • e1) ∈ posTangentConeAt s z := by
+    simpa only [add_sub_cancel_left, neg_smul] using
+      sub_mem_posTangentConeAt_of_segment_subset hsegmentMinus
+  have hTderiv : HasFDerivWithinAt T (fderivWithin ℝ T s z) s z := by
+    simpa only [I, T, s, φ, Function.comp_apply] using
+      ((contDiffOn_ext_coord_change b a z hz).differentiableWithinAt
+        one_ne_zero).hasFDerivWithinAt
+  let p : EuclideanSpace ℝ (Fin 2) →L[ℝ] ℝ := EuclideanSpace.proj 0
+  have hpderiv : HasFDerivWithinAt
+      (fun w : EuclideanSpace ℝ (Fin 2) ↦ (T w) 0)
+      (p.comp (fderivWithin ℝ T s z)) s z := by
+    simpa [p, Function.comp_apply] using
+      p.hasFDerivAt.comp_hasFDerivWithinAt z hTderiv
+  have hscaled : (p.comp (fderivWithin ℝ T s z)) (δ • e1) = 0 :=
+    hmin.hasFDerivWithinAt_eq_zero hpderiv hconePlus hconeMinus
+  have hscalar : δ * (fderivWithin ℝ T s z e1) 0 = 0 := by
+    simpa [p, ContinuousLinearMap.comp_apply, PiLp.smul_apply, smul_eq_mul] using hscaled
+  exact (mul_eq_zero.mp hscalar).resolve_left (ne_of_gt hδ)
+
+/-- The tangential component of a smooth extended-chart transition is
+nonzero on the boundary axis. -/
+theorem fderivWithin_extChartAt_axis_transition_tangent_ne_zero
+    {M : Type*} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) 1 M]
+    (a b : M) {z : EuclideanSpace ℝ (Fin 2)}
+    (hz : z ∈ ((extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm ≫
+      extChartAt (modelWithCornersEuclideanHalfSpace 2) b).source)
+    (hzAxis : z 0 = 0) :
+    (fderivWithin ℝ
+      (extChartAt (modelWithCornersEuclideanHalfSpace 2) b ∘
+        (extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm)
+      ((extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm ≫
+        extChartAt (modelWithCornersEuclideanHalfSpace 2) b).source z
+      (EuclideanSpace.single 1 (1 : ℝ))) 1 ≠ 0 := by
+  let I : ModelWithCorners ℝ (EuclideanSpace ℝ (Fin 2))
+      (EuclideanHalfSpace 2) := modelWithCornersEuclideanHalfSpace 2
+  let T : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2) :=
+    extChartAt I b ∘ (extChartAt I a).symm
+  let s : Set (EuclideanSpace ℝ (Fin 2)) :=
+    ((extChartAt I a).symm ≫ extChartAt I b).source
+  let D : EuclideanSpace ℝ (Fin 2) →L[ℝ] EuclideanSpace ℝ (Fin 2) :=
+    fderivWithin ℝ T s z
+  let e1 : EuclideanSpace ℝ (Fin 2) := EuclideanSpace.single 1 (1 : ℝ)
+  have hnormal :=
+    fderivWithin_extChartAt_axis_transition_tangent_normal_eq_zero a b hz hzAxis
+  have hzChange : z ∈ (I.extendCoordChange
+      (chartAt (EuclideanHalfSpace 2) a)
+      (chartAt (EuclideanHalfSpace 2) b)).source := by
+    change z ∈ (I.extendCoordChange (chartAt (EuclideanHalfSpace 2) a)
+      (chartAt (EuclideanHalfSpace 2) b)).source at hz
+    exact hz
+  have hInv0 := I.isInvertible_fderivWithin_extendCoordChange
+    (e := chartAt (EuclideanHalfSpace 2) a)
+    (e' := chartAt (EuclideanHalfSpace 2) b)
+    one_ne_zero (chart_mem_maximalAtlas a) (chart_mem_maximalAtlas b) hzChange
+  have hInv : D.IsInvertible := by
+    simpa only [D, T, s, I, ModelWithCorners.extendCoordChange,
+      extChartAt, Function.comp_apply] using hInv0
+  intro hTan
+  have hDzero : D e1 = 0 := by
+    apply PiLp.ext
+    rw [Fin.forall_fin_two]
+    exact ⟨by simpa [D, T, s, e1] using hnormal,
+      by simpa [D, T, s, e1] using hTan⟩
+  have hInj : Function.Injective D := hInv.injective
+  have he1zero : e1 = 0 := hInj (by simpa using hDzero)
+  have honezero : (1 : ℝ) = 0 := by
+    have h := congrArg (fun v : EuclideanSpace ℝ (Fin 2) => v (1 : Fin 2)) he1zero
+    simpa [e1] using h
+  exact one_ne_zero honezero
+
+/-- At a boundary-axis point, an extended-chart transition has nonnegative
+normal derivative in the inward normal direction. -/
+theorem fderivWithin_extChartAt_axis_transition_normal_normal_nonneg
+    {M : Type*} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) 1 M]
+    (a b : M) {z : EuclideanSpace ℝ (Fin 2)}
+    (hz : z ∈ ((extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm ≫
+      extChartAt (modelWithCornersEuclideanHalfSpace 2) b).source)
+    (hzAxis : z 0 = 0) :
+    0 ≤ (fderivWithin ℝ
+      (extChartAt (modelWithCornersEuclideanHalfSpace 2) b ∘
+        (extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm)
+      ((extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm ≫
+        extChartAt (modelWithCornersEuclideanHalfSpace 2) b).source z
+      (EuclideanSpace.single 0 (1 : ℝ))) 0 := by
+  let I : ModelWithCorners ℝ (EuclideanSpace ℝ (Fin 2))
+      (EuclideanHalfSpace 2) := modelWithCornersEuclideanHalfSpace 2
+  let φ : PartialEquiv (EuclideanSpace ℝ (Fin 2))
+      (EuclideanSpace ℝ (Fin 2)) :=
+    (extChartAt I a).symm ≫ extChartAt I b
+  let s : Set (EuclideanSpace ℝ (Fin 2)) := φ.source
+  let T : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2) :=
+    extChartAt I b ∘ (extChartAt I a).symm
+  let e0 : EuclideanSpace ℝ (Fin 2) := EuclideanSpace.single 0 (1 : ℝ)
+  change z ∈ s at hz
+  change 0 ≤ (fderivWithin ℝ T s z e0) 0
+  have sourceMem (w : EuclideanSpace ℝ (Fin 2)) :
+      w ∈ s ↔ w ∈ (extChartAt I a).target ∧
+        (extChartAt I a).symm w ∈ (extChartAt I b).source := by
+    simp only [s, φ, PartialEquiv.trans_source, PartialEquiv.symm_source,
+      Set.mem_inter_iff, Set.mem_preimage]
+  have hzSplit := (sourceMem z).mp hz
+  have hTaxis : (T z) 0 = 0 := by
+    simpa only [T, Function.comp_apply] using
+      extChartAt_axis_maps_to_axis a b hzSplit.1
+        (by simpa only [extChartAt_source] using hzSplit.2) hzAxis
+  have hnonneg : ∀ w ∈ s, 0 ≤ (T w) 0 := by
+    intro w hw
+    have hwSplit := (sourceMem w).mp hw
+    have htarget : extChartAt I b ((extChartAt I a).symm w) ∈
+        (extChartAt I b).target :=
+      (extChartAt I b).map_source hwSplit.2
+    have hrange : extChartAt I b ((extChartAt I a).symm w) ∈ Set.range I :=
+      extChartAt_target_subset_range b htarget
+    rw [range_modelWithCornersEuclideanHalfSpace] at hrange
+    simpa only [T, Function.comp_apply, mem_setOf_eq] using hrange
+  have hmin : IsLocalMinOn
+      (fun w : EuclideanSpace ℝ (Fin 2) ↦ (T w) 0) s z := by
+    apply IsMinOn.localize
+    intro w hw
+    rw [hTaxis]
+    exact hnonneg w hw
+  have hsNhds : s ∈ 𝓝[Set.range I] z := by
+    change (I.extendCoordChange (chartAt (EuclideanHalfSpace 2) a)
+      (chartAt (EuclideanHalfSpace 2) b)).source ∈ 𝓝[Set.range I] z
+    exact I.extendCoordChange_source_mem_nhdsWithin
+      (e := chartAt (EuclideanHalfSpace 2) a)
+      (e' := chartAt (EuclideanHalfSpace 2) b) hz
+  obtain ⟨ε, hε, hball⟩ := Metric.mem_nhdsWithin_iff.mp hsNhds
+  let δ : ℝ := ε / 2
+  have hδ : 0 < δ := by
+    dsimp only [δ]
+    linarith
+  have hδlt : δ < ε := by
+    dsimp only [δ]
+    linarith
+  have hzRange : z ∈ Set.range I := by
+    rw [range_modelWithCornersEuclideanHalfSpace]
+    simpa [hzAxis]
+  have hplusRange : z + δ • e0 ∈ Set.range I := by
+    rw [range_modelWithCornersEuclideanHalfSpace]
+    simpa [e0, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, hzAxis] using hδ.le
+  have hplusBall : z + δ • e0 ∈ Metric.ball z ε := by
+    rw [Metric.mem_ball, dist_eq_norm, add_sub_cancel_left,
+      norm_smul, PiLp.norm_single]
+    simpa only [Real.norm_eq_abs, abs_of_pos hδ, norm_one, mul_one] using hδlt
+  have hconvex : Convex ℝ (Metric.ball z ε ∩ Set.range I) :=
+    (convex_ball z ε).inter I.convex_range
+  have hsegmentNormal : segment ℝ z (z + δ • e0) ⊆ s :=
+    (hconvex.segment_subset ⟨mem_ball_self hε, hzRange⟩
+      ⟨hplusBall, hplusRange⟩).trans hball
+  have hconeNormal : δ • e0 ∈ posTangentConeAt s z := by
+    simpa only [add_sub_cancel_left] using
+      sub_mem_posTangentConeAt_of_segment_subset hsegmentNormal
+  have hTderiv : HasFDerivWithinAt T (fderivWithin ℝ T s z) s z := by
+    simpa only [I, T, s, φ, Function.comp_apply] using
+      ((contDiffOn_ext_coord_change b a z hz).differentiableWithinAt
+        one_ne_zero).hasFDerivWithinAt
+  let p : EuclideanSpace ℝ (Fin 2) →L[ℝ] ℝ := EuclideanSpace.proj 0
+  have hpderiv : HasFDerivWithinAt
+      (fun w : EuclideanSpace ℝ (Fin 2) ↦ (T w) 0)
+      (p.comp (fderivWithin ℝ T s z)) s z := by
+    simpa [p, Function.comp_apply] using
+      p.hasFDerivAt.comp_hasFDerivWithinAt z hTderiv
+  have hscaled : 0 ≤ (p.comp (fderivWithin ℝ T s z)) (δ • e0) :=
+    hmin.hasFDerivWithinAt_nonneg hpderiv hconeNormal
+  have hscalar : 0 ≤ δ * (fderivWithin ℝ T s z e0) 0 := by
+    simpa [p, ContinuousLinearMap.comp_apply, PiLp.smul_apply, smul_eq_mul] using hscaled
+  exact (mul_nonneg_iff_of_pos_left hδ).mp hscalar
+
+/-- At a boundary-axis point, an extended-chart transition points strictly
+inward to first order in its normal direction. -/
+theorem fderivWithin_extChartAt_axis_transition_normal_normal_pos
+    {M : Type*} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) 1 M]
+    (a b : M) {z : EuclideanSpace ℝ (Fin 2)}
+    (hz : z ∈ ((extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm ≫
+      extChartAt (modelWithCornersEuclideanHalfSpace 2) b).source)
+    (hzAxis : z 0 = 0) :
+    0 < (fderivWithin ℝ
+      (extChartAt (modelWithCornersEuclideanHalfSpace 2) b ∘
+        (extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm)
+      ((extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm ≫
+        extChartAt (modelWithCornersEuclideanHalfSpace 2) b).source z
+      (EuclideanSpace.single 0 (1 : ℝ))) 0 := by
+  let I : ModelWithCorners ℝ (EuclideanSpace ℝ (Fin 2))
+      (EuclideanHalfSpace 2) := modelWithCornersEuclideanHalfSpace 2
+  let T : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2) :=
+    extChartAt I b ∘ (extChartAt I a).symm
+  let s : Set (EuclideanSpace ℝ (Fin 2)) :=
+    ((extChartAt I a).symm ≫ extChartAt I b).source
+  let D : EuclideanSpace ℝ (Fin 2) →L[ℝ] EuclideanSpace ℝ (Fin 2) :=
+    fderivWithin ℝ T s z
+  let e0 : EuclideanSpace ℝ (Fin 2) := EuclideanSpace.single 0 (1 : ℝ)
+  let e1 : EuclideanSpace ℝ (Fin 2) := EuclideanSpace.single 1 (1 : ℝ)
+  change z ∈ s at hz
+  change 0 < (D e0) 0
+  have hnormalNonneg : 0 ≤ (D e0) 0 := by
+    simpa [D, T, s, e0] using
+      fderivWithin_extChartAt_axis_transition_normal_normal_nonneg a b hz hzAxis
+  have hTan : (D e1) 0 = 0 := by
+    simpa [D, T, s, e1] using
+      fderivWithin_extChartAt_axis_transition_tangent_normal_eq_zero a b hz hzAxis
+  have hzChange : z ∈ (I.extendCoordChange
+      (chartAt (EuclideanHalfSpace 2) a)
+      (chartAt (EuclideanHalfSpace 2) b)).source := by
+    change z ∈ (I.extendCoordChange (chartAt (EuclideanHalfSpace 2) a)
+      (chartAt (EuclideanHalfSpace 2) b)).source at hz
+    exact hz
+  have hInv0 := I.isInvertible_fderivWithin_extendCoordChange
+    (e := chartAt (EuclideanHalfSpace 2) a)
+    (e' := chartAt (EuclideanHalfSpace 2) b)
+    one_ne_zero (chart_mem_maximalAtlas a) (chart_mem_maximalAtlas b) hzChange
+  have hInv : D.IsInvertible := by
+    simpa only [D, T, s, I, ModelWithCorners.extendCoordChange,
+      extChartAt, Function.comp_apply] using hInv0
+  have hnormalNe : (D e0) 0 ≠ 0 := by
+    intro h00
+    have hdecomp (u : EuclideanSpace ℝ (Fin 2)) :
+        u = u 0 • e0 + u 1 • e1 := by
+      apply PiLp.ext
+      rw [Fin.forall_fin_two]
+      constructor <;>
+        simp [e0, e1, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
+    have hAll (u : EuclideanSpace ℝ (Fin 2)) : (D u) 0 = 0 := by
+      calc
+        (D u) 0 = (u 0 • D e0 + u 1 • D e1) 0 := by
+          conv_lhs => rw [hdecomp u]
+          rw [D.map_add, D.map_smul, D.map_smul]
+        _ = 0 := by
+          simp [PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, h00, hTan]
+    obtain ⟨u, hu⟩ := hInv.surjective e0
+    have huNormal := hAll u
+    rw [hu] at huNormal
+    have honezero : (1 : ℝ) = 0 := by
+      simpa [e0] using huNormal
+    exact one_ne_zero honezero
+  exact lt_of_le_of_ne hnormalNonneg hnormalNe.symm
+
 #print axioms extChartAt_axis_maps_to_axis
+#print axioms fderivWithin_extChartAt_axis_transition_tangent_normal_eq_zero
+#print axioms fderivWithin_extChartAt_axis_transition_tangent_ne_zero
+#print axioms fderivWithin_extChartAt_axis_transition_normal_normal_nonneg
+#print axioms fderivWithin_extChartAt_axis_transition_normal_normal_pos
 
 end
 
