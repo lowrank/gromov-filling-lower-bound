@@ -72,7 +72,7 @@ variable {M : Type uM} [PseudoMetricSpace M] [T2Space M]
 /-- The local phase data constructed for one controlled boundary chart. -/
 structure ControlledBoundaryChartInducedPhaseData
     (P : FiniteControlledBoundaryChartPartition M)
-    (R : ControlledRiemannianSurfaceOrientation M)
+    (O : ControlledBoundaryAtlasOrientation P)
     (boundary : UnitAddCircle → M) (i : P.ι) where
   phase : ℝ → ℝ
   phaseVelocity : ℝ → ℝ
@@ -87,23 +87,24 @@ structure ControlledBoundaryChartInducedPhaseData
           halfSpaceComplexExtChart (P.center i) (t * Complex.I)) =ᶠ[nhds y]
         fun t : ℝ ↦ boundary (angleToUnitAddCircle (phase t))
   chart_signed_winding_eq_boundary_partition :
-    R.chartSign (P.center i) *
+    O.chartSign i *
         (∫ y : ℝ, controlledBoundaryChartCutoff P i (y * Complex.I) *
           phaseVelocity y) =
       -(∫ t in -Real.pi..Real.pi,
         P.partition i (boundary (angleToUnitAddCircle t)))
 
-/-- Every chart of a controlled partition has induced local phase data. -/
-theorem nonempty_controlledBoundaryChartInducedPhaseData
+/-- Every chart of a finite oriented controlled boundary atlas has induced
+local phase data. -/
+theorem nonempty_controlledBoundaryChartInducedPhaseData_of_boundaryAtlasInducedOrientation
     (boundary : UnitAddCircle → M)
     (hboundary : IsometricCircleBoundary boundary)
     (hboundaryRange : Set.range boundary =
       (modelWithCornersEuclideanHalfSpace 2).boundary M)
     (P : FiniteControlledBoundaryChartPartition M)
-    (R : ControlledRiemannianSurfaceOrientation M)
-    (H : ControlledRiemannianInducedBoundaryOrientation R boundary)
+    (O : ControlledBoundaryAtlasOrientation P)
+    (H : ControlledBoundaryAtlasInducedBoundaryOrientation P O boundary)
     (i : P.ι) :
-    Nonempty (ControlledBoundaryChartInducedPhaseData P R boundary i) := by
+    Nonempty (ControlledBoundaryChartInducedPhaseData P O boundary i) := by
   classical
   rcases all_zero_or_exists_controlledBoundaryChartAxisInterval P i with
       hzero | ⟨a, b, hab, hdomain, houtside⟩
@@ -134,7 +135,7 @@ theorem nonempty_controlledBoundaryChartInducedPhaseData
       exists_lipschitzOnWith_real_lift_controlledBoundaryChartParameter_with_span_lt_one_on_Icc
         boundary hboundary hboundaryRange P i a b hab.le hdomain
     have horientation :=
-      H.chart_lift_orientation P i a b lift hab hdomain
+      H.chart_lift_orientation i a b lift hab hdomain
         hliftContinuous hliftProject
     let phase : ℝ → ℝ := fun y ↦ 2 * Real.pi * lift y
     let f : ℝ → ℝ := fun t ↦
@@ -210,7 +211,7 @@ theorem nonempty_controlledBoundaryChartInducedPhaseData
     have hlocal : (∫ y : ℝ, g y) =
         ∫ t in phase a..phase b, f t :=
       hglobal.trans (hpointwise.trans hsubstitution)
-    have hwinding : R.chartSign (P.center i) * (∫ y : ℝ, g y) =
+    have hwinding : O.chartSign i * (∫ y : ℝ, g y) =
         -(∫ t in -Real.pi..Real.pi, f t) := by
       rcases horientation with ⟨hsign, hliftAnti⟩ |
           ⟨hsign, hliftMono⟩
@@ -281,7 +282,7 @@ theorem nonempty_controlledBoundaryChartInducedPhaseData
             (s := -Real.pi)
           convert h using 1 <;> ring
         calc
-          R.chartSign (P.center i) * (∫ y : ℝ, g y) =
+          O.chartSign i * (∫ y : ℝ, g y) =
               ∫ t in phase a..phase b, f t := by
             rw [hsign, one_mul, hlocal]
           _ = -(∫ t in phase b..phase a, f t) :=
@@ -354,7 +355,7 @@ theorem nonempty_controlledBoundaryChartInducedPhaseData
             (s := -Real.pi)
           convert h using 1 <;> ring
         calc
-          R.chartSign (P.center i) * (∫ y : ℝ, g y) =
+          O.chartSign i * (∫ y : ℝ, g y) =
               -(∫ t in phase a..phase b, f t) := by
             rw [hsign, neg_one_mul, hlocal]
           _ = -(∫ t in -Real.pi..Real.pi, f t) := by rw [hfull]
@@ -395,7 +396,52 @@ theorem nonempty_controlledBoundaryChartInducedPhaseData
     · simpa only [g, f] using hwinding
 
 /-- Choosing the preceding chartwise data gives the local phase datum for
-the whole finite controlled atlas. -/
+one finite oriented controlled boundary atlas. -/
+theorem nonempty_controlledBoundaryAtlasBoundaryPhaseLocalData_of_boundaryAtlasInducedOrientation
+    (boundary : UnitAddCircle → M)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hboundaryRange : Set.range boundary =
+      (modelWithCornersEuclideanHalfSpace 2).boundary M)
+    (P : FiniteControlledBoundaryChartPartition M)
+    (O : ControlledBoundaryAtlasOrientation P)
+    (H : ControlledBoundaryAtlasInducedBoundaryOrientation P O boundary) :
+    Nonempty (ControlledBoundaryAtlasBoundaryPhaseLocalData P O boundary) := by
+  classical
+  let D : ∀ i : P.ι,
+      ControlledBoundaryChartInducedPhaseData P O boundary i :=
+    fun i ↦ Classical.choice
+      (nonempty_controlledBoundaryChartInducedPhaseData_of_boundaryAtlasInducedOrientation
+        boundary hboundary hboundaryRange P O H i)
+  exact ⟨{
+    phase := fun i ↦ (D i).phase
+    phaseVelocity := fun i ↦ (D i).phaseVelocity
+    ae_hasDerivAt_phase_of_cutoff_ne_zero := fun i ↦
+      (D i).ae_hasDerivAt_phase_of_cutoff_ne_zero
+    chartAxis_eventuallyEq_boundary_of_cutoff_ne_zero := fun i ↦
+      (D i).chartAxis_eventuallyEq_boundary_of_cutoff_ne_zero
+    chart_signed_winding_eq_boundary_partition := fun i ↦
+      (D i).chart_signed_winding_eq_boundary_partition
+  }⟩
+
+/-- A finite oriented controlled boundary atlas has the complete boundary
+phase datum required by the nonlinear Stokes layer. -/
+theorem nonempty_controlledBoundaryAtlasBoundaryPhase_of_boundaryAtlasInducedOrientation
+    [CompactSpace M]
+    (boundary : UnitAddCircle → M)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hboundaryRange : Set.range boundary =
+      (modelWithCornersEuclideanHalfSpace 2).boundary M)
+    (P : FiniteControlledBoundaryChartPartition M)
+    (O : ControlledBoundaryAtlasOrientation P)
+    (H : ControlledBoundaryAtlasInducedBoundaryOrientation P O boundary) :
+    Nonempty (ControlledBoundaryAtlasBoundaryPhase P O boundary) := by
+  obtain ⟨L⟩ :=
+    nonempty_controlledBoundaryAtlasBoundaryPhaseLocalData_of_boundaryAtlasInducedOrientation
+      boundary hboundary hboundaryRange P O H
+  exact ⟨L.toBoundaryPhase hboundary⟩
+
+/-- Restricting a global controlled orientation and its induced boundary
+convention supplies the corresponding finite-atlas local phase datum. -/
 theorem nonempty_controlledBoundaryAtlasBoundaryPhaseLocalData_of_inducedBoundaryOrientation
     (boundary : UnitAddCircle → M)
     (hboundary : IsometricCircleBoundary boundary)
@@ -406,23 +452,10 @@ theorem nonempty_controlledBoundaryAtlasBoundaryPhaseLocalData_of_inducedBoundar
     (H : ControlledRiemannianInducedBoundaryOrientation R boundary) :
     Nonempty (ControlledBoundaryAtlasBoundaryPhaseLocalData P
       (R.toBoundaryAtlasOrientation P) boundary) := by
-  classical
-  let D : ∀ i : P.ι,
-      ControlledBoundaryChartInducedPhaseData P R boundary i :=
-    fun i ↦ Classical.choice
-      (nonempty_controlledBoundaryChartInducedPhaseData
-        boundary hboundary hboundaryRange P R H i)
-  exact ⟨{
-    phase := fun i ↦ (D i).phase
-    phaseVelocity := fun i ↦ (D i).phaseVelocity
-    ae_hasDerivAt_phase_of_cutoff_ne_zero := fun i ↦
-      (D i).ae_hasDerivAt_phase_of_cutoff_ne_zero
-    chartAxis_eventuallyEq_boundary_of_cutoff_ne_zero := fun i ↦
-      (D i).chartAxis_eventuallyEq_boundary_of_cutoff_ne_zero
-    chart_signed_winding_eq_boundary_partition := fun i ↦ by
-      simpa only [ControlledRiemannianSurfaceOrientation.toBoundaryAtlasOrientation]
-        using (D i).chart_signed_winding_eq_boundary_partition
-  }⟩
+  exact
+    nonempty_controlledBoundaryAtlasBoundaryPhaseLocalData_of_boundaryAtlasInducedOrientation
+      boundary hboundary hboundaryRange P (R.toBoundaryAtlasOrientation P)
+      (H.toBoundaryAtlasInducedOrientation P)
 
 /-- An oriented controlled filling with the induced boundary convention has
 the complete boundary-phase datum required by the nonlinear Stokes layer. -/
@@ -437,19 +470,40 @@ theorem nonempty_controlledBoundaryAtlasBoundaryPhase_of_inducedBoundaryOrientat
     (H : ControlledRiemannianInducedBoundaryOrientation R boundary) :
     Nonempty (ControlledBoundaryAtlasBoundaryPhase P
       (R.toBoundaryAtlasOrientation P) boundary) := by
-  obtain ⟨L⟩ :=
-    nonempty_controlledBoundaryAtlasBoundaryPhaseLocalData_of_inducedBoundaryOrientation
-      boundary hboundary hboundaryRange P R H
-  exact ⟨L.toBoundaryPhase hboundary⟩
+  exact
+    nonempty_controlledBoundaryAtlasBoundaryPhase_of_boundaryAtlasInducedOrientation
+      boundary hboundary hboundaryRange P (R.toBoundaryAtlasOrientation P)
+      (H.toBoundaryAtlasInducedBoundaryOrientation P)
+
+/-- The geometric finite oriented-atlas package supplies a boundary phase,
+without storing that phase or its winding in the package itself. -/
+theorem FiniteControlledOrientedBoundaryAtlas.nonempty_boundaryPhase
+    [CompactSpace M]
+    {P : FiniteControlledBoundaryChartPartition M}
+    {boundary : UnitAddCircle → M}
+    (A : FiniteControlledOrientedBoundaryAtlas P boundary)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hboundaryRange : Set.range boundary =
+      (modelWithCornersEuclideanHalfSpace 2).boundary M) :
+    Nonempty (ControlledBoundaryAtlasBoundaryPhase P A.orientation boundary) := by
+  exact
+    nonempty_controlledBoundaryAtlasBoundaryPhase_of_boundaryAtlasInducedOrientation
+      boundary hboundary hboundaryRange P A.orientation A.inducedBoundary
 
 #print axioms angleToUnitAddCircle_two_pi_mul_eq_coe
 #print axioms lipschitzOnWith_two_pi_mul
 #print axioms ControlledBoundaryChartInducedPhaseData
-#print axioms nonempty_controlledBoundaryChartInducedPhaseData
+#print axioms
+  nonempty_controlledBoundaryChartInducedPhaseData_of_boundaryAtlasInducedOrientation
+#print axioms
+  nonempty_controlledBoundaryAtlasBoundaryPhaseLocalData_of_boundaryAtlasInducedOrientation
+#print axioms
+  nonempty_controlledBoundaryAtlasBoundaryPhase_of_boundaryAtlasInducedOrientation
 #print axioms
   nonempty_controlledBoundaryAtlasBoundaryPhaseLocalData_of_inducedBoundaryOrientation
 #print axioms
   nonempty_controlledBoundaryAtlasBoundaryPhase_of_inducedBoundaryOrientation
+#print axioms FiniteControlledOrientedBoundaryAtlas.nonempty_boundaryPhase
 
 end
 
