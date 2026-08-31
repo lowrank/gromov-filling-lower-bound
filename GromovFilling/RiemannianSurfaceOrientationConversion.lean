@@ -238,8 +238,9 @@ def RiemannianSurfaceOrientation.toControlledRiemannianSurfaceOrientation
         (O.orientation (y : M)).areaForm
           (q (Complex.orthonormalBasisOneI 0))
           (q (Complex.orthonormalBasisOneI 1))
+      cases hy
       rw [← hqderiv]
-      simpa only [orientedComplexTangentOrthonormalBasis_apply, hy]
+      simp only [orientedComplexTangentOrthonormalBasis_apply]
     by_cases hcenter : o0 = halfSpaceComplexCoordinateOrientation
     · have hlocal :
           Orientation.map (Fin 2) q.toLinearEquiv
