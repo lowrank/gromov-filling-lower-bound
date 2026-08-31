@@ -180,6 +180,36 @@ def chosenControlledHalfSpaceComplexChartDomain
     (chosenInteriorChartControl
       (modelWithCornersEuclideanHalfSpace 2) x)
 
+/-- The canonical controlled interior coordinate domain is contained in the
+corresponding controlled half-space domain.  The only additional condition in
+the interior domain is membership in the interior of the model range. -/
+theorem chosenControlledInteriorComplexChartDomain_subset_chosenControlledHalfSpaceComplexChartDomain
+    {M : Type*} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) 1 M]
+    [RiemannianBundle (fun y : M ↦ TangentSpace
+      (modelWithCornersEuclideanHalfSpace 2) y)]
+    [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))
+      (fun y : M ↦ TangentSpace
+        (modelWithCornersEuclideanHalfSpace 2) y)]
+    (x : M) :
+    chosenControlledInteriorComplexChartDomain
+      (modelWithCornersEuclideanHalfSpace 2)
+      Complex.orthonormalBasisOneI.repr x ⊆
+      chosenControlledHalfSpaceComplexChartDomain x := by
+  intro z hz
+  change Complex.orthonormalBasisOneI.repr z ∈
+    ball (extChartAt (modelWithCornersEuclideanHalfSpace 2) x x)
+      (chosenInteriorChartControl
+        (modelWithCornersEuclideanHalfSpace 2) x).r ∩
+      interior (Set.range (modelWithCornersEuclideanHalfSpace 2)) at hz
+  change Complex.orthonormalBasisOneI.repr z ∈
+    ball (extChartAt (modelWithCornersEuclideanHalfSpace 2) x x)
+      (chosenInteriorChartControl
+        (modelWithCornersEuclideanHalfSpace 2) x).r ∩
+      Set.range (modelWithCornersEuclideanHalfSpace 2)
+  exact ⟨hz.1, interior_subset hz.2⟩
+
 /-- Compactness selects finitely many controlled half-space inverse charts
 whose images cover the entire manifold, boundary included. -/
 theorem exists_fin_controlledHalfSpaceComplexExtChart_cover
@@ -234,6 +264,8 @@ theorem exists_fin_controlledHalfSpaceComplexExtChart_cover
 #print axioms controlledHalfSpaceComplexChartDomain_subset_domain
 #print axioms
   controlledHalfSpaceComplexChartDomain_subset_rightClosedHalfPlane
+#print axioms
+  chosenControlledInteriorComplexChartDomain_subset_chosenControlledHalfSpaceComplexChartDomain
 #print axioms lipschitzOnWith_controlledHalfSpaceComplexChart
 #print axioms image_controlledHalfSpaceComplexChartDomain
 #print axioms exists_fin_controlledHalfSpaceComplexExtChart_cover
