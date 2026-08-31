@@ -133,8 +133,10 @@ theorem fderivWithin_extChartAt_axis_transition_tangent_normal_eq_zero
       (fun w : EuclideanSpace ℝ (Fin 2) ↦ (T w) 0) s z := by
     apply IsMinOn.localize
     intro w hw
-    rw [hTaxis]
-    exact hnonneg w hw
+    change (T z) 0 ≤ (T w) 0
+    calc
+      (T z) 0 = 0 := hTaxis
+      _ ≤ (T w) 0 := hnonneg w hw
   have hsNhds : s ∈ 𝓝[Set.range I] z := by
     change (I.extendCoordChange (chartAt (EuclideanHalfSpace 2) a)
       (chartAt (EuclideanHalfSpace 2) b)).source ∈ 𝓝[Set.range I] z
@@ -169,10 +171,10 @@ theorem fderivWithin_extChartAt_axis_transition_tangent_normal_eq_zero
   have hconvex : Convex ℝ (Metric.ball z ε ∩ Set.range I) :=
     (convex_ball z ε).inter I.convex_range
   have hsegmentPlus : segment ℝ z (z + δ • e1) ⊆ s :=
-    (hconvex.segment_subset ⟨mem_ball_self hε, hzRange⟩
+    (hconvex.segment_subset ⟨Metric.mem_ball_self hε, hzRange⟩
       ⟨hplusBall, hplusRange⟩).trans hball
   have hsegmentMinus : segment ℝ z (z + (-δ) • e1) ⊆ s :=
-    (hconvex.segment_subset ⟨mem_ball_self hε, hzRange⟩
+    (hconvex.segment_subset ⟨Metric.mem_ball_self hε, hzRange⟩
       ⟨hminusBall, hminusRange⟩).trans hball
   have hconePlus : δ • e1 ∈ posTangentConeAt s z := by
     simpa only [add_sub_cancel_left] using
@@ -232,7 +234,10 @@ theorem fderivWithin_extChartAt_axis_transition_tangent_ne_zero
   have hInv0 := I.isInvertible_fderivWithin_extendCoordChange
     (e := chartAt (EuclideanHalfSpace 2) a)
     (e' := chartAt (EuclideanHalfSpace 2) b)
-    one_ne_zero (chart_mem_maximalAtlas a) (chart_mem_maximalAtlas b) hzChange
+    one_ne_zero
+      (IsManifold.chart_mem_maximalAtlas (I := I) (n := 1) a)
+      (IsManifold.chart_mem_maximalAtlas (I := I) (n := 1) b)
+      hzChange
   have hInv : D.IsInvertible := by
     simpa only [D, T, s, I, ModelWithCorners.extendCoordChange,
       extChartAt, Function.comp_apply] using hInv0
@@ -300,8 +305,10 @@ theorem fderivWithin_extChartAt_axis_transition_normal_normal_nonneg
       (fun w : EuclideanSpace ℝ (Fin 2) ↦ (T w) 0) s z := by
     apply IsMinOn.localize
     intro w hw
-    rw [hTaxis]
-    exact hnonneg w hw
+    change (T z) 0 ≤ (T w) 0
+    calc
+      (T z) 0 = 0 := hTaxis
+      _ ≤ (T w) 0 := hnonneg w hw
   have hsNhds : s ∈ 𝓝[Set.range I] z := by
     change (I.extendCoordChange (chartAt (EuclideanHalfSpace 2) a)
       (chartAt (EuclideanHalfSpace 2) b)).source ∈ 𝓝[Set.range I] z
@@ -329,7 +336,7 @@ theorem fderivWithin_extChartAt_axis_transition_normal_normal_nonneg
   have hconvex : Convex ℝ (Metric.ball z ε ∩ Set.range I) :=
     (convex_ball z ε).inter I.convex_range
   have hsegmentNormal : segment ℝ z (z + δ • e0) ⊆ s :=
-    (hconvex.segment_subset ⟨mem_ball_self hε, hzRange⟩
+    (hconvex.segment_subset ⟨Metric.mem_ball_self hε, hzRange⟩
       ⟨hplusBall, hplusRange⟩).trans hball
   have hconeNormal : δ • e0 ∈ posTangentConeAt s z := by
     simpa only [add_sub_cancel_left] using
@@ -393,7 +400,10 @@ theorem fderivWithin_extChartAt_axis_transition_normal_normal_pos
   have hInv0 := I.isInvertible_fderivWithin_extendCoordChange
     (e := chartAt (EuclideanHalfSpace 2) a)
     (e' := chartAt (EuclideanHalfSpace 2) b)
-    one_ne_zero (chart_mem_maximalAtlas a) (chart_mem_maximalAtlas b) hzChange
+    one_ne_zero
+      (IsManifold.chart_mem_maximalAtlas (I := I) (n := 1) a)
+      (IsManifold.chart_mem_maximalAtlas (I := I) (n := 1) b)
+      hzChange
   have hInv : D.IsInvertible := by
     simpa only [D, T, s, I, ModelWithCorners.extendCoordChange,
       extChartAt, Function.comp_apply] using hInv0

@@ -67,8 +67,8 @@ def RiemannianSurfaceOrientation.trivializedOrientationAt
     Orientation ℝ (EuclideanSpace ℝ (Fin 2)) (Fin 2) :=
   Orientation.map (Fin 2)
     ((trivializationAt (EuclideanSpace ℝ (Fin 2))
-      (TangentSpace (modelWithCornersEuclideanHalfSpace 2)) x)
-      .continuousLinearEquivAt ℝ (y : M)
+      (TangentSpace (modelWithCornersEuclideanHalfSpace 2)) x).continuousLinearEquivAt ℝ
+        (y : M)
         (by
           simpa only [TangentBundle.trivializationAt_baseSet] using
             y.property)).toLinearEquiv
@@ -77,8 +77,7 @@ def RiemannianSurfaceOrientation.trivializedOrientationAt
 /-- In a chosen controlled half-space chart, a conventional surface
 orientation has one constant trivialized value, including at the chart
 center. -/
-theorem RiemannianSurfaceOrientation
-    .trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceComplexChartDomain
+theorem RiemannianSurfaceOrientation.trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceComplexChartDomain
     (O : RiemannianSurfaceOrientation
       (modelWithCornersEuclideanHalfSpace 2) M)
     (x : M) {z : ℂ}
@@ -162,8 +161,7 @@ theorem RiemannianSurfaceOrientation
 /-- A point in the image of a chosen controlled half-space chart has a
 chart-source witness whose conventional orientation is the chart-center
 orientation. -/
-theorem RiemannianSurfaceOrientation
-    .exists_trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceImage
+theorem RiemannianSurfaceOrientation.exists_trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceImage
     (O : RiemannianSurfaceOrientation
       (modelWithCornersEuclideanHalfSpace 2) M)
     (x p : M)
@@ -184,18 +182,14 @@ theorem RiemannianSurfaceOrientation
     apply Subtype.ext
     exact hpz.symm
   rw [hpoint]
-  exact O
-    .trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceComplexChartDomain
-      x hz
+  exact
+    RiemannianSurfaceOrientation.trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceComplexChartDomain
+      O x hz
 
 #print axioms chosenControlledHalfSpaceChartSourcePoint
 #print axioms RiemannianSurfaceOrientation.trivializedOrientationAt
-#print axioms
-  RiemannianSurfaceOrientation
-    .trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceComplexChartDomain
-#print axioms
-  RiemannianSurfaceOrientation
-    .exists_trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceImage
+#print axioms RiemannianSurfaceOrientation.trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceComplexChartDomain
+#print axioms RiemannianSurfaceOrientation.exists_trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceImage
 
 end
 
