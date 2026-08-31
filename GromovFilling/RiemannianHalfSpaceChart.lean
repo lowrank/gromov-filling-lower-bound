@@ -184,6 +184,7 @@ theorem mfderiv_halfSpaceComplexExtChart_eq_symmL_comp
       mfderiv_comp z hinv e.mdifferentiableAt
     _ = _ := by
       rw [e.mfderiv_eq, ← htriv]
+      rfl
 
 /-- Every boundary-chart coordinate lies in the closed right half-plane. -/
 theorem halfSpaceComplexExtChartDomain_subset_rightClosedHalfPlane
