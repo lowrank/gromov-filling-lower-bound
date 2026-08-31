@@ -95,12 +95,10 @@ theorem intervalIntegral_eq_periodic_of_eq_zero_on_complement
   have hbTIntegrable : IntervalIntegrable f volume b (a + T) :=
     hf.intervalIntegrable _ _
   have hzeroIntegral : (∫ t in b..a + T, f t) = 0 := by
-    calc
-      (∫ t in b..a + T, f t) = ∫ _t in b..a + T, (0 : ℝ) := by
-        apply intervalIntegral.integral_congr_Ioo_of_le hbT
-        intro t ht
-        exact hzero t ht
-      _ = 0 := by simp
+    apply intervalIntegral.integral_zero_ae
+    filter_upwards [Measure.ae_ne volume (a + T)] with t hne ht
+    rw [Set.uIoc_of_le hbT] at ht
+    exact hzero t ⟨ht.1, lt_of_le_of_ne ht.2 hne⟩
   calc
     (∫ t in a..b, f t) = ∫ t in a..a + T, f t := by
       rw [← intervalIntegral.integral_add_adjacent_intervals
