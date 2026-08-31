@@ -28,7 +28,7 @@ honest induced-boundary compatibility datum. -/
 theorem riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling
     {M : Type uM} [PseudoMetricSpace M] [T2Space M]
     [MeasurableSpace M] [BorelSpace M]
-    [CompactSpace M] [Nonempty M] [ConnectedSpace M]
+    [CompactSpace M] [ConnectedSpace M]
     [ChartedSpace (EuclideanHalfSpace 2) M]
     [IsManifold (modelWithCornersEuclideanHalfSpace 2) (⊤ : WithTop ℕ∞) M]
     [RiemannianBundle (fun x : M ↦ TangentSpace
@@ -43,9 +43,21 @@ theorem riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometr
       (modelWithCornersEuclideanHalfSpace 2).boundary M)
     (R : ControlledRiemannianSurfaceOrientation M)
     (H : ControlledRiemannianInducedBoundaryOrientation R boundary) :
+    letI : Nonempty M := ⟨boundary 0⟩
+    letI : Nonempty (ControlledInteriorAtlas
+        (modelWithCornersEuclideanHalfSpace 2) M) :=
+      nonempty_controlledInteriorAtlas
+        (modelWithCornersEuclideanHalfSpace 2)
+        Complex.orthonormalBasisOneI.repr
     ENNReal.ofReal (538982446 / 100000000 : ℝ) <
       riemannianSurfaceAreaMeasure
         (modelWithCornersEuclideanHalfSpace 2) (Set.univ : Set M) := by
+  letI : Nonempty M := ⟨boundary 0⟩
+  letI : Nonempty (ControlledInteriorAtlas
+      (modelWithCornersEuclideanHalfSpace 2) M) :=
+    nonempty_controlledInteriorAtlas
+      (modelWithCornersEuclideanHalfSpace 2)
+      Complex.orthonormalBasisOneI.repr
   let P : FiniteControlledBoundaryChartPartition M :=
     Classical.choice (nonempty_finiteControlledBoundaryChartPartition M)
   let B : ControlledBoundaryAtlasBoundaryPhase P
