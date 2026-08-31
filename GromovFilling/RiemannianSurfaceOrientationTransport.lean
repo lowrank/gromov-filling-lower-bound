@@ -182,9 +182,9 @@ theorem RiemannianSurfaceOrientation.exists_trivializedOrientationAt_eq_center_o
     apply Subtype.ext
     exact hpz.symm
   rw [hpoint]
-  exact O
-    .trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceComplexChartDomain
-      x hz
+  exact
+    RiemannianSurfaceOrientation.trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceComplexChartDomain
+      O x hz
 
 #print axioms chosenControlledHalfSpaceChartSourcePoint
 #print axioms RiemannianSurfaceOrientation.trivializedOrientationAt
