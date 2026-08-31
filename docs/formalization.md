@@ -1,7 +1,7 @@
 # Formalization boundary
 
-The repository separates kernel-verified mathematics from manuscript claims
-that still depend on unavailable foundations. The complete 27-item
+The repository separates kernel-verified mathematics from broader manuscript
+claims that remain outside the exact headline closures. The complete 27-item
 manuscript ledger is maintained in
 [`FORMALIZATION.md`](https://github.com/lowrank/conj-gromov-filling/blob/main/FORMALIZATION.md).
 
@@ -16,6 +16,8 @@ manuscript ledger is maintained in
 | Compact-surface topology | Radó finite boundary-regular triangulation and faithful polygonal classification for half-space-modeled compact connected surfaces |
 | Planar and Riemannian analysis | Lipschitz area inequality, intrinsic two-Jacobian and chain rule, controlled interior charts, disjoint countable-atlas coverage, chart-independence, canonical Riemannian surface area, exact planar determinant identity, half-energy and integrated Jacobian budgets |
 | Riemannian profile derivatives | sharp intrinsic `‖D f‖ ≤ K` at interior differentiability points for globally `K`-Lipschitz real functions, including boundary distance, odd profile, and antipodal slack |
+| Headline Theorem 1.1 | `riemannian_universal_fourier_bound`: the `14 ζ(3) / π` lower bound for every compact connected Riemannian isometric filling at the stated boundary interface |
+| Headline Theorem 1.2 | `riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling`: the strict `5.38982446` lower bound at an explicit `R`/`H` controlled-orientation interface |
 | Certificate logic | finite-to-infinite universal deduction, defect propagation, scalar optimization |
 | Rigorous numerics | rational bounds for `π`, `ζ(3)`, and the displayed constants |
 | Logarithmic sine kernel | squared-sine gap, positive sine quotient, strict off-diagonal positivity, symmetry |
@@ -146,19 +148,33 @@ boundary preimages and applies the canonical controlled-atlas area theorem.
 The resulting `lemma54_riemannian_area` is the complete manuscript inequality,
 with no orientation or explicit winding-number hypothesis.
 
-## Partial headline statements
+## Verified headline statements
 
-The finite universal certificate and the nonlinear oriented certificate are
-kernel-verified deductions from named geometric inputs. The following bridges
-are not yet verified for every compact Riemannian surface:
+`GromovFilling.riemannian_universal_fourier_bound` is the end-to-end formal
+Theorem 1.1. For every compact connected Riemannian isometric filling with a
+boundary parametrization whose range is the ambient boundary, it proves the
+canonical surface-area lower bound `14 ζ(3) / π`. Its closure includes the
+controlled-atlas Lipschitz/Fubini almost-everywhere argument, the full
+orientation-free Lemma 5.4 area inequality, finite Givens coverage, and the
+finite-to-infinite certificate.
 
-- almost-everywhere eikonal differentiation and weak parameter integration;
-- the global differential-form Stokes/comass inequality.
+`GromovFilling.riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling`
+is the end-to-end formal Theorem 1.2. It proves the strict lower bound
+`538982446 / 100000000 = 5.38982446` for the same Riemannian filling interface
+with `R : ControlledRiemannianSurfaceOrientation M` and
+`H : ControlledRiemannianInducedBoundaryOrientation R boundary`.
 
-!!! danger "No conditional-shell upgrade"
-    These bridges are not declared as project axioms. Until they have kernel
-    proofs, the project does not describe the two manuscript headlines as
-    end-to-end Lean theorems.
+!!! note "Exact orientation boundary"
+    The pinned manifold library has no conventional orientation API for
+    manifolds with boundary. `R` records a controlled chart presentation of a
+    surface orientation; `H` records the outward-first local lift monotonicity
+    of the induced boundary orientation. `H` contains no integral, winding,
+    Stokes, comass, or area conclusion. This is therefore an explicit formal
+    interface, not a conditional shell around the target conclusion.
+
+Neither theorem claims Gromov's conjectural `2π` bound. Broader manuscript
+formulations that remain partial are recorded in the ledger; they are not
+dependencies of these two verified headline declarations.
 
 ## Open feasible manuscript obligations
 

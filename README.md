@@ -15,28 +15,33 @@ Bounds for Gromov's Filling Area Problem*.
 
 > [!IMPORTANT]
 > This repository does not prove Gromov's filling-area conjecture. The
-> manuscript proves lower bounds below the conjectural value `2π`, and the
-> headline Lean statements remain conditional on named Riemannian-surface
-> foundations. See [`FORMALIZATION.md`](FORMALIZATION.md) for the exact
-> verified, partial, and open claim boundary.
+> manuscript proves lower bounds below the conjectural value `2π`. Lean
+> verifies Theorem 1.1 for the stated compact Riemannian isometric-filling
+> interface and Theorem 1.2 at its explicit controlled-orientation interface.
+> See [`FORMALIZATION.md`](FORMALIZATION.md) for the exact verified, partial,
+> and open claim boundary.
 
 ## Headline certificate values
 
-The verified finite-to-infinite and numerical layers establish the exact
-orientation-free constant
+`riemannian_universal_fourier_bound` establishes the orientation-free
+Riemannian filling bound
 
 $$
 \frac{14\zeta(3)}{\pi}=5.3567723444\ldots
 $$
 
-and the scalar oriented nonlinear certificate at `λ = 0.03`
+`riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling`
+establishes the strict nonlinear bound at `λ = 0.03` for the explicit
+`R`/`H` controlled surface-orientation and induced-boundary interface
 
 $$
 5.38982446.
 $$
 
-Their application to every compact Riemannian isometric filling still needs
-the geometric bridges listed under [Current frontier](#current-frontier).
+The latter interface is explicit because the pinned manifold library does not
+provide a conventional orientation API for manifolds with boundary. Its
+induced-boundary compatibility datum records local lift monotonicity only; it
+does not assume a Stokes, winding, comass, integral, or area conclusion.
 
 ## Quickstart
 
@@ -69,6 +74,10 @@ every compiled project declaration against the exact allowlist `propext`,
 - the full orientation-free Lemma 5.4: arbitrary Jordan-boundary coverage,
   interior preimages, and the canonical Riemannian two-Jacobian area
   inequality;
+- Theorem 1.1: the universal Fourier lower bound for arbitrary compact
+  connected Riemannian isometric fillings at the stated boundary interface;
+- Theorem 1.2: the strict nonlinear lower bound at the explicit controlled
+  surface-orientation and outward-first induced-boundary interface;
 - planar Lipschitz area inequalities and Jacobian budgets;
 - sharp interior Riemannian Lipschitz-to-derivative bounds for boundary
   distance, odd-profile, and antipodal-slack functions;
@@ -118,32 +127,33 @@ lower obstruction automatically. Callers no longer supply it as a field.
 The project is pinned to:
 
 - Lean `4.29.0`;
-- mathlib `v4.29.0`;
+- mathlib `v4.29.0` at `8a178386ffc0f5fef0b77738bb5449d50efeea95`;
 - EPFL LARA `JordanCurveTheorem` at
   `e442525a662e9e3beb8205b9fa1fc99509076ded`.
 
-The latest hardened CI receipt, run
-[`33266848279`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33266848279)
-on merge commit `7f2e341cb95f82d23e3106ce45a1169649ff8cb8`, audited
-**5,019 declarations** under `GromovFilling`; every declaration stayed within
+The consolidated source-only CI receipt,
+[`33363167477`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33363167477)
+on exact source `7c19e1eb8e37b83a88190f15f9a65d4876797d74`, audited
+**6,304 declarations** under `GromovFilling`; every declaration stayed within
 the standard logical allowlist. CI also fails if the umbrella omits a source
 module or if project Lean source contains placeholder, custom axiom, unsafe,
 or native reduction escape tokens, and a negative control confirms that this
 scan fails closed.
 
-## Current frontier
+## Verified headline boundary
 
-Lemma 5.4 is now end-to-end verified. `GromovFilling.Lemma54` proves the
-compact-surface boundary obstruction, `JordanSchoenfliesCoverage` proves
-coverage of the canonical bounded Jordan component, and `Lemma54Area` proves
-the canonical Riemannian two-Jacobian area inequality. The remaining headline
-surface statements require:
+Lemma 5.4 and Theorem 1.1 are end-to-end verified without an orientability
+assumption. Theorem 1.2 is also end-to-end verified, at the explicit
+`R : ControlledRiemannianSurfaceOrientation M` and
+`H : ControlledRiemannianInducedBoundaryOrientation R boundary` interface.
+Those structures make the missing standard library notion of an orientation
+with boundary visible rather than hiding it in an axiom or a conclusion-
+bearing hypothesis.
 
-1. Riemannian eikonal and weak parameter-integral differentiation;
-2. a global differential-form Stokes/comass interface for the oriented case.
-
-These are tracked gaps, not project axioms. The repository does not encode an
-open target as an assumption and call the resulting implication a proof.
+Broader manuscript items such as a raw-distance eikonal theorem, a general
+one-parameter nonlinear formula, and a conventional global manifold Stokes
+API remain independently partial. They are not open dependencies of the two
+headline declarations. Neither headline reaches the conjectural `2π` bound.
 
 ## Documentation development
 

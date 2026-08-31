@@ -25,12 +25,18 @@ certificates; it does not prove the conjecture.
 ## Formal scope
 
 Lean verifies the finite Fourier algebra, exact boundary curves, orthogonal
-mixing, Jordan and degree arguments, finite mod-2 obstruction, planar area
-inequalities, certificate deductions, and rigorous numerical conclusions.
+mixing, Jordan and degree arguments, finite mod-2 obstruction, Riemannian
+area inequalities, certificate deductions, and rigorous numerical conclusions.
+It also verifies the two headline statements: the orientation-free universal
+Fourier bound, and the strict nonlinear improvement at the explicit controlled
+surface-orientation and induced-boundary interface described in the
+[formalization boundary](formalization.md).
 
-The general-surface realization of the topological and analytic interfaces is
-still open. See the [formalization boundary](formalization.md) before citing a
-statement as machine-checked.
+That interface is necessary because the pinned manifold library has no
+conventional orientation API for manifolds with boundary. It does not claim
+Gromov's conjectural `2π` bound. Broader manuscript claims listed as partial
+in the ledger are independent future work, not unproved assumptions of the
+two verified headline theorems.
 
 ## Source of record
 
@@ -38,4 +44,3 @@ statement as machine-checked.
 - Lean source: [`GromovFilling/`](https://github.com/lowrank/conj-gromov-filling/tree/main/GromovFilling)
 - Statement ledger: [`FORMALIZATION.md`](https://github.com/lowrank/conj-gromov-filling/blob/main/FORMALIZATION.md)
 - Verification workflow: [Lean CI](https://github.com/lowrank/conj-gromov-filling/actions/workflows/ci.yml)
-
