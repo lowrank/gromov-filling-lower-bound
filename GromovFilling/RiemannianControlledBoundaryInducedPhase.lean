@@ -55,8 +55,8 @@ theorem lipschitzOnWith_two_pi_mul
       mul_le_mul_of_nonneg_left hdist htwoPi.le
     _ = ((⟨2 * Real.pi, htwoPi.le⟩ * C : ℝ≥0) : ℝ) *
         |y - z| := by
-      simp only [NNReal.coe_mul, NNReal.coe_mk]
-      rw [mul_assoc]
+      simpa only [NNReal.coe_mul, NNReal.coe_mk] using
+        (mul_assoc (2 * Real.pi) (C : ℝ) |y - z|).symm
 
 variable {M : Type uM} [PseudoMetricSpace M] [T2Space M]
   [MeasurableSpace M] [BorelSpace M]
