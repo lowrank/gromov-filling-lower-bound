@@ -20,6 +20,10 @@ noncomputable section
 
 universe uM
 
+local instance riemannianControlledBoundaryConventionalInducedOrientationEuclideanFinrankTwo :
+    Fact (Module.finrank ℝ (EuclideanSpace ℝ (Fin 2)) = 2) :=
+  ⟨by simp⟩
+
 variable {M : Type uM} [PseudoMetricSpace M] [T2Space M] [CompactSpace M]
   [ChartedSpace (EuclideanHalfSpace 2) M]
   [IsManifold (modelWithCornersEuclideanHalfSpace 2) (⊤ : WithTop ℕ∞) M]
