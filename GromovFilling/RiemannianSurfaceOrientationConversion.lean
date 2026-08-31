@@ -69,7 +69,7 @@ theorem RiemannianSurfaceOrientation.controlledChartSign_eq_one_or_neg_one
   · left
     simp only [RiemannianSurfaceOrientation.controlledChartSign, h, if_pos]
   · right
-    simp only [RiemannianSurfaceOrientation.controlledChartSign, h, if_neg]
+    simp [RiemannianSurfaceOrientation.controlledChartSign, h]
 
 /-- A positive controlled chart sign means that the conventional orientation
 at the chart center agrees with the standard half-space coordinate
@@ -162,6 +162,7 @@ def RiemannianSurfaceOrientation.toControlledRiemannianSurfaceOrientation
         (chosenInteriorChartControl (modelWithCornersEuclideanHalfSpace 2) x) hz
     let y : (chartAt (EuclideanHalfSpace 2) x).source :=
       chosenControlledHalfSpaceChartSourcePoint x ⟨z, hzControlled⟩
+    have hy : (y : M) = halfSpaceComplexExtChart x z := rfl
     have hyBase : (y : M) ∈
         (trivializationAt (EuclideanSpace ℝ (Fin 2))
           (TangentSpace (modelWithCornersEuclideanHalfSpace 2)) x).baseSet := by
@@ -193,7 +194,8 @@ def RiemannianSurfaceOrientation.toControlledRiemannianSurfaceOrientation
         (trivializationAt (EuclideanSpace ℝ (Fin 2))
           (TangentSpace (modelWithCornersEuclideanHalfSpace 2)) x) hyBase
     have hqtrans : q.toLinearEquiv.trans t.toLinearEquiv = e.toLinearEquiv := by
-      ext v
+      apply LinearEquiv.ext
+      intro v
       change t (q v) = e v
       simp [q]
     have hqderiv : q.toContinuousLinearMap =
@@ -205,11 +207,14 @@ def RiemannianSurfaceOrientation.toControlledRiemannianSurfaceOrientation
         ((trivializationAt (EuclideanSpace ℝ (Fin 2))
           (TangentSpace (modelWithCornersEuclideanHalfSpace 2)) x).symmL ℝ
             (halfSpaceComplexExtChart x z)) (e v)
-      rw [← hsymm]
+      simpa only [hy] using
+        congrArg (fun L ↦ L (e v)) hsymm
     letI : Fact (Module.finrank ℝ
-        (TangentSpace (modelWithCornersEuclideanHalfSpace 2) (y : M)) = 2) :=
+        (TangentSpace (modelWithCornersEuclideanHalfSpace 2)
+          (halfSpaceComplexExtChart x z)) = 2) :=
       ⟨tangentSpace_finrank_eq_two
-        (modelWithCornersEuclideanHalfSpace 2) (y : M)⟩
+        (modelWithCornersEuclideanHalfSpace 2)
+        (halfSpaceComplexExtChart x z)⟩
     have hJacobian :
         orientedRiemannianChartJacobian
           (modelWithCornersEuclideanHalfSpace 2)
@@ -289,7 +294,12 @@ def RiemannianSurfaceOrientation.toControlledRiemannianSurfaceOrientation
                 Complex.orthonormalBasisOneI.toBasis.orientation := by
             rw [hqtrans]
           _ = halfSpaceComplexCoordinateOrientation := rfl
-          _ = -o0 := by rw [hcenterNeg, neg_neg]
+          _ = -o0 := by
+            calc
+              halfSpaceComplexCoordinateOrientation =
+                  -(-halfSpaceComplexCoordinateOrientation) :=
+                (neg_neg halfSpaceComplexCoordinateOrientation).symm
+              _ = -o0 := congrArg (fun w ↦ -w) hcenterNeg.symm
           _ = -(Orientation.map (Fin 2) t.toLinearEquiv
                 (O.orientation (y : M))) := by rw [htransport]
           _ = Orientation.map (Fin 2) t.toLinearEquiv
