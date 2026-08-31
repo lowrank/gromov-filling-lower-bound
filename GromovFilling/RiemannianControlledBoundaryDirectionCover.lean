@@ -150,6 +150,25 @@ noncomputable def ControlledBoundaryDirectionCoverData.glueLocallyConstant
     (IsLocallyConstant.iff_continuous _).mpr
       (D.glueContinuous hboundary hboundaryRange).continuous
 
+/-- On every active chart set, the glued direction label is its defining
+chartwise Boolean bit. -/
+theorem ControlledBoundaryDirectionCoverData.glueContinuous_apply_eq_bit
+    {boundary : UnitAddCircle → M}
+    (hboundary : IsometricCircleBoundary boundary)
+    (hboundaryRange : Set.range boundary =
+      (modelWithCornersEuclideanHalfSpace 2).boundary M)
+    {P : FiniteControlledBoundaryChartPartition M}
+    (D : ControlledBoundaryDirectionCoverData boundary P)
+    (i : P.activeAxisCharts) (q : UnitAddCircle)
+    (hqi : q ∈ controlledBoundaryChartActiveSet boundary P i.1) :
+    D.glueContinuous hboundary hboundaryRange q = D.bit i := by
+  unfold ControlledBoundaryDirectionCoverData.glueContinuous
+  change ContinuousMap.liftCover _ _ _ _
+      (⟨q, hqi⟩ : controlledBoundaryChartActiveSet boundary P i.1) = D.bit i
+  simpa only [ControlledBoundaryDirectionCoverData.localMap] using
+    (ContinuousMap.liftCover_coe
+      (x := ⟨q, hqi⟩ : controlledBoundaryChartActiveSet boundary P i.1))
+
 /-- Compatible active-chart labels have the same glued value at every two
 parameter-circle points. -/
 theorem ControlledBoundaryDirectionCoverData.glueContinuous_apply_eq
@@ -172,6 +191,8 @@ theorem ControlledBoundaryDirectionCoverData.glueContinuous_apply_eq
 #print axioms ControlledBoundaryDirectionCoverData.localMap
 #print axioms ControlledBoundaryDirectionCoverData.glueContinuous
 #print axioms ControlledBoundaryDirectionCoverData.glueLocallyConstant
+#print axioms
+  ControlledBoundaryDirectionCoverData.glueContinuous_apply_eq_bit
 #print axioms ControlledBoundaryDirectionCoverData.glueContinuous_apply_eq
 
 end

@@ -41,13 +41,14 @@ def ControlledBoundaryActiveAxisLift.outwardBit
   Bool.xor (if chartSign = 1 then true else false) L.monoBit
 
 /-- A locally strictly increasing transition preserves the stored direction
-bit of two projected controlled boundary lifts. -/
+bit of two projected controlled boundary lifts, including lifts chosen from
+different finite partitions. -/
 theorem ControlledBoundaryActiveAxisLift.monoBit_eq_of_local_transition_mono
     {boundary : UnitAddCircle → M}
-    {P : FiniteControlledBoundaryChartPartition M}
-    {i j : P.activeAxisCharts}
-    (L1 : ControlledBoundaryActiveAxisLift boundary P i)
-    (L2 : ControlledBoundaryActiveAxisLift boundary P j)
+    {P₁ P₂ : FiniteControlledBoundaryChartPartition M}
+    {i : P₁.activeAxisCharts} {j : P₂.activeAxisCharts}
+    (L1 : ControlledBoundaryActiveAxisLift boundary P₁ i)
+    (L2 : ControlledBoundaryActiveAxisLift boundary P₂ j)
     {u r : ℝ} (hr : 0 < r)
     (hsource : ∀ t ∈ Set.Icc (-r) r, u + t ∈ Set.Icc L1.a L1.b)
     {transition : ℝ → ℝ}
@@ -88,13 +89,14 @@ theorem ControlledBoundaryActiveAxisLift.monoBit_eq_of_local_transition_mono
     exact hL1bit.trans hL2bit.symm
 
 /-- A locally strictly decreasing transition flips the stored direction bit
-of two projected controlled boundary lifts. -/
+of two projected controlled boundary lifts, including lifts chosen from
+different finite partitions. -/
 theorem ControlledBoundaryActiveAxisLift.monoBit_eq_not_of_local_transition_anti
     {boundary : UnitAddCircle → M}
-    {P : FiniteControlledBoundaryChartPartition M}
-    {i j : P.activeAxisCharts}
-    (L1 : ControlledBoundaryActiveAxisLift boundary P i)
-    (L2 : ControlledBoundaryActiveAxisLift boundary P j)
+    {P₁ P₂ : FiniteControlledBoundaryChartPartition M}
+    {i : P₁.activeAxisCharts} {j : P₂.activeAxisCharts}
+    (L1 : ControlledBoundaryActiveAxisLift boundary P₁ i)
+    (L2 : ControlledBoundaryActiveAxisLift boundary P₂ j)
     {u r : ℝ} (hr : 0 < r)
     (hsource : ∀ t ∈ Set.Icc (-r) r, u + t ∈ Set.Icc L1.a L1.b)
     {transition : ℝ → ℝ}
@@ -138,10 +140,10 @@ theorem ControlledBoundaryActiveAxisLift.monoBit_eq_not_of_local_transition_anti
 outward-first Boolean label. -/
 theorem ControlledBoundaryActiveAxisLift.outwardBit_eq_of_chartSign_eq_of_monoBit_eq
     {boundary : UnitAddCircle → M}
-    {P : FiniteControlledBoundaryChartPartition M}
-    {i j : P.activeAxisCharts}
-    (L1 : ControlledBoundaryActiveAxisLift boundary P i)
-    (L2 : ControlledBoundaryActiveAxisLift boundary P j)
+    {P₁ P₂ : FiniteControlledBoundaryChartPartition M}
+    {i : P₁.activeAxisCharts} {j : P₂.activeAxisCharts}
+    (L1 : ControlledBoundaryActiveAxisLift boundary P₁ i)
+    (L2 : ControlledBoundaryActiveAxisLift boundary P₂ j)
     {sign1 sign2 : ℝ}
     (hsign : sign1 = sign2) (hbit : L1.monoBit = L2.monoBit) :
     L1.outwardBit sign1 = L2.outwardBit sign2 := by
@@ -151,10 +153,10 @@ theorem ControlledBoundaryActiveAxisLift.outwardBit_eq_of_chartSign_eq_of_monoBi
 direction bit in the outward-first label. -/
 theorem ControlledBoundaryActiveAxisLift.outwardBit_eq_of_chartSigns_one_neg_one
     {boundary : UnitAddCircle → M}
-    {P : FiniteControlledBoundaryChartPartition M}
-    {i j : P.activeAxisCharts}
-    (L1 : ControlledBoundaryActiveAxisLift boundary P i)
-    (L2 : ControlledBoundaryActiveAxisLift boundary P j)
+    {P₁ P₂ : FiniteControlledBoundaryChartPartition M}
+    {i : P₁.activeAxisCharts} {j : P₂.activeAxisCharts}
+    (L1 : ControlledBoundaryActiveAxisLift boundary P₁ i)
+    (L2 : ControlledBoundaryActiveAxisLift boundary P₂ j)
     {sign1 sign2 : ℝ}
     (hsign1 : sign1 = 1) (hsign2 : sign2 = -1)
     (hbit : L1.monoBit = Bool.not L2.monoBit) :
@@ -166,10 +168,10 @@ theorem ControlledBoundaryActiveAxisLift.outwardBit_eq_of_chartSigns_one_neg_one
 direction bit in the outward-first label. -/
 theorem ControlledBoundaryActiveAxisLift.outwardBit_eq_of_chartSigns_neg_one_one
     {boundary : UnitAddCircle → M}
-    {P : FiniteControlledBoundaryChartPartition M}
-    {i j : P.activeAxisCharts}
-    (L1 : ControlledBoundaryActiveAxisLift boundary P i)
-    (L2 : ControlledBoundaryActiveAxisLift boundary P j)
+    {P₁ P₂ : FiniteControlledBoundaryChartPartition M}
+    {i : P₁.activeAxisCharts} {j : P₂.activeAxisCharts}
+    (L1 : ControlledBoundaryActiveAxisLift boundary P₁ i)
+    (L2 : ControlledBoundaryActiveAxisLift boundary P₂ j)
     {sign1 sign2 : ℝ}
     (hsign1 : sign1 = -1) (hsign2 : sign2 = 1)
     (hbit : L1.monoBit = Bool.not L2.monoBit) :
