@@ -66,8 +66,8 @@ theorem halfSpaceComplexExtChart_real_mul_I_mem_boundary
             (Complex.orthonormalBasisOneI.repr z)) ∈
         interior
           (extChartAt (modelWithCornersEuclideanHalfSpace 2) x).target :=
-    ((modelWithCornersEuclideanHalfSpace 2).
-      isInteriorPoint_iff_of_mem_atlas one_ne_zero
+    ((modelWithCornersEuclideanHalfSpace 2).isInteriorPoint_iff_of_mem_atlas
+        one_ne_zero
         (chart_mem_atlas (EuclideanHalfSpace 2) x) hsource).mp hinterior
   rw [(extChartAt (modelWithCornersEuclideanHalfSpace 2) x).right_inv
     htarget] at hcoord
@@ -77,8 +77,10 @@ theorem halfSpaceComplexExtChart_real_mul_I_mem_boundary
   rw [interior_range_modelWithCornersEuclideanHalfSpace] at hrange
   have hzRealPos : 0 < z.re := by
     simpa only [Complex.orthonormalBasisOneI_repr_apply] using hrange
-  simpa only [z, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
-    Complex.I_re, Complex.I_im, mul_zero, zero_mul, sub_self] using hzRealPos
+  have : (0 : ℝ) < 0 := by
+    simpa only [z, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
+      Complex.I_re, Complex.I_im, mul_zero, zero_mul, sub_self] using hzRealPos
+  exact (lt_irrefl 0) this
 
 /-- A nonzero controlled cutoff on the imaginary axis lies at a genuine
 manifold-boundary point. -/
@@ -173,7 +175,7 @@ theorem continuousAt_controlledBoundaryChartParameter_of_cutoff_ne_zero
     (hyCutoff : controlledBoundaryChartCutoff P i
       (y * Complex.I) ≠ 0) :
     ContinuousAt (controlledBoundaryChartParameter boundary P i) y := by
-  have hboundaryEmbedding : IsClosedEmbedding boundary :=
+  have hboundaryEmbedding : Topology.IsClosedEmbedding boundary :=
     hboundary.lipschitzWith.continuous.isClosedEmbedding hboundary.injective
   apply hboundaryEmbedding.isInducing.continuousAt_iff.mpr
   have hyDomain : (y * Complex.I : ℂ) ∈
