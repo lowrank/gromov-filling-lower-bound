@@ -180,6 +180,75 @@ def chosenControlledHalfSpaceComplexChartDomain
     (chosenInteriorChartControl
       (modelWithCornersEuclideanHalfSpace 2) x)
 
+/-- Every selected controlled half-space coordinate has a small ambient ball
+whose positive-normal part lies in the corresponding controlled interior
+coordinate domain. -/
+theorem exists_ball_inter_rightOpen_subset_chosenControlledInteriorComplexChartDomain
+    {M : Type*} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) 1 M]
+    [RiemannianBundle (fun y : M ↦ TangentSpace
+      (modelWithCornersEuclideanHalfSpace 2) y)]
+    [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))
+      (fun y : M ↦ TangentSpace
+        (modelWithCornersEuclideanHalfSpace 2) y)]
+    (x : M) {z : ℂ}
+    (hz : z ∈ chosenControlledHalfSpaceComplexChartDomain x) :
+    ∃ ε > 0,
+      Metric.ball z ε ∩ complexRightOpenHalfPlane ⊆
+        chosenControlledInteriorComplexChartDomain
+          (modelWithCornersEuclideanHalfSpace 2)
+          Complex.orthonormalBasisOneI.repr x := by
+  let I := modelWithCornersEuclideanHalfSpace 2
+  let c := chosenInteriorChartControl I x
+  change Complex.orthonormalBasisOneI.repr z ∈
+    ball (extChartAt I x x) c.r ∩ Set.range I at hz
+  have hopen : IsOpen
+      (Complex.orthonormalBasisOneI.repr ⁻¹'
+        ball (extChartAt I x x) c.r) :=
+    isOpen_ball.preimage Complex.orthonormalBasisOneI.repr.continuous
+  obtain ⟨ε, hεpos, hε⟩ := Metric.isOpen_iff.mp hopen z hz.1
+  refine ⟨ε, hεpos, ?_⟩
+  rintro w ⟨hwball, hwright⟩
+  change Complex.orthonormalBasisOneI.repr w ∈
+    ball (extChartAt I x x) c.r ∩ interior (Set.range I)
+  refine ⟨hε hwball, ?_⟩
+  rw [interior_range_modelWithCornersEuclideanHalfSpace]
+  simpa only [complexRightOpenHalfPlane,
+    Complex.orthonormalBasisOneI_repr_apply] using hwright
+
+/-- At an axis point of a selected controlled half-space coordinate domain,
+a short positive-normal segment lies in the matching controlled interior
+coordinate domain. -/
+theorem exists_inward_normal_segment_mem_chosenControlledInteriorComplexChartDomain
+    {M : Type*} [TopologicalSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) 1 M]
+    [RiemannianBundle (fun y : M ↦ TangentSpace
+      (modelWithCornersEuclideanHalfSpace 2) y)]
+    [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))
+      (fun y : M ↦ TangentSpace
+        (modelWithCornersEuclideanHalfSpace 2) y)]
+    (x : M) {z : ℂ}
+    (hz : z ∈ chosenControlledHalfSpaceComplexChartDomain x)
+    (hzAxis : z.re = 0) :
+    ∃ ε > 0, ∀ t ∈ Set.Ioo (0 : ℝ) ε,
+      ((t : ℂ) + z) ∈
+        chosenControlledInteriorComplexChartDomain
+          (modelWithCornersEuclideanHalfSpace 2)
+          Complex.orthonormalBasisOneI.repr x := by
+  obtain ⟨ε, hεpos, hε⟩ :=
+    exists_ball_inter_rightOpen_subset_chosenControlledInteriorComplexChartDomain
+      x hz
+  refine ⟨ε, hεpos, ?_⟩
+  intro t ht
+  apply hε
+  refine ⟨?_, ?_⟩
+  · simpa only [Metric.mem_ball, dist_eq_norm, add_sub_cancel_right,
+      Complex.norm_real, Real.norm_eq_abs, abs_of_pos ht.1] using ht.2
+  · change 0 < ((t : ℂ) + z).re
+    simpa only [Complex.add_re, Complex.ofReal_re, hzAxis, add_zero] using ht.1
+
 /-- Compactness selects finitely many controlled half-space inverse charts
 whose images cover the entire manifold, boundary included. -/
 theorem exists_fin_controlledHalfSpaceComplexExtChart_cover
@@ -234,6 +303,10 @@ theorem exists_fin_controlledHalfSpaceComplexExtChart_cover
 #print axioms controlledHalfSpaceComplexChartDomain_subset_domain
 #print axioms
   controlledHalfSpaceComplexChartDomain_subset_rightClosedHalfPlane
+#print axioms
+  exists_ball_inter_rightOpen_subset_chosenControlledInteriorComplexChartDomain
+#print axioms
+  exists_inward_normal_segment_mem_chosenControlledInteriorComplexChartDomain
 #print axioms lipschitzOnWith_controlledHalfSpaceComplexChart
 #print axioms image_controlledHalfSpaceComplexChartDomain
 #print axioms exists_fin_controlledHalfSpaceComplexExtChart_cover
