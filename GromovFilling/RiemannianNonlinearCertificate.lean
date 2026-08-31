@@ -39,7 +39,7 @@ theorem ControlledBoundaryAtlasBoundaryPhase.nonlinearCertificate_le_surfaceArea
     [MeasurableSpace M] [BorelSpace M]
     [CompactSpace M] [Nonempty M]
     [ChartedSpace (EuclideanHalfSpace 2) M]
-    [IsManifold (modelWithCornersEuclideanHalfSpace 2) ∞ M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) (⊤ : WithTop ℕ∞) M]
     [RiemannianBundle (fun x : M ↦ TangentSpace
       (modelWithCornersEuclideanHalfSpace 2) x)]
     [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))
