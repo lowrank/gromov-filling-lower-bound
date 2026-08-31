@@ -12,8 +12,8 @@ complex coordinates and records the basic domain, image, smoothness, and
 injectivity facts needed by chartwise weak Stokes.
 -/
 
-open Bundle Function Manifold Set
-open scoped Manifold
+open Bundle Filter Function Manifold Set
+open scoped Manifold Topology
 
 namespace GromovFilling
 
