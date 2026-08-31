@@ -151,23 +151,26 @@ with no orientation or explicit winding-number hypothesis.
 ## Verified headline statements
 
 `GromovFilling.riemannian_universal_fourier_bound` is the end-to-end formal
-Theorem 1.1. For every compact connected Riemannian isometric filling with a
-boundary parametrization whose range is the ambient boundary, it proves the
-canonical surface-area lower bound `14 ζ(3) / π`. Its closure includes the
-controlled-atlas Lipschitz/Fubini almost-everywhere argument, the full
-orientation-free Lemma 5.4 area inequality, finite Givens coverage, and the
-finite-to-infinite certificate.
+Theorem 1.1. For every compact connected Riemannian isometric filling with the
+declaration's order-`1` half-space-manifold structure and a boundary
+parametrization whose range is the ambient boundary, it proves the canonical
+surface-area lower bound `14 ζ(3) / π`. Its closure includes the controlled-
+atlas Lipschitz/Fubini almost-everywhere argument, the full orientation-free
+Lemma 5.4 area inequality, finite Givens coverage, and the finite-to-infinite
+certificate.
 
 `GromovFilling.riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling`
 is the end-to-end formal Theorem 1.2. It proves the strict lower bound
-`538982446 / 100000000 = 5.38982446` for the same Riemannian filling interface
+`538982446 / 100000000 = 5.38982446` for a compact connected Riemannian
+isometric filling with its `(⊤ : WithTop ℕ∞)` half-space-manifold structure,
 with `R : ControlledRiemannianSurfaceOrientation M` and
 `H : ControlledRiemannianInducedBoundaryOrientation R boundary`.
 
 !!! note "Exact orientation boundary"
     The pinned manifold library has no conventional orientation API for
-    manifolds with boundary. `R` records a controlled chart presentation of a
-    surface orientation; `H` records the outward-first local lift monotonicity
+    manifolds with boundary. `R` records a tangent-plane orientation and
+    compatible `±1` canonical-chart signs whose signed chart Jacobian equals
+    its absolute value; `H` records the outward-first local lift monotonicity
     of the induced boundary orientation. `H` contains no integral, winding,
     Stokes, comass, or area conclusion. This is therefore an explicit formal
     interface, not a conditional shell around the target conclusion.

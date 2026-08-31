@@ -54,8 +54,8 @@ cd conj-gromov-filling
 The script checks the canonical umbrella, rejects source-level proof escapes,
 proves that the escape gate catches an injected placeholder, restores the
 pinned mathlib cache, and builds the complete package. GitHub CI also audits
-every compiled project declaration against the exact allowlist `propext`,
-`Classical.choice`, and `Quot.sound`.
+every declaration rooted at `GromovFilling` against the exact allowlist
+`propext`, `Classical.choice`, and `Quot.sound`.
 
 ## Verified core
 
