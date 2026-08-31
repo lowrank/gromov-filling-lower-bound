@@ -43,18 +43,21 @@ variable {M : Type uM} [PseudoMetricSpace M] [T2Space M]
   [IsRiemannianManifold (modelWithCornersEuclideanHalfSpace 2) M]
 
 /-- Boundary-phase compatibility for an oriented controlled atlas.  The
-angular lift is required only through its germ and derivative where the
-corresponding cutoff is nonzero.  The final field is the target-independent
-degree-one winding identity supplied by the induced boundary orientation. -/
+angular lift is required through its germ wherever the corresponding cutoff
+is nonzero and through its derivative almost everywhere there.  This is the
+natural regularity of the Lipschitz phases furnished by metric boundary
+charts.  The final field is the target-independent degree-one winding
+identity supplied by the induced boundary orientation. -/
 structure ControlledBoundaryAtlasBoundaryPhase
     (P : FiniteControlledBoundaryChartPartition M)
     (O : ControlledBoundaryAtlasOrientation P)
     (boundary : UnitAddCircle → M) where
   phase : P.ι → ℝ → ℝ
   phaseVelocity : P.ι → ℝ → ℝ
-  hasDerivAt_phase_of_cutoff_ne_zero :
-    ∀ i (y : ℝ), controlledBoundaryChartCutoff P i (y * Complex.I) ≠ 0 →
-      HasDerivAt (phase i) (phaseVelocity i y) y
+  ae_hasDerivAt_phase_of_cutoff_ne_zero :
+    ∀ i, ∀ᵐ y : ℝ,
+      controlledBoundaryChartCutoff P i (y * Complex.I) ≠ 0 →
+        HasDerivAt (phase i) (phaseVelocity i y) y
   chartAxis_eventuallyEq_boundary_of_cutoff_ne_zero :
     ∀ i (y : ℝ), controlledBoundaryChartCutoff P i (y * Complex.I) ≠ 0 →
       (fun t : ℝ ↦
@@ -107,22 +110,26 @@ theorem ControlledBoundaryAtlasBoundaryPhase.finiteResonantProfileMap_chartAxis_
   rw [ht, finiteResonantProfileMap_boundary_eq_curve
     hboundary N lam (B.phase i t)]
 
-/-- A chart-local resonant action density is its cutoff-weighted phase
-velocity times the constant primitive density of the resonant loop. -/
-theorem ControlledBoundaryAtlasBoundaryPhase.controlledBoundaryChartActionDensity_finiteResonantProfileMap
+/-- Almost everywhere, a chart-local resonant action density is its
+cutoff-weighted phase velocity times the constant primitive density of the
+resonant loop. -/
+theorem ControlledBoundaryAtlasBoundaryPhase.ae_controlledBoundaryChartActionDensity_finiteResonantProfileMap
     [CompactSpace M]
     {P : FiniteControlledBoundaryChartPartition M}
     {O : ControlledBoundaryAtlasOrientation P}
     {boundary : UnitAddCircle → M}
     (B : ControlledBoundaryAtlasBoundaryPhase P O boundary)
     (hboundary : IsometricCircleBoundary boundary)
-    (N : ℕ) (lam : ℝ) (i : P.ι) (y : ℝ) :
-    controlledBoundaryChartActionDensity P i
-        (finiteResonantProfileMap boundary N lam) y =
-      (controlledBoundaryChartCutoff P i (y * Complex.I) *
-          B.phaseVelocity i y) *
-        ((1 / 2 : ℝ) * ∑ n : Fin N,
-          (oddMode n : ℝ) * resonantBoundaryCoefficient lam n ^ 2) := by
+    (N : ℕ) (lam : ℝ) (i : P.ι) :
+    ∀ᵐ y : ℝ,
+      controlledBoundaryChartActionDensity P i
+          (finiteResonantProfileMap boundary N lam) y =
+        (controlledBoundaryChartCutoff P i (y * Complex.I) *
+            B.phaseVelocity i y) *
+          ((1 / 2 : ℝ) * ∑ n : Fin N,
+            (oddMode n : ℝ) * resonantBoundaryCoefficient lam n ^ 2) := by
+  filter_upwards [B.ae_hasDerivAt_phase_of_cutoff_ne_zero i]
+      with y hyPhase
   by_cases hyCutoff : controlledBoundaryChartCutoff P i
       (y * Complex.I) = 0
   · simp [controlledBoundaryChartActionDensity, hyCutoff]
@@ -155,7 +162,7 @@ theorem ControlledBoundaryAtlasBoundaryPhase.controlledBoundaryChartActionDensit
         _ = B.phaseVelocity i y •
               finiteResonantBoundaryVelocity N lam (B.phase i y) :=
           finiteComplexWeakLineDerivative_finiteResonantBoundaryCurve_comp
-            N lam (B.hasDerivAt_phase_of_cutoff_ne_zero i y hyCutoff)
+            N lam (hyPhase hyCutoff)
     unfold controlledBoundaryChartActionDensity
     rw [hvalue, hderiv, map_smul,
       standardComplexSymplecticPrimitive_resonantBoundary]
@@ -187,9 +194,8 @@ theorem ControlledBoundaryAtlasBoundaryPhase.integral_controlledBoundaryChartAct
           ((1 / 2 : ℝ) * ∑ n : Fin N,
             (oddMode n : ℝ) * resonantBoundaryCoefficient lam n ^ 2) := by
         apply integral_congr_ae
-        exact Filter.Eventually.of_forall fun y ↦
-          B.controlledBoundaryChartActionDensity_finiteResonantProfileMap
-            hboundary N lam i y
+        exact B.ae_controlledBoundaryChartActionDensity_finiteResonantProfileMap
+          hboundary N lam i
     _ = (∫ y : ℝ, controlledBoundaryChartCutoff P i (y * Complex.I) *
           B.phaseVelocity i y) *
         ((1 / 2 : ℝ) * ∑ n : Fin N,
@@ -312,7 +318,7 @@ theorem ControlledBoundaryAtlasBoundaryPhase.integral_orientedFiniteResonantRiem
 #print axioms
   finiteComplexWeakLineDerivative_finiteResonantBoundaryCurve_comp
 #print axioms
-  ControlledBoundaryAtlasBoundaryPhase.controlledBoundaryChartActionDensity_finiteResonantProfileMap
+  ControlledBoundaryAtlasBoundaryPhase.ae_controlledBoundaryChartActionDensity_finiteResonantProfileMap
 #print axioms
   ControlledBoundaryAtlasBoundaryPhase.sum_integral_controlledBoundaryChartActionDensity_finiteResonantProfileMap
 #print axioms finiteResonantSymplecticBoundaryAction_eq_two_pi_mul

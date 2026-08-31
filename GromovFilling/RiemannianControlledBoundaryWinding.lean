@@ -48,9 +48,10 @@ structure ControlledBoundaryAtlasBoundaryPhaseLocalData
     (boundary : UnitAddCircle → M) where
   phase : P.ι → ℝ → ℝ
   phaseVelocity : P.ι → ℝ → ℝ
-  hasDerivAt_phase_of_cutoff_ne_zero :
-    ∀ i (y : ℝ), controlledBoundaryChartCutoff P i (y * Complex.I) ≠ 0 →
-      HasDerivAt (phase i) (phaseVelocity i y) y
+  ae_hasDerivAt_phase_of_cutoff_ne_zero :
+    ∀ i, ∀ᵐ y : ℝ,
+      controlledBoundaryChartCutoff P i (y * Complex.I) ≠ 0 →
+        HasDerivAt (phase i) (phaseVelocity i y) y
   chartAxis_eventuallyEq_boundary_of_cutoff_ne_zero :
     ∀ i (y : ℝ), controlledBoundaryChartCutoff P i (y * Complex.I) ≠ 0 →
       (fun t : ℝ ↦
@@ -134,8 +135,8 @@ def ControlledBoundaryAtlasBoundaryPhaseLocalData.toBoundaryPhase
     ControlledBoundaryAtlasBoundaryPhase P O boundary where
   phase := L.phase
   phaseVelocity := L.phaseVelocity
-  hasDerivAt_phase_of_cutoff_ne_zero :=
-    L.hasDerivAt_phase_of_cutoff_ne_zero
+  ae_hasDerivAt_phase_of_cutoff_ne_zero :=
+    L.ae_hasDerivAt_phase_of_cutoff_ne_zero
   chartAxis_eventuallyEq_boundary_of_cutoff_ne_zero :=
     L.chartAxis_eventuallyEq_boundary_of_cutoff_ne_zero
   signed_weighted_winding := L.signed_weighted_winding hboundary

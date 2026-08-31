@@ -166,10 +166,11 @@ def ControlledBoundaryAtlasBoundaryPhaseSubstitutionData.toLocalData
     ControlledBoundaryAtlasBoundaryPhaseLocalData P O boundary where
   phase := S.phase
   phaseVelocity := S.phaseVelocity
-  hasDerivAt_phase_of_cutoff_ne_zero i y hy := by
-    apply S.hasDerivAt_phase i y
-    have hyInterval := S.support_cutoff_subset i hy
-    exact ⟨hyInterval.1.le, hyInterval.2⟩
+  ae_hasDerivAt_phase_of_cutoff_ne_zero i :=
+    Filter.Eventually.of_forall fun y hy ↦ by
+      apply S.hasDerivAt_phase i y
+      have hyInterval := S.support_cutoff_subset i hy
+      exact ⟨hyInterval.1.le, hyInterval.2⟩
   chartAxis_eventuallyEq_boundary_of_cutoff_ne_zero :=
     S.chartAxis_eventuallyEq_boundary_of_cutoff_ne_zero
   chart_signed_winding_eq_boundary_partition i :=
