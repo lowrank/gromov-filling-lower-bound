@@ -64,6 +64,7 @@ import GromovFilling.NormalFormBoundaryObstruction
 import GromovFilling.Numerics
 import GromovFilling.OddProfileParameterFourierBounds
 import GromovFilling.OneHighLeg
+import GromovFilling.OrientationAreaForm
 import GromovFilling.Oriented
 import GromovFilling.OrientedFiniteResonantComassLimit
 import GromovFilling.OrientedRiemannianChartDensity
