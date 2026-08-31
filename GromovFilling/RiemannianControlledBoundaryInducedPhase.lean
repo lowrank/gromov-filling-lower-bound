@@ -56,6 +56,7 @@ theorem lipschitzOnWith_two_pi_mul
     _ = ((⟨2 * Real.pi, htwoPi.le⟩ * C : ℝ≥0) : ℝ) *
         |y - z| := by
       simp only [NNReal.coe_mul, NNReal.coe_mk]
+      rw [mul_assoc]
 
 variable {M : Type uM} [PseudoMetricSpace M] [T2Space M]
   [MeasurableSpace M] [BorelSpace M]
