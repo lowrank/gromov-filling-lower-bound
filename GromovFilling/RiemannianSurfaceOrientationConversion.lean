@@ -74,8 +74,7 @@ theorem RiemannianSurfaceOrientation.controlledChartSign_eq_one_or_neg_one
 /-- A positive controlled chart sign means that the conventional orientation
 at the chart center agrees with the standard half-space coordinate
 orientation. -/
-theorem RiemannianSurfaceOrientation
-    .centerOrientation_eq_coordinateOrientation_of_controlledChartSign_eq_one
+theorem RiemannianSurfaceOrientation.centerOrientation_eq_coordinateOrientation_of_controlledChartSign_eq_one
     (O : RiemannianSurfaceOrientation
       (modelWithCornersEuclideanHalfSpace 2) M) (x : M)
     (hsign : O.controlledChartSign x = 1) :
@@ -95,8 +94,7 @@ theorem RiemannianSurfaceOrientation
 /-- A negative controlled chart sign means that the conventional orientation
 at the chart center is the negative of the standard half-space coordinate
 orientation. -/
-theorem RiemannianSurfaceOrientation
-    .centerOrientation_eq_neg_coordinateOrientation_of_controlledChartSign_eq_neg_one
+theorem RiemannianSurfaceOrientation.centerOrientation_eq_neg_coordinateOrientation_of_controlledChartSign_eq_neg_one
     (O : RiemannianSurfaceOrientation
       (modelWithCornersEuclideanHalfSpace 2) M) (x : M)
     (hsign : O.controlledChartSign x = -1) :
@@ -171,8 +169,8 @@ def RiemannianSurfaceOrientation.toControlledRiemannianSurfaceOrientation
     let t : TangentSpace (modelWithCornersEuclideanHalfSpace 2) (y : M) ≃L[ℝ]
         EuclideanSpace ℝ (Fin 2) :=
       (trivializationAt (EuclideanSpace ℝ (Fin 2))
-        (TangentSpace (modelWithCornersEuclideanHalfSpace 2)) x)
-        .continuousLinearEquivAt ℝ (y : M) hyBase
+        (TangentSpace (modelWithCornersEuclideanHalfSpace 2)) x).continuousLinearEquivAt ℝ
+          (y : M) hyBase
     let q : ℂ ≃L[ℝ]
         TangentSpace (modelWithCornersEuclideanHalfSpace 2) (y : M) :=
       e.trans t.symm
@@ -181,9 +179,8 @@ def RiemannianSurfaceOrientation.toControlledRiemannianSurfaceOrientation
         ⟨x, mem_chart_source (EuclideanHalfSpace 2) x⟩
     have htransport :
         Orientation.map (Fin 2) t.toLinearEquiv (O.orientation (y : M)) = o0 := by
-      have h := RiemannianSurfaceOrientation
-        .trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceComplexChartDomain
-          O x hzControlled
+      have h := RiemannianSurfaceOrientation.trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceComplexChartDomain
+        O x hzControlled
       change Orientation.map (Fin 2) t.toLinearEquiv (O.orientation (y : M)) = o0 at h
       exact h
     have hsymm :
@@ -315,12 +312,8 @@ def RiemannianSurfaceOrientation.toControlledRiemannianSurfaceOrientation
 #print axioms halfSpaceComplexCoordinateOrientation
 #print axioms RiemannianSurfaceOrientation.controlledChartSign
 #print axioms RiemannianSurfaceOrientation.controlledChartSign_eq_one_or_neg_one
-#print axioms
-  RiemannianSurfaceOrientation
-    .centerOrientation_eq_coordinateOrientation_of_controlledChartSign_eq_one
-#print axioms
-  RiemannianSurfaceOrientation
-    .centerOrientation_eq_neg_coordinateOrientation_of_controlledChartSign_eq_neg_one
+#print axioms RiemannianSurfaceOrientation.centerOrientation_eq_coordinateOrientation_of_controlledChartSign_eq_one
+#print axioms RiemannianSurfaceOrientation.centerOrientation_eq_neg_coordinateOrientation_of_controlledChartSign_eq_neg_one
 #print axioms RiemannianSurfaceOrientation.toControlledRiemannianSurfaceOrientation
 
 end

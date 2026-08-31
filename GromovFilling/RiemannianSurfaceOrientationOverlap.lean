@@ -74,7 +74,7 @@ theorem trivialization_coordChange_apply_eq_tangentCoordChange
     (tangentBundleCore I M).coordChange
       (achart (EuclideanHalfSpace 2) a)
       (achart (EuclideanHalfSpace 2) b) p v
-  exact Bundle.VectorBundleCore.trivializationAt_coordChange_eq
+  exact VectorBundleCore.trivializationAt_coordChange_eq
     (Z := tangentBundleCore I M) hbase v
 
 /-- The canonical tangent-coordinate change carries a conventional
