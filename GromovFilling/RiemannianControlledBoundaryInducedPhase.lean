@@ -280,7 +280,7 @@ theorem nonempty_controlledBoundaryChartInducedPhaseData_of_boundaryAtlasInduced
           have h := intervalIntegral_eq_periodic_of_eq_zero_on_complement
             hf hfPeriodic hphaseBA hphaseAPeriod hzeroUnused
             (s := -Real.pi)
-          convert h using 1 <;> ring
+          convert h using 1 <;> ring_nf
         calc
           O.chartSign i * (∫ y : ℝ, g y) =
               ∫ t in phase a..phase b, f t := by
@@ -353,7 +353,7 @@ theorem nonempty_controlledBoundaryChartInducedPhaseData_of_boundaryAtlasInduced
           have h := intervalIntegral_eq_periodic_of_eq_zero_on_complement
             hf hfPeriodic hphaseAB hphaseBPeriod hzeroUnused
             (s := -Real.pi)
-          convert h using 1 <;> ring
+          convert h using 1 <;> ring_nf
         calc
           O.chartSign i * (∫ y : ℝ, g y) =
               -(∫ t in phase a..phase b, f t) := by
@@ -455,7 +455,7 @@ theorem nonempty_controlledBoundaryAtlasBoundaryPhaseLocalData_of_inducedBoundar
   exact
     nonempty_controlledBoundaryAtlasBoundaryPhaseLocalData_of_boundaryAtlasInducedOrientation
       boundary hboundary hboundaryRange P (R.toBoundaryAtlasOrientation P)
-      (H.toBoundaryAtlasInducedOrientation P)
+      (ControlledRiemannianInducedBoundaryOrientation.toBoundaryAtlasInducedOrientation H P)
 
 /-- An oriented controlled filling with the induced boundary convention has
 the complete boundary-phase datum required by the nonlinear Stokes layer. -/
@@ -473,7 +473,7 @@ theorem nonempty_controlledBoundaryAtlasBoundaryPhase_of_inducedBoundaryOrientat
   exact
     nonempty_controlledBoundaryAtlasBoundaryPhase_of_boundaryAtlasInducedOrientation
       boundary hboundary hboundaryRange P (R.toBoundaryAtlasOrientation P)
-      (H.toBoundaryAtlasInducedBoundaryOrientation P)
+      (ControlledRiemannianInducedBoundaryOrientation.toBoundaryAtlasInducedOrientation H P)
 
 /-- The geometric finite oriented-atlas package supplies a boundary phase,
 without storing that phase or its winding in the package itself. -/
