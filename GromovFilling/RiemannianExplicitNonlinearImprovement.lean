@@ -24,6 +24,90 @@ local instance explicitNonlinearImprovementEuclideanFinrankTwo :
     Fact (Module.finrank ℝ (EuclideanSpace ℝ (Fin 2)) = 2) :=
   ⟨by simp⟩
 
+/-- The explicit nonlinear improvement from one finite oriented controlled
+boundary atlas satisfying the outward-first boundary convention.  The atlas
+contains no phase, winding, Stokes, or area conclusion; those are constructed
+and verified below from its geometric orientation data. -/
+theorem riemannianSurfaceArea_gt_point_zero_three_of_finite_oriented_boundary_atlas
+    {M : Type uM} [PseudoMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
+    [CompactSpace M] [ConnectedSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) (⊤ : WithTop ℕ∞) M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace
+      (modelWithCornersEuclideanHalfSpace 2) x)]
+    [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))
+      (fun x : M ↦ TangentSpace
+        (modelWithCornersEuclideanHalfSpace 2) x)]
+    [IsRiemannianManifold (modelWithCornersEuclideanHalfSpace 2) M]
+    (boundary : UnitAddCircle → M)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hboundaryRange : Set.range boundary =
+      (modelWithCornersEuclideanHalfSpace 2).boundary M)
+    (P : FiniteControlledBoundaryChartPartition M)
+    (A : FiniteControlledOrientedBoundaryAtlas P boundary) :
+    letI : Nonempty M := ⟨boundary 0⟩
+    letI : Nonempty (ControlledInteriorAtlas
+        (modelWithCornersEuclideanHalfSpace 2) M) :=
+      nonempty_controlledInteriorAtlas
+        (modelWithCornersEuclideanHalfSpace 2)
+        Complex.orthonormalBasisOneI.repr
+    ENNReal.ofReal (538982446 / 100000000 : ℝ) <
+      riemannianSurfaceAreaMeasure
+        (modelWithCornersEuclideanHalfSpace 2) (Set.univ : Set M) := by
+  letI : Nonempty M := ⟨boundary 0⟩
+  letI : Nonempty (ControlledInteriorAtlas
+      (modelWithCornersEuclideanHalfSpace 2) M) :=
+    nonempty_controlledInteriorAtlas
+      (modelWithCornersEuclideanHalfSpace 2)
+      Complex.orthonormalBasisOneI.repr
+  let B : ControlledBoundaryAtlasBoundaryPhase P A.orientation boundary :=
+    Classical.choice (A.nonempty_boundaryPhase hboundary hboundaryRange)
+  simpa only using B.surfaceArea_gt_point_zero_three hboundary
+
+/-- The all-parameter nonlinear master formula from one finite oriented
+controlled boundary atlas satisfying the outward-first boundary convention.
+This is the controlled-atlas realization of the manuscript's nonlinear
+formula; the strict decimal theorem above is its evaluated corollary. -/
+theorem riemannianNonlinearCertificate_le_surfaceArea_of_finite_oriented_boundary_atlas
+    {M : Type uM} [PseudoMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
+    [CompactSpace M] [ConnectedSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) (⊤ : WithTop ℕ∞) M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace
+      (modelWithCornersEuclideanHalfSpace 2) x)]
+    [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))
+      (fun x : M ↦ TangentSpace
+        (modelWithCornersEuclideanHalfSpace 2) x)]
+    [IsRiemannianManifold (modelWithCornersEuclideanHalfSpace 2) M]
+    (boundary : UnitAddCircle → M)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hboundaryRange : Set.range boundary =
+      (modelWithCornersEuclideanHalfSpace 2).boundary M)
+    (P : FiniteControlledBoundaryChartPartition M)
+    (A : FiniteControlledOrientedBoundaryAtlas P boundary)
+    (lam : ℝ) (hlam0 : 0 ≤ lam) (hlam : lam < Real.pi ^ 2 / 32) :
+    letI : Nonempty M := ⟨boundary 0⟩
+    letI : Nonempty (ControlledInteriorAtlas
+        (modelWithCornersEuclideanHalfSpace 2) M) :=
+      nonempty_controlledInteriorAtlas
+        (modelWithCornersEuclideanHalfSpace 2)
+        Complex.orthonormalBasisOneI.repr
+    ENNReal.ofReal (nonlinearCertificate lam) ≤
+      riemannianSurfaceAreaMeasure
+        (modelWithCornersEuclideanHalfSpace 2) (Set.univ : Set M) := by
+  letI : Nonempty M := ⟨boundary 0⟩
+  letI : Nonempty (ControlledInteriorAtlas
+      (modelWithCornersEuclideanHalfSpace 2) M) :=
+    nonempty_controlledInteriorAtlas
+      (modelWithCornersEuclideanHalfSpace 2)
+      Complex.orthonormalBasisOneI.repr
+  let B : ControlledBoundaryAtlasBoundaryPhase P A.orientation boundary :=
+    Classical.choice (A.nonempty_boundaryPhase hboundary hboundaryRange)
+  simpa only using
+    B.nonlinearCertificate_le_surfaceArea hboundary lam hlam0 hlam
+
 /-- The explicit nonlinear improvement for a compact connected controlled
 oriented Riemannian isometric filling.  Because the pinned manifold library
 does not expose orientations for manifolds with boundary, orientation is
@@ -71,8 +155,60 @@ theorem riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometr
         boundary hboundary hboundaryRange P R H)
   simpa only using B.surfaceArea_gt_point_zero_three hboundary
 
+/-- The all-parameter nonlinear master formula for a compact connected
+controlled oriented Riemannian isometric filling. -/
+theorem riemannianNonlinearCertificate_le_surfaceArea_of_controlled_oriented_isometric_filling
+    {M : Type uM} [PseudoMetricSpace M] [T2Space M]
+    [MeasurableSpace M] [BorelSpace M]
+    [CompactSpace M] [ConnectedSpace M]
+    [ChartedSpace (EuclideanHalfSpace 2) M]
+    [IsManifold (modelWithCornersEuclideanHalfSpace 2) (⊤ : WithTop ℕ∞) M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace
+      (modelWithCornersEuclideanHalfSpace 2) x)]
+    [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))
+      (fun x : M ↦ TangentSpace
+        (modelWithCornersEuclideanHalfSpace 2) x)]
+    [IsRiemannianManifold (modelWithCornersEuclideanHalfSpace 2) M]
+    (boundary : UnitAddCircle → M)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hboundaryRange : Set.range boundary =
+      (modelWithCornersEuclideanHalfSpace 2).boundary M)
+    (R : ControlledRiemannianSurfaceOrientation M)
+    (H : ControlledRiemannianInducedBoundaryOrientation R boundary)
+    (lam : ℝ) (hlam0 : 0 ≤ lam) (hlam : lam < Real.pi ^ 2 / 32) :
+    letI : Nonempty M := ⟨boundary 0⟩
+    letI : Nonempty (ControlledInteriorAtlas
+        (modelWithCornersEuclideanHalfSpace 2) M) :=
+      nonempty_controlledInteriorAtlas
+        (modelWithCornersEuclideanHalfSpace 2)
+        Complex.orthonormalBasisOneI.repr
+    ENNReal.ofReal (nonlinearCertificate lam) ≤
+      riemannianSurfaceAreaMeasure
+        (modelWithCornersEuclideanHalfSpace 2) (Set.univ : Set M) := by
+  letI : Nonempty M := ⟨boundary 0⟩
+  letI : Nonempty (ControlledInteriorAtlas
+      (modelWithCornersEuclideanHalfSpace 2) M) :=
+    nonempty_controlledInteriorAtlas
+      (modelWithCornersEuclideanHalfSpace 2)
+      Complex.orthonormalBasisOneI.repr
+  let P : FiniteControlledBoundaryChartPartition M :=
+    Classical.choice (nonempty_finiteControlledBoundaryChartPartition M)
+  let B : ControlledBoundaryAtlasBoundaryPhase P
+      (R.toBoundaryAtlasOrientation P) boundary :=
+    Classical.choice
+      (nonempty_controlledBoundaryAtlasBoundaryPhase_of_inducedBoundaryOrientation
+        boundary hboundary hboundaryRange P R H)
+  simpa only using
+    B.nonlinearCertificate_le_surfaceArea hboundary lam hlam0 hlam
+
+#print axioms
+  riemannianSurfaceArea_gt_point_zero_three_of_finite_oriented_boundary_atlas
+#print axioms
+  riemannianNonlinearCertificate_le_surfaceArea_of_finite_oriented_boundary_atlas
 #print axioms
   riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling
+#print axioms
+  riemannianNonlinearCertificate_le_surfaceArea_of_controlled_oriented_isometric_filling
 
 end
 
