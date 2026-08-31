@@ -2,6 +2,7 @@ import GromovFilling.RiemannianChartAreaLocality
 import GromovFilling.RiemannianChartIntegral
 import GromovFilling.RiemannianControlledBoundaryInteriorAtlas
 import GromovFilling.RiemannianControlledBoundaryOrientation
+import GromovFilling.RiemannianControlledBoundaryPrimitiveSupport
 
 /-!
 # Cancellation of controlled boundary-chart primitive errors
@@ -98,104 +99,6 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_primitiveError
       (finiteSymplecticFDerivPrimitiveError D.cutoff D.chartMap) :=
   integrable_finiteSymplecticFDerivPrimitiveError
     D.cutoff_lipschitz D.cutoff_compact D.chartMap_lipschitz
-
-/-- Outside the closed support of a real function, its Riemannian manifold
-differential vanishes. -/
-theorem riemannianRealMFDeriv_eq_zero_of_notMem_tsupport
-    {E H M : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
-    [TopologicalSpace M] [ChartedSpace H M]
-    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
-    (ρ : M → ℝ) (x : M) (hx : x ∉ tsupport ρ) :
-    riemannianRealMFDeriv I ρ x = 0 := by
-  rw [notMem_tsupport_iff_eventuallyEq] at hx
-  have hzero : mfderiv I (modelWithCornersSelf ℝ ℝ) ρ x = 0 := by
-    calc
-      mfderiv I (modelWithCornersSelf ℝ ℝ) ρ x =
-          mfderiv I (modelWithCornersSelf ℝ ℝ)
-            (fun _ : M ↦ (0 : ℝ)) x :=
-        hx.mfderiv_eq
-      _ = 0 := mfderiv_const
-  unfold riemannianRealMFDeriv
-  rw [hzero]
-  simp
-
-/-- Consequently, the intrinsic oriented primitive-error density is
-supported inside the closed support of its cutoff. -/
-theorem orientedFiniteComplexRiemannianPrimitiveErrorDensity_eq_zero_of_notMem_tsupport
-    {E H M ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
-    [TopologicalSpace M] [ChartedSpace H M]
-    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
-    [Fact (Module.finrank ℝ E = 2)] [Fintype ι] [Finite ι]
-    (o : RiemannianTangentPlaneOrientation I M)
-    (ρ : M → ℝ) (G : M → ι → ℂ) (x : M)
-    (hx : x ∉ tsupport ρ) :
-    orientedFiniteComplexRiemannianPrimitiveErrorDensity
-      I o ρ G x = 0 := by
-  unfold orientedFiniteComplexRiemannianPrimitiveErrorDensity
-  rw [riemannianRealMFDeriv_eq_zero_of_notMem_tsupport I ρ x hx]
-  simp
-
-/-- Support form of the preceding vanishing statement. -/
-theorem support_orientedFiniteComplexRiemannianPrimitiveErrorDensity_subset
-    {E H M ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
-    [TopologicalSpace M] [ChartedSpace H M]
-    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
-    [Fact (Module.finrank ℝ E = 2)] [Fintype ι] [Finite ι]
-    (o : RiemannianTangentPlaneOrientation I M)
-    (ρ : M → ℝ) (G : M → ι → ℂ) :
-    support (fun x ↦
-      orientedFiniteComplexRiemannianPrimitiveErrorDensity I o ρ G x) ⊆
-        tsupport ρ := by
-  intro x hx
-  by_contra hxt
-  exact hx
-    (orientedFiniteComplexRiemannianPrimitiveErrorDensity_eq_zero_of_notMem_tsupport
-      I o ρ G x hxt)
-
-/-- The intrinsic primitive error of one controlled cutoff vanishes at every
-interior point outside that cutoff's controlled chart image. -/
-theorem FiniteControlledBoundaryChartPartition.primitiveErrorDensity_eq_zero_of_interior_of_not_mem_image
-    {M : Type uM} [PseudoEMetricSpace M]
-    [ChartedSpace (EuclideanHalfSpace 2) M]
-    [IsManifold (modelWithCornersEuclideanHalfSpace 2) ∞ M]
-    [RiemannianBundle (fun x : M ↦ TangentSpace
-      (modelWithCornersEuclideanHalfSpace 2) x)]
-    [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))
-      (fun x : M ↦ TangentSpace
-        (modelWithCornersEuclideanHalfSpace 2) x)]
-    [IsRiemannianManifold (modelWithCornersEuclideanHalfSpace 2) M]
-    {ι : Type uι} [Fintype ι] [Finite ι]
-    (P : FiniteControlledBoundaryChartPartition M)
-    (O : ControlledBoundaryAtlasOrientation P) (i : P.ι)
-    (G : M → ι → ℂ) (x : M)
-    (hxInterior : x ∈
-      (modelWithCornersEuclideanHalfSpace 2).interior M)
-    (hxImage : x ∉
-      interiorComplexExtChart
-          (modelWithCornersEuclideanHalfSpace 2)
-          Complex.orthonormalBasisOneI.repr (P.center i) ''
-        chosenControlledInteriorComplexChartDomain
-          (modelWithCornersEuclideanHalfSpace 2)
-          Complex.orthonormalBasisOneI.repr (P.center i)) :
-    orientedFiniteComplexRiemannianPrimitiveErrorDensity
-      (modelWithCornersEuclideanHalfSpace 2) O.tangentOrientation
-      (P.partition i) G x = 0 := by
-  by_contra hxne
-  have hxsupport : x ∈ support (fun y ↦
-      orientedFiniteComplexRiemannianPrimitiveErrorDensity
-        (modelWithCornersEuclideanHalfSpace 2) O.tangentOrientation
-        (P.partition i) G y) := hxne
-  have hxtsupport : x ∈ tsupport (P.partition i) :=
-    support_orientedFiniteComplexRiemannianPrimitiveErrorDensity_subset
-      (modelWithCornersEuclideanHalfSpace 2) O.tangentOrientation
-      (P.partition i) G hxsupport
-  apply hxImage
-  rw [chosenControlledInteriorComplexChartDomain,
-    image_controlledInteriorComplexChartDomain]
-  exact ⟨P.controlledSubordinate i hxtsupport, hxInterior⟩
 
 /-- Integrable finite intrinsic primitive errors cancel after integration
 against any common measure. -/
@@ -347,7 +250,7 @@ theorem controlledBoundaryChartAreaPrimitiveErrorDensity_eq_zero_of_mem_rightOpe
       exact hzNotS (hzw ▸ hw)
     have hzero :=
       P.primitiveErrorDensity_eq_zero_of_interior_of_not_mem_image
-        O i G (F z) hzInterior
+        O.tangentOrientation i G (F z) hzInterior
           (by simpa only [F, s, I, e] using hzNotImage)
     rw [controlledBoundaryChartAreaPrimitiveErrorDensity, if_pos hzDomain]
     rw [show orientedFiniteComplexRiemannianPrimitiveErrorDensity
@@ -591,7 +494,8 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaPrimit
   have hqzero : ∀ᵐ x ∂μ, x ∉ U → q x = 0 := by
     filter_upwards [hμInterior] with x hxInterior hxU
     exact P.primitiveErrorDensity_eq_zero_of_interior_of_not_mem_image
-      O i G x hxInterior (by simpa only [U, F, s, I, e] using hxU)
+      O.tangentOrientation i G x hxInterior
+        (by simpa only [U, F, s, I, e] using hxU)
   have hqU : IntegrableOn q U μ := by
     change Integrable q (μ.restrict U)
     rw [hlocality]
@@ -628,7 +532,7 @@ theorem ControlledBoundaryChartWeakStokesData.integrable_and_integral_areaPrimit
     have hqzero : q (F z) = 0 := by
       simpa only [q] using
         P.primitiveErrorDensity_eq_zero_of_interior_of_not_mem_image
-          O i G (F z) hzInterior
+          O.tangentOrientation i G (F z) hzInterior
             (by simpa only [U, F, s, I, e] using hzNotImage)
     rw [hqzero, mul_zero]
   have hrightToFull :
@@ -722,13 +626,6 @@ theorem sum_integral_controlledBoundaryChartAreaPrimitiveErrorDensity_eq_zero
 #print axioms integrable_finiteComplexWeakPrimitiveErrorComplex
 #print axioms integrable_finiteSymplecticFDerivPrimitiveError
 #print axioms ControlledBoundaryChartWeakStokesData.integrable_primitiveError
-#print axioms riemannianRealMFDeriv_eq_zero_of_notMem_tsupport
-#print axioms
-  orientedFiniteComplexRiemannianPrimitiveErrorDensity_eq_zero_of_notMem_tsupport
-#print axioms
-  support_orientedFiniteComplexRiemannianPrimitiveErrorDensity_subset
-#print axioms
-  FiniteControlledBoundaryChartPartition.primitiveErrorDensity_eq_zero_of_interior_of_not_mem_image
 #print axioms
   sum_integral_orientedFiniteComplexRiemannianPrimitiveErrorDensity_eq_zero
 #print axioms
