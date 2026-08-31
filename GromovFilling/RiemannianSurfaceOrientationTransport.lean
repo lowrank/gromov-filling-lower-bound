@@ -159,11 +159,43 @@ theorem RiemannianSurfaceOrientation
   rw [hgz, hg₀] at htransport
   exact htransport
 
+/-- A point in the image of a chosen controlled half-space chart has a
+chart-source witness whose conventional orientation is the chart-center
+orientation. -/
+theorem RiemannianSurfaceOrientation
+    .exists_trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceImage
+    (O : RiemannianSurfaceOrientation
+      (modelWithCornersEuclideanHalfSpace 2) M)
+    (x p : M)
+    (hp : p ∈ halfSpaceComplexExtChart x ''
+      chosenControlledHalfSpaceComplexChartDomain x) :
+    ∃ hpx : p ∈ (chartAt (EuclideanHalfSpace 2) x).source,
+      RiemannianSurfaceOrientation.trivializedOrientationAt O x ⟨p, hpx⟩ =
+        RiemannianSurfaceOrientation.trivializedOrientationAt O x
+          ⟨x, mem_chart_source (EuclideanHalfSpace 2) x⟩ := by
+  rcases hp with ⟨z, hz, hpz⟩
+  have hpx : p ∈ (chartAt (EuclideanHalfSpace 2) x).source := by
+    rw [← hpz]
+    exact (chosenControlledHalfSpaceChartSourcePoint x ⟨z, hz⟩).property
+  refine ⟨hpx, ?_⟩
+  have hpoint :
+      (⟨p, hpx⟩ : (chartAt (EuclideanHalfSpace 2) x).source) =
+        chosenControlledHalfSpaceChartSourcePoint x ⟨z, hz⟩ := by
+    apply Subtype.ext
+    exact hpz.symm
+  rw [hpoint]
+  exact O
+    .trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceComplexChartDomain
+      x hz
+
 #print axioms chosenControlledHalfSpaceChartSourcePoint
 #print axioms RiemannianSurfaceOrientation.trivializedOrientationAt
 #print axioms
   RiemannianSurfaceOrientation
     .trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceComplexChartDomain
+#print axioms
+  RiemannianSurfaceOrientation
+    .exists_trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceImage
 
 end
 
