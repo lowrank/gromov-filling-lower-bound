@@ -19,6 +19,9 @@ namespace GromovFilling
 
 noncomputable section
 
+attribute [local instance] normedAddCommGroupTangentSpaceVectorSpace
+attribute [local instance] normedSpaceTangentSpaceVectorSpace
+
 /-- The closed complex right half-plane underlying Mathlib's two-dimensional
 manifold-with-boundary model. -/
 def complexRightClosedHalfPlane : Set ℂ :=
