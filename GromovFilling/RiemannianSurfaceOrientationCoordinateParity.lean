@@ -76,10 +76,12 @@ theorem RiemannianSurfaceOrientation.controlledChartSign_eq_coordChange_det_pos
         ⟨b, mem_chart_source (EuclideanHalfSpace 2) b⟩ at htransport
   rcases O.controlledChartSign_eq_one_or_neg_one a with ha | ha <;>
     rcases O.controlledChartSign_eq_one_or_neg_one b with hb | hb
-  · have hA0 := O
-      .centerOrientation_eq_coordinateOrientation_of_controlledChartSign_eq_one a ha
-    have hB0 := O
-      .centerOrientation_eq_coordinateOrientation_of_controlledChartSign_eq_one b hb
+  · have hA0 :=
+      RiemannianSurfaceOrientation.centerOrientation_eq_coordinateOrientation_of_controlledChartSign_eq_one
+        O a ha
+    have hB0 :=
+      RiemannianSurfaceOrientation.centerOrientation_eq_coordinateOrientation_of_controlledChartSign_eq_one
+        O b hb
     rw [hA0, hB0] at htransport
     exact (Orientation.map_eq_iff_det_pos halfSpaceComplexCoordinateOrientation
       e.toLinearEquiv (by simp)).mp htransport
@@ -87,10 +89,12 @@ theorem RiemannianSurfaceOrientation.controlledChartSign_eq_coordChange_det_pos
     norm_num at hsign
   · rw [ha, hb] at hsign
     norm_num at hsign
-  · have hA0 := O
-      .centerOrientation_eq_neg_coordinateOrientation_of_controlledChartSign_eq_neg_one a ha
-    have hB0 := O
-      .centerOrientation_eq_neg_coordinateOrientation_of_controlledChartSign_eq_neg_one b hb
+  · have hA0 :=
+      RiemannianSurfaceOrientation.centerOrientation_eq_neg_coordinateOrientation_of_controlledChartSign_eq_neg_one
+        O a ha
+    have hB0 :=
+      RiemannianSurfaceOrientation.centerOrientation_eq_neg_coordinateOrientation_of_controlledChartSign_eq_neg_one
+        O b hb
     rw [hA0, hB0, Orientation.map_neg] at htransport
     have hmap : Orientation.map (Fin 2) e.toLinearEquiv
         halfSpaceComplexCoordinateOrientation = halfSpaceComplexCoordinateOrientation :=
@@ -138,17 +142,21 @@ theorem RiemannianSurfaceOrientation.controlledChartSign_eq_neg_coordChange_det_
     rcases O.controlledChartSign_eq_one_or_neg_one b with hb | hb
   · rw [ha, hb] at hsign
     norm_num at hsign
-  · have hA0 := O
-      .centerOrientation_eq_coordinateOrientation_of_controlledChartSign_eq_one a ha
-    have hB0 := O
-      .centerOrientation_eq_neg_coordinateOrientation_of_controlledChartSign_eq_neg_one b hb
+  · have hA0 :=
+      RiemannianSurfaceOrientation.centerOrientation_eq_coordinateOrientation_of_controlledChartSign_eq_one
+        O a ha
+    have hB0 :=
+      RiemannianSurfaceOrientation.centerOrientation_eq_neg_coordinateOrientation_of_controlledChartSign_eq_neg_one
+        O b hb
     rw [hA0, hB0] at htransport
     exact (Orientation.map_eq_neg_iff_det_neg halfSpaceComplexCoordinateOrientation
       e.toLinearEquiv (by simp)).mp htransport
-  · have hA0 := O
-      .centerOrientation_eq_neg_coordinateOrientation_of_controlledChartSign_eq_neg_one a ha
-    have hB0 := O
-      .centerOrientation_eq_coordinateOrientation_of_controlledChartSign_eq_one b hb
+  · have hA0 :=
+      RiemannianSurfaceOrientation.centerOrientation_eq_neg_coordinateOrientation_of_controlledChartSign_eq_neg_one
+        O a ha
+    have hB0 :=
+      RiemannianSurfaceOrientation.centerOrientation_eq_coordinateOrientation_of_controlledChartSign_eq_one
+        O b hb
     rw [hA0, hB0, Orientation.map_neg] at htransport
     have hmap : Orientation.map (Fin 2) e.toLinearEquiv
         halfSpaceComplexCoordinateOrientation = -halfSpaceComplexCoordinateOrientation := by
