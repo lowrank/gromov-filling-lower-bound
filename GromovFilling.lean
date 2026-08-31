@@ -84,6 +84,7 @@ import GromovFilling.RadoBoundaryLocus
 import GromovFilling.ResonanceTrace
 import GromovFilling.RiemannianAreaFormula
 import GromovFilling.RiemannianAtlasArea
+import GromovFilling.RiemannianBoundaryOrientationDirectionTransport
 import GromovFilling.RiemannianBoundaryOrientationLifts
 import GromovFilling.RiemannianBoundaryPartition
 import GromovFilling.RiemannianChartArea
