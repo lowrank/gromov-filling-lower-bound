@@ -1,4 +1,5 @@
 import GromovFilling.RiemannianControlledBoundaryPhaseSubstitution
+import Mathlib.Topology.ContinuousMap.Interval
 
 /-!
 # Boundary parameters on controlled chart axes
@@ -215,6 +216,53 @@ theorem continuousAt_controlledBoundaryChartParameter_of_cutoff_ne_zero
         boundary hboundaryRange P i y hyCutoff).symm
   simpa only [Function.comp_apply] using hboundaryParameter
 
+/-- On every compact chart-axis interval where the controlled cutoff stays
+nonzero, the canonical circle parameter admits a continuous real lift.  The
+parameter is first extended continuously by clamping to the interval, after
+which the universal covering `ℝ → ℝ/ℤ` supplies a global lift. -/
+theorem exists_continuous_real_lift_controlledBoundaryChartParameter_on_Icc
+    (boundary : UnitAddCircle → M)
+    (hboundary : IsometricCircleBoundary boundary)
+    (hboundaryRange : Set.range boundary =
+      (modelWithCornersEuclideanHalfSpace 2).boundary M)
+    (P : FiniteControlledBoundaryChartPartition M) (i : P.ι)
+    (a b : ℝ) (hab : a ≤ b)
+    (hcutoff : ∀ y ∈ Set.Icc a b,
+      controlledBoundaryChartCutoff P i (y * Complex.I) ≠ 0) :
+    ∃ lift : ℝ → ℝ, Continuous lift ∧
+      ∀ y ∈ Set.Icc a b,
+        ((lift y : ℝ) : UnitAddCircle) =
+          controlledBoundaryChartParameter boundary P i y := by
+  have hparameterContinuousOn : ContinuousOn
+      (controlledBoundaryChartParameter boundary P i) (Set.Icc a b) := by
+    intro y hy
+    exact
+      (continuousAt_controlledBoundaryChartParameter_of_cutoff_ne_zero
+        boundary hboundary hboundaryRange P i y (hcutoff y hy)).continuousWithinAt
+  let parameterIcc : C(Set.Icc a b, UnitAddCircle) :=
+    ⟨fun y ↦ controlledBoundaryChartParameter boundary P i y,
+      hparameterContinuousOn.restrict⟩
+  let base : C(ℝ, UnitAddCircle) :=
+    ⟨Set.IccExtend hab parameterIcc,
+      parameterIcc.continuous.Icc_extend'⟩
+  let cov : IsCoveringMap ((↑) : ℝ → UnitAddCircle) :=
+    AddCircle.isCoveringMap_coe (p := (1 : ℝ))
+  obtain ⟨r, _hr, hr⟩ := AddCircle.eq_coe_Ico (base 0)
+  have hbase : ((r : ℝ) : UnitAddCircle) = base 0 := by
+    simpa [base] using hr
+  obtain ⟨lift, hlift, _hunique⟩ :=
+    cov.existsUnique_continuousMap_lifts base 0 r hbase
+  refine ⟨lift, lift.continuous, ?_⟩
+  intro y hy
+  have hproject := congrFun hlift.2 y
+  calc
+    ((lift y : ℝ) : UnitAddCircle) = base y := by
+      simpa [base] using hproject
+    _ = controlledBoundaryChartParameter boundary P i y := by
+      change Set.IccExtend hab parameterIcc y =
+        controlledBoundaryChartParameter boundary P i y
+      rw [Set.IccExtend_of_mem hab parameterIcc hy]
+
 #print axioms halfSpaceComplexExtChart_real_mul_I_mem_boundary
 #print axioms
   halfSpaceComplexExtChart_real_mul_I_mem_boundary_of_cutoff_ne_zero
@@ -225,6 +273,8 @@ theorem continuousAt_controlledBoundaryChartParameter_of_cutoff_ne_zero
   chartAxis_eventuallyEq_boundary_controlledBoundaryChartParameter
 #print axioms
   continuousAt_controlledBoundaryChartParameter_of_cutoff_ne_zero
+#print axioms
+  exists_continuous_real_lift_controlledBoundaryChartParameter_on_Icc
 
 end
 
