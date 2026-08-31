@@ -44,7 +44,7 @@ theorem eq_im_mul_I_of_mem_halfSpaceComplexExtChartDomain_of_image_mem_boundary
   have hzRe : z.re = 0 := by
     by_contra hzRe
     have hzRePos : 0 < z.re :=
-      lt_of_le_of_ne hzRightClosed hzRe.symm
+      lt_of_le_of_ne hzRightClosed (Ne.symm hzRe)
     have hzRightOpen : z ∈ complexRightOpenHalfPlane := by
       exact hzRePos
     have hzImage : halfSpaceComplexExtChart x z ∈
