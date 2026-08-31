@@ -20,6 +20,10 @@ noncomputable section
 
 universe uM
 
+local instance explicitNonlinearImprovementEuclideanFinrankTwo :
+    Fact (Module.finrank ℝ (EuclideanSpace ℝ (Fin 2)) = 2) :=
+  ⟨by simp⟩
+
 /-- The explicit nonlinear improvement for a compact connected controlled
 oriented Riemannian isometric filling.  Because the pinned manifold library
 does not expose orientations for manifolds with boundary, orientation is
