@@ -71,6 +71,57 @@ theorem RiemannianSurfaceOrientation.controlledChartSign_eq_one_or_neg_one
   · right
     simp only [RiemannianSurfaceOrientation.controlledChartSign, h, if_neg]
 
+/-- A positive controlled chart sign means that the conventional orientation
+at the chart center agrees with the standard half-space coordinate
+orientation. -/
+theorem RiemannianSurfaceOrientation
+    .centerOrientation_eq_coordinateOrientation_of_controlledChartSign_eq_one
+    (O : RiemannianSurfaceOrientation
+      (modelWithCornersEuclideanHalfSpace 2) M) (x : M)
+    (hsign : O.controlledChartSign x = 1) :
+    RiemannianSurfaceOrientation.trivializedOrientationAt O x
+      ⟨x, mem_chart_source (EuclideanHalfSpace 2) x⟩ =
+      halfSpaceComplexCoordinateOrientation := by
+  classical
+  by_contra h
+  have hsignNeg : O.controlledChartSign x = -1 := by
+    change (if RiemannianSurfaceOrientation.trivializedOrientationAt O x
+        ⟨x, mem_chart_source (EuclideanHalfSpace 2) x⟩ =
+          halfSpaceComplexCoordinateOrientation then 1 else -1) = -1
+    simp [h]
+  rw [hsignNeg] at hsign
+  norm_num at hsign
+
+/-- A negative controlled chart sign means that the conventional orientation
+at the chart center is the negative of the standard half-space coordinate
+orientation. -/
+theorem RiemannianSurfaceOrientation
+    .centerOrientation_eq_neg_coordinateOrientation_of_controlledChartSign_eq_neg_one
+    (O : RiemannianSurfaceOrientation
+      (modelWithCornersEuclideanHalfSpace 2) M) (x : M)
+    (hsign : O.controlledChartSign x = -1) :
+    RiemannianSurfaceOrientation.trivializedOrientationAt O x
+      ⟨x, mem_chart_source (EuclideanHalfSpace 2) x⟩ =
+      -halfSpaceComplexCoordinateOrientation := by
+  classical
+  have hne : RiemannianSurfaceOrientation.trivializedOrientationAt O x
+      ⟨x, mem_chart_source (EuclideanHalfSpace 2) x⟩ ≠
+        halfSpaceComplexCoordinateOrientation := by
+    intro h
+    have hsignPos : O.controlledChartSign x = 1 := by
+      change (if RiemannianSurfaceOrientation.trivializedOrientationAt O x
+          ⟨x, mem_chart_source (EuclideanHalfSpace 2) x⟩ =
+            halfSpaceComplexCoordinateOrientation then 1 else -1) = 1
+      simp [h]
+    rw [hsignPos] at hsign
+    norm_num at hsign
+  rcases Orientation.eq_or_eq_neg
+      (RiemannianSurfaceOrientation.trivializedOrientationAt O x
+        ⟨x, mem_chart_source (EuclideanHalfSpace 2) x⟩)
+      halfSpaceComplexCoordinateOrientation (by simp) with h | h
+  · exact (hne h).elim
+  · exact h
+
 /-- Transporting an orientation through two linear equivalences is the same
 as transporting it through their composite. -/
 private theorem orientation_map_trans
@@ -264,6 +315,12 @@ def RiemannianSurfaceOrientation.toControlledRiemannianSurfaceOrientation
 #print axioms halfSpaceComplexCoordinateOrientation
 #print axioms RiemannianSurfaceOrientation.controlledChartSign
 #print axioms RiemannianSurfaceOrientation.controlledChartSign_eq_one_or_neg_one
+#print axioms
+  RiemannianSurfaceOrientation
+    .centerOrientation_eq_coordinateOrientation_of_controlledChartSign_eq_one
+#print axioms
+  RiemannianSurfaceOrientation
+    .centerOrientation_eq_neg_coordinateOrientation_of_controlledChartSign_eq_neg_one
 #print axioms RiemannianSurfaceOrientation.toControlledRiemannianSurfaceOrientation
 
 end
