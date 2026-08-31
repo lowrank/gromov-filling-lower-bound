@@ -127,6 +127,7 @@ import GromovFilling.RiemannianNonlinearCertificate
 import GromovFilling.RiemannianProfileFourierAE
 import GromovFilling.RiemannianProfileFourierEnergy
 import GromovFilling.RiemannianStandardChart
+import GromovFilling.RiemannianSurfaceOrientation
 import GromovFilling.RiemannianTwoJacobian
 import GromovFilling.RiemannianUniversalFourierBound
 import GromovFilling.SurfaceClassificationFoundation
