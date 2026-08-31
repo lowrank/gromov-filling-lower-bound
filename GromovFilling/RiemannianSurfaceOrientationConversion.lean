@@ -85,9 +85,186 @@ private theorem orientation_map_trans
   induction o using Module.Ray.ind with
   | h v hv => rfl
 
+/-- A conventional orientation gives the `±1` sign required by every
+controlled half-space chart on its selected controlled interior domain. -/
+def RiemannianSurfaceOrientation.toControlledRiemannianSurfaceOrientation
+    (O : RiemannianSurfaceOrientation
+      (modelWithCornersEuclideanHalfSpace 2) M) :
+    ControlledRiemannianSurfaceOrientation M where
+  tangentOrientation := O.toTangentPlaneOrientation
+    (modelWithCornersEuclideanHalfSpace 2) M
+  chartSign := O.controlledChartSign
+  chartSign_eq_one_or_neg_one :=
+    O.controlledChartSign_eq_one_or_neg_one
+  chartSign_mul_jacobian_eq_abs := by
+    classical
+    intro x z hz
+    let e : ℂ ≃L[ℝ] EuclideanSpace ℝ (Fin 2) :=
+      Complex.orthonormalBasisOneI.repr.toContinuousLinearEquiv
+    have hzControlled : z ∈ chosenControlledHalfSpaceComplexChartDomain x :=
+      chosenControlledInteriorComplexChartDomain_subset_chosenControlledHalfSpaceComplexChartDomain
+        x hz
+    have hzDeriv : z ∈
+        halfSpaceComplexExtChartDomain x ∩ complexRightOpenHalfPlane := by
+      rw [halfSpaceComplexExtChartDomain_inter_rightOpenHalfPlane]
+      exact controlledInteriorComplexChartDomain_subset_interiorComplexExtChartDomain
+        (modelWithCornersEuclideanHalfSpace 2)
+        Complex.orthonormalBasisOneI.repr
+        (chosenInteriorChartControl (modelWithCornersEuclideanHalfSpace 2) x) hz
+    let y : (chartAt (EuclideanHalfSpace 2) x).source :=
+      chosenControlledHalfSpaceChartSourcePoint x ⟨z, hzControlled⟩
+    have hyBase : (y : M) ∈
+        (trivializationAt (EuclideanSpace ℝ (Fin 2))
+          (TangentSpace (modelWithCornersEuclideanHalfSpace 2)) x).baseSet := by
+      simpa only [TangentBundle.trivializationAt_baseSet] using y.property
+    let t : TangentSpace (modelWithCornersEuclideanHalfSpace 2) (y : M) ≃L[ℝ]
+        EuclideanSpace ℝ (Fin 2) :=
+      (trivializationAt (EuclideanSpace ℝ (Fin 2))
+        (TangentSpace (modelWithCornersEuclideanHalfSpace 2)) x)
+        .continuousLinearEquivAt ℝ (y : M) hyBase
+    let q : ℂ ≃L[ℝ]
+        TangentSpace (modelWithCornersEuclideanHalfSpace 2) (y : M) :=
+      e.trans t.symm
+    let o0 : Orientation ℝ (EuclideanSpace ℝ (Fin 2)) (Fin 2) :=
+      RiemannianSurfaceOrientation.trivializedOrientationAt O x
+        ⟨x, mem_chart_source (EuclideanHalfSpace 2) x⟩
+    have htransport :
+        Orientation.map (Fin 2) t.toLinearEquiv (O.orientation (y : M)) = o0 := by
+      have h := RiemannianSurfaceOrientation
+        .trivializedOrientationAt_eq_center_of_mem_chosenControlledHalfSpaceComplexChartDomain
+          O x hzControlled
+      change Orientation.map (Fin 2) t.toLinearEquiv (O.orientation (y : M)) = o0 at h
+      exact h
+    have hsymm :
+        (t.symm : EuclideanSpace ℝ (Fin 2) →L[ℝ]
+          TangentSpace (modelWithCornersEuclideanHalfSpace 2) (y : M)) =
+          (trivializationAt (EuclideanSpace ℝ (Fin 2))
+            (TangentSpace (modelWithCornersEuclideanHalfSpace 2)) x).symmL ℝ (y : M) := by
+      dsimp only [t]
+      exact Trivialization.symm_continuousLinearEquivAt_eq'
+        (trivializationAt (EuclideanSpace ℝ (Fin 2))
+          (TangentSpace (modelWithCornersEuclideanHalfSpace 2)) x) hyBase
+    have hqtrans : q.toLinearEquiv.trans t.toLinearEquiv = e.toLinearEquiv := by
+      ext v
+      change t (q v) = e v
+      simp [q]
+    have hqderiv : q.toContinuousLinearMap =
+        mfderiv 𝓘(ℝ, ℂ) (modelWithCornersEuclideanHalfSpace 2)
+          (halfSpaceComplexExtChart x) z := by
+      rw [mfderiv_halfSpaceComplexExtChart_eq_symmL_comp x hzDeriv]
+      ext v
+      change t.symm (e v) =
+        ((trivializationAt (EuclideanSpace ℝ (Fin 2))
+          (TangentSpace (modelWithCornersEuclideanHalfSpace 2)) x).symmL ℝ
+            (halfSpaceComplexExtChart x z)) (e v)
+      rw [← hsymm]
+    letI : Fact (Module.finrank ℝ
+        (TangentSpace (modelWithCornersEuclideanHalfSpace 2) (y : M)) = 2) :=
+      ⟨tangentSpace_finrank_eq_two
+        (modelWithCornersEuclideanHalfSpace 2) (y : M)⟩
+    have hJacobian :
+        orientedRiemannianChartJacobian
+          (modelWithCornersEuclideanHalfSpace 2)
+          (O.toTangentPlaneOrientation
+            (modelWithCornersEuclideanHalfSpace 2) M)
+          (halfSpaceComplexExtChart x) z =
+        (O.orientation (y : M)).areaForm
+          (q (Complex.orthonormalBasisOneI 0))
+          (q (Complex.orthonormalBasisOneI 1)) := by
+      change (O.orientation (halfSpaceComplexExtChart x z)).areaForm
+          (mfderiv 𝓘(ℝ, ℂ) (modelWithCornersEuclideanHalfSpace 2)
+            (halfSpaceComplexExtChart x) z
+            (orientedComplexTangentOrthonormalBasis z 0))
+          (mfderiv 𝓘(ℝ, ℂ) (modelWithCornersEuclideanHalfSpace 2)
+            (halfSpaceComplexExtChart x) z
+            (orientedComplexTangentOrthonormalBasis z 1)) =
+        (O.orientation (y : M)).areaForm
+          (q (Complex.orthonormalBasisOneI 0))
+          (q (Complex.orthonormalBasisOneI 1))
+      rw [← hqderiv]
+      simp only [orientedComplexTangentOrthonormalBasis_apply]
+    by_cases hcenter : o0 = halfSpaceComplexCoordinateOrientation
+    · have hlocal :
+          Orientation.map (Fin 2) q.toLinearEquiv
+              Complex.orthonormalBasisOneI.toBasis.orientation =
+            O.orientation (y : M) := by
+        apply (Orientation.map (Fin 2) t.toLinearEquiv).injective
+        calc
+          Orientation.map (Fin 2) t.toLinearEquiv
+              (Orientation.map (Fin 2) q.toLinearEquiv
+                Complex.orthonormalBasisOneI.toBasis.orientation) =
+              Orientation.map (Fin 2)
+                (q.toLinearEquiv.trans t.toLinearEquiv)
+                Complex.orthonormalBasisOneI.toBasis.orientation :=
+            (orientation_map_trans q.toLinearEquiv t.toLinearEquiv
+              Complex.orthonormalBasisOneI.toBasis.orientation).symm
+          _ = Orientation.map (Fin 2) e.toLinearEquiv
+                Complex.orthonormalBasisOneI.toBasis.orientation := by
+            rw [hqtrans]
+          _ = halfSpaceComplexCoordinateOrientation := rfl
+          _ = o0 := hcenter.symm
+          _ = Orientation.map (Fin 2) t.toLinearEquiv
+                (O.orientation (y : M)) := htransport.symm
+      have hpositive : 0 <
+          orientedRiemannianChartJacobian
+            (modelWithCornersEuclideanHalfSpace 2)
+            (O.toTangentPlaneOrientation
+              (modelWithCornersEuclideanHalfSpace 2) M)
+            (halfSpaceComplexExtChart x) z := by
+        rw [hJacobian]
+        exact orientation_map_eq_areaForm_pos
+          Complex.orthonormalBasisOneI (O.orientation (y : M)) q hlocal
+      have hsign : O.controlledChartSign x = 1 := by
+        change (if o0 = halfSpaceComplexCoordinateOrientation then 1 else -1) = 1
+        simp [hcenter]
+      rw [hsign, one_mul, abs_of_pos hpositive]
+    · have hcenterNeg : o0 = -halfSpaceComplexCoordinateOrientation := by
+        rcases Orientation.eq_or_eq_neg o0 halfSpaceComplexCoordinateOrientation (by simp) with
+            h | h
+        · exact (hcenter h).elim
+        · exact h
+      have hlocal :
+          Orientation.map (Fin 2) q.toLinearEquiv
+              Complex.orthonormalBasisOneI.toBasis.orientation =
+            -O.orientation (y : M) := by
+        apply (Orientation.map (Fin 2) t.toLinearEquiv).injective
+        calc
+          Orientation.map (Fin 2) t.toLinearEquiv
+              (Orientation.map (Fin 2) q.toLinearEquiv
+                Complex.orthonormalBasisOneI.toBasis.orientation) =
+              Orientation.map (Fin 2)
+                (q.toLinearEquiv.trans t.toLinearEquiv)
+                Complex.orthonormalBasisOneI.toBasis.orientation :=
+            (orientation_map_trans q.toLinearEquiv t.toLinearEquiv
+              Complex.orthonormalBasisOneI.toBasis.orientation).symm
+          _ = Orientation.map (Fin 2) e.toLinearEquiv
+                Complex.orthonormalBasisOneI.toBasis.orientation := by
+            rw [hqtrans]
+          _ = halfSpaceComplexCoordinateOrientation := rfl
+          _ = -o0 := by rw [hcenterNeg, neg_neg]
+          _ = -(Orientation.map (Fin 2) t.toLinearEquiv
+                (O.orientation (y : M))) := by rw [htransport]
+          _ = Orientation.map (Fin 2) t.toLinearEquiv
+                (-O.orientation (y : M)) := by
+            rw [Orientation.map_neg]
+      have hnegative :
+          orientedRiemannianChartJacobian
+            (modelWithCornersEuclideanHalfSpace 2)
+            (O.toTangentPlaneOrientation
+              (modelWithCornersEuclideanHalfSpace 2) M)
+            (halfSpaceComplexExtChart x) z < 0 := by
+        rw [hJacobian]
+        exact orientation_map_eq_neg_areaForm_neg
+          Complex.orthonormalBasisOneI (O.orientation (y : M)) q hlocal
+      have hsign : O.controlledChartSign x = -1 := by
+        change (if o0 = halfSpaceComplexCoordinateOrientation then 1 else -1) = -1
+        simp [hcenter]
+      rw [hsign, neg_one_mul, abs_of_neg hnegative]
+
 #print axioms halfSpaceComplexCoordinateOrientation
 #print axioms RiemannianSurfaceOrientation.controlledChartSign
 #print axioms RiemannianSurfaceOrientation.controlledChartSign_eq_one_or_neg_one
+#print axioms RiemannianSurfaceOrientation.toControlledRiemannianSurfaceOrientation
 
 end
 
