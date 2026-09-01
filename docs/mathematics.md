@@ -115,7 +115,10 @@ conclusion
 area > 5.38982446
 ```
 
-Both headline surface bounds remain conditional on the eikonal/parameter-
-integral bridge, and the oriented bound additionally needs the global
-Stokes/comass interface described on the
+Both headline surface bounds are verified at their exact Riemannian
+interfaces. The oriented endpoint takes the project-defined conventional
+tangent-plane orientation; Lean derives the controlled boundary direction and
+finite certificate data internally. Broader raw-distance eikonal and global
+Stokes/comass formulations remain partial as independent manuscript items, not
+as hypotheses of the headline theorems; see the
 [formalization page](formalization.md).

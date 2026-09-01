@@ -10,11 +10,12 @@ Gromov's filling-area problem.
 
 !!! warning "Current verification boundary"
     The repository does not prove Gromov's conjecture. The manuscript proves
-    lower bounds below the conjectural value `2π`, and the Lean headline
-    theorems remain conditional on specific Riemannian-surface foundations.
+    lower bounds below the conjectural value `2π`. Lean verifies both headline
+    theorems at the exact Riemannian-surface and orientation interfaces stated
+    on the formalization page.
 
 <div class="status-strip">
-  <div><strong>5,019</strong><span>project declarations accepted by the live axiom audit</span></div>
+  <div><strong>6,677</strong><span>project declarations accepted by the live axiom audit</span></div>
   <div><strong>Lean 4.29</strong><span>pinned toolchain with mathlib 4.29 and a fixed Jordan input</span></div>
   <div><strong>MIT</strong><span>public source, reproducible CI, and explicit claim boundaries</span></div>
 </div>
@@ -28,7 +29,7 @@ compact-surface polygonal classification, planar area and Jacobian
 inequalities, rigorous constant evaluation, off-diagonal
 logarithmic-sine-kernel positivity, de Sitter profile identities, finite
 one-high-leg Gram/Rayleigh algebra, exact scalar resonance-trace arithmetic,
-and conditional certificate assembly.
+and end-to-end assembly of Theorems 1.1 and 1.2.
 
 The general glued-polygon theorem now handles every fixed-point-free
 involutive side pairing, including orientation-reversing identifications. The
@@ -70,14 +71,16 @@ caller assumption.
 
 ## Current frontier
 
-Lemma 5.4 is now end-to-end verified: compact-surface parity, arbitrary Jordan
-bounded-component coverage, interior preimages, and the canonical Riemannian
-two-Jacobian area inequality. Two analytic bridges remain outside the verified
-scope of the headline surface bounds:
+Lemma 5.4 and both headline surface bounds are now end-to-end verified at
+their exact interfaces. Theorem 1.2 uses the project-defined conventional
+surface orientation and derives its controlled boundary direction for the
+supplied parametrization or its reversal. Broader formulations remain outside
+the headline closures, including:
 
 1. Riemannian eikonal and parameter-integral differentiation;
-2. a global differential-form Stokes/comass interface for the oriented case.
+2. a standalone global differential-form Stokes/comass API;
+3. an equivalence with a future generic library-level orientation API.
 
-The repository keeps these foundations visible. It does not replace them with
-project axioms or encode an open target as a hypothesis and call the result a
-proof.
+The repository keeps those independent boundaries visible. They are not
+assumptions of either headline endpoint, and the project does not replace them
+with custom axioms or conclusion-bearing hypotheses.

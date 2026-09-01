@@ -16,8 +16,9 @@ Bounds for Gromov's Filling Area Problem*.
 > [!IMPORTANT]
 > This repository does not prove Gromov's filling-area conjecture. The
 > manuscript proves lower bounds below the conjectural value `2π`. Lean
-> verifies Theorem 1.1 for the stated compact Riemannian isometric-filling
-> interface and the all-parameter controlled-atlas core of Theorem 1.2.
+> verifies Theorems 1.1 and 1.2 at their stated compact Riemannian
+> isometric-filling interfaces. Theorem 1.2 reads “oriented” through the
+> project-defined `RiemannianSurfaceOrientation` described below.
 > See [`FORMALIZATION.md`](FORMALIZATION.md) for the exact verified, partial,
 > and open claim boundary.
 
@@ -30,20 +31,21 @@ $$
 \frac{14\zeta(3)}{\pi}=5.3567723444\ldots
 $$
 
-`ControlledBoundaryAtlasBoundaryPhase.nonlinearCertificate_le_surfaceArea`
-establishes the nonlinear formula for every admissible `λ` at the explicit
-controlled boundary-atlas/phase interface. Its named `R`/`H` corollary,
-`riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling`,
-gives the strict bound at `λ = 0.03`
+`riemannianSurfaceArea_gt_point_zero_three_of_conventionally_oriented_isometric_filling`
+establishes Theorem 1.2's strict bound at `λ = 0.03`
 
 $$
 5.38982446.
 $$
 
-The latter interface is explicit because the pinned manifold library does not
-provide a conventional orientation API for manifolds with boundary. Its
-induced-boundary compatibility datum records local lift monotonicity only; it
-does not assume a Stokes, winding, comass, integral, or area conclusion.
+The companion theorem
+`riemannianNonlinearCertificate_le_surfaceArea_of_conventionally_oriented_isometric_filling`
+establishes the manuscript's all-parameter formula for every
+`0 ≤ λ < π² / 32`. The project-defined orientation is a tangent-plane
+orientation locally constant in canonical tangent-bundle trivializations. It
+contains no boundary parametrization, controlled atlas, Stokes, winding,
+comass, integral, or area conclusion. Lean derives the controlled boundary
+data for the supplied parametrization or its reversal.
 
 ## Quickstart
 
@@ -78,9 +80,9 @@ every declaration rooted at `GromovFilling` against the exact allowlist
   inequality;
 - Theorem 1.1: the universal Fourier lower bound for arbitrary compact
   connected Riemannian isometric fillings at the stated boundary interface;
-- Theorem 1.2 core: the all-parameter nonlinear formula at an explicit
-  controlled boundary-atlas/phase interface, with the strict `λ = 0.03`
-  controlled-orientation corollary;
+- Theorem 1.2: the strict `λ = 0.03` nonlinear improvement, together with the
+  all-parameter formula, for conventionally oriented Riemannian isometric
+  fillings at the exact project-defined orientation interface;
 - planar Lipschitz area inequalities and Jacobian budgets;
 - sharp interior Riemannian Lipschitz-to-derivative bounds for boundary
   distance, odd-profile, and antipodal-slack functions;
@@ -134,10 +136,10 @@ The project is pinned to:
 - EPFL LARA `JordanCurveTheorem` at
   `e442525a662e9e3beb8205b9fa1fc99509076ded`.
 
-The consolidated source-only CI receipt,
-[`33363167477`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33363167477)
-on exact source `7c19e1eb8e37b83a88190f15f9a65d4876797d74`, audited
-**6,304 declarations** under `GromovFilling`; every declaration stayed within
+The consolidated merged-main CI receipt,
+[`33504856733`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33504856733)
+on exact merge `f35f06688c7b8d208b526d8a7196c6a2e2baaf2e`, audited
+**6,677 declarations** under `GromovFilling`; every declaration stayed within
 the standard logical allowlist. CI also fails if the umbrella omits a source
 module or if project Lean source contains placeholder, custom axiom, unsafe,
 or native reduction escape tokens, and a negative control confirms that this
@@ -146,20 +148,18 @@ scan fails closed.
 ## Verified headline boundary
 
 Lemma 5.4 and Theorem 1.1 are end-to-end verified without an orientability
-assumption. The controlled-atlas core of Theorem 1.2 and its decimal
-controlled-interface corollary are end-to-end verified at the explicit
-`R : ControlledRiemannianSurfaceOrientation M` and
-`H : ControlledRiemannianInducedBoundaryOrientation R boundary` interface.
-Those structures make the missing standard library notion of an orientation
-with boundary visible rather than hiding it in an axiom or a conclusion-
-bearing hypothesis. Lean does not yet derive that interface from the
-manuscript's bare conventional orientation assumption, so the unqualified
-manuscript Theorem 1.2 remains an open bridge.
+assumption. Theorem 1.2 is end-to-end verified with
+`O : RiemannianSurfaceOrientation (modelWithCornersEuclideanHalfSpace 2) M`.
+The final statements have no controlled-atlas, phase, induced-boundary,
+coverage, Jacobian-budget, Stokes, comass, integral, or area-conclusion
+hypothesis. The project-local orientation structure records the standard
+tangent-plane datum and its local coherence; no equivalence with a future
+generic Mathlib manifold-with-boundary orientation API is claimed.
 
-Broader manuscript items such as a raw-distance eikonal theorem, the
-conventional orientation/boundary-alignment bridge, and a conventional global
-manifold Stokes API remain independently partial. Neither headline reaches the
-conjectural `2π` bound.
+Broader manuscript items such as the raw-distance eikonal formulation and a
+standalone global manifold Stokes/comass API remain independently partial, but
+they are not open dependencies of either headline theorem. Neither headline
+reaches the conjectural `2π` bound.
 
 ## Documentation development
 
