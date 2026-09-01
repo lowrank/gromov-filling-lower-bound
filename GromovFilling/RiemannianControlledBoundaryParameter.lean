@@ -98,13 +98,39 @@ theorem halfSpaceComplexExtChart_real_mul_I_mem_boundary_of_cutoff_ne_zero
     (controlledBoundaryChartCutoff_eq_zero_of_not_mem P i hyDomain)
 
 /-- The circle parameter obtained by applying the set-theoretic inverse of a
-boundary parametrization to a controlled chart-axis point. -/
+boundary parametrization to a half-space chart-axis point. -/
+def controlledBoundaryCenterParameter
+    (boundary : UnitAddCircle → M) (x : M) (y : ℝ) : UnitAddCircle :=
+  Function.invFun boundary
+    (halfSpaceComplexExtChart x (y * Complex.I))
+
+/-- The controlled chart-axis parameter, factored through the selected chart
+center. -/
 def controlledBoundaryChartParameter
     (boundary : UnitAddCircle → M)
     (P : FiniteControlledBoundaryChartPartition M)
     (i : P.ι) (y : ℝ) : UnitAddCircle :=
-  Function.invFun boundary
-    (halfSpaceComplexExtChart (P.center i) (y * Complex.I))
+  controlledBoundaryCenterParameter boundary (P.center i) y
+
+@[simp]
+theorem controlledBoundaryChartParameter_eq_centerParameter
+    (boundary : UnitAddCircle → M)
+    (P : FiniteControlledBoundaryChartPartition M)
+    (i : P.ι) (y : ℝ) :
+    controlledBoundaryChartParameter boundary P i y =
+      controlledBoundaryCenterParameter boundary (P.center i) y := rfl
+
+/-- Controlled chart-axis parameters agree whenever their selected chart
+centers agree, independently of the surrounding finite partitions. -/
+theorem controlledBoundaryChartParameter_eq_of_center_eq
+    (boundary : UnitAddCircle → M)
+    (P Q : FiniteControlledBoundaryChartPartition M)
+    (i : P.ι) (j : Q.ι)
+    (hcenter : P.center i = Q.center j) (y : ℝ) :
+    controlledBoundaryChartParameter boundary P i y =
+      controlledBoundaryChartParameter boundary Q j y := by
+  rw [controlledBoundaryChartParameter_eq_centerParameter,
+    controlledBoundaryChartParameter_eq_centerParameter, hcenter]
 
 /-- On the nonzero trace of a controlled cutoff, the canonical circle
 parameter maps back to the original chart-axis point. -/
@@ -117,7 +143,7 @@ theorem boundary_controlledBoundaryChartParameter_of_cutoff_ne_zero
       (y * Complex.I) ≠ 0) :
     boundary (controlledBoundaryChartParameter boundary P i y) =
       halfSpaceComplexExtChart (P.center i) (y * Complex.I) := by
-  unfold controlledBoundaryChartParameter
+  unfold controlledBoundaryChartParameter controlledBoundaryCenterParameter
   apply Function.invFun_eq
   rw [← Set.mem_range, hboundaryRange]
   exact
@@ -352,7 +378,10 @@ theorem exists_continuous_real_lift_strictMonoOn_or_strictAntiOn_controlledBound
 #print axioms halfSpaceComplexExtChart_real_mul_I_mem_boundary
 #print axioms
   halfSpaceComplexExtChart_real_mul_I_mem_boundary_of_cutoff_ne_zero
+#print axioms controlledBoundaryCenterParameter
 #print axioms controlledBoundaryChartParameter
+#print axioms controlledBoundaryChartParameter_eq_centerParameter
+#print axioms controlledBoundaryChartParameter_eq_of_center_eq
 #print axioms boundary_controlledBoundaryChartParameter_of_cutoff_ne_zero
 #print axioms continuous_controlledBoundaryChartCutoff_real_mul_I
 #print axioms
