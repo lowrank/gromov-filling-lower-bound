@@ -204,10 +204,19 @@ theorem ControlledBoundaryDirectionCoverData.glueContinuous_apply_eq_bit
     (i : P.activeAxisCharts) (q : UnitAddCircle)
     (hqi : q ∈ controlledBoundaryChartActiveSet boundary P i.1) :
     D.glueContinuous hboundary hboundaryRange q = D.bit i := by
-  unfold ControlledBoundaryDirectionCoverData.glueContinuous
-  rw [ContinuousMap.liftCover_coe
-    (x := (⟨q, hqi⟩ : controlledBoundaryChartActiveSet boundary P i.1))]
-  simp only [ControlledBoundaryDirectionCoverData.localMap]
+  have hrestrict :
+      (D.glueContinuous hboundary hboundaryRange).restrict
+          (controlledBoundaryChartActiveSet boundary P i.1) =
+        D.localMap i := by
+    unfold ControlledBoundaryDirectionCoverData.glueContinuous
+    exact ContinuousMap.liftCover_restrict
+  have hvalue :=
+    congrArg
+      (fun f : C(controlledBoundaryChartActiveSet boundary P i.1, Bool) ↦
+        f ⟨q, hqi⟩)
+      hrestrict
+  simpa only [ContinuousMap.restrict_apply,
+    ControlledBoundaryDirectionCoverData.localMap] using hvalue
 
 /-- Compatible active-chart labels have the same glued value at every two
 parameter-circle points. -/
