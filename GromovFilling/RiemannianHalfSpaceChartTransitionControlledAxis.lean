@@ -77,9 +77,9 @@ theorem exists_commonControlledAxisInterval
     simpa only [I, T, s, phi, Function.comp_def] using
       (contDiffOn_ext_coord_change (n := 1) b a).continuousOn
   obtain ⟨epsA, hepsA, hballA⟩ := Metric.mem_nhds_iff.mp
-    (isOpen_ball.mem_nhds hzA.1)
+    (Metric.isOpen_ball.mem_nhds hzA.1)
   obtain ⟨epsB, hepsB, hballB⟩ := Metric.mem_nhds_iff.mp
-    (isOpen_ball.mem_nhds hzB.1)
+    (Metric.isOpen_ball.mem_nhds hzB.1)
   have hTpre : T ⁻¹' Metric.ball (T z) epsB ∈ 𝓝[s] z :=
     (hTcont z hz).preimage_mem_nhdsWithin
       (Metric.ball_mem_nhds _ hepsB)
