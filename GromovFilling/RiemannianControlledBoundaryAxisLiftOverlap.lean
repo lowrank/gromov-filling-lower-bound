@@ -138,7 +138,8 @@ theorem ControlledBoundaryActiveAxisLift.toAxisLift_outwardBit_eq_of_axisLiftOve
   have hTauImage : tau 0 ∈ Set.Ioo L2.a L2.b := by
     simpa only [hTauZero] using hv
   obtain ⟨rTarget, hrTarget, hTarget⟩ :=
-    hTauContinuousAt.exists_centeredIcc_mapsTo_Icc hTauImage
+    GromovFilling.ContinuousAt.exists_centeredIcc_mapsTo_Icc
+      hTauContinuousAt hTauImage
   have hTarget' : Set.MapsTo tau
       (Set.Icc (-rTarget) rTarget) (Set.Icc L2.a L2.b) := by
     simpa only [zero_add] using hTarget

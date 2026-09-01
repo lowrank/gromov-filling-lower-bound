@@ -258,11 +258,12 @@ theorem ControlledBoundaryAxisLift.outwardBit_eq_true_iff
       (chartSign = 1 ∧ StrictAntiOn L.lift (Set.Icc L.a L.b)) ∨
         (chartSign = -1 ∧ StrictMonoOn L.lift (Set.Icc L.a L.b)) := by
   have hneg : (-1 : ℝ) ≠ 1 := by norm_num
+  have hone_neg : (1 : ℝ) ≠ -1 := Ne.symm hneg
   rcases hsign with hsign | hsign
   · rcases hdirection : L.direction with hmono | hanti
     · have hnot := not_strictAntiOn_of_strictMonoOn L.hab hmono
       simp [ControlledBoundaryAxisLift.outwardBit,
-        ControlledBoundaryAxisLift.monoBit, hsign, hdirection, hmono, hnot, hneg]
+        ControlledBoundaryAxisLift.monoBit, hsign, hdirection, hmono, hnot, hone_neg]
     · have hnot := not_strictMonoOn_of_strictAntiOn L.hab hanti
       simp [ControlledBoundaryAxisLift.outwardBit,
         ControlledBoundaryAxisLift.monoBit, hsign, hdirection, hanti, hnot, hneg]
@@ -284,6 +285,7 @@ theorem ControlledBoundaryAxisLift.outwardBit_eq_false_iff
       (chartSign = 1 ∧ StrictMonoOn L.lift (Set.Icc L.a L.b)) ∨
         (chartSign = -1 ∧ StrictAntiOn L.lift (Set.Icc L.a L.b)) := by
   have hneg : (-1 : ℝ) ≠ 1 := by norm_num
+  have hone_neg : (1 : ℝ) ≠ -1 := Ne.symm hneg
   rcases hsign with hsign | hsign
   · rcases hdirection : L.direction with hmono | hanti
     · have hnot := not_strictAntiOn_of_strictMonoOn L.hab hmono
@@ -291,7 +293,7 @@ theorem ControlledBoundaryAxisLift.outwardBit_eq_false_iff
         ControlledBoundaryAxisLift.monoBit, hsign, hdirection, hmono, hnot, hneg]
     · have hnot := not_strictMonoOn_of_strictAntiOn L.hab hanti
       simp [ControlledBoundaryAxisLift.outwardBit,
-        ControlledBoundaryAxisLift.monoBit, hsign, hdirection, hanti, hnot, hneg]
+        ControlledBoundaryAxisLift.monoBit, hsign, hdirection, hanti, hnot, hone_neg]
   · rcases hdirection : L.direction with hmono | hanti
     · have hnot := not_strictAntiOn_of_strictMonoOn L.hab hmono
       simp [ControlledBoundaryAxisLift.outwardBit,
