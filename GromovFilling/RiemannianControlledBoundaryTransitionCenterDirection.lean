@@ -163,4 +163,3 @@ theorem exists_axis_interval_strictAntiOn_of_centerParameter_eq_of_controlledCha
 end
 
 end GromovFilling
-

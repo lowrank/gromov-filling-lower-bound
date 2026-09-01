@@ -15,7 +15,7 @@ The follow-up interval theorem retains the quantitative controlled-domain
 margins on both sides of the overlap.  It contains no orientation assertion.
 -/
 
-open Manifold Set
+open Bundle Manifold Set
 open scoped Manifold Topology
 
 namespace GromovFilling

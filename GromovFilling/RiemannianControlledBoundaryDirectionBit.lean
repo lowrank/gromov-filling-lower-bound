@@ -10,7 +10,7 @@ order-theoretic adapters which recover the stored Boolean from that local
 information.
 -/
 
-open Set
+open Bundle Set
 
 namespace GromovFilling
 

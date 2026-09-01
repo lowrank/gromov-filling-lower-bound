@@ -11,7 +11,7 @@ outward-first bit combines that direction with the conventional chart sign.
 No manifold-chart bookkeeping is performed here.
 -/
 
-open Set
+open Bundle Set
 
 namespace GromovFilling
 

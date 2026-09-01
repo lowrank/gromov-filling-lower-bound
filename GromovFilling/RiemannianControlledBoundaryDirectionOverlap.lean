@@ -120,7 +120,8 @@ theorem ControlledBoundaryActiveAxisLift.outwardBit_eq_of_activeOverlap
     simp [Complex.orthonormalBasisOneI_repr_apply]
   have hTContinuous : ContinuousOn T s := by
     simpa only [I, T, s, phi, Function.comp_def] using
-      (contDiffOn_ext_coord_change (P₂.center j.1) (P₁.center i.1)).continuousOn
+      (contDiffOn_ext_coord_change (n := 1)
+        (P₂.center j.1) (P₁.center i.1)).continuousOn
   have hEtaContinuous : Continuous eta := by
     simpa only [eta] using
       continuous_const.add (continuous_id.smul continuous_const)
@@ -130,11 +131,8 @@ theorem ControlledBoundaryActiveAxisLift.outwardBit_eq_of_activeOverlap
   let p : EuclideanSpace ℝ (Fin 2) →L[ℝ] ℝ := EuclideanSpace.proj 1
   have hTauContinuous : ContinuousOn tau J := by
     simpa only [tau, p, Function.comp_def] using
-      p.continuous.continuousOn.comp
+      p.continuous.comp_continuousOn
         (hTContinuous.comp hEtaContinuous.continuousOn hEtaMaps)
-        (by
-          intro t ht
-          simp)
   have hZeroJ : (0 : ℝ) ∈ J := by
     dsimp only [J]
     constructor <;> linarith
