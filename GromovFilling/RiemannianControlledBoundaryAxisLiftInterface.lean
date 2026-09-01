@@ -46,8 +46,7 @@ structure ControlledBoundaryAxisLift
   project_lift : ∀ y : ℝ, y ∈ Set.Icc a b →
     ((lift y : ℝ) : UnitAddCircle) =
       controlledBoundaryChartParameter boundary P i y
-  direction : Sum (StrictMonoOn lift (Set.Icc a b))
-    (StrictAntiOn lift (Set.Icc a b))
+  direction : ControlledBoundaryLiftDirection lift (Set.Icc a b)
 
 /-- Forget the cutoff-support field of an active axis lift. -/
 def ControlledBoundaryActiveAxisLift.toAxisLift
@@ -101,7 +100,7 @@ theorem strictMonoOn_or_strictAntiOn_ofContinuousProjectedLift
 parameter on a nontrivial domain interval.  Injectivity of the chart
 parameter forces one of the two strict directions, so no cutoff-activity
 assumption is needed. -/
-def ControlledBoundaryAxisLift.ofContinuousProjectedLift
+noncomputable def ControlledBoundaryAxisLift.ofContinuousProjectedLift
     (boundary : UnitAddCircle → M)
     (hboundaryRange : Set.range boundary =
       (modelWithCornersEuclideanHalfSpace 2).boundary M)
@@ -113,37 +112,26 @@ def ControlledBoundaryAxisLift.ofContinuousProjectedLift
     (hliftProject : ∀ y ∈ Set.Icc a b,
       ((lift y : ℝ) : UnitAddCircle) =
         controlledBoundaryChartParameter boundary P i y) :
-    ControlledBoundaryAxisLift boundary P i := by
-  rcases strictMonoOn_or_strictAntiOn_ofContinuousProjectedLift
+    ControlledBoundaryAxisLift boundary P i := {
+  a := a
+  b := b
+  hab := hab
+  hdomain := hdomain
+  lift := lift
+  continuous_lift := hliftContinuous
+  project_lift := hliftProject
+  direction := ControlledBoundaryLiftDirection.ofOr
+    (strictMonoOn_or_strictAntiOn_ofContinuousProjectedLift
       boundary hboundaryRange P i a b hab hdomain lift hliftContinuous
-      hliftProject with hmono | hanti
-  · exact {
-      a := a
-      b := b
-      hab := hab
-      hdomain := hdomain
-      lift := lift
-      continuous_lift := hliftContinuous
-      project_lift := hliftProject
-      direction := Sum.inl hmono
-    }
-  · exact {
-      a := a
-      b := b
-      hab := hab
-      hdomain := hdomain
-      lift := lift
-      continuous_lift := hliftContinuous
-      project_lift := hliftProject
-      direction := Sum.inr hanti
-    }
+      hliftProject)
+}
 
 /-- Boolean encoding of an arbitrary controlled lift's strict direction. -/
 def ControlledBoundaryAxisLift.monoBit
     {boundary : UnitAddCircle → M}
     {P : FiniteControlledBoundaryChartPartition M} {i : P.ι}
     (L : ControlledBoundaryAxisLift boundary P i) : Bool :=
-  L.direction.isLeft
+  L.direction.monoBit
 
 /-- Boolean encoding of the outward-first direction for an arbitrary
 controlled axis lift. -/

@@ -34,6 +34,47 @@ variable {M : Type uM} [PseudoMetricSpace M] [T2Space M]
       (modelWithCornersEuclideanHalfSpace 2) x)]
   [IsRiemannianManifold (modelWithCornersEuclideanHalfSpace 2) M]
 
+/-- A Type-level witness for one of the two possible strict directions of a
+real lift.  The strict-direction statements themselves are propositions, so
+they cannot be used directly as the two Type arguments of `Sum`. -/
+inductive ControlledBoundaryLiftDirection (lift : ℝ → ℝ) (s : Set ℝ) : Type where
+  | mono (h : StrictMonoOn lift s) : ControlledBoundaryLiftDirection lift s
+  | anti (h : StrictAntiOn lift s) : ControlledBoundaryLiftDirection lift s
+
+/-- Boolean label of a stored lift direction. -/
+def ControlledBoundaryLiftDirection.monoBit
+    {lift : ℝ → ℝ} {s : Set ℝ} :
+    ControlledBoundaryLiftDirection lift s → Bool
+  | .mono _ => true
+  | .anti _ => false
+
+@[simp] theorem ControlledBoundaryLiftDirection.monoBit_mono
+    {lift : ℝ → ℝ} {s : Set ℝ} (h : StrictMonoOn lift s) :
+    (ControlledBoundaryLiftDirection.mono h).monoBit = true := rfl
+
+@[simp] theorem ControlledBoundaryLiftDirection.monoBit_anti
+    {lift : ℝ → ℝ} {s : Set ℝ} (h : StrictAntiOn lift s) :
+    (ControlledBoundaryLiftDirection.anti h).monoBit = false := rfl
+
+/-- A disjunctive strict-direction proof provides a nonempty Type-level
+direction witness without eliminating a proposition into `Type`. -/
+theorem nonempty_controlledBoundaryLiftDirection_of_or
+    {lift : ℝ → ℝ} {s : Set ℝ}
+    (h : StrictMonoOn lift s ∨ StrictAntiOn lift s) :
+    Nonempty (ControlledBoundaryLiftDirection lift s) := by
+  rcases h with hmono | hanti
+  · exact ⟨ControlledBoundaryLiftDirection.mono hmono⟩
+  · exact ⟨ControlledBoundaryLiftDirection.anti hanti⟩
+
+/-- Select the Type-level direction witness supplied by a strict-direction
+disjunction.  This is noncomputable only because the source disjunction is a
+proposition. -/
+noncomputable def ControlledBoundaryLiftDirection.ofOr
+    {lift : ℝ → ℝ} {s : Set ℝ}
+    (h : StrictMonoOn lift s ∨ StrictAntiOn lift s) :
+    ControlledBoundaryLiftDirection lift s :=
+  Classical.choice (nonempty_controlledBoundaryLiftDirection_of_or h)
+
 /-- A controlled axis interval and a chosen real lift for one active boundary
 chart.  `direction` records the only two possible strict directions without
 making a classical Boolean decision about a proposition. -/
@@ -53,8 +94,7 @@ structure ControlledBoundaryActiveAxisLift
   project_lift : ∀ y : ℝ, y ∈ Set.Icc a b →
     ((lift y : ℝ) : UnitAddCircle) =
       controlledBoundaryChartParameter boundary P i.1 y
-  direction : Sum (StrictMonoOn lift (Set.Icc a b))
-    (StrictAntiOn lift (Set.Icc a b))
+  direction : ControlledBoundaryLiftDirection lift (Set.Icc a b)
 
 /-- The Boolean encoding of an active axis lift's strict direction: `true`
 means increasing and `false` means decreasing. -/
@@ -63,7 +103,7 @@ def ControlledBoundaryActiveAxisLift.monoBit
     {P : FiniteControlledBoundaryChartPartition M}
     {i : P.activeAxisCharts}
     (L : ControlledBoundaryActiveAxisLift boundary P i) : Bool :=
-  L.direction.isLeft
+  L.direction.monoBit
 
 /-- Every active controlled chart admits an interval lift with a definite
 strict direction. -/
@@ -81,7 +121,8 @@ theorem nonempty_controlledBoundaryActiveAxisLift
       _hliftAbsolutelyContinuous, hliftProject, hliftDirection⟩ :=
     exists_lipschitzOnWith_real_lift_controlledBoundaryChartParameter_of_mem_controlledDomain_on_Icc
       boundary hboundary hboundaryRange P i.1 a b hab.le hdomain
-  refine ⟨{
+  let mk : ControlledBoundaryLiftDirection lift (Set.Icc a b) →
+      ControlledBoundaryActiveAxisLift boundary P i := fun direction ↦ {
     a := a
     b := b
     hab := hab
@@ -90,11 +131,11 @@ theorem nonempty_controlledBoundaryActiveAxisLift
     lift := lift
     continuous_lift := hliftContinuous
     project_lift := hliftProject
-    direction := ?_
-  }⟩
+    direction := direction
+  }
   rcases hliftDirection with hmono | hanti
-  · exact Sum.inl hmono
-  · exact Sum.inr hanti
+  · exact ⟨mk (ControlledBoundaryLiftDirection.mono hmono)⟩
+  · exact ⟨mk (ControlledBoundaryLiftDirection.anti hanti)⟩
 
 /-- A collection of chartwise Boolean direction labels that agree wherever
 their active boundary-chart sets overlap. -/
@@ -164,11 +205,9 @@ theorem ControlledBoundaryDirectionCoverData.glueContinuous_apply_eq_bit
     (hqi : q ∈ controlledBoundaryChartActiveSet boundary P i.1) :
     D.glueContinuous hboundary hboundaryRange q = D.bit i := by
   unfold ControlledBoundaryDirectionCoverData.glueContinuous
-  change ContinuousMap.liftCover _ _ _ _
-      (⟨q, hqi⟩ : controlledBoundaryChartActiveSet boundary P i.1) = D.bit i
-  simpa only [ControlledBoundaryDirectionCoverData.localMap] using
-    (ContinuousMap.liftCover_coe
-      (x := (⟨q, hqi⟩ : controlledBoundaryChartActiveSet boundary P i.1)))
+  rw [ContinuousMap.liftCover_coe
+    (x := (⟨q, hqi⟩ : controlledBoundaryChartActiveSet boundary P i.1))]
+  simp only [ControlledBoundaryDirectionCoverData.localMap]
 
 /-- Compatible active-chart labels have the same glued value at every two
 parameter-circle points. -/

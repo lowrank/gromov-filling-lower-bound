@@ -80,10 +80,9 @@ theorem RiemannianSurfaceOrientation.controlledInducedBoundaryOrientation_or_rev
         strictMonoOn_or_strictAntiOn_ofContinuousProjectedLift
           boundary hboundaryRange P i a b hab hdomain
           (fun y : ℝ ↦ -lift y) hnegContinuous hnegProject
-      let d : Sum
-          (StrictMonoOn (fun y : ℝ ↦ -lift y) (Set.Icc a b))
-          (StrictAntiOn (fun y : ℝ ↦ -lift y) (Set.Icc a b)) :=
-        hdirection.elim Sum.inl Sum.inr
+      let d : ControlledBoundaryLiftDirection
+          (fun y : ℝ ↦ -lift y) (Set.Icc a b) :=
+        ControlledBoundaryLiftDirection.ofOr hdirection
       let L : ControlledBoundaryAxisLift boundary P i := {
         a := a
         b := b
@@ -138,9 +137,8 @@ theorem RiemannianSurfaceOrientation.controlledInducedBoundaryOrientation_or_rev
         strictMonoOn_or_strictAntiOn_ofContinuousProjectedLift
           boundary hboundaryRange P i a b hab hdomain lift
           hliftContinuous hliftProject
-      let d : Sum (StrictMonoOn lift (Set.Icc a b))
-          (StrictAntiOn lift (Set.Icc a b)) :=
-        hdirection.elim Sum.inl Sum.inr
+      let d : ControlledBoundaryLiftDirection lift (Set.Icc a b) :=
+        ControlledBoundaryLiftDirection.ofOr hdirection
       let L : ControlledBoundaryAxisLift boundary P i := {
         a := a
         b := b

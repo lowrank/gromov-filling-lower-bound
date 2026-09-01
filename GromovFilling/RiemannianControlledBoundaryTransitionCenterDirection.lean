@@ -84,7 +84,7 @@ private theorem transition_source_axis_images_of_centerParameter_eq
     change (extChartAt I a).symm
         (Complex.orthonormalBasisOneI.repr (u * Complex.I)) =
       (extChartAt I a).symm z
-    rw [z]
+    simpa only [z]
   have hBImage : (extChartAt I a).symm z ∈
       halfSpaceComplexExtChart b ''
         chosenControlledHalfSpaceComplexChartDomain b := by
