@@ -35,7 +35,27 @@ variable {M : Type uM} [PseudoMetricSpace M] [T2Space M]
   [IsRiemannianManifold (modelWithCornersEuclideanHalfSpace 2) M]
 
 /-- Every controlled imaginary-axis coordinate maps back from its canonical
-circle parameter, whether or not the partition cutoff is nonzero there. -/
+center parameter whenever it lies in that center's controlled chart domain. -/
+theorem boundary_controlledBoundaryCenterParameter_of_mem_controlledDomain
+    (boundary : UnitAddCircle → M)
+    (hboundaryRange : Set.range boundary =
+      (modelWithCornersEuclideanHalfSpace 2).boundary M)
+    (x : M) (y : ℝ)
+    (hyDomain : (y * Complex.I : ℂ) ∈
+      chosenControlledHalfSpaceComplexChartDomain x) :
+    boundary (controlledBoundaryCenterParameter boundary x y) =
+      halfSpaceComplexExtChart x (y * Complex.I) := by
+  unfold controlledBoundaryCenterParameter
+  apply Function.invFun_eq
+  rw [← Set.mem_range, hboundaryRange]
+  exact halfSpaceComplexExtChart_real_mul_I_mem_boundary
+    x y
+    (controlledHalfSpaceComplexChartDomain_subset_domain
+      (chosenInteriorChartControl
+        (modelWithCornersEuclideanHalfSpace 2) x) hyDomain)
+
+/-- Every controlled imaginary-axis coordinate maps back from its canonical
+chart parameter, whether or not the partition cutoff is nonzero there. -/
 theorem boundary_controlledBoundaryChartParameter_of_mem_controlledDomain
     (boundary : UnitAddCircle → M)
     (hboundaryRange : Set.range boundary =
@@ -45,14 +65,9 @@ theorem boundary_controlledBoundaryChartParameter_of_mem_controlledDomain
       chosenControlledHalfSpaceComplexChartDomain (P.center i)) :
     boundary (controlledBoundaryChartParameter boundary P i y) =
       halfSpaceComplexExtChart (P.center i) (y * Complex.I) := by
-  unfold controlledBoundaryChartParameter
-  apply Function.invFun_eq
-  rw [← Set.mem_range, hboundaryRange]
-  exact halfSpaceComplexExtChart_real_mul_I_mem_boundary
-    (P.center i) y
-    (controlledHalfSpaceComplexChartDomain_subset_domain
-      (chosenInteriorChartControl
-        (modelWithCornersEuclideanHalfSpace 2) (P.center i)) hyDomain)
+  simpa only [controlledBoundaryChartParameter_eq_centerParameter] using
+    boundary_controlledBoundaryCenterParameter_of_mem_controlledDomain
+      boundary hboundaryRange (P.center i) y hyDomain
 
 /-- Throughout a controlled axis domain, the coordinate cutoff is exactly
 the manifold partition pulled back by the canonical circle parameter. -/
@@ -354,6 +369,8 @@ theorem exists_lipschitzOnWith_real_lift_controlledBoundaryChartParameter_of_mem
   exact lift.continuous.continuousOn.strictMonoOn_of_injOn_Icc'
     hab hliftInjective
 
+#print axioms
+  boundary_controlledBoundaryCenterParameter_of_mem_controlledDomain
 #print axioms
   boundary_controlledBoundaryChartParameter_of_mem_controlledDomain
 #print axioms
