@@ -89,13 +89,12 @@ theorem exists_axis_interval_strictMonoOn_or_strictAntiOn_with_deriv
       continuous_const.add (continuous_id.smul continuous_const)
   have hTcont : ContinuousOn T s := by
     simpa only [I, T, s, φ, Function.comp_def] using
-      (contDiffOn_ext_coord_change b a).continuousOn
+      (contDiffOn_ext_coord_change (n := 1) b a).continuousOn
   let p : EuclideanSpace ℝ (Fin 2) →L[ℝ] ℝ := EuclideanSpace.proj 1
   have hgcont : ContinuousOn g J := by
     simpa only [g, p, Function.comp_def] using
-      p.continuous.continuousOn.comp
+      p.continuous.comp_continuousOn
         (hTcont.comp hηcont.continuousOn hηmaps)
-        (by intro t ht; simp)
   have hTinj : Set.InjOn T s := by
     simpa only [T, s, φ, Function.comp_def] using φ.injOn
   have hginj : Set.InjOn g J := by
@@ -114,10 +113,10 @@ theorem exists_axis_interval_strictMonoOn_or_strictAntiOn_with_deriv
     linarith
   have hdir : StrictMonoOn g J ∨ StrictAntiOn g J :=
     hgcont.strictMonoOn_of_injOn_Icc'
-      (by dsimp only [J]; linarith) hginj
+      (by linarith : -r ≤ r) hginj
   have hTderiv : HasFDerivWithinAt T D s z := by
     simpa only [I, T, s, φ, Function.comp_apply] using
-      ((contDiffOn_ext_coord_change b a z hz).differentiableWithinAt
+      ((contDiffOn_ext_coord_change (n := 1) b a z hz).differentiableWithinAt
         one_ne_zero).hasFDerivWithinAt
   have hη : HasDerivWithinAt η e1 J 0 := by
     simpa only [η, one_smul] using
