@@ -41,15 +41,16 @@ structure ControlledBoundaryActiveAxisLift
     (boundary : UnitAddCircle → M)
     (P : FiniteControlledBoundaryChartPartition M)
     (i : P.activeAxisCharts) where
-  a b : ℝ
+  a : ℝ
+  b : ℝ
   hab : a < b
-  hdomain : ∀ y ∈ Set.Icc a b, (y * Complex.I : ℂ) ∈
+  hdomain : ∀ y : ℝ, y ∈ Set.Icc a b → (y * Complex.I : ℂ) ∈
     chosenControlledHalfSpaceComplexChartDomain (P.center i.1)
-  houtside : ∀ y ∉ Set.Ioo a b,
+  houtside : ∀ y : ℝ, y ∉ Set.Ioo a b →
     controlledBoundaryChartCutoff P i.1 (y * Complex.I) = 0
   lift : ℝ → ℝ
   continuous_lift : Continuous lift
-  project_lift : ∀ y ∈ Set.Icc a b,
+  project_lift : ∀ y : ℝ, y ∈ Set.Icc a b →
     ((lift y : ℝ) : UnitAddCircle) =
       controlledBoundaryChartParameter boundary P i.1 y
   direction : Sum (StrictMonoOn lift (Set.Icc a b))
@@ -167,7 +168,7 @@ theorem ControlledBoundaryDirectionCoverData.glueContinuous_apply_eq_bit
       (⟨q, hqi⟩ : controlledBoundaryChartActiveSet boundary P i.1) = D.bit i
   simpa only [ControlledBoundaryDirectionCoverData.localMap] using
     (ContinuousMap.liftCover_coe
-      (x := ⟨q, hqi⟩ : controlledBoundaryChartActiveSet boundary P i.1))
+      (x := (⟨q, hqi⟩ : controlledBoundaryChartActiveSet boundary P i.1)))
 
 /-- Compatible active-chart labels have the same glued value at every two
 parameter-circle points. -/
@@ -181,8 +182,8 @@ theorem ControlledBoundaryDirectionCoverData.glueContinuous_apply_eq
     (q r : UnitAddCircle) :
     D.glueContinuous hboundary hboundaryRange q =
       D.glueContinuous hboundary hboundaryRange r := by
-  exact (D.glueLocallyConstant hboundary hboundaryRange)
-    .apply_eq_of_preconnectedSpace q r
+  exact LocallyConstant.apply_eq_of_preconnectedSpace
+    (D.glueLocallyConstant hboundary hboundaryRange) q r
 
 #print axioms ControlledBoundaryActiveAxisLift
 #print axioms ControlledBoundaryActiveAxisLift.monoBit

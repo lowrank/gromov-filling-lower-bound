@@ -22,19 +22,27 @@ theorem exists_centeredIcc_subset_Icc_of_mem_Ioo
     {a b u : ℝ} (hu : u ∈ Set.Ioo a b) :
     ∃ r : ℝ, 0 < r ∧ ∀ t ∈ Set.Icc (-r) r,
       u + t ∈ Set.Icc a b := by
-  let r : ℝ := min (u - a) (b - u) / 2
+  let r : ℝ := min (u - a) (b - u)
   have hleft : 0 < u - a := sub_pos.mpr hu.1
   have hright : 0 < b - u := sub_pos.mpr hu.2
   have hmin : 0 < min (u - a) (b - u) := lt_min hleft hright
   have hr : 0 < r := by
-    dsimp only [r]
-    linarith
+    simpa only [r] using hmin
   refine ⟨r, hr, ?_⟩
   intro t ht
+  rcases ht with ⟨htlower, htupper⟩
+  have hleftBound : a - u ≤ t := by
+    have hminLeft : r ≤ u - a := by
+      dsimp only [r]
+      exact min_le_left _ _
+    exact le_trans (by linarith) htlower
+  have hrightBound : t ≤ b - u := by
+    have hminRight : r ≤ b - u := by
+      dsimp only [r]
+      exact min_le_right _ _
+    exact htupper.trans hminRight
   constructor <;>
-    dsimp only [r] at ht ⊢ <;>
-    linarith [min_le_left (u - a) (b - u),
-      min_le_right (u - a) (b - u)]
+    linarith
 
 /-- A real function continuous at a point sends some centered closed interval
 around that point into any open interval containing its value. -/
@@ -47,11 +55,13 @@ theorem ContinuousAt.exists_centeredIcc_mapsTo_Icc
   have hpreimage : f ⁻¹' Set.Ioo a b ∈ 𝓝 u :=
     hcontinuous.preimage_mem_nhds (Ioo_mem_nhds himage.1 himage.2)
   obtain ⟨eps, heps, hball⟩ := Metric.mem_nhds_iff.mp hpreimage
-  refine ⟨eps / 2, by linarith, ?_⟩
+  refine ⟨eps / 2, half_pos heps, ?_⟩
   intro t ht
+  rcases ht with ⟨htlower, htupper⟩
+  have hhalf : eps / 2 < eps := half_lt_self heps
   have htAbs : |t| < eps := by
     rw [abs_lt]
-    constructor <;> linarith
+    exact ⟨(neg_lt_neg hhalf).trans_le htlower, htupper.trans_lt hhalf⟩
   apply Set.Ioo_subset_Icc_self
   apply hball
   rw [Metric.mem_ball, Real.dist_eq]

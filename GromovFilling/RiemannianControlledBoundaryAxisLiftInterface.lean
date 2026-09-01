@@ -36,13 +36,14 @@ not require the chart cutoff to be active. -/
 structure ControlledBoundaryAxisLift
     (boundary : UnitAddCircle → M)
     (P : FiniteControlledBoundaryChartPartition M) (i : P.ι) where
-  a b : ℝ
+  a : ℝ
+  b : ℝ
   hab : a < b
-  hdomain : ∀ y ∈ Set.Icc a b, (y * Complex.I : ℂ) ∈
+  hdomain : ∀ y : ℝ, y ∈ Set.Icc a b → (y * Complex.I : ℂ) ∈
     chosenControlledHalfSpaceComplexChartDomain (P.center i)
   lift : ℝ → ℝ
   continuous_lift : Continuous lift
-  project_lift : ∀ y ∈ Set.Icc a b,
+  project_lift : ∀ y : ℝ, y ∈ Set.Icc a b →
     ((lift y : ℝ) : UnitAddCircle) =
       controlledBoundaryChartParameter boundary P i y
   direction : Sum (StrictMonoOn lift (Set.Icc a b))

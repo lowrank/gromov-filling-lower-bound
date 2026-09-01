@@ -49,8 +49,8 @@ theorem controlledBoundaryCenterParameter_eq_of_transition_axis
         (extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm) z) 0 = 0) :
     controlledBoundaryCenterParameter boundary a (z 1) =
       controlledBoundaryCenterParameter boundary b
-        ((extChartAt (modelWithCornersEuclideanHalfSpace 2) b ∘
-          (extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm) z) 1 := by
+        (((extChartAt (modelWithCornersEuclideanHalfSpace 2) b ∘
+          (extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm) z) 1) := by
   let I : ModelWithCorners ℝ (EuclideanSpace ℝ (Fin 2))
       (EuclideanHalfSpace 2) := modelWithCornersEuclideanHalfSpace 2
   let T : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2) :=
@@ -210,7 +210,7 @@ theorem exists_commonControlledAxisInterval_of_centerParameter_eq
     centerParameter_eq_transition_source_and_apply
       boundary hboundaryRange a b u v hu hv hparameter
   have hzAxis : z 0 = 0 := by
-    simp only [z, Complex.orthonormalBasisOneI_repr_apply,
+    simp [z, Complex.orthonormalBasisOneI_repr_apply,
       Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
       Complex.I_re, Complex.I_im, mul_zero, zero_mul, sub_self]
   have hzA : z ∈ controlledHalfSpaceChartSet ca := by
@@ -261,7 +261,8 @@ theorem exists_commonControlledAxisInterval_with_centerParameter_eq
           t • EuclideanSpace.single 1 (1 : ℝ))) 0 = 0 ∧
       controlledBoundaryCenterParameter boundary a
         ((Complex.orthonormalBasisOneI.repr (u * Complex.I) +
-          t • EuclideanSpace.single 1 (1 : ℝ)) 1) =
+          t • EuclideanSpace.single 1 (1 : ℝ) :
+            EuclideanSpace ℝ (Fin 2)) 1) =
         controlledBoundaryCenterParameter boundary b
           (((extChartAt (modelWithCornersEuclideanHalfSpace 2) b ∘
             (extChartAt (modelWithCornersEuclideanHalfSpace 2) a).symm)
@@ -275,7 +276,8 @@ theorem exists_commonControlledAxisInterval_with_centerParameter_eq
   obtain ⟨hsource, hA, hB, haxis⟩ := hinterval t ht
   have hsourceAxis :
       (Complex.orthonormalBasisOneI.repr (u * Complex.I) +
-        t • EuclideanSpace.single 1 (1 : ℝ)) 0 = 0 := by
+        t • EuclideanSpace.single 1 (1 : ℝ) :
+          EuclideanSpace ℝ (Fin 2)) 0 = 0 := by
     simp [Complex.orthonormalBasisOneI_repr_apply,
       PiLp.add_apply, PiLp.smul_apply]
   refine ⟨hsource, hA, hB, haxis, ?_⟩
