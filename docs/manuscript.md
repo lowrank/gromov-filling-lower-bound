@@ -27,20 +27,21 @@ certificates; it does not prove the conjecture.
 Lean verifies the finite Fourier algebra, exact boundary curves, orthogonal
 mixing, Jordan and degree arguments, finite mod-2 obstruction, Riemannian
 area inequalities, certificate deductions, and rigorous numerical conclusions.
-It verifies the orientation-free universal Fourier bound and the
-all-parameter nonlinear controlled-atlas core, with its strict decimal
-corollary at the explicit controlled surface-orientation and induced-boundary
-interface described in the
+It verifies the orientation-free universal Fourier bound and the oriented
+nonlinear improvement, including both the strict decimal endpoint and the
+all-parameter formula, at the exact interfaces described in the
 [formalization boundary](formalization.md).
 
-That interface is necessary because the pinned manifold library has no
-conventional orientation API for manifolds with boundary. Lean does not yet
-derive the controlled interface from the manuscript's bare conventional
-orientation hypothesis, so the unqualified manuscript Theorem 1.2 remains an
-open bridge. It does not claim Gromov's conjectural `2π` bound. Broader
-manuscript claims listed as partial in the ledger are independent future work
-for Theorem 1.1 and the controlled-interface theorem; the orientation bridge
-is explicitly tracked rather than hidden.
+For Theorem 1.2, the project represents “oriented” by
+`RiemannianSurfaceOrientation`: a tangent-plane orientation locally constant
+in canonical tangent-bundle trivializations. Lean derives the required
+controlled boundary data for the supplied parametrization or its reversal;
+the final theorem has no controlled-atlas or induced-boundary hypothesis. The
+pinned library still has no bundled generic manifold-with-boundary orientation
+API, and no equivalence with a future such API is claimed. The formalization
+does not claim Gromov's conjectural `2π` bound. Broader manuscript claims
+listed as partial in the ledger are independent future work, not hidden
+dependencies of either headline theorem.
 
 ## Source of record
 

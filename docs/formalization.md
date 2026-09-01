@@ -17,7 +17,7 @@ manuscript ledger is maintained in
 | Planar and Riemannian analysis | Lipschitz area inequality, intrinsic two-Jacobian and chain rule, controlled interior charts, disjoint countable-atlas coverage, chart-independence, canonical Riemannian surface area, exact planar determinant identity, half-energy and integrated Jacobian budgets |
 | Riemannian profile derivatives | sharp intrinsic `‖D f‖ ≤ K` at interior differentiability points for globally `K`-Lipschitz real functions, including boundary distance, odd profile, and antipodal slack |
 | Headline Theorem 1.1 | `riemannian_universal_fourier_bound`: the `14 ζ(3) / π` lower bound for every compact connected Riemannian isometric filling at the stated boundary interface |
-| Headline Theorem 1.2 core | `ControlledBoundaryAtlasBoundaryPhase.nonlinearCertificate_le_surfaceArea`: the all-parameter nonlinear formula at an explicit finite controlled boundary atlas and phase interface; `5.38982446` is its named `λ = 0.03` `R`/`H` corollary, while the bridge from the manuscript's bare orientation hypothesis remains open |
+| Headline Theorem 1.2 | `riemannianSurfaceArea_gt_point_zero_three_of_conventionally_oriented_isometric_filling`: the strict `5.38982446` bound at the project-defined conventional surface-orientation interface; the companion `riemannianNonlinearCertificate_le_surfaceArea_of_conventionally_oriented_isometric_filling` proves the all-parameter formula |
 | Certificate logic | finite-to-infinite universal deduction, defect propagation, scalar optimization |
 | Rigorous numerics | rational bounds for `π`, `ζ(3)`, and the displayed constants |
 | Logarithmic sine kernel | squared-sine gap, positive sine quotient, strict off-diagonal positivity, symmetry |
@@ -159,38 +159,40 @@ atlas Lipschitz/Fubini almost-everywhere argument, the full orientation-free
 Lemma 5.4 area inequality, finite Givens coverage, and the finite-to-infinite
 certificate.
 
-`GromovFilling.ControlledBoundaryAtlasBoundaryPhase.nonlinearCertificate_le_surfaceArea`
-is the all-parameter controlled-atlas nonlinear core. For every
-`0 ≤ λ < π² / 32`, it proves the manuscript's nonlinear certificate lower
-bound once a finite controlled boundary atlas and its compatible boundary
-phase are supplied. The named theorem
-`GromovFilling.riemannianSurfaceArea_gt_point_zero_three_of_controlled_oriented_isometric_filling`
-is the strict `λ = 0.03` corollary, giving
-`538982446 / 100000000 = 5.38982446` at the explicit `R`/`H` interface.
+`GromovFilling.riemannianSurfaceArea_gt_point_zero_three_of_conventionally_oriented_isometric_filling`
+is the end-to-end formal Theorem 1.2. For every compact connected smooth
+half-space-modeled Riemannian isometric filling with a full boundary
+parametrization and
+`O : RiemannianSurfaceOrientation (modelWithCornersEuclideanHalfSpace 2) M`,
+it proves the strict lower bound
+`538982446 / 100000000 = 5.38982446`.
+
+`GromovFilling.riemannianNonlinearCertificate_le_surfaceArea_of_conventionally_oriented_isometric_filling`
+proves the manuscript's all-parameter formula at the same interface: for every
+`0 ≤ λ < π² / 32`, `ENNReal.ofReal (nonlinearCertificate λ)` is at most the
+canonical Riemannian surface area.
 
 !!! note "Exact orientation boundary"
-    The pinned manifold library has no conventional orientation API for
-    manifolds with boundary. `R` records a tangent-plane orientation and
-    compatible `±1` canonical-chart signs whose signed chart Jacobian equals
-    its absolute value; `H` records the outward-first local lift monotonicity
-    of the induced boundary orientation. From them Lean constructs the finite
-    boundary phase used by the all-parameter theorem. `H` contains no
-    integral, winding, Stokes, comass, or area conclusion. This is therefore
-    an explicit formal interface, not a conditional shell around the target
-    conclusion.
+    The pinned manifold library has no bundled generic orientation API for
+    manifolds with boundary. The project therefore defines
+    `RiemannianSurfaceOrientation` directly as a tangent-plane orientation
+    locally constant in every canonical tangent-bundle trivialization. It
+    contains no boundary parametrization, controlled chart signs, phase,
+    winding, Stokes, comass, integral, or area conclusion. No equivalence with
+    a future generic Mathlib orientation API is claimed.
 
-The manuscript's Theorem 1.2 instead quantifies over every compact connected
-**oriented** Riemannian isometric filling. The project does not yet contain a
-Lean theorem constructing a finite controlled oriented boundary atlas, or the
-needed boundary-parameter alignment/reversal fact, from that conventional
-orientation hypothesis. The controlled-atlas core is therefore verified, but
-the unqualified manuscript statement remains an open formal bridge.
+`RiemannianSurfaceOrientation.controlledInducedBoundaryOrientation_or_reverse`
+derives the controlled induced-boundary orientation and proves that its
+outward-first direction agrees with the supplied circle parametrization or
+with its reversal. Compactness then supplies the finite partition and phase
+used by the nonlinear certificate. Reversal preserves the isometric-boundary
+and range data, so both final surface-area statements have only the
+conventional orientation argument and no residual controlled-atlas, phase, or
+boundary-alignment hypothesis.
 
-Neither Lean theorem claims Gromov's conjectural `2π` bound. Broader manuscript
-formulations that remain partial are recorded in the ledger; the
-conventional-orientation bridge is a remaining dependency of the unqualified
-manuscript Theorem 1.2, rather than a dependency of the controlled-interface
-Lean declaration.
+Neither headline theorem claims Gromov's conjectural `2π` bound. Broader
+manuscript formulations that remain partial are recorded in the ledger, but
+they are not open dependencies of Theorems 1.1 or 1.2.
 
 ## Open feasible manuscript obligations
 

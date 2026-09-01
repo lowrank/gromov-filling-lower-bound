@@ -56,10 +56,13 @@ Classical.choice
 Quot.sound
 ```
 
-The latest hardened receipt, run
-[`33266848279`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33266848279)
-on merge commit `7f2e341cb95f82d23e3106ce45a1169649ff8cb8`, audited
-5,019 project declarations with no other axioms.
+The latest hardened merged-main receipt, run
+[`33504856733`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33504856733)
+on exact merge `f35f06688c7b8d208b526d8a7196c6a2e2baaf2e`, completed
+all 3,769 full-build jobs and audited 6,677 project declarations with no other
+axioms. The endpoint-specific `#print axioms` output for Theorem 1.1, the
+strict Theorem 1.2 bound, and the all-parameter nonlinear theorem reports the
+same exact allowlist.
 
 ## What a pass means
 
