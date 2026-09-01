@@ -13,7 +13,7 @@ This is the local domain-control ingredient for comparing boundary directions
 through overlapping charts.  It makes no orientation assertion.
 -/
 
-open Manifold Set
+open Bundle Manifold Set
 open scoped Manifold Topology
 
 namespace GromovFilling
@@ -75,7 +75,7 @@ theorem exists_commonControlledAxisInterval
       (by simpa only [I, phi, s] using hz) hzAxis
   have hTcont : ContinuousOn T s := by
     simpa only [I, T, s, phi, Function.comp_def] using
-      (contDiffOn_ext_coord_change b a).continuousOn
+      (contDiffOn_ext_coord_change (n := 1) b a).continuousOn
   obtain ⟨epsA, hepsA, hballA⟩ := Metric.mem_nhds_iff.mp
     (isOpen_ball.mem_nhds hzA.1)
   obtain ⟨epsB, hepsB, hballB⟩ := Metric.mem_nhds_iff.mp
