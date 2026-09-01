@@ -152,7 +152,7 @@ theorem ControlledBoundaryActiveAxisLift.outwardBit_eq_of_activeOverlap
   have centeredIcc_subset {r s : ℝ} (hrs : r ≤ s) :
       Set.Icc (-r) r ⊆ Set.Icc (-s) s := by
     intro t ht
-    constructor <;> linarith
+    exact ⟨(neg_le_neg hrs).trans ht.1, ht.2.trans hrs⟩
   have shrink (rOrientation : ℝ) (hrOrientation : 0 < rOrientation) :
       ∃ r : ℝ, 0 < r ∧
         Set.Icc (-r) r ⊆ J ∧
@@ -199,7 +199,7 @@ theorem ControlledBoundaryActiveAxisLift.outwardBit_eq_of_activeOverlap
     calc
       ((L1.lift (u + t) : ℝ) : UnitAddCircle) =
           controlledBoundaryChartParameter boundary P₁ i.1 (u + t) :=
-        L1.project_lift (hSource t (hSourceSub ht))
+        L1.project_lift (u + t) (hSource t (hSourceSub ht))
       _ = controlledBoundaryCenterParameter boundary (P₁.center i.1) (u + t) := rfl
       _ = controlledBoundaryCenterParameter boundary (P₂.center j.1) (tau t) := by
         simpa [tau, eta, z, T, e1,
@@ -207,7 +207,7 @@ theorem ControlledBoundaryActiveAxisLift.outwardBit_eq_of_activeOverlap
           PiLp.add_apply, PiLp.smul_apply, Function.comp_apply] using hCenter
       _ = controlledBoundaryChartParameter boundary P₂ j.1 (tau t) := rfl
       _ = ((L2.lift (tau t) : ℝ) : UnitAddCircle) :=
-        (L2.project_lift (hTarget' t (hTargetSub ht))).symm
+        (L2.project_lift (tau t) (hTarget' (hTargetSub ht))).symm
   rcases O.controlledChartSign_eq_one_or_neg_one (P₁.center i.1) with hi | hi <;>
     rcases O.controlledChartSign_eq_one_or_neg_one (P₂.center j.1) with hj | hj
   · obtain ⟨rOrientation, hrOrientation, hOrientation⟩ :=
@@ -223,7 +223,7 @@ theorem ControlledBoundaryActiveAxisLift.outwardBit_eq_of_activeOverlap
       L1.monoBit_eq_of_local_transition_mono L2 hr
         (fun t ht ↦ hSource t (hSourceSub ht))
         (hTauContinuous.mono hDomSub)
-        (fun t ht ↦ hTarget' t (hTargetSub ht))
+        (fun t ht ↦ hTarget' (hTargetSub ht))
         (hProjectOf r hDomSub hSourceSub hTargetSub)
         (hOrientation'.mono hOrientationSub)
     exact L1.outwardBit_eq_of_chartSign_eq_of_monoBit_eq L2
@@ -241,14 +241,14 @@ theorem ControlledBoundaryActiveAxisLift.outwardBit_eq_of_activeOverlap
       L1.monoBit_eq_not_of_local_transition_anti L2 hr
         (fun t ht ↦ hSource t (hSourceSub ht))
         (hTauContinuous.mono hDomSub)
-        (fun t ht ↦ hTarget' t (hTargetSub ht))
+        (fun t ht ↦ hTarget' (hTargetSub ht))
         (hProjectOf r hDomSub hSourceSub hTargetSub)
         (hOrientation'.mono hOrientationSub)
     exact L1.outwardBit_eq_of_chartSigns_one_neg_one L2 hi hj hBit
   · obtain ⟨rOrientation, hrOrientation, hOrientation⟩ :=
       exists_axis_interval_strictAntiOn_of_centerParameter_eq_of_controlledChartSign_eq_neg
         O boundary hboundaryRange (P₁.center i.1) (P₂.center j.1) u v
-        hu hv hparameter (by rw [hi, hj]; norm_num)
+        hu hv hparameter (by rw [hi, hj])
     obtain ⟨r, hr, hDomSub, hSourceSub, hTargetSub, hOrientationSub⟩ :=
       shrink rOrientation hrOrientation
     have hOrientation' : StrictAntiOn tau
@@ -258,7 +258,7 @@ theorem ControlledBoundaryActiveAxisLift.outwardBit_eq_of_activeOverlap
       L1.monoBit_eq_not_of_local_transition_anti L2 hr
         (fun t ht ↦ hSource t (hSourceSub ht))
         (hTauContinuous.mono hDomSub)
-        (fun t ht ↦ hTarget' t (hTargetSub ht))
+        (fun t ht ↦ hTarget' (hTargetSub ht))
         (hProjectOf r hDomSub hSourceSub hTargetSub)
         (hOrientation'.mono hOrientationSub)
     exact L1.outwardBit_eq_of_chartSigns_neg_one_one L2 hi hj hBit
@@ -275,7 +275,7 @@ theorem ControlledBoundaryActiveAxisLift.outwardBit_eq_of_activeOverlap
       L1.monoBit_eq_of_local_transition_mono L2 hr
         (fun t ht ↦ hSource t (hSourceSub ht))
         (hTauContinuous.mono hDomSub)
-        (fun t ht ↦ hTarget' t (hTargetSub ht))
+        (fun t ht ↦ hTarget' (hTargetSub ht))
         (hProjectOf r hDomSub hSourceSub hTargetSub)
         (hOrientation'.mono hOrientationSub)
     exact L1.outwardBit_eq_of_chartSign_eq_of_monoBit_eq L2
