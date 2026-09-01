@@ -166,9 +166,11 @@ theorem RiemannianSurfaceOrientation.controlledChartSign_eq_neg_coordChange_det_
       have hnegEq : -halfSpaceComplexCoordinateOrientation = halfSpaceComplexCoordinateOrientation := by
         simpa only [hEq] using htransport
       exact (Module.Ray.ne_neg_self halfSpaceComplexCoordinateOrientation) hnegEq.symm
+    have hdim : Fintype.card (Fin 2) = Module.finrank ℝ E := by
+      simp [E]
     have hmap : Orientation.map (Fin 2) e.toLinearEquiv
         halfSpaceComplexCoordinateOrientation = -halfSpaceComplexCoordinateOrientation :=
-      (Orientation.ne_iff_eq_neg _ _ (by simp)).mp hmap_ne
+      (Orientation.ne_iff_eq_neg _ _ hdim).mp hmap_ne
     exact (Orientation.map_eq_neg_iff_det_neg halfSpaceComplexCoordinateOrientation
       e.toLinearEquiv (by simp)).mp hmap
   · rw [ha, hb] at hsign
