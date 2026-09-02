@@ -43,6 +43,7 @@ nav:
   - Lean modules: modules.md
   - Verify: verification.md
   - Manuscript: manuscript.md
+  - Reusable libraries: library-contributions.md
   - Contribute: contributing.md
 
 plugins:

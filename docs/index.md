@@ -67,6 +67,13 @@ caller assumption.
 
     [Run the verification](verification.md)
 
+-   **Reusable libraries**
+
+    See how the general topology, geometry, and analysis infrastructure can be
+    extracted and contributed without changing the verified theorem artifact.
+
+    [Review the contribution roadmap](library-contributions.md)
+
 </div>
 
 ## Current frontier
