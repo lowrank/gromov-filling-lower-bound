@@ -48,7 +48,12 @@ Result: pass.
 
 - Clean `latexmk -pdf -interaction=nonstopmode -halt-on-error` build: pass.
 - Determinism: `SOURCE_DATE_EPOCH` is pinned to the frozen manuscript commit
-  time; two clean builds produced byte-identical PDFs.
+  time; two clean builds on the release toolchain (pdfTeX 1.40.25, TeX Live
+  2023/Debian) produced byte-identical PDFs.
+- Cross-toolchain check: Greenwood's pdfTeX 1.40.29 / TeX Live 2026 build also
+  passed all release gates. It produced distribution-dependent PDF bytes, so
+  `make check` uses the ignored `.build/` directory and leaves the canonical
+  release artifact untouched.
 - Log scan for TeX errors, undefined references/citations, PDF-string
   warnings, and overfull/underfull boxes: zero findings.
 - Pagination: 20 numbered core frames, unnumbered title and close, and 16

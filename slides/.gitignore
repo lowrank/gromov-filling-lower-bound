@@ -1,4 +1,5 @@
 *.aux
+.build/
 *.fdb_latexmk
 *.fls
 *.log

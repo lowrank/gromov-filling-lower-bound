@@ -76,7 +76,10 @@ The full release contains 20 numbered core frames, an unnumbered title and
 close, and 16 separately numbered backup frames: 38 physical PDF pages in
 all. There are no overlays, so source frames and physical pages reconcile
 directly. The Makefile pins `SOURCE_DATE_EPOCH` to the frozen manuscript
-commit time so clean builds produce the same canonical PDF bytes.
+commit time. Clean builds on the recorded release toolchain produce the same
+canonical PDF bytes; `make check` compiles into the ignored `.build/`
+directory so verification on a different TeX distribution cannot overwrite
+the audited PDF.
 
 Five switches near the top of the TeX source control optional core modules:
 `showoddslack`, `showcalibration`, `showbarriers`, `showfrontier`, and
