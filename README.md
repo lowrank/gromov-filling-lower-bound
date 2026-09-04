@@ -1,17 +1,15 @@
 # Gromov filling-area formalization
 
 [![Lean](https://img.shields.io/badge/Lean-4.29.0-137f9e.svg)](https://lean-lang.org/)
-[![Lean CI](https://github.com/lowrank/conj-gromov-filling/actions/workflows/ci.yml/badge.svg)](https://github.com/lowrank/conj-gromov-filling/actions/workflows/ci.yml)
-[![Documentation](https://github.com/lowrank/conj-gromov-filling/actions/workflows/pages.yml/badge.svg)](https://lowrank.github.io/conj-gromov-filling/)
+[![Lean CI](https://github.com/lowrank/gromov-filling-lower-bound/actions/workflows/ci.yml/badge.svg)](https://github.com/lowrank/conj-gromov-filling/actions/workflows/ci.yml)
+[![Documentation](https://github.com/lowrank/gromov-filling-lower-bound/actions/workflows/pages.yml/badge.svg)](https://lowrank.github.io/gromov-filling-lower-bound/)
 [![License](https://img.shields.io/badge/license-MIT-0d2538.svg)](LICENSE)
 
 ![A circle boundary, triangulated spanning surface, and Fourier traces](docs/assets/hero.webp)
 
-**Documentation:** <https://lowrank.github.io/conj-gromov-filling/>
+**Documentation:** <https://lowrank.github.io/gromov-filling-lower-bound/>
 
-Lean 4 formalization of the Fourier, topology, planar area, and certificate
-arguments accompanying Yimin Zhong's note *Fourier and Resonant Nonlinear
-Bounds for Gromov's Filling Area Problem*.
+Lean 4 formalization of arXiv:
 
 > [!IMPORTANT]
 > This repository does not prove Gromov's filling-area conjecture. The
