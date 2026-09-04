@@ -6,6 +6,18 @@ The intended audience is first-year graduate students who know basic real
 analysis, linear algebra, and the fundamental group, but may not know
 Riemannian geometry, geometric measure theory, or calibrations.
 
+## Files
+
+- [`gromov_filling_mother_deck.tex`](gromov_filling_mother_deck.tex) is the
+  editable mother deck, including speaker notes and optional core modules.
+- [`gromov_filling_mother_deck.pdf`](gromov_filling_mother_deck.pdf) is the
+  canonical compiled deck.
+- [`CLAIM_LEDGER.md`](CLAIM_LEDGER.md) maps every load-bearing core frame to
+  its manuscript locus and scope guard.
+- [`RELEASE_AUDIT.md`](RELEASE_AUDIT.md) records the reproducible release
+  evidence for the canonical PDF.
+- [`Makefile`](Makefile) provides the build and release gates.
+
 ## Source contract
 
 The mathematical source of record is
@@ -51,6 +63,36 @@ The mother deck is venue-neutral. A speaker can shorten it by omitting the
 optional modules marked in the TeX source; the full PDF remains the canonical
 archive and question bank.
 
+## Build and adapt
+
+From this directory, run:
+
+```sh
+make
+make check
+```
+
+The full release contains 20 numbered core frames, an unnumbered title and
+close, and 16 separately numbered backup frames: 38 physical PDF pages in
+all. There are no overlays, so source frames and physical pages reconcile
+directly. The Makefile pins `SOURCE_DATE_EPOCH` to the frozen manuscript
+commit time so clean builds produce the same canonical PDF bytes.
+
+Five switches near the top of the TeX source control optional core modules:
+`showoddslack`, `showcalibration`, `showbarriers`, `showfrontier`, and
+`showverification`. Keep all five enabled for the mother deck. Suggested
+venue cuts are:
+
+- 35 minutes: omit the odd-slack, barriers, frontier, and verification
+  modules; use backup only for questions;
+- 55 minutes: present the complete 20-frame core;
+- 90 minutes or a mini-course: present the core and insert selected backup
+  derivations immediately after their parent frames.
+
+Every core frame and the title/close have a `\\note{...}` speaker cue. To
+prepare a presenter copy, enable Beamer's notes option locally; do not commit
+that presenter-only rendering in place of the canonical audience PDF.
+
 ## Release bar
 
 Before a PDF is released:
@@ -63,3 +105,6 @@ Before a PDF is released:
   pages;
 - raster and inspect every page after the last source change;
 - stage the source, README, ledger, and canonical PDF as one release unit.
+
+The current release evidence is frozen in
+[`RELEASE_AUDIT.md`](RELEASE_AUDIT.md).
