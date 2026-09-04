@@ -11,7 +11,7 @@ Audit date: 2026-09-04
 - Formalization-ledger blob:
   `87e8e97236dff07e615a6c1a463fb95328034e7c`
 - Deck-source SHA-256:
-  `a36e70491ede5dcb75e1c5a90124092d1d03deac2eee2350a5038b5b1e0e2a08`
+  `a55a764e4db0407b536a160ddbd8ab9fac23b29415cdf285cd0ca9474990145a`
 - Canonical-PDF SHA-256:
   `852c9d339573144b6ffa01ca39144a295b548a773b61221ddda9026ee87ba21f`
 
