@@ -20,13 +20,18 @@ Riemannian geometry, geometric measure theory, or calibrations.
 
 ## Source contract
 
-The mathematical source of record is
-[`../fourier_resonant_filling_area_v3.tex`](../fourier_resonant_filling_area_v3.tex)
-as present at repository commit
-`f166e04054b397efdcb7c1ac5217ede715c1cfd0` (file blob
-`42a9c8d2e856943f6109031f8bf914ae65872d63`). The claim-status source is
-[`../FORMALIZATION.md`](../FORMALIZATION.md) at the same repository commit
-(file blob `87e8e97236dff07e615a6c1a463fb95328034e7c`).
+The mathematical snapshot used to author the deck is
+[`fourier_resonant_filling_area_v3.tex` at commit `f166e04`](https://github.com/lowrank/gromov-filling-lower-bound/blob/f166e04054b397efdcb7c1ac5217ede715c1cfd0/fourier_resonant_filling_area_v3.tex)
+(file blob `42a9c8d2e856943f6109031f8bf914ae65872d63`). The exact claim-status
+snapshot is
+[`FORMALIZATION.md` at the same commit](https://github.com/lowrank/gromov-filling-lower-bound/blob/f166e04054b397efdcb7c1ac5217ede715c1cfd0/FORMALIZATION.md)
+(file blob `87e8e97236dff07e615a6c1a463fb95328034e7c`). These private links require
+collaborator access.
+
+Current `main` removed the draft manuscript at commit `ecb50eb` pending the
+official arXiv source. The deck deliberately remains pinned to the immutable
+pre-removal blob; reconcile and advance this contract explicitly when that
+official source becomes available.
 
 The deck must preserve four boundaries:
 
