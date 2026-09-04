@@ -8,7 +8,8 @@ all: $(DECK).pdf
 $(DECK).pdf: $(DECK).tex
 	latexmk -pdf -interaction=nonstopmode -halt-on-error $(DECK).tex
 
-check: $(DECK).pdf
+check:
+	latexmk -pdf -interaction=nonstopmode -halt-on-error $(DECK).tex
 	@! grep -Eiq 'LaTeX Error|Undefined control sequence|undefined (references|citations)|Token not allowed in a PDF string|Overfull|Underfull' $(DECK).log
 	@set -eu; \
 		pages="$$(pdfinfo $(DECK).pdf | awk '/^Pages:/ {print $$2}')"; \
