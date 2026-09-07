@@ -47,7 +47,7 @@ lemma infiniteOddMixedCorrelation_eq_tail
 
 /-- The two tail contributions fit a single Cauchy--Schwarz estimate. -/
 lemma two_tail_cauchy (a b P N : ℝ)
-    (hP : 0 ≤ P) (hN : 0 ≤ N)
+    (hP : 0 ≤ P) (_hN : 0 ≤ N)
     (ha : a ^ 2 ≤ P) (hb : b ^ 2 ≤ N) :
     b * Real.sqrt (P - a ^ 2) + a * Real.sqrt (N - b ^ 2) ≤
       Real.sqrt P * Real.sqrt N := by

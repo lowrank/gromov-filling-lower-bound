@@ -41,7 +41,8 @@ theorem oddProfileFourierMap_first_add_twenty_five_tail_energy_le_two
         9 * ‖oddProfileFourierMap boundary (oddMode 1) x‖ ^ 2 +
         ∑ n : Fin N, (oddMode ((n : ℕ) + 2) : ℝ) ^ 2 *
           ‖oddProfileFourierMap boundary (oddMode ((n : ℕ) + 2)) x‖ ^ 2 ≤ 2 := by
-    simpa [Fin.val_succ, Nat.succ_eq_add_one, oddMode, add_assoc] using hweighted
+    simpa [Fin.val_succ, Nat.succ_eq_add_one, oddMode, add_assoc,
+      show (3 : ℝ) ^ 2 = 9 by norm_num] using hweighted
   nlinarith [sq_nonneg ‖oddProfileFourierMap boundary (oddMode 1) x‖]
 
 /-- The exact weight-25 tail inequality in the revised Section 4. -/
