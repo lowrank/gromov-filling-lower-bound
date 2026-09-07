@@ -54,7 +54,7 @@ jobs:
           build: true
           build-args: ${{ inputs.target }}
           use-mathlib-cache: true
-          use-github-cache: false
+          use-github-cache: true
           axiom-audit: false
 
       - name: Build Lean project
