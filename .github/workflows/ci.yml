@@ -23,6 +23,15 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      # Mathlib restores its own cache below. Archiving the whole .lake tree
+      # exhausted runner disk space during previous full builds.
+      - name: Cache project build
+        uses: actions/cache@v4
+        with:
+          path: .lake/build
+          key: project-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          restore-keys: project-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+
       - name: Check canonical umbrella
         run: ./scripts/check_umbrella.sh
 
@@ -54,13 +63,14 @@ jobs:
           build: true
           build-args: ${{ inputs.target }}
           use-mathlib-cache: true
-          use-github-cache: true
+          use-github-cache: false
           axiom-audit: false
 
       - name: Build Lean project
         if: github.event_name != 'workflow_dispatch'
         uses: leanprover/lean-action@v1
         with:
+          use-github-cache: false
           axiom-audit: true
           axiom-audit-allow: propext,Classical.choice,Quot.sound
           axiom-audit-root: GromovFilling
