@@ -96,7 +96,7 @@ theorem norm_tsum_mul_le_sqrt_infiniteComplexEnergy
     _ = Real.sqrt (infiniteComplexEnergy f) *
         Real.sqrt (infiniteComplexEnergy g) := by rw [hF, hG]
 
-private lemma summable_mul_of_summable_normSq
+lemma summable_mul_of_summable_normSq
     (f g : ℕ → ℂ)
     (hf : Summable (fun k ↦ Complex.normSq (f k)))
     (hg : Summable (fun k ↦ Complex.normSq (g k))) :
@@ -432,7 +432,7 @@ def infiniteOddMixedCorrelation (y : ℕ → ℂ) (c : ℤ → ℂ) : ℂ :=
     (-star (c (-(oddMode k : ℤ))) * c 1 +
       star (c (-1)) * c (oddMode k : ℤ))
 
-private lemma infiniteOddMixedCorrelation_decomposition
+lemma infiniteOddMixedCorrelation_decomposition
     (y : ℕ → ℂ) (c : ℤ → ℂ)
     (hy : Summable (fun k ↦ Complex.normSq (y k)))
     (hpos : Summable

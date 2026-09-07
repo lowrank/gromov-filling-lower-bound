@@ -161,6 +161,8 @@ import GromovFilling.RiemannianSurfaceOrientationTransitionParity
 import GromovFilling.RiemannianSurfaceOrientationTransport
 import GromovFilling.RiemannianTwoJacobian
 import GromovFilling.RiemannianUniversalFourierBound
+import GromovFilling.SharpenedInfiniteVariation
+import GromovFilling.SharpenedNumerics
 import GromovFilling.SharpenedOriented
 import GromovFilling.SurfaceClassificationFoundation
 import GromovFilling.SurfaceCoverage
