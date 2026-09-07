@@ -1,9 +1,11 @@
 # Formalization boundary
 
+The revised `main2.tex` Section 4 is mapped separately in [Revised Section 4](section4.md). The intermediate lemma numbers below come from the earlier long manuscript; the headline endpoints below use the revised bound.
+
 The repository separates kernel-verified mathematics from broader manuscript
 claims that remain outside the exact headline closures. The complete 27-item
 manuscript ledger is maintained in
-[`FORMALIZATION.md`](https://github.com/lowrank/conj-gromov-filling/blob/main/FORMALIZATION.md).
+[`FORMALIZATION.md`](https://github.com/lowrank/gromov-filling-lower-bound/blob/main/FORMALIZATION.md).
 
 ## Verified layers
 
@@ -17,7 +19,7 @@ manuscript ledger is maintained in
 | Planar and Riemannian analysis | Lipschitz area inequality, intrinsic two-Jacobian and chain rule, controlled interior charts, disjoint countable-atlas coverage, chart-independence, canonical Riemannian surface area, exact planar determinant identity, half-energy and integrated Jacobian budgets |
 | Riemannian profile derivatives | sharp intrinsic `‖D f‖ ≤ K` at interior differentiability points for globally `K`-Lipschitz real functions, including boundary distance, odd profile, and antipodal slack |
 | Headline Theorem 1.1 | `riemannian_universal_fourier_bound`: the `14 ζ(3) / π` lower bound for every compact connected Riemannian isometric filling at the stated boundary interface |
-| Headline Theorem 1.2 | `riemannianSurfaceArea_gt_point_zero_three_of_conventionally_oriented_isometric_filling`: the strict `5.38982446` bound at the project-defined conventional surface-orientation interface; the companion `riemannianNonlinearCertificate_le_surfaceArea_of_conventionally_oriented_isometric_filling` proves the all-parameter formula |
+| Headline Theorem 1.2 | `riemannianSurfaceArea_gt_one_div_twenty_five_of_conventionally_oriented_isometric_filling`: the strict `5.40154` bound at the project-defined conventional surface-orientation interface; the companion `riemannianSharpenedNonlinearCertificate_le_surfaceArea_of_conventionally_oriented_isometric_filling` proves the all-parameter formula |
 | Certificate logic | finite-to-infinite universal deduction, defect propagation, scalar optimization |
 | Rigorous numerics | rational bounds for `π`, `ζ(3)`, and the displayed constants |
 | Logarithmic sine kernel | squared-sine gap, positive sine quotient, strict off-diagonal positivity, symmetry |
@@ -159,17 +161,17 @@ atlas Lipschitz/Fubini almost-everywhere argument, the full orientation-free
 Lemma 5.4 area inequality, finite Givens coverage, and the finite-to-infinite
 certificate.
 
-`GromovFilling.riemannianSurfaceArea_gt_point_zero_three_of_conventionally_oriented_isometric_filling`
+`GromovFilling.riemannianSurfaceArea_gt_one_div_twenty_five_of_conventionally_oriented_isometric_filling`
 is the end-to-end formal Theorem 1.2. For every compact connected smooth
 half-space-modeled Riemannian isometric filling with a full boundary
 parametrization and
 `O : RiemannianSurfaceOrientation (modelWithCornersEuclideanHalfSpace 2) M`,
 it proves the strict lower bound
-`538982446 / 100000000 = 5.38982446`.
+`540154 / 100000 = 5.40154`.
 
-`GromovFilling.riemannianNonlinearCertificate_le_surfaceArea_of_conventionally_oriented_isometric_filling`
+`GromovFilling.riemannianSharpenedNonlinearCertificate_le_surfaceArea_of_conventionally_oriented_isometric_filling`
 proves the manuscript's all-parameter formula at the same interface: for every
-`0 ≤ λ < π² / 32`, `ENNReal.ofReal (nonlinearCertificate λ)` is at most the
+`0 ≤ λ < π² / 32`, `ENNReal.ofReal (sharpenedNonlinearCertificate λ)` is at most the
 canonical Riemannian surface area.
 
 !!! note "Exact orientation boundary"
@@ -194,7 +196,7 @@ Neither headline theorem claims Gromov's conjectural `2π` bound. Broader
 manuscript formulations that remain partial are recorded in the ledger, but
 they are not open dependencies of Theorems 1.1 or 1.2.
 
-## Open feasible manuscript obligations
+## Further obligations in the earlier long manuscript
 
 Several later finite or algebraic manuscript claims remain suitable for future
 formalization, including completion of the separable barrier, Hardy

@@ -1,8 +1,6 @@
 # Manuscript relationship
 
-The Lean project accompanies
-`fourier_resonant_filling_area_v3.tex`, titled *Fourier and Resonant Nonlinear
-Bounds for Gromov's Filling Area Problem*.
+The Lean project accompanies *A Fourier approach to Gromov's Filling Area Conjecture*. This update follows the authors' `main2.tex` at Overleaf commit `85c9eb9`; its Section 4 contains the improved orientable bound. The manuscript source is maintained separately from this Lean repository.
 
 ## Mathematical scope
 
@@ -16,7 +14,7 @@ shortcuts. It proves an orientation-free lower bound
 and an oriented nonlinear improvement
 
 ```text
-area > 5.38982446.
+area > 5.40154.
 ```
 
 The conjectural filling area remains `2π`. The paper develops stronger
@@ -45,7 +43,9 @@ dependencies of either headline theorem.
 
 ## Source of record
 
-- Manuscript source: [`fourier_resonant_filling_area_v3.tex`](https://github.com/lowrank/conj-gromov-filling/blob/main/fourier_resonant_filling_area_v3.tex)
-- Lean source: [`GromovFilling/`](https://github.com/lowrank/conj-gromov-filling/tree/main/GromovFilling)
-- Statement ledger: [`FORMALIZATION.md`](https://github.com/lowrank/conj-gromov-filling/blob/main/FORMALIZATION.md)
-- Verification workflow: [Lean CI](https://github.com/lowrank/conj-gromov-filling/actions/workflows/ci.yml)
+- Current manuscript snapshot: `main2.tex`, Overleaf commit `85c9eb9`, SHA-256 `d6ec5c17e00be87d174cd730e2dd84b6c65881b3f36d4ab99abd0fb0dd556249`.
+- [Current Section 4 statement map](section4.md).
+- [Verified Lean source](https://github.com/lowrank/gromov-filling-lower-bound/tree/bdf0d050ee1d375d7025645c7a2ff22b9a2dd16b/GromovFilling).
+- [Statement ledger](https://github.com/lowrank/gromov-filling-lower-bound/blob/main/FORMALIZATION.md).
+- [Earlier long manuscript](https://github.com/lowrank/gromov-filling-lower-bound/blob/6510257be426839a514ae0c7ae811a085264337f/fourier_resonant_filling_area_v3.tex), retained as historical context for the older ledger and module numbering.
+- [Lean CI receipt](https://github.com/lowrank/gromov-filling-lower-bound/actions/runs/34167476132).

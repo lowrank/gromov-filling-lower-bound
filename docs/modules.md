@@ -35,4 +35,8 @@ module list and fails if any source file is missing from the umbrella.
 - `scripts/verify.sh` is the one-command local reproduction path.
 
 Browse the complete source tree in the
-[GitHub repository](https://github.com/lowrank/conj-gromov-filling/tree/main/GromovFilling).
+[GitHub repository](https://github.com/lowrank/gromov-filling-lower-bound/tree/main/GromovFilling).
+
+## Revised Section 4
+
+`SharpenedOriented` proves the capped ellipse estimate and defines the revised certificate. `SharpenedInfiniteVariation` proves the cancelled correlation bound; `SharpenedProfileTail` supplies the weight-25 energy inequality; `SharpenedComass` combines them with the existing quadratic and orientation estimates. `SharpenedNumerics` proves the rational lower enclosure at `1/25`. `RiemannianSharpenedNonlinear` connects those estimates to the existing finite Stokes and surface-area construction and exports the revised headline theorems.

@@ -40,6 +40,7 @@ nav:
   - Home: index.md
   - Mathematics: mathematics.md
   - Formalization: formalization.md
+  - Revised Section 4: section4.md
   - Lean modules: modules.md
   - Verify: verification.md
   - Manuscript: manuscript.md

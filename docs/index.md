@@ -5,8 +5,8 @@
 </div>
 
 This project is a Lean 4 formalization of the Fourier, topology, planar area,
-and certificate arguments accompanying Yimin Zhong's research note on
-Gromov's filling-area problem.
+and certificate arguments in *A Fourier approach to Gromov's Filling Area
+Conjecture* by Le Chen, Xiaolong Li, and Yimin Zhong.
 
 !!! warning "Current verification boundary"
     The repository does not prove Gromov's conjecture. The manuscript proves
@@ -15,7 +15,7 @@ Gromov's filling-area problem.
     on the formalization page.
 
 <div class="status-strip">
-  <div><strong>6,677</strong><span>project declarations accepted by the live axiom audit</span></div>
+  <div><strong>6,762</strong><span>project declarations accepted by the live axiom audit</span></div>
   <div><strong>Lean 4.29</strong><span>pinned toolchain with mathlib 4.29 and a fixed Jordan input</span></div>
   <div><strong>MIT</strong><span>public source, reproducible CI, and explicit claim boundaries</span></div>
 </div>
@@ -91,3 +91,5 @@ the headline closures, including:
 The repository keeps those independent boundaries visible. They are not
 assumptions of either headline endpoint, and the project does not replace them
 with custom axioms or conclusion-bearing hypotheses.
+
+The updated orientable bound is `Area(M) > 5.40154`; its all-parameter parent is Theorem 4.1 of `main2.tex`. The [Section 4 map](section4.md) records the exact scope and CI receipt.
