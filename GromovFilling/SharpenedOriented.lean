@@ -40,7 +40,7 @@ lemma capped_profile_cross_term_le (r Z R s : ℝ)
   have hyoung := sq_nonneg (s * r - 5 * R * Z)
   have hsq_r : s ^ 2 * r ^ 2 = (2 - R ^ 2) * r ^ 2 := by rw [hsq]
   have hsq_R : R ^ 2 * s ^ 2 = R ^ 2 * (2 - R ^ 2) := by rw [hsq]
-  apply (mul_le_mul_right (by positivity : 0 < 5 * R * s)).mp
+  apply (mul_le_mul_iff_left₀ (by positivity : 0 < 5 * R * s)).mp
   nlinarith only [henergy, hsupport, hyoung, hsq_r, hsq_R]
 
 /-- The capped weight-25 profile estimate gives the revised exact constant. -/
