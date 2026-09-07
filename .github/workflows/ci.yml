@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      target:
+        description: Project module to check during proof development
+        required: true
+        default: GromovFilling.RiemannianControlledBoundaryResonantAction
+        type: string
 
 permissions:
   contents: read
@@ -32,13 +38,21 @@ jobs:
       - name: Prove proof-escape gate fails closed
         run: ./scripts/test_proof_escape_gate.sh
 
+      - name: Validate requested Lean module
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          LEAN_TARGET: ${{ inputs.target }}
+        run: |
+          [[ "$LEAN_TARGET" =~ ^GromovFilling(\.[A-Za-z][A-Za-z0-9_]*)+$ ]]
+          test -f "${LEAN_TARGET//.//}.lean"
+
       - name: Build changed Lean leaf
         if: github.event_name == 'workflow_dispatch'
         uses: leanprover/lean-action@v1
         with:
           auto-config: false
           build: true
-          build-args: GromovFilling.RiemannianControlledBoundaryResonantAction
+          build-args: ${{ inputs.target }}
           use-mathlib-cache: true
           use-github-cache: false
           axiom-audit: false
