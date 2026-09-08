@@ -21,9 +21,10 @@ For a boundary parametrization `γ`, the metric profile records the distance
 from an interior point to every boundary point. Its odd Fourier modes have
 exact boundary values
 
-```text
-z_n(γ(s)) = -4 / (π n²) exp(i n s),   n positive and odd.
-```
+$$
+z_n(\gamma(s))=-\frac{4}{\pi n^2}e^{ins},
+\qquad n>0\text{ odd}.
+$$
 
 The Lean development proves the triangle-wave coefficients, continuity,
 global Lipschitz bounds, planar weak differentiation, and finite Bessel energy
@@ -54,9 +55,9 @@ For `J` normalized resonances, Lean exhibits the positive odd test frequency
 `m = 2J+1`, proves its unit norm and anti-periodicity, and computes the exact
 occupied-coordinate symplectic cost
 
-```text
-1 + ∑ j, μ_j².
-```
+$$
+1+\sum_j\mu_j^2.
+$$
 
 The displayed finite resonance matrix is constructed entry by entry from its
 convergent odd-mode series. Its quadratic form is proved equal to the boundary
@@ -103,16 +104,16 @@ coverage, this proves the full orientation-free Lemma 3.4 inequality (Lemma 5.4 
 
 The orientation-free constant is
 
-```text
-14 ζ(3) / π = 5.3567723444...
-```
+$$
+\frac{14\zeta(3)}{\pi}=5.3567723444\ldots
+$$
 
 The oriented nonlinear certificate at `λ = 1/25` gives the rigorous scalar
 conclusion
 
-```text
-area > 5.40154
-```
+$$
+\operatorname{Area}(M)>5.40154.
+$$
 
 Both headline surface bounds are verified at their exact Riemannian
 interfaces. The oriented endpoint takes the project-defined conventional
