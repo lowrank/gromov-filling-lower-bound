@@ -45,6 +45,8 @@ on the two-dimensional half-space, with a circle isometry parametrizing the
 whole boundary. Theorem 1.1 uses an order-one manifold structure. The two
 nonlinear endpoints use a smooth manifold and a supplied
 `RiemannianSurfaceOrientation`, a locally coherent tangent-plane orientation.
+Lean parametrizes the circle by `ℝ/ℤ` and scales its distance by `2π` in
+`IsometricCircleBoundary`; the physical circumference is the paper's `2π`.
 The Lean types are recorded verbatim in the
 [machine-readable statement ledger](https://github.com/lowrank/gromov-filling-lower-bound/blob/main/verification/current-manuscript.json).
 
@@ -57,7 +59,7 @@ check; no claim is made that Lean checks prose or novelty.
 ## Numbered formulas and historical material
 
 The machine ledger retains every numbered equation environment, its label,
-page, and source text. Definitions of the profile, Fourier coordinates,
+page, source text, and individual verification status. Definitions of the profile, Fourier coordinates,
 boundary action, and sharpened constants are the transcription inputs.
 The finite identities and estimates used in the headline proofs are checked
 from those inputs. Hilbert-space formulas inherit the partial scope of the
