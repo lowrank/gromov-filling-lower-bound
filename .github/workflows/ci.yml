@@ -36,7 +36,11 @@ jobs:
         with:
           path: .lake/build
           key: project-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.lean') }}-${{ github.sha }}
-          restore-keys: project-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.lean') }}-
+          # The second prefix migrates caches made before the lakefile key fix.
+          # Lake still checks all source/dependency traces during the full build.
+          restore-keys: |
+            project-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.lean') }}-
+            project-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
 
       - name: Check canonical umbrella
         run: ./scripts/check_umbrella.sh
