@@ -11,9 +11,10 @@ correlation cancels. The resulting Cauchy–Schwarz estimate has coefficient one
 and uses the profile tail starting at frequency five. The capped weight-25
 ellipse estimate then gives `sharpenedCstar`:
 
-```text
-C* = √2 (16/π² + 8/(5π) √(2 − 16/π²)).
-```
+$$
+C_* = \sqrt{2}\left(\frac{16}{\pi^2}
++\frac{8}{5\pi}\sqrt{2-\frac{16}{\pi^2}}\right).
+$$
 
 | Current manuscript item | Status | Formal endpoint or scope |
 |---|---|---|
