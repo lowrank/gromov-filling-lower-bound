@@ -99,7 +99,7 @@ family are verified. Standard smooth interior charts supply the required
 measurability; a finite controlled atlas is disjointified to avoid counting
 overlaps; exact chart-transition invariance identifies its measure with the
 canonical Riemannian surface-area measure. Combined with Jordan--Schönflies
-coverage, this proves the full orientation-free Lemma 5.4 inequality.
+coverage, this proves the full orientation-free Lemma 3.4 inequality (Lemma 5.4 in the earlier draft).
 
 The orientation-free constant is
 

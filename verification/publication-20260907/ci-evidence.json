@@ -1,0 +1,83 @@
+{
+  "evidence_sha256": {
+    "negative.json": "1066624221b63761db3326ba2e73e49b3089bcb1f422e9fbce70e5fd9b7a69e2",
+    "positive.json": "f9b48472679ed0016d35a34d157cb5ca92bde218026b2015829eaebe66dfe546",
+    "source-receipt.json": "e3af36f7705f369629427bdf4dd95b5af03d886edbc5df8dc18ffc22aff34229"
+  },
+  "feature_pages_deployment": "skipped",
+  "live_ci": {
+    "checkout_commit": "f85f25c689ccba13d6fba99d364d5850f5b89ff3",
+    "checkout_tree": "fb10ee160957d88fab1dfbf4f50e560cefd84001",
+    "conclusion": "success",
+    "databaseId": 34177156896,
+    "event": "pull_request",
+    "full_log_sha256": "80f9f8e9e618af51053ce2dc424ac9d30e74fd7301a52ee4653baf0033f0dbe4",
+    "headSha": "57500b07f9a75b73f2e4a27a0a42e3e6a5ecc5f2",
+    "name": "Lean CI",
+    "project_cache_restored": true,
+    "project_declarations": 6762,
+    "project_modules": 174,
+    "receipt_mutations_rejected": 11,
+    "same_tree_as_persistent_candidate": true,
+    "source_files": 474,
+    "startedAt": "2026-09-08T01:35:22Z",
+    "status": "completed",
+    "updatedAt": "2026-09-08T01:44:26Z",
+    "url": "https://github.com/lowrank/gromov-filling-lower-bound/actions/runs/34177156896"
+  },
+  "manuscript_ledger": {
+    "numbered_equations": 22,
+    "numbered_statements": 18,
+    "partially_verified_statements": 9,
+    "path": "verification/current-manuscript.json",
+    "sha256": "59baa54a56698c1061d2c1147e156d9eb9e97a568d97055a72f8aaa7a91bbb56",
+    "verified_statements": 9
+  },
+  "pristine_mathematical_source_build": {
+    "conclusion": "success",
+    "databaseId": 34172818364,
+    "full_log_sha256": "c9ebb06183bb42b52bbb9f5554568000b597f2cd6d3b7f32f77731ffdf2c24d0",
+    "headSha": "bf67cd01abc1003c00da2145fc26c7a322c1b43f",
+    "project_cache_restored": false,
+    "scope": "The mathematical sources are identical; this older job does not certify the revised checker sources. The live_ci job checks the new checker.",
+    "status": "completed",
+    "unchanged_lean_and_lakefile_hashes": 445,
+    "url": "https://github.com/lowrank/gromov-filling-lower-bound/actions/runs/34172818364"
+  },
+  "proof_and_checker_candidate": {
+    "commit": "57500b07f9a75b73f2e4a27a0a42e3e6a5ecc5f2",
+    "tree": "fb10ee160957d88fab1dfbf4f50e560cefd84001"
+  },
+  "review_independence": {
+    "execution": "GitHub-hosted CI runners",
+    "second_kernel_implementation": false,
+    "statement_alignment": "implementer review; independent human or model review not asserted"
+  },
+  "schema": "gromov-publication-ci-evidence-v1",
+  "supporting_checks": [
+    {
+      "conclusion": "success",
+      "databaseId": 34177156844,
+      "headSha": "57500b07f9a75b73f2e4a27a0a42e3e6a5ecc5f2",
+      "name": "Verification tooling",
+      "status": "completed",
+      "url": "https://github.com/lowrank/gromov-filling-lower-bound/actions/runs/34177156844"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 34177156856,
+      "headSha": "57500b07f9a75b73f2e4a27a0a42e3e6a5ecc5f2",
+      "name": "Documentation CI",
+      "status": "completed",
+      "url": "https://github.com/lowrank/gromov-filling-lower-bound/actions/runs/34177156856"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 34177153135,
+      "headSha": "57500b07f9a75b73f2e4a27a0a42e3e6a5ecc5f2",
+      "name": "Deploy MkDocs site to GitHub Pages",
+      "status": "completed",
+      "url": "https://github.com/lowrank/gromov-filling-lower-bound/actions/runs/34177153135"
+    }
+  ]
+}

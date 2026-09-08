@@ -11,6 +11,6 @@ cd "$repo_dir"
 ./scripts/test_proof_escape_gate.sh
 lake exe cache get
 lake build
+./scripts/audit_axioms.sh
 
-echo 'PASS: umbrella, build, Unicode-confusable, and source proof-escape gates.'
-echo 'The live environment axiom audit is enforced by GitHub Actions.'
+echo 'PASS: complete package build, source gates, live axiom audit, and verified receipt.'

@@ -8,10 +8,15 @@ on:
   workflow_dispatch:
     inputs:
       target:
-        description: Project module to check during proof development
+        description: GromovFilling for the full audit, or a development module
         required: true
-        default: GromovFilling.RiemannianControlledBoundaryResonantAction
+        default: GromovFilling
         type: string
+      pristine:
+        description: Rebuild project sources without restoring project oleans
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -21,16 +26,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       # Mathlib restores its own cache below. Archiving the whole .lake tree
       # exhausted runner disk space during previous full builds.
       - name: Cache project build
-        uses: actions/cache@v4
+        if: ${{ !inputs.pristine }}
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: .lake/build
-          key: project-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
-          restore-keys: project-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+          key: project-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.lean') }}-${{ github.sha }}
+          # The second prefix migrates caches made before the lakefile key fix.
+          # Lake still checks all source/dependency traces during the full build.
+          restore-keys: |
+            project-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.lean') }}-
+            project-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
 
       - name: Check canonical umbrella
         run: ./scripts/check_umbrella.sh
@@ -52,12 +62,12 @@ jobs:
         env:
           LEAN_TARGET: ${{ inputs.target }}
         run: |
-          [[ "$LEAN_TARGET" =~ ^GromovFilling(\.[A-Za-z][A-Za-z0-9_]*)+$ ]]
+          [[ "$LEAN_TARGET" =~ ^GromovFilling(\.[A-Za-z][A-Za-z0-9_]*)*$ ]]
           test -f "${LEAN_TARGET//.//}.lean"
 
       - name: Build changed Lean leaf
-        if: github.event_name == 'workflow_dispatch'
-        uses: leanprover/lean-action@v1
+        if: github.event_name == 'workflow_dispatch' && inputs.target != 'GromovFilling'
+        uses: leanprover/lean-action@50fcf42d2e460296f1a34b402e990d1b24f8b596 # v1
         with:
           auto-config: false
           build: true
@@ -67,10 +77,21 @@ jobs:
           axiom-audit: false
 
       - name: Build Lean project
-        if: github.event_name != 'workflow_dispatch'
-        uses: leanprover/lean-action@v1
+        if: github.event_name != 'workflow_dispatch' || inputs.target == 'GromovFilling'
+        uses: leanprover/lean-action@50fcf42d2e460296f1a34b402e990d1b24f8b596 # v1
         with:
           use-github-cache: false
-          axiom-audit: true
-          axiom-audit-allow: propext,Classical.choice,Quot.sound
-          axiom-audit-root: GromovFilling
+          axiom-audit: false
+
+      - name: Audit complete environment and verify source receipt
+        if: github.event_name != 'workflow_dispatch' || inputs.target == 'GromovFilling'
+        run: ./scripts/audit_axioms.sh
+
+      - name: Preserve verification evidence
+        if: always() && (github.event_name != 'workflow_dispatch' || inputs.target == 'GromovFilling')
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: verification-${{ github.sha }}
+          path: .verification/
+          include-hidden-files: true
+          if-no-files-found: error
