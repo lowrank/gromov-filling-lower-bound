@@ -75,7 +75,7 @@ instructions](docs/verification.md) for setup and interpretation.
   hypotheses;
 - arbitrary fixed-point-free polygon-side pairings, including
   orientation-reversing identifications;
-- the full orientation-free Lemma 5.4: arbitrary Jordan-boundary coverage,
+- the full orientation-free Lemma 3.4 (formerly 5.4): arbitrary Jordan-boundary coverage,
   interior preimages, and the canonical Riemannian two-Jacobian area
   inequality;
 - Theorem 1.1: the universal Fourier lower bound for arbitrary compact
@@ -99,7 +99,7 @@ instructions](docs/verification.md) for setup and interpretation.
 - finite and infinite certificate deductions, boundary-action series, and
   rigorous rational enclosures for the displayed constants.
 
-The [current manuscript ledger](docs/current-manuscript.md) covers all 18 numbered statements; the [Section 4 map](docs/section4.md) gives the revised nonlinear proof details. [`FORMALIZATION.md`](FORMALIZATION.md) also preserves the historical 27-item ledger. The earlier `nonlinearCertificate` and `λ = 0.03` endpoint remain available.
+The [current manuscript ledger](docs/current-manuscript.md) covers all 18 numbered statements; the [Section 4 map](docs/section4.md) gives the revised nonlinear proof details. Proposition 8.1, Lemma 14.3, and Proposition 15.1 above belong to the earlier long draft, whose 27-item ledger remains in [`FORMALIZATION.md`](FORMALIZATION.md). The earlier `nonlinearCertificate` and `λ = 0.03` endpoint remain available.
 
 ## General polygon-side obstruction
 
@@ -137,16 +137,16 @@ The project is pinned to:
 - EPFL LARA `JordanCurveTheorem` at
   `e442525a662e9e3beb8205b9fa1fc99509076ded`.
 
-Lean CI [34167476132](https://github.com/lowrank/gromov-filling-lower-bound/actions/runs/34167476132) on `bdf0d050ee1d375d7025645c7a2ff22b9a2dd16b` passed the full package build and live axiom audit. The audit accepted 6,762 declarations under `GromovFilling`, using only `propext`, `Classical.choice`, and `Quot.sound`.
+Lean CI [34177156896](https://github.com/lowrank/gromov-filling-lower-bound/actions/runs/34177156896) passed the full build, complete live audit, compiled negative control, and 11 receipt mutation tests. Its checked tree equals the persistent candidate `57500b07f9a75b73f2e4a27a0a42e3e6a5ecc5f2`. The audit accepted 6,762 distinct declarations under `GromovFilling`, using only `propext`, `Classical.choice`, and `Quot.sound`.
 
-[Machine-readable source and CI receipt](verification/section4-20260907.json).
+The [publication audit](docs/publication-audit.md) records source identity, scope, CI evidence, and the historical-draft publication decision. [Source receipt and complete inventories](verification/publication-20260907/) are retained in Git; the [earlier Section 4 receipt](verification/section4-20260907.json) remains unchanged.
 
 The reproduction command also rejects missing umbrella imports and source-level proof escapes. Its compiled scratch control exercises the live axiom audit, and receipt mutation tests check source and inventory drift. See [verification](docs/verification.md) and the [current statement map](docs/current-manuscript.md).
 
 ## Verified headline boundary
 
-Lemma 5.4 and Theorem 1.1 are end-to-end verified without an orientability
-assumption. Theorem 1.2 is end-to-end verified with
+Lemma 3.4 and Theorem 1.1 are end-to-end verified without an orientability
+assumption. Theorems 1.2 and 4.1 are end-to-end verified with
 `O : RiemannianSurfaceOrientation (modelWithCornersEuclideanHalfSpace 2) M`.
 The final statements have no controlled-atlas, phase, induced-boundary,
 coverage, Jacobian-budget, Stokes, comass, integral, or area-conclusion
@@ -156,8 +156,8 @@ generic Mathlib manifold-with-boundary orientation API is claimed.
 
 Broader manuscript items such as the raw-distance eikonal formulation and a
 standalone global manifold Stokes/comass API remain independently partial, but
-they are not open dependencies of either headline theorem. Neither headline
-reaches the conjectural `2π` bound.
+they are not open dependencies of the three main theorems. These lower bounds
+remain below the conjectural `2π` bound.
 
 ## Documentation development
 

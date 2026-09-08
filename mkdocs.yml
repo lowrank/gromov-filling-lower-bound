@@ -44,6 +44,7 @@ nav:
   - Revised Section 4: section4.md
   - Lean modules: modules.md
   - Verify: verification.md
+  - Publication audit: publication-audit.md
   - Manuscript: manuscript.md
   - Reusable libraries: library-contributions.md
   - Contribute: contributing.md

@@ -27,9 +27,19 @@ cd gromov-filling-lower-bound
 ./scripts/verify.sh
 ```
 
-For an immutable reproduction, check out the full candidate commit recorded
-in the receipt before running the script. Before the repository is made
-public, cloning requires collaborator access.
+To reproduce the September 7 publication audit, check out its persistent
+proof and checker candidate before running the script:
+
+```bash
+git fetch origin 57500b07f9a75b73f2e4a27a0a42e3e6a5ecc5f2
+git checkout --detach 57500b07f9a75b73f2e4a27a0a42e3e6a5ecc5f2
+./scripts/verify.sh
+```
+
+The CI receipt names a temporary PR merge commit whose tree is identical to
+this candidate; the [publication audit](publication-audit.md) records both
+identities. Before the repository is made public, cloning requires
+collaborator access.
 
 The result is written to the ignored `.verification/` directory:
 
@@ -135,6 +145,11 @@ It establishes neither a stronger prose statement nor the filling-area
 conjecture. The [current manuscript ledger](current-manuscript.md) records
 all 18 numbered statements and distinguishes the three complete headline
 theorems from broader formulations that remain partial.
+
+The [publication audit](publication-audit.md) links the complete live
+inventory, compiled negative control, and source receipt from
+[CI 34177156896](https://github.com/lowrank/gromov-filling-lower-bound/actions/runs/34177156896).
+Those evidence files are committed under `verification/publication-20260907/`.
 
 The earlier [Section 4 CI receipt](https://github.com/lowrank/gromov-filling-lower-bound/actions/runs/34167476132)
 records the full build and 6,762-declaration audit for

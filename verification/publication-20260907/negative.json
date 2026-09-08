@@ -1,0 +1,1 @@
+{"declarations":["GromovFilling.auditTamper"],"modules":["GromovFilling.AuditTamper"],"report":{"allowed":["propext","Classical.choice","Quot.sound"],"audited":1,"axiomsUsed":["sorryAx"],"ok":false,"root":"GromovFilling","violations":[{"axioms":["sorryAx"],"decl":"GromovFilling.auditTamper"}]},"schema":"gromov-axiom-inventory-v1"}
