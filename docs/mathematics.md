@@ -1,9 +1,8 @@
 # Mathematical architecture
 
 The formal development turns metric boundary data into explicit planar
-certificates. Its strongest unconditional statements are finite, algebraic,
-topological, and planar. The final passage to arbitrary Riemannian surfaces is
-tracked separately.
+certificates. The development includes the final passage to compact Riemannian
+surfaces at the boundary and orientation interfaces described below.
 
 <div class="research-hero" markdown>
 ![Fourier modes passing through an orthogonal mixing lattice to a Jordan region](assets/fourier-architecture.webp)
@@ -108,11 +107,11 @@ The orientation-free constant is
 14 ζ(3) / π = 5.3567723444...
 ```
 
-The oriented nonlinear certificate at `λ = 0.03` gives the rigorous scalar
+The oriented nonlinear certificate at `λ = 1/25` gives the rigorous scalar
 conclusion
 
 ```text
-area > 5.38982446
+area > 5.40154
 ```
 
 Both headline surface bounds are verified at their exact Riemannian
@@ -122,3 +121,5 @@ finite certificate data internally. Broader raw-distance eikonal and global
 Stokes/comass formulations remain partial as independent manuscript items, not
 as hypotheses of the headline theorems; see the
 [formalization page](formalization.md).
+
+The revised coefficient uses cancellation of the first mixed-correlation term and the profile tail starting at frequency five. See [Revised Section 4](section4.md) for the exact formula and its Lean endpoints.

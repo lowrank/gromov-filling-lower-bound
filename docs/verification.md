@@ -9,8 +9,9 @@ receipt.
 On a machine with sufficient memory and the pinned Lean toolchain available:
 
 ```bash
-git clone https://github.com/lowrank/conj-gromov-filling.git
-cd conj-gromov-filling
+git clone https://github.com/lowrank/gromov-filling-lower-bound.git
+cd gromov-filling-lower-bound
+git checkout --detach bdf0d050ee1d375d7025645c7a2ff22b9a2dd16b
 ./scripts/verify.sh
 ```
 
@@ -56,13 +57,9 @@ Classical.choice
 Quot.sound
 ```
 
-The latest hardened merged-main receipt, run
-[`33504856733`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33504856733)
-on exact merge `f35f06688c7b8d208b526d8a7196c6a2e2baaf2e`, completed
-all 3,769 full-build jobs and audited 6,677 project declarations with no other
-axioms. The endpoint-specific `#print axioms` output for Theorem 1.1, the
-strict Theorem 1.2 bound, and the all-parameter nonlinear theorem reports the
-same exact allowlist.
+Lean CI [34167476132](https://github.com/lowrank/gromov-filling-lower-bound/actions/runs/34167476132) on `bdf0d050ee1d375d7025645c7a2ff22b9a2dd16b` passed the full package build and live axiom audit. The audit accepted 6,762 declarations under `GromovFilling`, using only `propext`, `Classical.choice`, and `Quot.sound`.
+
+The two revised surface endpoints and the rational specialization also print their axiom dependencies directly. Earlier receipts certify the earlier source versions and constants; they are not used as evidence for the changed first-variation estimate.
 
 ## What a pass means
 

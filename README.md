@@ -1,7 +1,7 @@
 # Gromov filling-area formalization
 
 [![Lean](https://img.shields.io/badge/Lean-4.29.0-137f9e.svg)](https://lean-lang.org/)
-[![Lean CI](https://github.com/lowrank/gromov-filling-lower-bound/actions/workflows/ci.yml/badge.svg)](https://github.com/lowrank/conj-gromov-filling/actions/workflows/ci.yml)
+[![Lean CI](https://github.com/lowrank/gromov-filling-lower-bound/actions/workflows/ci.yml/badge.svg)](https://github.com/lowrank/gromov-filling-lower-bound/actions/workflows/ci.yml)
 [![Documentation](https://github.com/lowrank/gromov-filling-lower-bound/actions/workflows/pages.yml/badge.svg)](https://lowrank.github.io/gromov-filling-lower-bound/)
 [![License](https://img.shields.io/badge/license-MIT-0d2538.svg)](LICENSE)
 
@@ -9,7 +9,7 @@
 
 **Documentation:** <https://lowrank.github.io/gromov-filling-lower-bound/>
 
-Lean 4 formalization of arXiv:
+Lean 4 formalization of *A Fourier approach to Gromov's Filling Area Conjecture*.
 
 > [!IMPORTANT]
 > This repository does not prove Gromov's filling-area conjecture. The
@@ -29,16 +29,16 @@ $$
 \frac{14\zeta(3)}{\pi}=5.3567723444\ldots
 $$
 
-`riemannianSurfaceArea_gt_point_zero_three_of_conventionally_oriented_isometric_filling`
-establishes Theorem 1.2's strict bound at `λ = 0.03`
+`riemannianSurfaceArea_gt_one_div_twenty_five_of_conventionally_oriented_isometric_filling`
+establishes Theorem 1.2's strict bound at `λ = 1/25`
 
 $$
-5.38982446.
+5.40154.
 $$
 
 The companion theorem
-`riemannianNonlinearCertificate_le_surfaceArea_of_conventionally_oriented_isometric_filling`
-establishes the manuscript's all-parameter formula for every
+`riemannianSharpenedNonlinearCertificate_le_surfaceArea_of_conventionally_oriented_isometric_filling`
+establishes the revised Theorem 4.1 formula for every
 `0 ≤ λ < π² / 32`. The project-defined orientation is a tangent-plane
 orientation locally constant in canonical tangent-bundle trivializations. It
 contains no boundary parametrization, controlled atlas, Stokes, winding,
@@ -48,8 +48,9 @@ data for the supplied parametrization or its reversal.
 ## Quickstart
 
 ```bash
-git clone https://github.com/lowrank/conj-gromov-filling.git
-cd conj-gromov-filling
+git clone https://github.com/lowrank/gromov-filling-lower-bound.git
+cd gromov-filling-lower-bound
+git checkout --detach bdf0d050ee1d375d7025645c7a2ff22b9a2dd16b
 ./scripts/verify.sh
 ```
 
@@ -78,7 +79,7 @@ every declaration rooted at `GromovFilling` against the exact allowlist
   inequality;
 - Theorem 1.1: the universal Fourier lower bound for arbitrary compact
   connected Riemannian isometric fillings at the stated boundary interface;
-- Theorem 1.2: the strict `λ = 0.03` nonlinear improvement, together with the
+- Theorem 1.2: the strict `λ = 1/25` nonlinear improvement, together with the
   all-parameter formula, for conventionally oriented Riemannian isometric
   fillings at the exact project-defined orientation interface;
 - planar Lipschitz area inequalities and Jacobian budgets;
@@ -97,8 +98,7 @@ every declaration rooted at `GromovFilling` against the exact allowlist
 - finite and infinite certificate deductions, boundary-action series, and
   rigorous rational enclosures for the displayed constants.
 
-The full manuscript-facing ledger contains 27 named items and is maintained in
-[`FORMALIZATION.md`](FORMALIZATION.md).
+The [current Section 4 map](docs/section4.md) records the revised theorem labels and proof scope. [`FORMALIZATION.md`](FORMALIZATION.md) also preserves the historical 27-item ledger. The earlier `nonlinearCertificate` and `λ = 0.03` endpoint remain available.
 
 ## General polygon-side obstruction
 
@@ -119,7 +119,7 @@ lower obstruction automatically. Callers no longer supply it as a field.
 | [`ClassificationOfSurfaces/`](ClassificationOfSurfaces/) | pinned Apache-2.0 compact-surface classification source closure, adapted to Lean 4.29 |
 | [`Wikipedia/`](Wikipedia/) and [`SchoenfliesCompat/`](SchoenfliesCompat/) | pinned Apache-2.0 Jordan--Schönflies source closure and project compatibility layer |
 | [`GromovFilling.lean`](GromovFilling.lean) | canonical generated umbrella import |
-| [`fourier_resonant_filling_area_v3.tex`](fourier_resonant_filling_area_v3.tex) | companion manuscript source |
+| [`docs/manuscript.md`](docs/manuscript.md) | manuscript version and source provenance |
 | [`FORMALIZATION.md`](FORMALIZATION.md) | exact manuscript-to-Lean statement ledger |
 | [`docs/`](docs/) | GitHub Pages documentation source |
 | [`scripts/verify.sh`](scripts/verify.sh) | one-command local verification |
@@ -134,14 +134,11 @@ The project is pinned to:
 - EPFL LARA `JordanCurveTheorem` at
   `e442525a662e9e3beb8205b9fa1fc99509076ded`.
 
-The consolidated merged-main CI receipt,
-[`33504856733`](https://github.com/lowrank/conj-gromov-filling/actions/runs/33504856733)
-on exact merge `f35f06688c7b8d208b526d8a7196c6a2e2baaf2e`, audited
-**6,677 declarations** under `GromovFilling`; every declaration stayed within
-the standard logical allowlist. CI also fails if the umbrella omits a source
-module or if project Lean source contains placeholder, custom axiom, unsafe,
-or native reduction escape tokens, and a negative control confirms that this
-scan fails closed.
+Lean CI [34167476132](https://github.com/lowrank/gromov-filling-lower-bound/actions/runs/34167476132) on `bdf0d050ee1d375d7025645c7a2ff22b9a2dd16b` passed the full package build and live axiom audit. The audit accepted 6,762 declarations under `GromovFilling`, using only `propext`, `Classical.choice`, and `Quot.sound`.
+
+[Machine-readable source and CI receipt](verification/section4-20260907.json).
+
+CI also rejects missing umbrella imports and source-level proof escapes. A scratch negative control checks that the source guard fails closed. See [verification](docs/verification.md) and the [current statement map](docs/section4.md).
 
 ## Verified headline boundary
 

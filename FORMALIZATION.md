@@ -1,5 +1,15 @@
 # Manuscript-to-Lean statement ledger
 
+The current Section 4 target is `main2.tex` at Overleaf commit `85c9eb9`. It replaces the earlier orientable estimate by `Area(M) > 5.40154` and gives the revised all-parameter formula in Theorem 4.1.
+
+Lean CI [34167476132](https://github.com/lowrank/gromov-filling-lower-bound/actions/runs/34167476132) on `bdf0d050ee1d375d7025645c7a2ff22b9a2dd16b` passed the full package build and live axiom audit. The audit accepted 6,762 declarations under `GromovFilling`, using only `propext`, `Classical.choice`, and `Quot.sound`.
+
+The current statements and the scope of their Lean proofs are listed in [Revised Section 4](docs/section4.md). The new endpoints are `riemannianSurfaceArea_gt_one_div_twenty_five_of_conventionally_oriented_isometric_filling` and `riemannianSharpenedNonlinearCertificate_le_surfaceArea_of_conventionally_oriented_isometric_filling`, both in `RiemannianSharpenedNonlinear.lean`. Their geometric hypotheses match the previous endpoints exactly.
+
+The following ledger is retained for the earlier `fourier_resonant_filling_area_v3.tex` manuscript. Its numbering and status descriptions are historical; they do not label the revised Section 4. The old constants and endpoints remain available under their original names.
+
+## Historical ledger: the earlier long manuscript
+
 This ledger records the formal status of every named mathematical item in
 `fourier_resonant_filling_area_v3.tex`. “Verified” means that the stated claim
 has a kernel-checked Lean theorem in this repository and is covered by the
