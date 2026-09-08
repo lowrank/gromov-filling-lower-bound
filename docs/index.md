@@ -17,7 +17,7 @@ Conjecture* by Le Chen, Xiaolong Li, and Yimin Zhong.
 <div class="status-strip">
   <div><strong>6,762</strong><span>project declarations accepted by the live axiom audit</span></div>
   <div><strong>Lean 4.29</strong><span>pinned toolchain with mathlib 4.29 and a fixed Jordan input</span></div>
-  <div><strong>MIT</strong><span>public source, reproducible CI, and explicit claim boundaries</span></div>
+  <div><strong>MIT</strong><span>project license; vendored sources retain Apache-2.0</span></div>
 </div>
 
 ## What is verified
@@ -49,10 +49,10 @@ caller assumption.
 
 -   **Formalization boundary**
 
-    See exactly which manuscript statements are verified, partial, or still
-    open, with no headline overclaim.
+    See the verification scope of every numbered statement in the current
+    manuscript.
 
-    [Inspect the claim boundary](formalization.md)
+    [Inspect the claim boundary](current-manuscript.md)
 
 -   **Lean modules**
 
@@ -78,7 +78,7 @@ caller assumption.
 
 ## Current frontier
 
-Lemma 5.4 and both headline surface bounds are now end-to-end verified at
+Lemma 3.4 (the earlier Lemma 5.4) and both headline surface bounds are now end-to-end verified at
 their exact interfaces. Theorem 1.2 uses the project-defined conventional
 surface orientation and derives its controlled boundary direction for the
 supplied parametrization or its reversal. Broader formulations remain outside

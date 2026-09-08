@@ -1,9 +1,9 @@
 # Formalization boundary
 
-The revised `main2.tex` Section 4 is mapped separately in [Revised Section 4](section4.md). The intermediate lemma numbers below come from the earlier long manuscript; the headline endpoints below use the revised bound.
+All 18 numbered statements of the revised `main2.tex` are mapped in the [current manuscript ledger](current-manuscript.md), with nonlinear details in [Revised Section 4](section4.md). The intermediate lemma numbers below come from the earlier long manuscript; the headline endpoints below use the revised bound.
 
 The repository separates kernel-verified mathematics from broader manuscript
-claims that remain outside the exact headline closures. The complete 27-item
+claims that remain outside the exact headline closures. The historical 27-item
 manuscript ledger is maintained in
 [`FORMALIZATION.md`](https://github.com/lowrank/gromov-filling-lower-bound/blob/main/FORMALIZATION.md).
 

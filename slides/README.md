@@ -1,5 +1,10 @@
 # Gromov filling-area Beamer mother deck
 
+This is the September 4 historical teaching snapshot. It uses the earlier
+`5.38982446` bound; the current manuscript proves `5.40154`. See the
+[current statement ledger](../docs/current-manuscript.md). Its release audit
+applies to the frozen deck, not to the current repository release.
+
 This directory contains the master teaching deck for Gromov's filling-area
 conjecture and the Fourier/resonance program developed in this repository.
 The intended audience is first-year graduate students who know basic real

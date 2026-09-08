@@ -44,8 +44,13 @@ dependencies of either headline theorem.
 ## Source of record
 
 - Current manuscript snapshot: `main2.tex`, Overleaf commit `85c9eb9`, SHA-256 `d6ec5c17e00be87d174cd730e2dd84b6c65881b3f36d4ab99abd0fb0dd556249`.
+- [Complete current statement ledger](current-manuscript.md).
 - [Current Section 4 statement map](section4.md).
 - [Verified Lean source](https://github.com/lowrank/gromov-filling-lower-bound/tree/bdf0d050ee1d375d7025645c7a2ff22b9a2dd16b/GromovFilling).
 - [Statement ledger](https://github.com/lowrank/gromov-filling-lower-bound/blob/main/FORMALIZATION.md).
 - [Earlier long manuscript](https://github.com/lowrank/gromov-filling-lower-bound/blob/6510257be426839a514ae0c7ae811a085264337f/fourier_resonant_filling_area_v3.tex), retained as historical context for the older ledger and module numbering.
 - [Lean CI receipt](https://github.com/lowrank/gromov-filling-lower-bound/actions/runs/34167476132).
+
+## Acknowledgment
+
+Le Chen was partially supported by NSF CAREER grant DMS-2443823.

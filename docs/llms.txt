@@ -1,0 +1,18 @@
+# Gromov filling-area formalization
+
+Lean 4.29 proofs of the Fourier filling-area bounds. The current orientable
+bound is 5.40154, and Theorem 4.1 covers 0 <= lambda < pi^2/32.
+Theorems 1.1, 1.2, and 4.1 are complete at the declared Riemannian and
+project-defined orientation interfaces. Some broader Hilbert-space claims
+remain partial. This repository does not prove the conjectural 2*pi bound.
+
+- Contract: https://github.com/lowrank/gromov-filling-lower-bound/blob/main/AGENTS.md
+- Current manuscript: https://lowrank.github.io/gromov-filling-lower-bound/current-manuscript/
+- Revised Section 4: https://lowrank.github.io/gromov-filling-lower-bound/section4/
+- Verification: https://lowrank.github.io/gromov-filling-lower-bound/verification/
+- Headline types and source ledger: https://github.com/lowrank/gromov-filling-lower-bound/blob/main/verification/current-manuscript.json
+- Source: https://github.com/lowrank/gromov-filling-lower-bound/tree/main/GromovFilling
+
+Run scripts/verify.sh on an approved build host. Full Lean builds belong in
+GitHub CI, not on Dell or Greenwood. Preserve manuscript claim boundaries,
+dependency pins, and exact source receipts. Historical ledgers are labeled.

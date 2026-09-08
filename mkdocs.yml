@@ -1,8 +1,8 @@
 site_name: Fourier bounds for Gromov's filling-area problem
 site_description: Lean-verified Fourier, topology, and certificate arguments for Gromov's filling-area problem.
-site_url: https://lowrank.github.io/conj-gromov-filling/
-repo_url: https://github.com/lowrank/conj-gromov-filling
-repo_name: lowrank/conj-gromov-filling
+site_url: https://lowrank.github.io/gromov-filling-lower-bound/
+repo_url: https://github.com/lowrank/gromov-filling-lower-bound
+repo_name: lowrank/gromov-filling-lower-bound
 edit_uri: edit/main/docs/
 
 theme:
@@ -40,6 +40,7 @@ nav:
   - Home: index.md
   - Mathematics: mathematics.md
   - Formalization: formalization.md
+  - Current manuscript: current-manuscript.md
   - Revised Section 4: section4.md
   - Lean modules: modules.md
   - Verify: verification.md
@@ -70,7 +71,7 @@ extra_css:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/lowrank/conj-gromov-filling
+      link: https://github.com/lowrank/gromov-filling-lower-bound
       name: Repository on GitHub
 
 copyright: Copyright 2026 Yimin Zhong and contributors. MIT License.

@@ -1,0 +1,401 @@
+{
+  "schema": "gromov-current-manuscript-ledger-v1",
+  "manuscript": {
+    "file": "main2.tex",
+    "statement_source_commit": "85c9eb955a7ae04c8d799def3ac8e68fa70028e9",
+    "statement_source_sha256": "d6ec5c17e00be87d174cd730e2dd84b6c65881b3f36d4ab99abd0fb0dd556249",
+    "formalization_note_commit": "3c37718a4bd21de0e283fda7ebf39ce81e42e8a0",
+    "note_source_sha256": "b136a76c08e6688cfca66d87ded6cd0de13f37314e296832759c615e3af0725b",
+    "all_numbered_statements_unchanged": true
+  },
+  "statements": [
+    {
+      "kind": "theorem",
+      "number": "1.1",
+      "page": 1,
+      "label": "thm:main",
+      "source_line_start": 76,
+      "source_line_end": 83,
+      "statement_tex": "\\begin{theorem}\\label{thm:main}\nEvery compact, connected Riemannian isometric filling \\(M\\) of a circle of length \\(2\\pi\\), orientable or not, satisfies\n\\begin{equation}\\label{eq 1.2}\n\\operatorname{Area}(M)\\ge \\frac{14\\zeta(3)}{\\pi}\n\\approx 5.35677,\n\\end{equation}\nwhere \\(\\zeta\\) denotes the Riemann zeta function.    \n\\end{theorem}",
+      "status": "verified"
+    },
+    {
+      "kind": "theorem",
+      "number": "1.2",
+      "page": 2,
+      "label": "thm:main orientable",
+      "source_line_start": 86,
+      "source_line_end": 91,
+      "statement_tex": "\\begin{theorem}\\label{thm:main orientable}\nEvery compact, connected orientable Riemannian isometric filling \\(M\\) of a circle of length \\(2\\pi\\) satisfies\n\\[\n\\operatorname{Area}(M)>5.40154.\n\\]   \n\\end{theorem}",
+      "status": "verified"
+    },
+    {
+      "kind": "lemma",
+      "number": "2.1",
+      "page": 4,
+      "label": "lemma 2.2",
+      "source_line_start": 161,
+      "source_line_end": 165,
+      "statement_tex": "\\begin{lemma}\\label{lemma 2.2}\nFor every fixed $\\theta\\in\\T$,\n$$|\\nabla u_\\theta(x)|=1$$\nat every point $x\\in M^\\circ$ at which $u_\\theta$ is differentiable. Consequently, this identity holds for almost every $(x,\\theta)\\in M^\\circ\\times\\T$.\n\\end{lemma}",
+      "status": "partially verified"
+    },
+    {
+      "kind": "lemma",
+      "number": "2.2",
+      "page": 5,
+      "label": "lem:boundary-fourier",
+      "source_line_start": 202,
+      "source_line_end": 206,
+      "statement_tex": "\\begin{lemma}\\label{lem:boundary-fourier}\nFor every positive odd integer $n$,\n$$z_n(\\gamma(s))=-\\rho_ne^{ins},$$\nwhere $\\rho_n:=\\frac4{\\pi n^2}$. \n\\end{lemma}",
+      "status": "verified"
+    },
+    {
+      "kind": "lemma",
+      "number": "2.3",
+      "page": 5,
+      "label": "lemma 2.4",
+      "source_line_start": 231,
+      "source_line_end": 238,
+      "statement_tex": "\\begin{lemma}\\label{lemma 2.4}\nThere exists a set $E\\subset M^\\circ$ of full measure such that all the functions $A_n$ and $B_n$, $n\\geq1$, are differentiable at every $x\\in E$ and, for every $v\\in T_xM$,\n$$dA_n(x)(v)=\\frac1\\pi\\int_0^{2\\pi} d a_\\theta(x)(v)\\cos(n\\theta)\\,d\\theta,$$\nand\n$$dB_n(x)(v)=\\frac1\\pi\\int_0^{2\\pi} d a_\\theta(x)(v)\\sin(n\\theta)\\,d\\theta.\n$$\nMoreover, $E$ may be chosen so that \\eqref{eq 2.5} holds for almost every $\\theta$ at every $x\\in E$.\n\\end{lemma}",
+      "status": "partially verified"
+    },
+    {
+      "kind": "proposition",
+      "number": "2.4",
+      "page": 6,
+      "label": "prop 2.5",
+      "source_line_start": 266,
+      "source_line_end": 276,
+      "statement_tex": "\\begin{proposition}\\label{prop 2.5}\nLet $m_1,\\ldots,m_N$ be distinct positive odd integers, and let $U=(u_{jk})\\in O(N)$. Define\n$$G_j:=\\sum_{k=1}^N u_{jk}F_{m_k},\\qquad 1\\leq j\\leq N.$$\nThen\n\\begin{equation}\\label{eq:jacobian-bound}\n\\sum_{j=1}^N J_2G_j(x)\\leq1\n\\end{equation}\nfor almost every $x\\in M^\\circ$. \nHere $J_2G_j$ denotes the two-dimensional\nJacobian.\n\\end{proposition}",
+      "status": "partially verified"
+    },
+    {
+      "kind": "lemma",
+      "number": "3.1",
+      "page": 8,
+      "label": "lemma 3.1",
+      "source_line_start": 327,
+      "source_line_end": 345,
+      "statement_tex": "\\begin{lemma}\\label{lemma 3.1}\nThe first row of $U_N$ is given by\n$$ u_{11}=\\prod_{\\ell=2}^N c_\\ell,\n\\qquad\nu_{1k}=-s_k\\prod_{\\ell=2}^{k-1}c_\\ell\n\\quad (2\\leq k\\leq N).\n$$\nFor $2\\leq j\\leq N$, we have\n$$u_{j1}=s_j\\prod_{\\ell=j+1}^N c_\\ell,\n\\qquad\nu_{jk}=\n\\begin{cases}\n0,&2\\leq k<j,\\\\\nc_j,&k=j,\\\\\n-s_js_k\\displaystyle\\prod_{\\ell=j+1}^{k-1}c_\\ell,\n&j<k\\leq N.\n\\end{cases}\n$$\n\\end{lemma}",
+      "status": "verified"
+    },
+    {
+      "kind": "lemma",
+      "number": "3.2",
+      "page": 8,
+      "label": "lemma 3.2",
+      "source_line_start": 355,
+      "source_line_end": 358,
+      "statement_tex": "\\begin{lemma}\\label{lemma 3.2}\nEvery row of $U_N$ satisfies\n$$|u_{j1}|>\\sum_{k=2}^N\\frac{|u_{jk}|}{m_k},\\qquad 1\\leq j\\leq N.$$\n\\end{lemma}",
+      "status": "verified"
+    },
+    {
+      "kind": "lemma",
+      "number": "3.3",
+      "page": 9,
+      "label": "lemma 3.3",
+      "source_line_start": 394,
+      "source_line_end": 402,
+      "statement_tex": "\\begin{lemma}\\label{lemma 3.3}\nLet $m_1,\\ldots,m_N$ be positive integers such that $1=m_1<m_2<\\cdots<m_N,$\nand let $a_1,\\ldots,a_N\\in\\C$. Suppose that\n$$ |a_1|>\\sum_{k=2}^Nm_k|a_k|.$$\nThen the map\n$$ z:\\T\\longrightarrow\\C, \\qquad z(s)=\\sum_{k=1}^Na_ke^{im_ks}, $$\nis a smooth embedding with winding number $1$ about the origin. If $\\Omega_z$ is the bounded component of $\\C\\setminus z(\\T)$, then\n$$ |\\Omega_z|=\\pi\\sum_{k=1}^Nm_k|a_k|^2.$$\n\\end{lemma}",
+      "status": "verified"
+    },
+    {
+      "kind": "lemma",
+      "number": "3.4",
+      "page": 10,
+      "label": "lemma 3.4",
+      "source_line_start": 423,
+      "source_line_end": 428,
+      "statement_tex": "\\begin{lemma}\\label{lemma 3.4}\nLet $M$ be a compact connected surface with exactly one boundary component, and let $G:M\\to\\R^2$ be continuous. Suppose that $G|_{\\partial M}$ is an embedding, and let $\\Omega$ be the bounded component of $\\R^2\\setminus G(\\partial M)$. Then\n$$\\Omega\\subset G(M).$$\nIf $M$ is Riemannian and $G$ is Lipschitz, then\n$$ \\int_MJ_2G\\,dA\\geq|\\Omega|. $$\n\\end{lemma}",
+      "status": "verified"
+    },
+    {
+      "kind": "proposition",
+      "number": "3.5",
+      "page": 11,
+      "label": "prop:finite-universal-bound",
+      "source_line_start": 461,
+      "source_line_end": 464,
+      "statement_tex": "\\begin{proposition}\\label{prop:finite-universal-bound}\nLet $M$ be a compact connected Riemannian isometric filling of the circle of length $2\\pi$. Then, for every $N\\geq1$,\n$$\\operatorname{Area}(M) \\geq \\frac{16}{\\pi}\\sum_{k=1}^N\\frac1{(2k-1)^3}.$$\n\\end{proposition}",
+      "status": "verified"
+    },
+    {
+      "kind": "theorem",
+      "number": "4.1",
+      "page": 12,
+      "label": "thm:nonlinear-formula",
+      "source_line_start": 520,
+      "source_line_end": 531,
+      "statement_tex": "\\begin{theorem}\\label{thm:nonlinear-formula}\nLet $M$ be a compact connected orientable Riemannian isometric filling of $\\T$. For every $0\\leq\\lambda<\\pi^2/32$, we have\n\\begin{equation}\\label{eq:nonlinear-master}\n\\operatorname{Area}(M)\\geq\n\\frac{C_0+b\\lambda+d\\lambda^2}\n{1+\\lambda^2\\left[\nQ_*+\\dfrac{C_*^2}{4(1-D_*\\lambda)}\n\\right]}.\n\\end{equation}\nIn particular,\n$$\\operatorname{Area}(M)>5.40154.$$\n\\end{theorem}",
+      "status": "verified"
+    },
+    {
+      "kind": "lemma",
+      "number": "4.2",
+      "page": 13,
+      "label": "lem:orientable-fourier-bounds",
+      "source_line_start": 543,
+      "source_line_end": 565,
+      "statement_tex": "\\begin{lemma}\\label{lem:orientable-fourier-bounds}\nThe map $\\Phi$ is Lipschitz and differentiable almost everywhere. At almost every $x\\in M^\\circ$, for every orthonormal basis $(e_1,e_2)$ of $T_xM$, we have\n\\begin{equation}\\label{eq:orientable-fourier-energy}\n\\|d\\Phi(e_1)\\|_H^2+\\|d\\Phi(e_2)\\|_H^2\n=\\frac1\\pi\\int_0^{2\\pi}|\\nabla a_\\theta|^2\\,d\\theta\n\\leq2.\n\\end{equation}\nMoreover, writing\n$$r=|z_1(x)|,\n\\qquad\nY^2=\\sum_{n\\in\\mathcal O}|z_{n+2}(x)|^2,\n\\qquad\nZ^2=\\sum_{\\substack{m\\in\\mathcal O\\\\m\\geq5}}|z_m(x)|^2,\n$$\nwe have, at every $x\\in M$,\n\\begin{equation}\\label{eq:orientable-coordinate-bounds}\nr\\leq\\frac4\\pi,\n\\qquad\nr^2+9Y^2\\leq2,\n\\qquad\nr^2+25Z^2\\leq2.\n\\end{equation}\n\\end{lemma}",
+      "status": "partially verified"
+    },
+    {
+      "kind": "proposition",
+      "number": "4.3",
+      "page": 14,
+      "label": "prop:nonlinear-boundary-action",
+      "source_line_start": 641,
+      "source_line_end": 651,
+      "statement_tex": "\\begin{proposition}\\label{prop:nonlinear-boundary-action}\nFor every $\\lambda\\geq0$, we have\n\\begin{equation}\\label{eq:nonlinear-boundary-action}\n\\int_M\\Omega_\\lambda\n=B(\\lambda)\n:=\\pi\\sum_{n\\in\\mathcal O}\nn\\left(\\rho_n+\\lambda\\rho_1^2\\rho_{n+2}\\right)^2\n=C_0+b\\lambda+d\\lambda^2.\n\\end{equation}\nIn particular, $b>0$.\n\\end{proposition}",
+      "status": "partially verified"
+    },
+    {
+      "kind": "lemma",
+      "number": "4.4",
+      "page": 16,
+      "label": "lem:nonlinear-first-variation",
+      "source_line_start": 725,
+      "source_line_end": 735,
+      "statement_tex": "\\begin{lemma}\\label{lem:nonlinear-first-variation}\nWriting $a=z_1$ and $y_n=z_{n+2}$, we have\n\\begin{equation}\\label{eq:nonlinear-first-variation}\n\\begin{aligned}\nL={}&2\\operatorname{Re}\\left[a^2\\sum_{n\\in\\mathcal O}\\left(\\overline{c_n}c_{n+2}-c_{-n}\\overline{c_{-(n+2)}}\\right)\\right]\\\\\n&+4\\operatorname{Re}\\left[a\\sum_{n\\in\\mathcal O}\\overline{y_n}\n\\left(c_{-1}\\overline{c_n}-\\overline{c_1}c_{-n}\\right)\\right].\n\\end{aligned}\n\\end{equation}\nIn particular, $L=0$ whenever $|\\Omega_0|=1$.\n\\end{lemma}",
+      "status": "partially verified"
+    },
+    {
+      "kind": "proposition",
+      "number": "4.5",
+      "page": 17,
+      "label": "prop:nonlinear-linear-estimate",
+      "source_line_start": 770,
+      "source_line_end": 777,
+      "statement_tex": "\\begin{proposition}\\label{prop:nonlinear-linear-estimate}\nAt every common differentiability point and for every ordered orthonormal basis, set\n$$\\delta=1-|\\Omega_0|.$$\nThen\n\\begin{equation}\\label{eq:nonlinear-linear-estimate}\n|L|\\leq C_*\\sqrt\\delta+D_*\\delta.\n\\end{equation}\n\\end{proposition}",
+      "status": "partially verified"
+    },
+    {
+      "kind": "lemma",
+      "number": "4.6",
+      "page": 19,
+      "label": "lem:nonlinear-quadratic-estimate",
+      "source_line_start": 841,
+      "source_line_end": 844,
+      "statement_tex": "\\begin{lemma}\\label{lem:nonlinear-quadratic-estimate}\nAt every common differentiability point and for every ordered orthonormal basis, we have\n$$ |Q|\\leq Q_*.$$\n\\end{lemma}",
+      "status": "partially verified"
+    },
+    {
+      "kind": "proposition",
+      "number": "4.7",
+      "page": 19,
+      "label": "prop:nonlinear-comass",
+      "source_line_start": 866,
+      "source_line_end": 871,
+      "statement_tex": "\\begin{proposition}\\label{prop:nonlinear-comass}\nFor $0\\leq\\lambda<\\pi^2/32$, we have\n\\begin{equation}\\label{eq:nonlinear-comass}\n\\|\\Omega_\\lambda\\|_{\\mathrm{comass}}\\leq C(\\lambda):=1+\\lambda^2\\left[Q_*+\\frac{C_*^2}{4(1-D_*\\lambda)}\\right].\n\\end{equation}\n\\end{proposition}",
+      "status": "partially verified"
+    }
+  ],
+  "numbered_equations": [
+    {
+      "label": "eq 1.1",
+      "number": "1.1",
+      "page": 1,
+      "source_line_start": 64,
+      "equation_tex": "\\begin{equation}\\label{eq 1.1}\n    d_M(\\gamma(s),\\gamma(t))=d_{\\T}(s,t) \\qquad \\text{for all }s,t\\in\\T,\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq 1.2",
+      "number": "1.2",
+      "page": 1,
+      "source_line_start": 78,
+      "equation_tex": "\\begin{equation}\\label{eq 1.2}\n\\operatorname{Area}(M)\\ge \\frac{14\\zeta(3)}{\\pi}\n\\approx 5.35677,\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq 2.1",
+      "number": "2.1",
+      "page": 3,
+      "source_line_start": 137,
+      "equation_tex": "\\begin{equation}\\label{eq 2.1}\n    |u_\\theta(x)-u_\\varphi(y)|\n\\le d_M(x,y)+d_{\\T}(\\theta,\\varphi)\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq 2.5",
+      "number": "2.2",
+      "page": 4,
+      "source_line_start": 179,
+      "equation_tex": "\\begin{equation}\\label{eq 2.5}\n|\\nabla a_\\theta|^2+|\\nabla\\sigma_\\theta|^2\n=\\frac12\\left(\n|\\nabla u_\\theta|^2+|\\nabla u_{\\theta+\\pi}|^2\n\\right)\n=1\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:jacobian-bound",
+      "number": "2.3",
+      "page": 6,
+      "source_line_start": 270,
+      "equation_tex": "\\begin{equation}\\label{eq:jacobian-bound}\n\\sum_{j=1}^N J_2G_j(x)\\leq1\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:nonlinear-constants",
+      "number": "4.1",
+      "page": 12,
+      "source_line_start": 501,
+      "equation_tex": "\\begin{equation}\\label{eq:nonlinear-constants}\n\\begin{gathered}\nC_0=\\frac{14\\zeta(3)}{\\pi},\\qquad\nb=\\frac{512}{\\pi^3}\\left(\\frac34-\\frac{\\pi^2}{16}\\right),\\\\\nd=\\frac{4096}{\\pi^5}\\left(\n\\frac78\\zeta(3)+1-\\frac{\\pi^4}{48}\\right),\\\\\nC_*=\\sqrt2\\left[\n\\frac{16}{\\pi^2}\n+\\frac8{5\\pi}\\sqrt{2-\\frac{16}{\\pi^2}}\n\\right],\\\\\nD_*=\\frac{32}{\\pi^2},\n\\qquad\nQ_*=\\frac{1280}{9\\pi^4}+\\frac{128}{9\\pi^2}.\n\\end{gathered}\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:nonlinear-master",
+      "number": "4.2",
+      "page": 12,
+      "source_line_start": 522,
+      "equation_tex": "\\begin{equation}\\label{eq:nonlinear-master}\n\\operatorname{Area}(M)\\geq\n\\frac{C_0+b\\lambda+d\\lambda^2}\n{1+\\lambda^2\\left[\nQ_*+\\dfrac{C_*^2}{4(1-D_*\\lambda)}\n\\right]}.\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:orientable-fourier-energy",
+      "number": "4.3",
+      "page": 13,
+      "source_line_start": 545,
+      "equation_tex": "\\begin{equation}\\label{eq:orientable-fourier-energy}\n\\|d\\Phi(e_1)\\|_H^2+\\|d\\Phi(e_2)\\|_H^2\n=\\frac1\\pi\\int_0^{2\\pi}|\\nabla a_\\theta|^2\\,d\\theta\n\\leq2.\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:orientable-coordinate-bounds",
+      "number": "4.4",
+      "page": 13,
+      "source_line_start": 558,
+      "equation_tex": "\\begin{equation}\\label{eq:orientable-coordinate-bounds}\nr\\leq\\frac4\\pi,\n\\qquad\nr^2+9Y^2\\leq2,\n\\qquad\nr^2+25Z^2\\leq2.\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:cubic-fourier-perturbation",
+      "number": "4.5",
+      "page": 14,
+      "source_line_start": 614,
+      "equation_tex": "\\begin{equation}\\label{eq:cubic-fourier-perturbation}\nh(z)=\\overline{z_1}^{\\,2}Sz,\n\\qquad\nG_\\lambda(z)=z+\\lambda h(z),\n\\qquad\n\\Psi_\\lambda=G_\\lambda\\circ\\Phi.\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:cubic-fourier-derivative",
+      "number": "4.6",
+      "page": 14,
+      "source_line_start": 622,
+      "equation_tex": "\\begin{equation}\\label{eq:cubic-fourier-derivative}\nDh_z(v)=2\\overline{z_1}\\,\\overline{v_1}\\,Sz\n+\\overline{z_1}^{\\,2}Sv.\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:cubic-fourier-boundary",
+      "number": "4.7",
+      "page": 14,
+      "source_line_start": 633,
+      "equation_tex": "\\begin{equation}\\label{eq:cubic-fourier-boundary}\n(\\Psi_\\lambda)_n(\\gamma(s))\n=-\\left(\\rho_n+\\lambda\\rho_1^2\\rho_{n+2}\\right)e^{ins}.\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:nonlinear-boundary-action",
+      "number": "4.8",
+      "page": 14,
+      "source_line_start": 643,
+      "equation_tex": "\\begin{equation}\\label{eq:nonlinear-boundary-action}\n\\int_M\\Omega_\\lambda\n=B(\\lambda)\n:=\\pi\\sum_{n\\in\\mathcal O}\nn\\left(\\rho_n+\\lambda\\rho_1^2\\rho_{n+2}\\right)^2\n=C_0+b\\lambda+d\\lambda^2.\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:tangent-fourier-energy",
+      "number": "4.9",
+      "page": 16,
+      "source_line_start": 700,
+      "equation_tex": "\\begin{equation}\\label{eq:tangent-fourier-energy}\n\\sum_{k\\in2\\Z+1}|c_k|^2=\\frac1{2\\pi}\\int_0^{2\\pi}|W(\\theta)|^2\\,d\\theta \\leq1.\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:tangent-complex-coordinates",
+      "number": "4.10",
+      "page": 16,
+      "source_line_start": 706,
+      "equation_tex": "\\begin{equation}\\label{eq:tangent-complex-coordinates}\np_n=c_{-n}+\\overline{c_n},\n\\qquad\nq_n=i\\left(\\overline{c_n}-c_{-n}\\right).\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:unperturbed-density",
+      "number": "4.11",
+      "page": 16,
+      "source_line_start": 712,
+      "equation_tex": "\\begin{equation}\\label{eq:unperturbed-density}\n\\Omega_0(e_1,e_2)=\\sum_{n\\in\\mathcal O}\\left(|c_n|^2-|c_{-n}|^2\\right).\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:nonlinear-form-expansion",
+      "number": "4.12",
+      "page": 16,
+      "source_line_start": 718,
+      "equation_tex": "\\begin{equation}\\label{eq:nonlinear-form-expansion}\n\\Omega_\\lambda=\\Omega_0+\\lambda L+\\lambda^2Q.\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:nonlinear-first-variation",
+      "number": "4.13",
+      "page": 16,
+      "source_line_start": 727,
+      "equation_tex": "\\begin{equation}\\label{eq:nonlinear-first-variation}\n\\begin{aligned}\nL={}&2\\operatorname{Re}\\left[a^2\\sum_{n\\in\\mathcal O}\\left(\\overline{c_n}c_{n+2}-c_{-n}\\overline{c_{-(n+2)}}\\right)\\right]\\\\\n&+4\\operatorname{Re}\\left[a\\sum_{n\\in\\mathcal O}\\overline{y_n}\n\\left(c_{-1}\\overline{c_n}-\\overline{c_1}c_{-n}\\right)\\right].\n\\end{aligned}\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:nonlinear-linear-estimate",
+      "number": "4.14",
+      "page": 17,
+      "source_line_start": 774,
+      "equation_tex": "\\begin{equation}\\label{eq:nonlinear-linear-estimate}\n|L|\\leq C_*\\sqrt\\delta+D_*\\delta.\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:nonlinear-autocorrelation-bound",
+      "number": "4.15",
+      "page": 18,
+      "source_line_start": 796,
+      "equation_tex": "\\begin{equation}\\label{eq:nonlinear-autocorrelation-bound}\n\\begin{aligned}\n|A-B| &\\leq|A+B+X|+2|B|+|X|\\\\\n&\\leq\\delta+\\sqrt N\n\\leq\\delta+\\sqrt{\\frac\\delta2}.\n\\end{aligned}\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:nonlinear-cancellation-bound",
+      "number": "4.16",
+      "page": 18,
+      "source_line_start": 817,
+      "equation_tex": "\\begin{equation}\\label{eq:nonlinear-cancellation-bound}\n\\begin{aligned}\n\\left|\\sum_{n\\in\\mathcal O}\\overline{y_n}v_n \\right|\n&\\leq Z\\sqrt{PN}\\\\\n&\\leq\\frac Z2\\sqrt{\\delta(2-\\delta)} \\leq Z\\sqrt{\\frac\\delta2}.\n\\end{aligned}\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    },
+    {
+      "label": "eq:nonlinear-comass",
+      "number": "4.17",
+      "page": 19,
+      "source_line_start": 868,
+      "equation_tex": "\\begin{equation}\\label{eq:nonlinear-comass}\n\\|\\Omega_\\lambda\\|_{\\mathrm{comass}}\\leq C(\\lambda):=1+\\lambda^2\\left[Q_*+\\frac{C_*^2}{4(1-D_*\\lambda)}\\right].\n\\end{equation}",
+      "scope": "primitive definition, or finite/Fourier core; broader analytical scope follows the containing result in docs/current-manuscript.md"
+    }
+  ],
+  "headline_types": [
+    {
+      "manuscript_label": "thm:main",
+      "declaration": "GromovFilling.riemannian_universal_fourier_bound",
+      "file": "GromovFilling/RiemannianUniversalFourierBound.lean",
+      "source_sha256": "d16abd0a5b88ebc141afecd95ac5f1d6e1f4550b3938dfd49bff2961f6f4fa93",
+      "type_source": "theorem riemannian_universal_fourier_bound\n    (S : Type*) [PseudoMetricSpace S] [T2Space S]\n    [MeasurableSpace S] [BorelSpace S]\n    [ConnectedSpace S] [CompactSpace S]\n    [ChartedSpace (EuclideanHalfSpace 2) S]\n    [IsManifold (modelWithCornersEuclideanHalfSpace 2) 1 S]\n    [RiemannianBundle (fun x : S ↦\n      TangentSpace (modelWithCornersEuclideanHalfSpace 2) x)]\n    [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))\n      (fun x : S ↦\n        TangentSpace (modelWithCornersEuclideanHalfSpace 2) x)]\n    [IsRiemannianManifold (modelWithCornersEuclideanHalfSpace 2) S]\n    (boundary : UnitAddCircle → S)\n    (hboundary : IsometricCircleBoundary boundary)\n    (hboundaryRange : Set.range boundary =\n      (modelWithCornersEuclideanHalfSpace 2).boundary S) :\n    letI : Nonempty S := ⟨boundary 0⟩\n    letI : Nonempty (ControlledInteriorAtlas\n        (modelWithCornersEuclideanHalfSpace 2) S) :=\n      nonempty_controlledInteriorAtlas\n        (modelWithCornersEuclideanHalfSpace 2)\n        Complex.orthonormalBasisOneI.repr\n    ENNReal.ofReal universalConstant ≤\n      riemannianSurfaceAreaMeasure\n        (modelWithCornersEuclideanHalfSpace 2) (Set.univ : Set S)"
+    },
+    {
+      "manuscript_label": "thm:main orientable",
+      "declaration": "GromovFilling.riemannianSurfaceArea_gt_one_div_twenty_five_of_conventionally_oriented_isometric_filling",
+      "file": "GromovFilling/RiemannianSharpenedNonlinear.lean",
+      "source_sha256": "53a7e8698bd1207adb4c58c82a5551a24aa39e718ed6b9e8cbaf4ef878a2f59e",
+      "type_source": "theorem riemannianSurfaceArea_gt_one_div_twenty_five_of_conventionally_oriented_isometric_filling\n    {M : Type uM} [PseudoMetricSpace M] [T2Space M]\n    [MeasurableSpace M] [BorelSpace M]\n    [CompactSpace M] [ConnectedSpace M]\n    [ChartedSpace (EuclideanHalfSpace 2) M]\n    [IsManifold (modelWithCornersEuclideanHalfSpace 2) (⊤ : WithTop ℕ∞) M]\n    [RiemannianBundle (fun x : M ↦ TangentSpace\n      (modelWithCornersEuclideanHalfSpace 2) x)]\n    [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))\n      (fun x : M ↦ TangentSpace\n        (modelWithCornersEuclideanHalfSpace 2) x)]\n    [IsRiemannianManifold (modelWithCornersEuclideanHalfSpace 2) M]\n    (boundary : UnitAddCircle → M)\n    (hboundary : IsometricCircleBoundary boundary)\n    (hboundaryRange : Set.range boundary =\n      (modelWithCornersEuclideanHalfSpace 2).boundary M)\n    (O : RiemannianSurfaceOrientation\n      (modelWithCornersEuclideanHalfSpace 2) M) :\n    letI : Nonempty M := ⟨boundary 0⟩\n    letI : Nonempty (ControlledInteriorAtlas\n        (modelWithCornersEuclideanHalfSpace 2) M) :=\n      nonempty_controlledInteriorAtlas\n        (modelWithCornersEuclideanHalfSpace 2)\n        Complex.orthonormalBasisOneI.repr\n    ENNReal.ofReal (540154 / 100000 : ℝ) <\n      riemannianSurfaceAreaMeasure\n        (modelWithCornersEuclideanHalfSpace 2) (Set.univ : Set M)"
+    },
+    {
+      "manuscript_label": "thm:nonlinear-formula",
+      "declaration": "GromovFilling.riemannianSharpenedNonlinearCertificate_le_surfaceArea_of_conventionally_oriented_isometric_filling",
+      "file": "GromovFilling/RiemannianSharpenedNonlinear.lean",
+      "source_sha256": "53a7e8698bd1207adb4c58c82a5551a24aa39e718ed6b9e8cbaf4ef878a2f59e",
+      "type_source": "theorem riemannianSharpenedNonlinearCertificate_le_surfaceArea_of_conventionally_oriented_isometric_filling\n    {M : Type uM} [PseudoMetricSpace M] [T2Space M]\n    [MeasurableSpace M] [BorelSpace M]\n    [CompactSpace M] [ConnectedSpace M]\n    [ChartedSpace (EuclideanHalfSpace 2) M]\n    [IsManifold (modelWithCornersEuclideanHalfSpace 2) (⊤ : WithTop ℕ∞) M]\n    [RiemannianBundle (fun x : M ↦ TangentSpace\n      (modelWithCornersEuclideanHalfSpace 2) x)]\n    [IsContinuousRiemannianBundle (EuclideanSpace ℝ (Fin 2))\n      (fun x : M ↦ TangentSpace\n        (modelWithCornersEuclideanHalfSpace 2) x)]\n    [IsRiemannianManifold (modelWithCornersEuclideanHalfSpace 2) M]\n    (boundary : UnitAddCircle → M)\n    (hboundary : IsometricCircleBoundary boundary)\n    (hboundaryRange : Set.range boundary =\n      (modelWithCornersEuclideanHalfSpace 2).boundary M)\n    (O : RiemannianSurfaceOrientation\n      (modelWithCornersEuclideanHalfSpace 2) M)\n    (lam : ℝ) (hlam0 : 0 ≤ lam) (hlam : lam < Real.pi ^ 2 / 32) :\n    letI : Nonempty M := ⟨boundary 0⟩\n    letI : Nonempty (ControlledInteriorAtlas\n        (modelWithCornersEuclideanHalfSpace 2) M) :=\n      nonempty_controlledInteriorAtlas\n        (modelWithCornersEuclideanHalfSpace 2)\n        Complex.orthonormalBasisOneI.repr\n    ENNReal.ofReal (sharpenedNonlinearCertificate lam) ≤\n      riemannianSurfaceAreaMeasure\n        (modelWithCornersEuclideanHalfSpace 2) (Set.univ : Set M)"
+    }
+  ],
+  "review_scope": "statement inventory and explicit hypothesis comparison; independence from the previous implementation is not asserted",
+  "numerical_specialization": {
+    "parameter": "1/25",
+    "proved_strict_lower": "5.401544",
+    "unverified_upper": "5.401545",
+    "headline_strict_lower": "5.40154"
+  }
+}
