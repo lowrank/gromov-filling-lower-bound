@@ -1,3 +1,8 @@
+/-
+SPDX-License-Identifier: Apache-2.0
+Module enumeration is adapted from leanprover-community/axiom-audit at
+46024e005996495c65ef609368e11ab39c4222e3. See LICENSE.axiom-audit.
+-/
 import AxiomAudit
 
 /-!

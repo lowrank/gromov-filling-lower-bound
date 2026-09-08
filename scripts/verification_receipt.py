@@ -38,7 +38,8 @@ def digest(path):
 
 
 def source_files(root):
-    files = {"GromovFilling.lean", "lakefile.lean", "lake-manifest.json", "lean-toolchain"}
+    files = {"GromovFilling.lean", "lakefile.lean", "lake-manifest.json", "lean-toolchain",
+             "scripts/LICENSE.axiom-audit"}
     for directory in PROOF_DIRS:
         require((root / directory).is_dir(), f"missing source directory: {directory}")
         files.update(str(p.relative_to(root)) for p in (root / directory).rglob("*.lean"))
