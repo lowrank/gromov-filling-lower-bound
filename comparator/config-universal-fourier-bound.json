@@ -1,0 +1,8 @@
+{
+  "challenge_module": "Audit.UniversalFourierBound.Challenge",
+  "solution_module": "Audit.UniversalFourierBound.Solution",
+  "theorem_names": ["GromovFillingAudit.UniversalFourierBound.riemannian_universal_fourier_bound"],
+  "definition_names": [],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+  "enable_nanoda": true
+}

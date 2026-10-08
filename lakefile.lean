@@ -19,3 +19,8 @@ lean_lib ClassificationOfSurfaces
 
 @[default_target]
 lean_lib GromovFilling
+
+-- Comparator audit (see Audit/README.md): Mathlib-only challenges and their
+-- solutions for lean-pkg's comparator tier. Not a default target.
+lean_lib Audit where
+  globs := #[.submodules `Audit]
