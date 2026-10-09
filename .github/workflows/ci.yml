@@ -83,6 +83,12 @@ jobs:
           use-github-cache: false
           axiom-audit: false
 
+      # The comparator audit (Audit/, see Audit/README.md) is not a default
+      # target; build it so the Defs, Challenge and Solution modules stay green.
+      - name: Build comparator audit
+        if: github.event_name != 'workflow_dispatch' || inputs.target == 'GromovFilling'
+        run: lake build Audit
+
       - name: Audit complete environment and verify source receipt
         if: github.event_name != 'workflow_dispatch' || inputs.target == 'GromovFilling'
         run: ./scripts/audit_axioms.sh
