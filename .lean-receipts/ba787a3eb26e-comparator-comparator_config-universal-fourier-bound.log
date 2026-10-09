@@ -1,0 +1,1051 @@
+Building Audit.UniversalFourierBound.Challenge
+⚠ [2719/2719] Replayed Audit.UniversalFourierBound.Challenge
+warning: Audit/UniversalFourierBound/Challenge.lean:39:8: declaration uses `sorry`
+Build completed successfully (2719 jobs).
+Exporting #[Nat, String, String.mk, Char, Quot, Quot.mk, Quot.lift, Quot.ind, GromovFillingAudit.UniversalFourierBound.riemannian_universal_fourier_bound, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight, String.ofList, Char.ofNat, List, eagerReduce] from Audit.UniversalFourierBound.Challenge
+Building Audit.UniversalFourierBound.Solution
+⚠ [2774/2884] Replayed GromovFilling.EuclideanAreaFormula
+warning: GromovFilling/EuclideanAreaFormula.lean:145:6: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/EuclideanAreaFormula.lean:171:6: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+⚠ [2920/3145] Replayed GromovFilling.FinePolygonalModel
+warning: GromovFilling/FinePolygonalModel.lean:1535:8: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:3567:57: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:3578:57: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:3763:8: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:4713:8: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:4765:10: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:4825:6: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:4843:6: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:4975:4: Try `simp at hEq` instead of `simpa using hEq`
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:5033:2: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:5266:8: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:5268:8: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:5306:10: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:5308:10: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:5311:10: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:5313:10: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:5657:25: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:5661:25: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:5677:93: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:5690:8: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:5786:6: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:6059:8: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6062:8: unused variable `hedgeToX`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6063:8: unused variable `hedgeStart`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6065:8: unused variable `hedgeFinish`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6108:8: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6111:8: unused variable `hedgeToX`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6112:8: unused variable `hedgeStart`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6114:8: unused variable `hedgeFinish`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6147:8: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6150:8: unused variable `hedgeToX`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6151:8: unused variable `hedgeStart`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6153:8: unused variable `hedgeFinish`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6186:8: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6189:8: unused variable `hedgeToX`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6190:8: unused variable `hedgeStart`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6192:8: unused variable `hedgeFinish`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6241:8: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6244:8: unused variable `hedgeToX`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6245:8: unused variable `hedgeStart`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6247:8: unused variable `hedgeFinish`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6673:4: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:6682:8: unused variable `P`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6683:8: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6774:45: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:6775:8: unused variable `hedgeFaceCount`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:7167:10: This simp argument is unused:
+  squareCenterPolygonFaceEdges
+
+Hint: Omit it from the simp argument list.
+  simp [squareCenterPolygonFaceEdges̵,̵ ̵s̵q̵u̵a̵r̵e̵C̵e̵n̵t̵e̵r̵P̵o̵l̵y̵g̵o̵n̵F̵a̵c̵e̵E̵d̵g̵e̵] at hk
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/FinePolygonalModel.lean:7195:12: This simp argument is unused:
+  squareCenterPolygonFaceSize
+
+Hint: Omit it from the simp argument list.
+  simp [squareCenterPolygonFaceS̵i̵z̵e̵,̵ ̵s̵q̵u̵a̵r̵e̵C̵e̵n̵t̵e̵r̵P̵o̵l̵y̵g̵o̵n̵F̵a̵c̵e̵Edge] at ht
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/FinePolygonalModel.lean:7197:12: This simp argument is unused:
+  squareCenterPolygonFaceSize
+
+Hint: Omit it from the simp argument list.
+  simp [squareCenterPolygonFaceS̵i̵z̵e̵,̵ ̵s̵q̵u̵a̵r̵e̵C̵e̵n̵t̵e̵r̵P̵o̵l̵y̵g̵o̵n̵F̵a̵c̵e̵Edge] at ht
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/FinePolygonalModel.lean:7198:12: This simp argument is unused:
+  squareCenterPolygonFaceSize
+
+Hint: Omit it from the simp argument list.
+  simp [squareCenterPolygonFaceS̵i̵z̵e̵,̵ ̵s̵q̵u̵a̵r̵e̵C̵e̵n̵t̵e̵r̵P̵o̵l̵y̵g̵o̵n̵F̵a̵c̵e̵Edge] at ht
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/FinePolygonalModel.lean:7214:12: This simp argument is unused:
+  squareCenterPolygonFaceSize
+
+Hint: Omit it from the simp argument list.
+  simp [squareCenterPolygonFaceS̵i̵z̵e̵,̵ ̵s̵q̵u̵a̵r̵e̵C̵e̵n̵t̵e̵r̵P̵o̵l̵y̵g̵o̵n̵F̵a̵c̵e̵Edge] at ht
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/FinePolygonalModel.lean:7215:12: This simp argument is unused:
+  squareCenterPolygonFaceSize
+
+Hint: Omit it from the simp argument list.
+  simp [squareCenterPolygonFaceS̵i̵z̵e̵,̵ ̵s̵q̵u̵a̵r̵e̵C̵e̵n̵t̵e̵r̵P̵o̵l̵y̵g̵o̵n̵F̵a̵c̵e̵Edge] at ht
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/FinePolygonalModel.lean:7217:12: This simp argument is unused:
+  squareCenterPolygonFaceSize
+
+Hint: Omit it from the simp argument list.
+  simp [squareCenterPolygonFaceS̵i̵z̵e̵,̵ ̵s̵q̵u̵a̵r̵e̵C̵e̵n̵t̵e̵r̵P̵o̵l̵y̵g̵o̵n̵F̵a̵c̵e̵Edge] at ht
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/FinePolygonalModel.lean:7281:29: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:7450:91: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:7361:67: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:7463:8: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:8597:8: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/FinePolygonalModel.lean:8604:45: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/FinePolygonalModel.lean:8605:8: unused variable `hedgeFaceCount`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [2921/3145] Replayed GromovFilling.JacobianBudget
+warning: GromovFilling/JacobianBudget.lean:200:13: This simp argument is unused:
+  Finset.mem_univ
+
+Hint: Omit it from the simp argument list.
+  simp only [̵F̵i̵n̵s̵e̵t̵.̵m̵e̵m̵_̵u̵n̵i̵v̵,̵ ̵R̵e̵a̵l̵.̵n̵o̵r̵m̵_̵e̵q̵_̵a̵b̵s̵,̵[̲R̲e̲a̲l̲.̲n̲o̲r̲m̲_̲e̲q̲_̲a̲b̲s̲,̲ sq_abs, Finset.sum_const_zero, Fintype.sum_prod_type,
+  ̲  ̲ ̲ ̲Fin.sum_univ_two] at hb
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/JacobianBudget.lean:200:56: This simp argument is unused:
+  Finset.sum_const_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [Finset.mem_univ, Real.norm_eq_abs, sq_abs, F̵i̵n̵s̵e̵t̵.̵s̵u̵m̵_̵c̵o̵n̵s̵t̵_̵z̵e̵r̵o̵,̵Fintype.sum_prod_type,
+      Fin.sum_univ_two] at hb
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [2922/3145] Replayed GromovFilling.Givens
+warning: GromovFilling/Givens.lean:420:8: This simp argument is unused:
+  neg_smul
+
+Hint: Omit it from the simp argument list.
+  simp only [sub_eq_add_neg, mul_add, mul_neg, neg_add_rev, mul_assoc, n̵e̵g̵_̵s̵m̵u̵l̵,̵ ̵one_smul, neg_one_zsmul,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲neg_one_smul ℝ]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/Givens.lean:420:18: This simp argument is unused:
+  one_smul
+
+Hint: Omit it from the simp argument list.
+  simp only [sub_eq_add_neg, mul_add, mul_neg, neg_add_rev, mul_assoc, neg_smul, o̵n̵e̵_̵s̵m̵u̵l̵,̵ ̵neg_one_zsmul,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲neg_one_smul ℝ]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/Givens.lean:420:28: This simp argument is unused:
+  neg_one_zsmul
+
+Hint: Omit it from the simp argument list.
+  simp only [sub_eq_add_neg, mul_add, mul_neg, neg_add_rev, mul_assoc, neg_smul, one_smul,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲n̵e̵g̵_̵o̵n̵e̵_̵z̵s̵m̵u̵l̵,̵ ̵neg_one_smul ℝ]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/Givens.lean:420:43: This simp argument is unused:
+  neg_one_smul ℝ
+
+Hint: Omit it from the simp argument list.
+  simp only [sub_eq_add_neg, mul_add, mul_neg, neg_add_rev, mul_assoc, neg_smul, one_smul,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲n̵e̵g̵_̵o̵n̵e̵_̵z̵s̵m̵u̵l̵,̵ ̵n̵e̵g̵_̵o̵n̵e̵_̵s̵m̵u̵l̵ ̵ℝ̵]̵n̲e̲g̲_̲o̲n̲e̲_̲z̲s̲m̲u̲l̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/Givens.lean:688:24: This simp argument is unused:
+  hklval
+
+Hint: Omit it from the simp argument list.
+  simp [natBasis, h̵k̵l̵v̵a̵l̵,̵ ̵Ne.symm hklval, k.isLt, l.isLt]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [3134/3367] Replayed JordanCurveTheorem.SectionY_GridCells
+info: JordanCurveTheorem/SectionY_GridCells.lean:612:38: Try this:
+  [apply] simp only [point, WithLp.equiv_symm_apply, Fin.zero_eta, Fin.isValue, PiLp.add_apply, PiLp.smul_apply,
+    Matrix.cons_val_zero, smul_eq_mul]
+info: JordanCurveTheorem/SectionY_GridCells.lean:612:38: Try this:
+  [apply] simp only [point, WithLp.equiv_symm_apply, Fin.mk_one, Fin.isValue, PiLp.add_apply, PiLp.smul_apply,
+    Matrix.cons_val_one, Matrix.cons_val_fin_one, smul_eq_mul]
+info: JordanCurveTheorem/SectionY_GridCells.lean:616:38: Try this:
+  [apply] simp only [point, WithLp.equiv_symm_apply, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, one_smul,
+    sub_self, zero_smul, add_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:616:38: Try this:
+  [apply] simp only [point, WithLp.equiv_symm_apply, Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+    Matrix.cons_val_fin_one, one_smul, sub_self, zero_smul, add_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:622:40: Try this:
+  [apply] simp only [point, WithLp.equiv_symm_apply, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, PiLp.add_apply,
+    PiLp.smul_apply, smul_eq_mul]
+info: JordanCurveTheorem/SectionY_GridCells.lean:622:40: Try this:
+  [apply] simp only [point, WithLp.equiv_symm_apply, Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+    Matrix.cons_val_fin_one, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
+warning: JordanCurveTheorem/SectionY_GridCells.lean:606:36: This simp argument is unused:
+  Set.mem_setOf_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [mem_segment_iff_param,̵ ̵S̵e̵t̵.̵m̵e̵m̵_̵s̵e̵t̵O̵f̵_̵e̵q̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+info: JordanCurveTheorem/SectionY_GridCells.lean:637:34: Try this:
+  [apply] simp only [Fin.isValue, pointI, point, WithLp.equiv_symm_apply, Int.cast_add, Int.cast_one, PiLp.add_apply,
+    PiLp.smul_apply, Matrix.cons_val_zero, smul_eq_mul] at this
+info: JordanCurveTheorem/SectionY_GridCells.lean:639:34: Try this:
+  [apply] simp only [Fin.isValue, pointI, point, WithLp.equiv_symm_apply, Int.cast_add, Int.cast_one, PiLp.add_apply,
+    PiLp.smul_apply, Matrix.cons_val_one, Matrix.cons_val_fin_one, smul_eq_mul] at this
+info: JordanCurveTheorem/SectionY_GridCells.lean:641:61: Try this:
+  [apply] simp only [pointI, point, WithLp.equiv_symm_apply, zero_smul, sub_zero, Int.cast_add, Int.cast_one, one_smul,
+    zero_add, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:641:61: Try this:
+  [apply] simp only [pointI, point, WithLp.equiv_symm_apply, zero_smul, sub_zero, Int.cast_add, Int.cast_one, one_smul,
+    zero_add, Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_fin_one]
+info: JordanCurveTheorem/SectionY_GridCells.lean:644:48: Try this:
+  [apply] simp only [pointI, point, WithLp.equiv_symm_apply, one_smul, sub_self, Int.cast_add, Int.cast_one, zero_smul,
+    add_zero, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:644:48: Try this:
+  [apply] simp only [pointI, point, WithLp.equiv_symm_apply, one_smul, sub_self, Int.cast_add, Int.cast_one, zero_smul,
+    add_zero, Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_fin_one]
+info: JordanCurveTheorem/SectionY_GridCells.lean:653:31: Try this:
+  [apply] simp only [Fin.zero_eta, Fin.isValue, pointI, point, WithLp.equiv_symm_apply, Int.cast_add, Int.cast_one,
+    PiLp.add_apply, PiLp.smul_apply, Matrix.cons_val_zero, smul_eq_mul]
+info: JordanCurveTheorem/SectionY_GridCells.lean:653:31: Try this:
+  [apply] simp only [Fin.mk_one, Fin.isValue, pointI, point, WithLp.equiv_symm_apply, Int.cast_add, Int.cast_one,
+    PiLp.add_apply, PiLp.smul_apply, Matrix.cons_val_one, Matrix.cons_val_fin_one, smul_eq_mul]
+info: JordanCurveTheorem/SectionY_GridCells.lean:655:43: Try this:
+  [apply] simp only [pointI, point, WithLp.equiv_symm_apply, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, one_smul,
+    sub_self, Int.cast_add, Int.cast_one, zero_smul, add_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:655:43: Try this:
+  [apply] simp only [pointI, point, WithLp.equiv_symm_apply, Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+    Matrix.cons_val_fin_one, one_smul, sub_self, Int.cast_add, Int.cast_one, zero_smul, add_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:657:43: Try this:
+  [apply] simp only [pointI, point, Int.cast_add, Int.cast_one, WithLp.equiv_symm_apply, Fin.zero_eta, Fin.isValue,
+    Matrix.cons_val_zero, zero_smul, sub_zero, one_smul, zero_add]
+info: JordanCurveTheorem/SectionY_GridCells.lean:657:43: Try this:
+  [apply] simp only [pointI, point, Int.cast_add, Int.cast_one, WithLp.equiv_symm_apply, Fin.mk_one, Fin.isValue,
+    Matrix.cons_val_one, Matrix.cons_val_fin_one, zero_smul, sub_zero, one_smul, zero_add]
+info: JordanCurveTheorem/SectionY_GridCells.lean:672:34: Try this:
+  [apply] simp only [Fin.isValue, pointI, point, WithLp.equiv_symm_apply, Int.cast_add, Int.cast_one, PiLp.add_apply,
+    PiLp.smul_apply, Matrix.cons_val_zero, smul_eq_mul] at this
+info: JordanCurveTheorem/SectionY_GridCells.lean:674:34: Try this:
+  [apply] simp only [Fin.isValue, pointI, point, WithLp.equiv_symm_apply, Int.cast_add, Int.cast_one, PiLp.add_apply,
+    PiLp.smul_apply, Matrix.cons_val_one, Matrix.cons_val_fin_one, smul_eq_mul] at this
+info: JordanCurveTheorem/SectionY_GridCells.lean:676:61: Try this:
+  [apply] simp only [pointI, point, WithLp.equiv_symm_apply, zero_smul, sub_zero, Int.cast_add, Int.cast_one, one_smul,
+    zero_add, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:676:61: Try this:
+  [apply] simp only [pointI, point, WithLp.equiv_symm_apply, zero_smul, sub_zero, Int.cast_add, Int.cast_one, one_smul,
+    zero_add, Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_fin_one]
+info: JordanCurveTheorem/SectionY_GridCells.lean:679:48: Try this:
+  [apply] simp only [pointI, point, WithLp.equiv_symm_apply, one_smul, sub_self, Int.cast_add, Int.cast_one, zero_smul,
+    add_zero, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:679:48: Try this:
+  [apply] simp only [pointI, point, WithLp.equiv_symm_apply, one_smul, sub_self, Int.cast_add, Int.cast_one, zero_smul,
+    add_zero, Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_fin_one]
+info: JordanCurveTheorem/SectionY_GridCells.lean:688:31: Try this:
+  [apply] simp only [Fin.zero_eta, Fin.isValue, pointI, point, WithLp.equiv_symm_apply, Int.cast_add, Int.cast_one,
+    PiLp.add_apply, PiLp.smul_apply, Matrix.cons_val_zero, smul_eq_mul]
+info: JordanCurveTheorem/SectionY_GridCells.lean:688:31: Try this:
+  [apply] simp only [Fin.mk_one, Fin.isValue, pointI, point, WithLp.equiv_symm_apply, Int.cast_add, Int.cast_one,
+    PiLp.add_apply, PiLp.smul_apply, Matrix.cons_val_one, Matrix.cons_val_fin_one, smul_eq_mul]
+info: JordanCurveTheorem/SectionY_GridCells.lean:690:43: Try this:
+  [apply] simp only [pointI, point, WithLp.equiv_symm_apply, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, one_smul,
+    sub_self, Int.cast_add, Int.cast_one, zero_smul, add_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:690:43: Try this:
+  [apply] simp only [pointI, point, WithLp.equiv_symm_apply, Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+    Matrix.cons_val_fin_one, one_smul, sub_self, Int.cast_add, Int.cast_one, zero_smul, add_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:692:43: Try this:
+  [apply] simp only [pointI, point, Int.cast_add, Int.cast_one, WithLp.equiv_symm_apply, Fin.zero_eta, Fin.isValue,
+    Matrix.cons_val_zero, zero_smul, sub_zero, one_smul, zero_add]
+info: JordanCurveTheorem/SectionY_GridCells.lean:692:43: Try this:
+  [apply] simp only [pointI, point, Int.cast_add, Int.cast_one, WithLp.equiv_symm_apply, Fin.mk_one, Fin.isValue,
+    Matrix.cons_val_one, Matrix.cons_val_fin_one, zero_smul, sub_zero, one_smul, zero_add]
+info: JordanCurveTheorem/SectionY_GridCells.lean:727:12: Try this:
+  [apply] simp only [Fin.zero_eta, Fin.isValue, pointI, point, Int.cast_add, Int.cast_one, WithLp.equiv_symm_apply,
+    Matrix.cons_val_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:728:12: Try this:
+  [apply] simp only [Fin.mk_one, Fin.isValue, pointI, point, Int.cast_add, Int.cast_one, WithLp.equiv_symm_apply,
+    Matrix.cons_val_one, Matrix.cons_val_fin_one]
+info: JordanCurveTheorem/SectionY_GridCells.lean:730:10: Try this:
+  [apply] simp only [Fin.zero_eta, Fin.isValue, pointI, point, WithLp.equiv_symm_apply, Matrix.cons_val_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:731:10: Try this:
+  [apply] simp only [Fin.mk_one, Fin.isValue, pointI, point, WithLp.equiv_symm_apply, Matrix.cons_val_one,
+    Matrix.cons_val_fin_one]
+info: JordanCurveTheorem/SectionY_GridCells.lean:740:65: Try this:
+  [apply] simp only [Fin.isValue, pointI, point, Int.cast_add, Int.cast_one, WithLp.equiv_symm_apply,
+    Matrix.cons_val_one, Matrix.cons_val_fin_one]
+info: JordanCurveTheorem/SectionY_GridCells.lean:749:12: Try this:
+  [apply] simp only [Fin.zero_eta, Fin.isValue, pointI, point, Int.cast_add, Int.cast_one, WithLp.equiv_symm_apply,
+    Matrix.cons_val_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:750:12: Try this:
+  [apply] simp only [Fin.mk_one, Fin.isValue, pointI, point, Int.cast_add, Int.cast_one, WithLp.equiv_symm_apply,
+    Matrix.cons_val_one, Matrix.cons_val_fin_one]
+info: JordanCurveTheorem/SectionY_GridCells.lean:752:10: Try this:
+  [apply] simp only [Fin.zero_eta, Fin.isValue, pointI, point, WithLp.equiv_symm_apply, Matrix.cons_val_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:753:10: Try this:
+  [apply] simp only [Fin.mk_one, Fin.isValue, pointI, point, WithLp.equiv_symm_apply, Matrix.cons_val_one,
+    Matrix.cons_val_fin_one]
+info: JordanCurveTheorem/SectionY_GridCells.lean:761:19: Try this:
+  [apply] simp only [Fin.isValue, pointI, point, Int.cast_add, Int.cast_one, WithLp.equiv_symm_apply,
+    Matrix.cons_val_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:837:51: Try this:
+  [apply] simp only [Fin.zero_eta, Fin.isValue, pointI, point, Int.cast_neg, Int.cast_natCast, WithLp.equiv_symm_apply,
+    Matrix.cons_val_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:837:51: Try this:
+  [apply] simp only [Fin.mk_one, Fin.isValue, pointI, point, Int.cast_neg, Int.cast_natCast, WithLp.equiv_symm_apply,
+    Matrix.cons_val_one, Matrix.cons_val_fin_one]
+info: JordanCurveTheorem/SectionY_GridCells.lean:842:51: Try this:
+  [apply] simp only [Fin.zero_eta, Fin.isValue, pointI, point, Int.cast_neg, Int.cast_natCast, WithLp.equiv_symm_apply,
+    Matrix.cons_val_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:842:51: Try this:
+  [apply] simp only [Fin.mk_one, Fin.isValue, pointI, point, Int.cast_neg, Int.cast_natCast, WithLp.equiv_symm_apply,
+    Matrix.cons_val_one, Matrix.cons_val_fin_one]
+info: JordanCurveTheorem/SectionY_GridCells.lean:1039:16: Try this:
+  [apply] simp only [hed_def, hi, ↓reduceDIte]
+info: JordanCurveTheorem/SectionY_GridCells.lean:1042:16: Try this:
+  [apply] simp only [hed_def, hi, ↓reduceDIte]
+info: JordanCurveTheorem/SectionY_GridCells.lean:1428:6: Try this:
+  [apply] simp only [Fin.zero_eta, Fin.isValue, pointI, point, Int.cast_neg, Int.cast_natCast, WithLp.equiv_symm_apply,
+    Matrix.cons_val_zero]
+info: JordanCurveTheorem/SectionY_GridCells.lean:1429:6: Try this:
+  [apply] simp only [Fin.mk_one, Fin.isValue, pointI, point, Int.cast_neg, Int.cast_natCast, WithLp.equiv_symm_apply,
+    Matrix.cons_val_one, Matrix.cons_val_fin_one]
+⚠ [3142/3367] Replayed GromovFilling.SurfaceCoverage
+warning: GromovFilling/SurfaceCoverage.lean:663:8: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:666:8: unused variable `hedgeToX`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:667:8: unused variable `hedgeStart`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:669:8: unused variable `hedgeFinish`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:1581:8: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:1584:8: unused variable `hedgeToX`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:1585:8: unused variable `hedgeStart`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:1587:8: unused variable `hedgeFinish`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:1616:8: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:1619:8: unused variable `hedgeToX`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:1620:8: unused variable `hedgeStart`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:1622:8: unused variable `hedgeFinish`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:1952:8: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:1955:8: unused variable `hedgeToX`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:1956:8: unused variable `hedgeStart`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:1958:8: unused variable `hedgeFinish`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:2315:8: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:2318:8: unused variable `hedgeToX`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:2319:8: unused variable `hedgeStart`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/SurfaceCoverage.lean:2321:8: unused variable `hedgeFinish`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+ℹ [3170/3367] Replayed GromovFilling.PolynomialDiskArea
+info: GromovFilling/PolynomialDiskArea.lean:180:8: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+⚠ [3171/3367] Replayed GromovFilling.GivensDiskArea
+warning: GromovFilling/GivensDiskArea.lean:48:8: This simp argument is unused:
+  higherFinIndex
+
+Hint: Omit it from the simp argument list.
+  simp only [Nat.succ_sub_one, Complex.normSq_ofReal, h̵i̵g̵h̵e̵r̵F̵i̵n̵I̵n̵d̵e̵x̵,̵ ̵Fin.val_zero, Fin.val_succ]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [3172/3367] Replayed GromovFilling.ComplexAreaFormula
+warning: GromovFilling/ComplexAreaFormula.lean:193:6: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/ComplexAreaFormula.lean:218:6: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/ComplexAreaFormula.lean:457:8: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/ComplexAreaFormula.lean:460:8: unused variable `hedgeToX`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/ComplexAreaFormula.lean:461:8: unused variable `hedgeStart`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/ComplexAreaFormula.lean:463:8: unused variable `hedgeFinish`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/ComplexAreaFormula.lean:830:8: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/ComplexAreaFormula.lean:833:8: unused variable `hedgeToX`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/ComplexAreaFormula.lean:834:8: unused variable `hedgeStart`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/ComplexAreaFormula.lean:836:8: unused variable `hedgeFinish`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/ComplexAreaFormula.lean:1242:8: unused variable `hm`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/ComplexAreaFormula.lean:1245:8: unused variable `hedgeToX`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/ComplexAreaFormula.lean:1246:8: unused variable `hedgeStart`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GromovFilling/ComplexAreaFormula.lean:1248:8: unused variable `hedgeFinish`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+ℹ [3184/3367] Replayed GromovFilling.RiemannianJacobianBudget
+info: GromovFilling/RiemannianJacobianBudget.lean:199:0: 'GromovFilling.riemannianTwoJacobian_le_half_derivativeEnergy' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: GromovFilling/RiemannianJacobianBudget.lean:200:0: 'GromovFilling.sum_riemannianTwoJacobian_le_one_of_derivativeEnergy' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: GromovFilling/RiemannianJacobianBudget.lean:201:0: 'GromovFilling.sum_lintegral_riemannianTwoJacobian_le_measure' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: GromovFilling/RiemannianJacobianBudget.lean:202:0: 'GromovFilling.sum_lintegral_riemannianTwoJacobian_le_surfaceAreaMeasure' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+ℹ [3188/3367] Replayed GromovFilling.RiemannianLipschitzDerivative
+info: GromovFilling/RiemannianLipschitzDerivative.lean:424:0: 'GromovFilling.norm_mfderiv_real_le_of_lipschitzWith' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GromovFilling/RiemannianLipschitzDerivative.lean:425:0: 'GromovFilling.norm_mfderiv_boundaryDistance_le_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GromovFilling/RiemannianLipschitzDerivative.lean:426:0: 'GromovFilling.norm_mfderiv_oddDistanceProfile_le_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GromovFilling/RiemannianLipschitzDerivative.lean:427:0: 'GromovFilling.norm_mfderiv_distanceSlack_le_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3189/3367] Replayed GromovFilling.FourierBoundary
+warning: GromovFilling/FourierBoundary.lean:36:25: This simp argument is unused:
+  F
+
+Hint: Omit it from the simp argument list.
+  simp only [F̵,̵ ̵id_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+ℹ [3190/3367] Replayed GromovFilling.ComplexJacobianBudget
+info: GromovFilling/ComplexJacobianBudget.lean:156:2: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+⚠ [3215/3367] Replayed GromovFilling.ProfileFourier
+warning: GromovFilling/ProfileFourier.lean:180:50: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: GromovFilling/ProfileFourier.lean:526:66: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+warning: GromovFilling/ProfileFourier.lean:526:62: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: GromovFilling/ProfileFourier.lean:538:66: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+warning: GromovFilling/ProfileFourier.lean:538:62: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: GromovFilling/ProfileFourier.lean:1185:31: This simp argument is unused:
+  mul_left_comm
+
+Hint: Omit it from the simp argument list.
+  simp [smul_eq_mul, mul_comm, mul_l̵e̵f̵t̵_̵c̵o̵m̵m̵,̵ ̵m̵u̵l̵_̵assoc]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/ProfileFourier.lean:1185:46: This simp argument is unused:
+  mul_assoc
+
+Hint: Omit it from the simp argument list.
+  simp [smul_eq_mul, mul_comm, mul_left_comm,̵ ̵m̵u̵l̵_̵a̵s̵s̵o̵c̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/ProfileFourier.lean:1209:31: This simp argument is unused:
+  mul_left_comm
+
+Hint: Omit it from the simp argument list.
+  simp [smul_eq_mul, mul_comm, mul_l̵e̵f̵t̵_̵c̵o̵m̵m̵,̵ ̵m̵u̵l̵_̵assoc]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/ProfileFourier.lean:1209:46: This simp argument is unused:
+  mul_assoc
+
+Hint: Omit it from the simp argument list.
+  simp [smul_eq_mul, mul_comm, mul_left_comm,̵ ̵m̵u̵l̵_̵a̵s̵s̵o̵c̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+info: GromovFilling/ProfileFourier.lean:1938:24: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+info: GromovFilling/ProfileFourier.lean:1938:24: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+info: GromovFilling/ProfileFourier.lean:1952:24: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+info: GromovFilling/ProfileFourier.lean:1952:24: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+ℹ [3216/3367] Replayed GromovFilling.RiemannianProfileFourierEnergy
+info: GromovFilling/RiemannianProfileFourierEnergy.lean:679:0: 'GromovFilling.sum_riemannianComplexDerivativeEnergy_oddProfileFourierMap_le_two' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: GromovFilling/RiemannianProfileFourierEnergy.lean:680:0: 'GromovFilling.sum_riemannianTwoJacobian_oddProfileFourierMap_le_one' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+ℹ [3217/3367] Replayed GromovFilling.RiemannianProfileFourierAE
+info: GromovFilling/RiemannianProfileFourierAE.lean:655:0: 'GromovFilling.ControlledInteriorAtlas.ae_ae_mdifferentiableAt_oddDistanceProfile' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: GromovFilling/RiemannianProfileFourierAE.lean:656:0: 'GromovFilling.sum_riemannianComplexDerivativeEnergy_givensMetricFourierMap' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: GromovFilling/RiemannianProfileFourierAE.lean:657:0: 'GromovFilling.sum_riemannianTwoJacobian_givensMetricFourierMap_le_one' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: GromovFilling/RiemannianProfileFourierAE.lean:658:0: 'GromovFilling.ae_sum_riemannianTwoJacobian_givensMetricFourierMap_le_one_surfaceArea' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: GromovFilling/RiemannianProfileFourierAE.lean:659:0: 'GromovFilling.sum_lintegral_riemannianTwoJacobian_givensMetricFourierMap_le_surfaceArea' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+⚠ [3235/3367] Replayed Wikipedia.SchoenfliesTheorem.Subarc
+warning: Wikipedia/SchoenfliesTheorem/Subarc.lean:194:52: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: Wikipedia/SchoenfliesTheorem/Subarc.lean:205:52: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ℹ [3306/3367] Replayed Wikipedia.JordanCurveTheorem
+info: Wikipedia/JordanCurveTheorem.lean:81:0: 'SchoenfliesJordanCurveTheorem.jordan_curve' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Wikipedia/JordanCurveTheorem.lean:84:0: 'SchoenfliesJordanCurveTheorem.jordan_curve_theorem' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Wikipedia/JordanCurveTheorem.lean:87:0: 'SchoenfliesJordanCurveTheorem.jordan_curve_circle' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3366/3367] Replayed GromovFilling.JordanSchoenfliesFoundation
+info: GromovFilling/JordanSchoenfliesFoundation.lean:31:0: 'Schoenflies.squareExtension' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GromovFilling/JordanSchoenfliesFoundation.lean:32:0: 'Schoenflies.jordan_schoenflies' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GromovFilling/JordanSchoenfliesFoundation.lean:33:0: 'Schoenflies.jordan_schoenflies_homeomorph' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GromovFilling/JordanSchoenfliesFoundation.lean:34:0: 'GromovFilling.planeJordanSchoenflies_of_homeomorph' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3403/3583] Replayed ClassificationOfSurfaces.Moise.PolygonalJordan
+info: ClassificationOfSurfaces/Moise/PolygonalJordan.lean:113:37: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+info: ClassificationOfSurfaces/Moise/PolygonalJordan.lean:177:37: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+info: ClassificationOfSurfaces/Moise/PolygonalJordan.lean:730:54: Try this:
+  [apply] abel_nf
+info: ClassificationOfSurfaces/Moise/PolygonalJordan.lean:735:73: Try this:
+  [apply] abel_nf
+info: ClassificationOfSurfaces/Moise/PolygonalJordan.lean:738:47: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+info: ClassificationOfSurfaces/Moise/PolygonalJordan.lean:1142:56: Try this:
+  [apply] abel_nf
+info: ClassificationOfSurfaces/Moise/PolygonalJordan.lean:1158:75: Try this:
+  [apply] abel_nf
+info: ClassificationOfSurfaces/Moise/PolygonalJordan.lean:1402:58: Try this:
+  [apply] abel_nf
+info: ClassificationOfSurfaces/Moise/PolygonalJordan.lean:1652:2: Try this:
+  [apply] abel_nf
+warning: ClassificationOfSurfaces/Moise/PolygonalJordan.lean:1970:43: This simp argument is unused:
+  mul_one
+
+Hint: Omit it from the simp argument list.
+  simp only [zero_mul, Complex.exp_zero, m̵u̵l̵_̵o̵n̵e̵,̵ ̵Complex.ofReal_re,
+  ̵  ̵ ̵ ̵ ̵ ̵Complex.ofReal_im, abs_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ClassificationOfSurfaces/Moise/PolygonalJordan.lean:1970:52: This simp argument is unused:
+  Complex.ofReal_re
+
+Hint: Omit it from the simp argument list.
+  simp only [zero_mul, Complex.exp_zero, mul_one, Complex.ofReal_r̵e̵,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵C̵o̵m̵p̵l̵e̵x̵.̵o̵f̵R̵e̵a̵l̵_̵im, abs_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ClassificationOfSurfaces/Moise/PolygonalJordan.lean:1971:6: This simp argument is unused:
+  Complex.ofReal_im
+
+Hint: Omit it from the simp argument list.
+  simp only [zero_mul, Complex.exp_zero, mul_one, Complex.ofReal_re, C̵o̵m̵p̵l̵e̵x̵.̵o̵f̵R̵e̵a̵l̵_̵i̵m̵,̵ ̵abs_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ClassificationOfSurfaces/Moise/PolygonalJordan.lean:1971:25: This simp argument is unused:
+  abs_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [zero_mul, Complex.exp_zero, mul_one, Complex.ofReal_re,
+  ̵  ̵ ̵ ̵ ̵ ̵Complex.ofReal_im,̵ ̵a̵b̵s̵_̵z̵e̵r̵o̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+ℹ [3441/3583] Replayed ClassificationOfSurfaces.Moise.PolygonalCrosscut
+info: ClassificationOfSurfaces/Moise/PolygonalCrosscut.lean:724:43: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+info: ClassificationOfSurfaces/Moise/PolygonalCrosscut.lean:726:52: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+info: ClassificationOfSurfaces/Moise/PolygonalCrosscut.lean:726:52: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+info: ClassificationOfSurfaces/Moise/PolygonalCrosscut.lean:736:23: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+info: ClassificationOfSurfaces/Moise/PolygonalCrosscut.lean:1910:2: Try this:
+  [apply] abel_nf
+ℹ [3442/3583] Replayed ClassificationOfSurfaces.Moise.PolygonalSchoenflies
+info: ClassificationOfSurfaces/Moise/PolygonalSchoenflies.lean:200:35: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+info: ClassificationOfSurfaces/Moise/PolygonalSchoenflies.lean:212:35: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+ℹ [3454/3583] Replayed ClassificationOfSurfaces.Moise.LocallyFiniteGraphPL
+info: ClassificationOfSurfaces/Moise/LocallyFiniteGraphPL.lean:73:2: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+ℹ [3489/3583] Replayed ClassificationOfSurfaces.FiniteCyclicP1Realization
+info: ClassificationOfSurfaces/FiniteCyclicP1Realization.lean:872:2: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+info: ClassificationOfSurfaces/FiniteCyclicP1Realization.lean:923:2: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+info: ClassificationOfSurfaces/FiniteCyclicP1Realization.lean:953:2: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+⚠ [3494/3583] Replayed ClassificationOfSurfaces.FiniteCyclicP2Realization
+warning: ClassificationOfSurfaces/FiniteCyclicP2Realization.lean:1272:64: 'rfl' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+warning: ClassificationOfSurfaces/FiniteCyclicP2Realization.lean:1283:65: 'rfl' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+warning: ClassificationOfSurfaces/FiniteCyclicP2Realization.lean:1289:62: 'rfl' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+warning: ClassificationOfSurfaces/FiniteCyclicP2Realization.lean:1272:64: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+warning: ClassificationOfSurfaces/FiniteCyclicP2Realization.lean:1283:65: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+warning: ClassificationOfSurfaces/FiniteCyclicP2Realization.lean:1289:62: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+⚠ [3501/3583] Replayed ClassificationOfSurfaces.FiniteCyclicP2DegenerateRealization
+warning: ClassificationOfSurfaces/FiniteCyclicP2DegenerateRealization.lean:574:57: 'rfl' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+warning: ClassificationOfSurfaces/FiniteCyclicP2DegenerateRealization.lean:580:63: 'rfl' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+warning: ClassificationOfSurfaces/FiniteCyclicP2DegenerateRealization.lean:574:57: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+warning: ClassificationOfSurfaces/FiniteCyclicP2DegenerateRealization.lean:580:63: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+⚠ [3504/3583] Replayed ClassificationOfSurfaces.FiniteCyclicCancellation
+warning: ClassificationOfSurfaces/FiniteCyclicCancellation.lean:248:20: This simp argument is unused:
+  P1.expandWord
+
+Hint: Omit it from the simp argument list.
+  simp only [P2.split, source, Dyck.oneFace, P1.freshEdge, P2.retainWord,
+  ̵  ̵ ̵ ̵List.cons_append,
+  ̲  ̲ ̲ ̲List.nil_append, List.length_cons, List.length_nil, zero_add,
+  ̵  ̵ ̵ ̵Nat.reduceAdd, List.ofFn_succ,
+  ̲  ̲ ̲ ̲P2.faceWord, P2.rightBoundary, P2.storedWord,
+  ̵  ̵ ̵ ̵sourceCut, Bool.false_eq_true, ↓reduceIte,
+  ̲  ̲ ̲ ̲P2.rightOrientedBoundary,
+  ̵  ̵ ̵ ̵P2.freshEdge, List.map_cons, P1.castSuccDart_neg, List.map_map,
+      P2.selectedBoundary, P2.selectedOrientedBoundary, P1.castSuccDart_pos,
+  ̵  ̵ ̵ ̵List.map_nil,
+  ̲  ̲ ̲ ̲Dyck.oneFace_boundary, Fin.isValue, Fin.cast_eq_self,
+  ̵  ̵ ̵ ̵Fin.succ_zero_eq_one, List.ofFn_zero,
+  ̲  ̲ ̲ ̲P1.expand, target, targetCut,
+  ̵  ̵ ̵ ̵P2Cut.canonical, Fin.coe_ofNat_eq_mod, Nat.zero_mod,
+  ̲  ̲ ̲ ̲List.take_zero,
+  ̵  ̵ ̵ ̵List.drop_zero, P̵1̵.̵e̵x̵p̵a̵n̵d̵W̵o̵r̵d̵,̵ ̵mk.injEq, heq_eq_eq,
+  ̵  ̵ ̵ ̵List.cons.injEq, and_true, true_and]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ClassificationOfSurfaces/FiniteCyclicCancellation.lean:249:4: This simp argument is unused:
+  List.cons.injEq
+
+Hint: Omit it from the simp argument list.
+  simp only [P2.split, source, Dyck.oneFace, P1.freshEdge, P2.retainWord,
+  ̵  ̵ ̵ ̵List.cons_append,
+  ̲  ̲ ̲ ̲List.nil_append, List.length_cons, List.length_nil, zero_add,
+  ̵  ̵ ̵ ̵Nat.reduceAdd, List.ofFn_succ,
+  ̲  ̲ ̲ ̲P2.faceWord, P2.rightBoundary, P2.storedWord,
+  ̵  ̵ ̵ ̵sourceCut, Bool.false_eq_true, ↓reduceIte,
+  ̲  ̲ ̲ ̲P2.rightOrientedBoundary,
+  ̵  ̵ ̵ ̵P2.freshEdge, List.map_cons, P1.castSuccDart_neg, List.map_map,
+      P2.selectedBoundary, P2.selectedOrientedBoundary, P1.castSuccDart_pos,
+  ̵  ̵ ̵ ̵List.map_nil,
+  ̲  ̲ ̲ ̲Dyck.oneFace_boundary, Fin.isValue, Fin.cast_eq_self,
+  ̵  ̵ ̵ ̵Fin.succ_zero_eq_one, List.ofFn_zero,
+  ̲  ̲ ̲ ̲P1.expand, target, targetCut,
+  ̵  ̵ ̵ ̵P2Cut.canonical, Fin.coe_ofNat_eq_mod, Nat.zero_mod,
+  ̲  ̲ ̲ ̲List.take_zero,
+  ̵  ̵ ̵ ̵List.drop_zero, P1.expandWord, mk.injEq, heq_eq_eq,
+  ̵  ̵ ̵ ̵L̵i̵s̵t̵.̵c̵o̵n̵s̵.̵i̵n̵j̵E̵q̵,̵ ̵and_true, true_and]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ClassificationOfSurfaces/FiniteCyclicCancellation.lean:249:21: This simp argument is unused:
+  and_true
+
+Hint: Omit it from the simp argument list.
+  simp only [P2.split, source, Dyck.oneFace, P1.freshEdge, P2.retainWord,
+  ̵  ̵ ̵ ̵List.cons_append,
+  ̲  ̲ ̲ ̲List.nil_append, List.length_cons, List.length_nil, zero_add,
+  ̵  ̵ ̵ ̵Nat.reduceAdd, List.ofFn_succ,
+  ̲  ̲ ̲ ̲P2.faceWord, P2.rightBoundary, P2.storedWord,
+  ̵  ̵ ̵ ̵sourceCut, Bool.false_eq_true, ↓reduceIte,
+  ̲  ̲ ̲ ̲P2.rightOrientedBoundary,
+  ̵  ̵ ̵ ̵P2.freshEdge, List.map_cons, P1.castSuccDart_neg, List.map_map,
+      P2.selectedBoundary, P2.selectedOrientedBoundary, P1.castSuccDart_pos,
+  ̵  ̵ ̵ ̵List.map_nil,
+  ̲  ̲ ̲ ̲Dyck.oneFace_boundary, Fin.isValue, Fin.cast_eq_self,
+  ̵  ̵ ̵ ̵Fin.succ_zero_eq_one, List.ofFn_zero,
+  ̲  ̲ ̲ ̲P1.expand, target, targetCut,
+  ̵  ̵ ̵ ̵P2Cut.canonical, Fin.coe_ofNat_eq_mod, Nat.zero_mod,
+  ̲  ̲ ̲ ̲List.take_zero,
+  ̵  ̵ ̵ ̵List.drop_zero, P1.expandWord, mk.injEq, heq_eq_eq,
+  ̵  ̵ ̵ ̵List.cons.injEq, a̵n̵d̵_̵true,̵ ̵t̵r̵u̵e̵_and]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ClassificationOfSurfaces/FiniteCyclicCancellation.lean:259:40: This simp argument is unused:
+  true_and
+
+Hint: Omit it from the simp argument list.
+  simp only [List.cons.injEq, and_true,̵ ̵t̵r̵u̵e̵_̵a̵n̵d̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ClassificationOfSurfaces/FiniteCyclicCancellation.lean:664:18: This simp argument is unused:
+  finCongr_apply_mk
+
+Hint: Omit it from the simp argument list.
+  simp [source, FiniteCyclicPresentation.boundary, kW, f̵i̵n̵C̵o̵n̵g̵r̵_̵a̵p̵p̵l̵y̵_̵m̵k̵,̵ ̵List.get_cons_succ]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ClassificationOfSurfaces/FiniteCyclicCancellation.lean:664:37: This simp argument is unused:
+  List.get_cons_succ
+
+Hint: Omit it from the simp argument list.
+  simp [source, FiniteCyclicPresentation.boundary, kW, f̵i̵n̵C̵o̵n̵g̵r̵_̵a̵p̵p̵l̵y̵_̵m̵k̵,̵ ̵L̵i̵s̵t̵.̵g̵e̵t̵_̵c̵o̵n̵s̵_̵s̵u̵c̵c̵]̵f̲i̲n̲C̲o̲n̲g̲r̲_̲a̲p̲p̲l̲y̲_̲m̲k̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [3510/3583] Replayed ClassificationOfSurfaces.FiniteCyclicFaceMerge
+warning: ClassificationOfSurfaces/FiniteCyclicFaceMerge.lean:557:21: This simp argument is unused:
+  targetCut
+
+Hint: Omit it from the simp argument list.
+  simp only [̵t̵a̵r̵g̵e̵t̵C̵u̵t̵,̵ ̵m̵a̵r̵k̵e̵d̵T̵a̵r̵g̵e̵t̵C̵u̵t̵,̵[̲m̲a̲r̲k̲e̲d̲T̲a̲r̲g̲e̲t̲C̲u̲t̲,̲ P2.selectedBoundary, P2.selectedOrientedBoundary,
+              P2.storedWord, Bool.false_eq_true, if_false, P2.freshEdge]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [3513/3583] Replayed ClassificationOfSurfaces.FiniteCyclicWordReductionCore
+warning: ClassificationOfSurfaces/FiniteCyclicWordReductionCore.lean:3054:19: This simp argument is unused:
+  targetWord
+
+Hint: Omit it from the simp argument list.
+  simp [raw, t̵a̵r̵g̵e̵t̵W̵o̵r̵d̵,̵ ̵dart, List.cons_append, List.append_assoc]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ClassificationOfSurfaces/FiniteCyclicWordReductionCore.lean:3116:19: This simp argument is unused:
+  targetWord
+
+Hint: Omit it from the simp argument list.
+  simp [raw, t̵a̵r̵g̵e̵t̵W̵o̵r̵d̵,̵ ̵dart, List.cons_append, List.append_assoc]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ClassificationOfSurfaces/FiniteCyclicWordReductionCore.lean:3053:56: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ClassificationOfSurfaces/FiniteCyclicWordReductionCore.lean:3115:56: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ℹ [3528/3583] Replayed ClassificationOfSurfaces.TriangleCell
+info: ClassificationOfSurfaces/TriangleCell.lean:293:27: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+info: ClassificationOfSurfaces/TriangleCell.lean:309:27: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+ℹ [3541/3583] Replayed GromovFilling.Lemma54Area
+info: GromovFilling/Lemma54Area.lean:107:0: 'GromovFilling.lemma54_schoenfliesJordanInterior_subset_image_interior' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: GromovFilling/Lemma54Area.lean:108:0: 'GromovFilling.lemma54_riemannian_area' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3542/3583] Replayed GromovFilling.FourierArea
+info: GromovFilling/FourierArea.lean:97:8: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+warning: GromovFilling/FourierArea.lean:87:15: This simp argument is unused:
+  zero_mul
+
+Hint: Omit it from the simp argument list.
+  simp only [z̵e̵r̵o̵_̵m̵u̵l̵,̵ ̵integral_cos, Real.sin_zero, sub_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/FourierArea.lean:87:39: This simp argument is unused:
+  Real.sin_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [zero_mul, integral_cos, R̵e̵a̵l̵.̵s̵i̵n̵_̵z̵e̵r̵o̵,̵ ̵sub_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: GromovFilling/FourierArea.lean:87:54: This simp argument is unused:
+  sub_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [zero_mul, integral_cos, Real.sin_zero,̵ ̵s̵u̵b̵_̵z̵e̵r̵o̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [3550/3583] Replayed GromovFilling.ClosedOneForm
+warning: GromovFilling/ClosedOneForm.lean:1010:4: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/ClosedOneForm.lean:1060:6: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: GromovFilling/ClosedOneForm.lean:1160:4: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+ℹ [3614/3617] Replayed GromovFilling.BoundaryActionSeries
+info: GromovFilling/BoundaryActionSeries.lean:170:12: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+ℹ [3616/3617] Replayed GromovFilling.RiemannianUniversalFourierBound
+info: GromovFilling/RiemannianUniversalFourierBound.lean:208:0: 'GromovFilling.volume_schoenfliesJordanInterior_givensBoundaryCurveAddCircle' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: GromovFilling/RiemannianUniversalFourierBound.lean:209:0: 'GromovFilling.mixedBoundaryArea_le_lintegral_riemannianTwoJacobian_givensMetricFourierMap' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: GromovFilling/RiemannianUniversalFourierBound.lean:210:0: 'GromovFilling.riemannian_universal_fourier_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+Build completed successfully (3617 jobs).
+Exporting #[Nat, String, String.mk, Char, Quot, Quot.mk, Quot.lift, Quot.ind, GromovFillingAudit.UniversalFourierBound.riemannian_universal_fourier_bound, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight, String.ofList, Char.ofNat, List, eagerReduce] from Audit.UniversalFourierBound.Solution
+Running nanoda kernel on solution
+nanoda kernel accepts the solution
+Running Lean default kernel on solution.
+Lean default kernel accepts the solution
+Your solution is okay!
