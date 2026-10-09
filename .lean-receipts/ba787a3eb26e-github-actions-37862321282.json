@@ -1,0 +1,15 @@
+{
+ "commit": "ba787a3eb26eaa88752d06d91f17763478233eab",
+ "lean_toolchain": "leanprover/lean4:v4.29.0",
+ "mathlib_rev": "8a178386ffc0f5fef0b77738bb5449d50efeea95",
+ "sorry_count": 0,
+ "axioms": [
+  "propext",
+  "Classical.choice",
+  "Quot.sound"
+ ],
+ "report_sha256": "04895adb032339056b949d4e268b50b090f85f6bb476ef0ba925a09ddc9bf128",
+ "job_id": "github-actions-37862321282",
+ "checker": "GitHub Actions Lean CI run 37862321282: full lake build + proof-escape scan + scripts/audit_axioms.sh (6762 declarations), on the tree of 72cf415 = ba787a3 + comparator receipts",
+ "generated_at": "2026-10-09T01:24:10Z"
+}
