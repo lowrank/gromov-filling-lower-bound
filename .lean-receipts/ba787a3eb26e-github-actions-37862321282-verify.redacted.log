@@ -1,0 +1,33 @@
+gromov-filling-lean lower-tier verification report
+commit: ba787a3eb26eaa88752d06d91f17763478233eab
+lean_toolchain: leanprover/lean4:v4.29.0
+mathlib_rev: 8a178386ffc0f5fef0b77738bb5449d50efeea95
+
+Source of evidence: GitHub Actions, lowrank/gromov-filling-lower-bound,
+workflow "Lean CI", run 37862321282 (pull request #160), conclusion success.
+The run built GitHub's test merge 53e66a3d04927ad2de30c6bef50cec4a1eb3e0ba, whose
+tree 03a612c7cf1bd0bc9e2a67b05c55e9f520d3b3f7 equals the tree of 72cf415, which is ba787a3eb26e plus the two
+comparator receipt files under .lean-receipts/ only. The Lean sources built are
+exactly those of ba787a3eb26e.
+
+Steps (all success): check canonical umbrella; check vendored surface and
+Jordan-Schoenflies foundations; reject proof escapes (scripts/check_no_proof_escapes.sh);
+prove the proof-escape gate fails closed; build Lean project (lean-action, full
+build, "Build completed successfully (3775 jobs)"); audit complete environment and
+verify source receipt (scripts/audit_axioms.sh).
+
+Axiom audit (positive.json report): ok = true; audited declarations = 6762;
+root = GromovFilling; axioms used = propext, Classical.choice, Quot.sound; violations = none.
+Headline: GromovFilling.riemannian_universal_fourier_bound depends on axioms
+[propext, Classical.choice, Quot.sound] (pre-audit-build.log).
+
+Artifact verification-53e66a3d04927ad2de30c6bef50cec4a1eb3e0ba, files:
+  audit-tool-build.log  sha256 8a71c58d1049b673630297edb5582856beb60dfaad9e51b52efc89e18d522ca9
+  negative-build.log  sha256 77c4db0604dd7720254f1284e5f52357ac0c334551cd26509018bc7e1269bc81
+  negative-stderr.log  sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  negative.json  sha256 1066624221b63761db3326ba2e73e49b3089bcb1f422e9fbce70e5fd9b7a69e2
+  positive.json  sha256 f9b48472679ed0016d35a34d157cb5ca92bde218026b2015829eaebe66dfe546
+  pre-audit-build.log  sha256 e19f49558c9a6de6caebcaaf546c8981f84e40c694ad49d6cb5aad62768f65ca
+  source-receipt.json  sha256 ef682186d588756903d8ece210c35f20c8d07848f16ab797a7186b81e0d94aae
+
+sorry_count (production modules): 0
