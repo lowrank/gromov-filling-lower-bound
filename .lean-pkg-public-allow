@@ -1,0 +1,3 @@
+# Public on purpose: strings the public-safety scan would otherwise flag.
+# The audit harness test commits as a fixture identity under the reserved .invalid domain (RFC 2606).
+allow: scripts/test_audit_harness.sh: ^audit@example\.invalid$
