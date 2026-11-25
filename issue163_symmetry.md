@@ -5,7 +5,7 @@ Consider a compact connected orientable Riemannian surface $M$ whose single boun
 **A sufficient condition in every positive genus.** Suppose $X$ admits a smooth orientation-preserving involution $J$ commuting with $\tau$, with sphere quotient and $2\,\mathrm{genus}(X)+2$ fixed points. If the ratio of the largest to smallest singular value of $dJ$ in $G$ is everywhere at most $1.6$, then
 
 $$
- \operatorname{Area}(M)>6.155019283 .
+ \mathrm{Area}(M)>6.155019283 .
 $$
 
 A topological involution with these properties exists in every positive genus. The hypothesis is the quantitative distortion estimate for a suitable choice. There is a stronger area-weighted criterion, including a gain when the regions exchanged by $J$ have different area densities. A flat-collar example below distinguishes two choices of $J$ with identical boundary markings.
@@ -38,13 +38,13 @@ Here is the extension of the Bangert–Croke–Ivanov–Katz argument needed for
 
 For a uniformly rotated round great circle, its expected length in the pulled-back norm is $\tfrac12\int_{S^2}m\,dA_{\rm rd}$. Indeed its unit tangent has uniform direction conditional on its basepoint, and its round length is $2\pi$. Cauchy–Schwarz bounds the square of this expectation by $\pi I(h)$. We may choose a generic circle of length at most $\sqrt{\pi I(h)}+\epsilon$. It projects to a figure eight. The round antipodal map exchanges its two halves and projects to the reflection, so the two hoops have equal lengths. This supplies a loop of length at most $(\sqrt{\pi I(h)}+\epsilon)/2$ based on the equator winding once around the selected branch point. The odd-winding argument of Lemmas 7.2–7.3 cuts and exchanges arcs while preserving their combined length. It applies to the reversible norm and produces an equator-based loop of at most that length whose lift joins deck partners. Letting $\epsilon$ tend to zero proves the estimate. The argument applies to continuous positive metrics by approximation from above with the finite symmetries preserved.
 
-An independent check already reaches $6.15$ at smaller distortion using the Riemannian metric $H=(G+J^*G)/2$. Its lengths dominate those for $F$, it makes $J$ an isometry, and the original hyperelliptic theorem gives $\operatorname{Area}(X,H)\ge4\pi$. If $a,b$ are the two area densities relative to a common measure, direct evaluation of the determinant gives
+An independent check already reaches $6.15$ at smaller distortion using the Riemannian metric $H=(G+J^*G)/2$. Its lengths dominate those for $F$, it makes $J$ an isometry, and the original hyperelliptic theorem gives $\mathrm{Area}(X,H)\ge4\pi$. If $a,b$ are the two area densities relative to a common measure, direct evaluation of the determinant gives
 $$
  \frac{dA_H}{(dA_G+dA_{J^*G})/2}
  =\sqrt{1+\frac{ab}{(a+b)^2}(K+K^{-1}-2)}
  \le\frac{\sqrt K+1/\sqrt K}{2}.
 $$
-Thus $K\le3/2$ throughout already gives $\operatorname{Area}(M)\ge4\pi\sqrt6/5>6.15623$. Averaging lengths gives the stronger constants below.
+Thus $K\le3/2$ throughout already gives $\mathrm{Area}(M)\ge4\pi\sqrt6/5>6.15623$. Averaging lengths gives the stronger constants below.
 
 ## The local calculation
 
@@ -55,14 +55,14 @@ $$
 The determinant-one reference tensor $\mathrm{diag}(e^s,e^{-s})$ has angular mean $(\sqrt a\,p(s)+\sqrt b\,p(k-s))/2$. Consequently define
 $$
  C(K,q)=\min_{0\le s\le k}\frac{(p(s)+\sqrt q\,p(k-s))^2}{2(1+q)},\qquad
- R_J=\frac{1}{\operatorname{Area}(X)}\int_X C(K,q)\,\frac{a+b}{2}\,d\mu .
+ R_J=\frac{1}{\mathrm{Area}(X)}\int_X C(K,q)\,\frac{a+b}{2}\,d\mu .
 $$
 Then
 $$
- \boxed{\operatorname{Area}(M)\ge\frac{2\pi}{R_J}.}
+ \boxed{\mathrm{Area}(M)\ge\frac{2\pi}{R_J}.}
 $$
 
-To check the minimization, $p$ is even and strictly convex. The second derivative of each positive square-root integrand is at least one quarter of that integrand. For determinant-one tensors the distance $d(A,B)=\log\lambda_{\max}(A^{-1}B)$ is symmetric and obeys the triangle inequality by the order comparison $B\preceq e^{d(A,B)}A$. For any reference shape the two distances to the given shapes therefore sum to at least $k$. The displayed diagonal interpolation realizes all splits $(s,k-s)$, so it minimizes among all reference shapes. The unique minimizer changes to $k-s$ when the tensors are interchanged. This yields a $J$- and $\tau$-invariant reference metric globally. At $k=0$ the shapes coincide. The minimizing shape is continuous by uniqueness and can be approximated by smooth invariant metrics. Finally $I(h)=R_J\operatorname{Area}(X)$ in the limit and $\operatorname{Area}(X)=2\operatorname{Area}(M)$.
+To check the minimization, $p$ is even and strictly convex. The second derivative of each positive square-root integrand is at least one quarter of that integrand. For determinant-one tensors the distance $d(A,B)=\log\lambda_{\max}(A^{-1}B)$ is symmetric and obeys the triangle inequality by the order comparison $B\preceq e^{d(A,B)}A$. For any reference shape the two distances to the given shapes therefore sum to at least $k$. The displayed diagonal interpolation realizes all splits $(s,k-s)$, so it minimizes among all reference shapes. The unique minimizer changes to $k-s$ when the tensors are interchanged. This yields a $J$- and $\tau$-invariant reference metric globally. At $k=0$ the shapes coincide. The minimizing shape is continuous by uniqueness and can be approximated by smooth invariant metrics. Finally $I(h)=R_J\mathrm{Area}(X)$ in the limit and $\mathrm{Area}(X)=2\mathrm{Area}(M)$.
 
 At $q=1$ the minimizing $s$ is $k/2$. For every $q$ the same trial gives
 $$
@@ -81,18 +81,18 @@ This proves the $1.6$ criterion. More generally a $\tau$-equivariant smooth mark
 
 The model rows report the value if the indicated pair type supplies the entire averaged density. Interchanging the members replaces $q$ by $1/q$ and preserves the cost. For an actual surface one integrates the pair costs with their area weights. The balanced threshold for $6.15$ lies strictly between $K=1.61488$ and $1.61489$.
 
-**A sufficient condition for the sharp $2\pi$.** Suppose that wherever $J$ fails to preserve angles, its distortion satisfies $K\le3$ and the larger of the two area densities is at least four times the smaller one. Then $R_J\le1$ and $\operatorname{Area}(M)\ge2\pi$.
+**A sufficient condition for the sharp $2\pi$.** Suppose that wherever $J$ fails to preserve angles, its distortion satisfies $K\le3$ and the larger of the two area densities is at least four times the smaller one. Then $R_J\le1$ and $\mathrm{Area}(M)\ge2\pi$.
 
 Indeed $C$ is nondecreasing in $K$ because any split of a larger $k$ can be shortened while decreasing both angular costs weakly. It is symmetric under $q\mapsto1/q$. For $q\ge1$ a minimizing split can be chosen with $s\ge k/2$, so $A=p(s)\ge B=p(k-s)$. The derivative of $(A+tB)/\sqrt{1+t^2}$ has the sign of $B-tA$, which is nonpositive for $t=\sqrt q\ge1$. Taking minima shows that $C$ is nonincreasing as the larger area ratio grows. At $(K,q)=(3,4)$ even the simple trial $e^s=2$ gives $C<0.994$ by the rational series test. On the conformal region $C(1,q)=(1+\sqrt q)^2/(2(1+q))\le1$. Integrating proves the claim. This supplies an explicit sharp-bound criterion on angle-distorting involutions as well as a reason to test the area Jacobian along with the dilatation.
 
 ## A collar test with the same total twist
 
-Consider two exchanged flat collars of width $w$, circumference $L$, and a tangential marking offset $d$ between their ends. Use a shear $(x,y)\mapsto(x+f(y),y)$ on one collar and its inverse on its partner. Write $u=f'(y)$, so that the mean shear is $d/w$. For this map $q=1$ and $\tfrac12\log K=\operatorname{arsinh}(|u|/2)$. The local cost is
+Consider two exchanged flat collars of width $w$, circumference $L$, and a tangential marking offset $d$ between their ends. Use a shear $(x,y)\mapsto(x+f(y),y)$ on one collar and its inverse on its partner. Write $u=f'(y)$, so that the mean shear is $d/w$. For this map $q=1$ and $\tfrac12\log K=\mathrm{arsinh}(|u|/2)$. The local cost is
 $$
- H(u)=p(\operatorname{arsinh}(u/2))^2 .
+ H(u)=p(\mathrm{arsinh}(u/2))^2 .
 $$
 
-**Uniform shear minimizes the cost among all shear interpolations of this offset.** To prove this, put $s=\operatorname{arsinh}(u/2)$. For $s>0$ integration in $\theta$ gives $p''+\coth(s)p'=3p/4$. In detail, with $A=\cosh s+\sinh s\cos\theta$ and $\nu=1/2$, applying $\partial_s^2+\coth(s)\partial_s-\nu(\nu+1)$ to $A^\nu$ gives $(\nu/\sinh s)\partial_\theta(\sin\theta\,A^{\nu-1})$. Its angular mean is zero.
+**Uniform shear minimizes the cost among all shear interpolations of this offset.** To prove this, put $s=\mathrm{arsinh}(u/2)$. For $s>0$ integration in $\theta$ gives $p''+\coth(s)p'=3p/4$. In detail, with $A=\cosh s+\sinh s\cos\theta$ and $\nu=1/2$, applying $\partial_s^2+\coth(s)\partial_s-\nu(\nu+1)$ to $A^\nu$ gives $(\nu/\sinh s)\partial_\theta(\sin\theta\,A^{\nu-1})$. Its angular mean is zero.
 
 Set $v=\tanh s$ and $l=p'/p$. Then $0\le l\le v/2$ because $p/\sqrt{\cosh s}$ is the angular mean of $\sqrt{1+v\cos\theta}$, an even concave function of $v$. The sign of $H''(u)$ is the sign of $l^2+3/4-(v+1/v)l$. On this interval the latter is at least its value at $v/2$, namely $(1-v^2)/4>0$. At zero $H(u)=1+3u^2/32+O(u^4)$. Evenness and Jensen's inequality finish the proof.
 
@@ -100,7 +100,7 @@ For $d/w=0.4$, distributing the twist across the collar gives $2\pi/H(0.4)>6.191
 
 There is also a dimensional estimate. The large-shear limit is $H(u)/|u|\to4/\pi^2$, obtained by dividing the angular integrand by $e^{|s|/2}$ and averaging $|\cos\theta|$. Convexity and $H(0)=1$ imply $H(u)-1\le4|u|/\pi^2$. Jensen applied to the square root gives the second upper estimate $H(u)-1\le\sqrt{1+u^2/4}-1\le u^2/8$. Thus, if the complement has $C\le1$ and the comparison involution is glued using these flat collars, then
 $$
- \operatorname{Area}(M)\ge 2\pi-\frac12\sum_j L_j
+ \mathrm{Area}(M)\ge 2\pi-\frac12\sum_j L_j
        \min\left\{\frac{d_j^2}{8w_j},\frac{4|d_j|}{\pi^2}\right\}.
 $$
 The sum counts collars on $X$, including both members of each pair. Piecewise smooth shear interpolations may be smoothed in arbitrarily thin end strips with their cost converging to the displayed value.

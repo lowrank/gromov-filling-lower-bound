@@ -2,7 +2,7 @@
 
 Let $M$ be a compact connected orientable Riemannian surface with one boundary component. Assume its ambient distance restricted to the boundary is the intrinsic distance of a circle of length $2\pi$. In every genus,
 $$
- \operatorname{Area}(M)\ge \frac{617166391098385050}{10^{18}}\pi^2
+ \mathrm{Area}(M)\ge \frac{617166391098385050}{10^{18}}\pi^2
  >6.091188129789057449 .
 $$
 The signed finite field with 224 antipodal anchor pairs gives $6.091181920033558876$ on its own. The additional term is the average of two polygonal Fourier corrections. This proof takes the transported finite hierarchy in the 25 November bundle as input. [Finite 224-point proof](issue163_dyadic_lift.md) · [Fourier shell construction](issue163_fourier_caps.md)
@@ -23,7 +23,7 @@ Write $U/Q$ for the finite norm budget, with $U=639413036587531299403539588646$ 
 $$
  z^*(-iW/2)z+b|v^*z|^2\le U/Q,\qquad |z_j|\le1 .
 $$
-It uses the better of the triangle estimate and the rank-one criterion with $H=D+(U/Q-\operatorname{tr}D)I/n+iW/2$. A floating-point solve proposes an inverse vector. The replay rounds that vector to rationals, encloses the trigonometric coefficients, and bounds the residual in integer arithmetic. It adjusts the rounding denominator when the vector has a large component. The shell and block averaging argument then applies to each parity grid. [Local norm and winding proof](issue163_fourier_caps.md)
+It uses the better of the triangle estimate and the rank-one criterion with $H=D+(U/Q-\mathrm{tr}D)I/n+iW/2$. A floating-point solve proposes an inverse vector. The replay rounds that vector to rationals, encloses the trigonometric coefficients, and bounds the residual in integer arithmetic. It adjusts the rounding denominator when the vector has a large component. The shell and block averaging argument then applies to each parity grid. [Local norm and winding proof](issue163_fourier_caps.md)
 
 The computation covers 97,072 coarse cells and 1,047 shells of width $1/5000$. For the downward-rounded densities $b_j$ it gives $\sum_j(2j+1)10^{12}b_j=5001933659384$. The common replay also checks all 214,058 terminal cells of the signed finite field and 1,898,400 rooted child profiles at level 224.
 
@@ -37,7 +37,7 @@ $$
 $$
 The checker uses the rational inverse proposal as $x$, obtains $x^*Hx$ exactly and rounds $\Re(v^*x)$ downward. It takes the larger local upper allowance from the two rules. On each shell, every profile retained by the fixed range test imposes its allowance. Taking the minimum over even a subset of these profiles gives an upper bound. Integrating the resulting shell envelope uses upward rational enclosures of $\tan(\pi/224)$ and $\pi^2$. This ceiling concerns density selection within the stated rule. Changing the Fourier shape, the finite field, or the local norm certificate remains possible.
 
-One tested change moved every integer multiplier $S_j$ to $\operatorname{round}(10^8+1.025(S_j-10^8))$, rounding half-integers upward. On that field the zero endpoint profile exhausted the 112-point budget, leaving zero gain from the 224-point positive repairs. With the same Fourier shape, its full replay gave $6.091067300485864298$.
+One tested change moved every integer multiplier $S_j$ to $\mathrm{round}(10^8+1.025(S_j-10^8))$, rounding half-integers upward. On that field the zero endpoint profile exhausted the 112-point budget, leaving zero gain from the 224-point positive repairs. With the same Fourier shape, its full replay gave $6.091067300485864298$.
 
 ## Replay
 

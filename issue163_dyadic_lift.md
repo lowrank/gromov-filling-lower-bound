@@ -2,11 +2,11 @@
 
 For the same orientable circle fillings, the signed 112-point certificate gives
 $$
- \operatorname{Area}(M)\ge \frac{617165758412709490}{10^{18}}\pi^2>6.091181885431729436 .
+ \mathrm{Area}(M)\ge \frac{617165758412709490}{10^{18}}\pi^2>6.091181885431729436 .
 $$
 The 224-point construction gives
 $$
- \operatorname{Area}(M)\ge \frac{617165761918607805}{10^{18}}\pi^2>6.091181920033558876 .
+ \mathrm{Area}(M)\ge \frac{617165761918607805}{10^{18}}\pi^2>6.091181920033558876 .
 $$
 Both statements use the finite transported certificate in the supplied bundle. The 224-point replay first checks the full signed 112-point field and then checks 1,898,400 rooted child profiles. [Signed 112-point proof](issue163_reweighted_field.md)
 

@@ -2,7 +2,7 @@
 
 For every compact connected orientable Riemannian surface whose single boundary component is an isometrically embedded intrinsic circle of length $2\pi$,
 $$
- \operatorname{Area}(M)\ge \frac{316186938521718142086885116509}{511999948800000000000000000000}\pi^2
+ \mathrm{Area}(M)\ge \frac{316186938521718142086885116509}{511999948800000000000000000000}\pi^2
  >6.095000609501857507 .
 $$
 This raises the previous displayed constant by $0.003812479712800058$. The November 25 note gave $6.082181436172889493\ldots$. The conjectural lower bound is $2\pi$. The new finite proof rechecks all 214,058 matrices with integer arithmetic. [Proof and replay](issue163_free_field.md)

@@ -31,7 +31,7 @@ $$
 
 All 666 orbits occur on these rows. The central row has labels $112$ for $0\le i\le112$ and $111$ thereafter. On all three rows the scalar cell midpoints satisfy the angular Lipschitz and antipodal inequalities. A slight contraction towards zero makes the inequalities strict while keeping the same open labels. On the central row an integer planar test of unit-disk vectors bounds $\lambda<50019/50000$. All its pair determinants are nonnegative. The fixed Fourier term has nonnegative slopes, nonnegative density and positive oriented sine weights, so it can only strengthen this test. On the two outer rows that term vanishes because each parity has a sample in its excluded outer band. Testing two perpendicular unit vectors on one edge and zero elsewhere gives $|x_o+\lambda W^0_{ij}|\le1$. Checking an occurrence for every class yields $|x_o|\le11/10$.
 
-For a rational complex test matrix $Z$ on an outer row let $h_{ij}=\sum_k\operatorname{Im}(\overline{Z_{ik}}Z_{jk})$. Put $b=\sum_{i<j}W^0_{ij}h_{ij}$ and $g_o=\sum_{i<j}(E_o)_{ij}h_{ij}$. If a fresh diagonal $D+iW/2\succeq0$ has trace at most one, positivity tested against each column gives
+For a rational complex test matrix $Z$ on an outer row let $h_{ij}=\sum_k\Im(\overline{Z_{ik}}Z_{jk})$. Put $b=\sum_{i<j}W^0_{ij}h_{ij}$ and $g_o=\sum_{i<j}(E_o)_{ij}h_{ij}$. If a fresh diagonal $D+iW/2\succeq0$ has trace at most one, positivity tested against each column gives
 
 $$
  \lambda b+\sum_o x_o g_o\le m,\qquad m=\max_i\sum_k |Z_{ik}|^2.

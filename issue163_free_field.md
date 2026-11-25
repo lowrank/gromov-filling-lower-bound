@@ -2,7 +2,7 @@
 
 For a compact connected orientable Riemannian surface whose single boundary is an isometrically embedded intrinsic circle of length $2\pi$, in every genus,
 $$
- \operatorname{Area}(M)\ge
+ \mathrm{Area}(M)\ge
  \frac{316186938521718142086885116509}{511999948800000000000000000000}\pi^2
  >6.095000609501857507.
 $$
@@ -22,7 +22,7 @@ $$
 
 ## Integer norm verification
 
-For a terminal matrix write $W$ for its unweighted real skew matrix and $S$ for the diagonal matrix of scalar multipliers. A diagonal $D$ with $D+iW/2\succeq0$ gives $SDS+iSWS/2\succeq0$. Since every coordinate gradient has norm at most one, the absolute evaluation of the weighted form is bounded by $\operatorname{tr}(SDS)$. Complex conjugation gives the opposite sign. The common rational trace budget is $999999900000/10^{12}$. Dividing the raw action by this budget gives the stated exact fraction.
+For a terminal matrix write $W$ for its unweighted real skew matrix and $S$ for the diagonal matrix of scalar multipliers. A diagonal $D$ with $D+iW/2\succeq0$ gives $SDS+iSWS/2\succeq0$. Since every coordinate gradient has norm at most one, the absolute evaluation of the weighted form is bounded by $\mathrm{tr}(SDS)$. Complex conjugation gives the opposite sign. The common rational trace budget is $999999900000/10^{12}$. Dividing the raw action by this budget gives the stated exact fraction.
 
 The checker uses the earlier diagonal arrays to propose integer diagonals, with a stored replacement where needed. For each proposed $D$ it compares its weighted trace to the budget using integers. It next proposes a rounded complex triangular factor $L$ and verifies that the cleared-denominator Hermitian residual $D+iW/2-LL^*$ is diagonally dominant in every row. It uses $|\Re z|+|\Im z|$ as an upper bound for each off-diagonal modulus. The residual and the Gram matrix are therefore positive semidefinite. Floating-point Cholesky proposes the factor. Acceptance uses integer Gram products and trace comparisons. A bound on the squared norm of each integer factor row ensures all signed 64-bit dot products fit by Cauchy–Schwarz. The cleared residual and trace use signed 128-bit integers.
 

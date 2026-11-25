@@ -7,7 +7,7 @@ Let $M$ be a compact connected orientable Riemannian surface with one boundary c
 Cut $M$ along a disjoint collection of smooth simple closed interior curves. One may also discard components away from the external boundary. Let $P$ be the retained connected surface, with the original boundary and new seam circles $C_i$. Assume that capping all its seams gives a surface of genus at most one. Write
 
 $$
- L_i=\operatorname{length}(C_i),\quad
+ L_i=\mathrm{length}(C_i),\quad
  d_i=d_M(C_i,\partial M),\quad
  H_i=\left(\frac\pi2-d_i\right)_+,\quad
  B_i=\frac{L_i^2}{2\pi}\sin\!\left(\min\left\{\frac\pi2,\frac{2\pi H_i}{L_i}\right\}\right).
@@ -16,15 +16,15 @@ $$
 Distances here are measured before cutting. Count both copies of a nonseparating cut if both are retained. Then
 
 $$
- \boxed{\operatorname{Area}(M)\ \ge\ 2\pi+\operatorname{Area}(M\setminus P)-\sum_i B_i.}
+ \boxed{\mathrm{Area}(M)\ \ge\ 2\pi+\mathrm{Area}(M\setminus P)-\sum_i B_i.}
 $$
 
-The discarded area means $\operatorname{Area}(M)-\operatorname{Area}(P)$, so merely cutting a curve discards zero area.
+The discarded area means $\mathrm{Area}(M)-\mathrm{Area}(P)$, so merely cutting a curve discards zero area.
 
 **Consequences.** Suppose $g-1$ disjoint nonseparating curves of lengths $\ell_j$ leave a connected genus-one surface after cutting and capping.
 
 - At any depth the area is at least $2\pi-\sum_j\ell_j^2/\pi$. This reaches $6.15$ when $\sum_j\ell_j^2\le\pi(2\pi-6.15)=0.4184139826\ldots$. For genus two the exact single-cut threshold is $\sqrt{\pi(2\pi-6.15)}=0.6468492734\ldots$.
-- If $\sum_j\ell_j\le2$ and every curve lies at distance at least $1.54$ from the boundary, then $\operatorname{Area}(M)\ge6.16$. Indeed $B_i\le L_i H_i$ and $2\pi-4(\pi/2-1.54)=6.16$.
+- If $\sum_j\ell_j\le2$ and every curve lies at distance at least $1.54$ from the boundary, then $\mathrm{Area}(M)\ge6.16$. Indeed $B_i\le L_i H_i$ and $2\pi-4(\pi/2-1.54)=6.16$.
 - If each curve lies at depth at least $\pi/2$, the area is at least $2\pi$ for arbitrary cut lengths. More generally, the sharp bound follows as soon as the discarded area covers the sum of the cap costs.
 
 ## Proof
@@ -47,6 +47,6 @@ $$
 
 for every pair of short collars $i,j$ and every $s,t$ on the external boundary. The first and last visits in the proof give exactly this inequality. The cost of a short collar is then $L_i^2\sin(2\pi h_i/L_i)/(2\pi)$.
 
-One may also use $h_i=\operatorname{diam}_M(C_i)/2$ for an individual seam when this is less than $L_i/4$. Any excursion from that seam through its closing disk and back then costs at least its original ambient diameter. Replace it by an original path of no greater length between its endpoints. Such a seam needs no pairwise external test. These replacements compare lengths in the original surface, which may include the discarded region.
+One may also use $h_i=\mathrm{diam}_M(C_i)/2$ for an individual seam when this is less than $L_i/4$. Any excursion from that seam through its closing disk and back then costs at least its original ambient diameter. Replace it by an original path of no greater length between its endpoints. Such a seam needs no pairwise external test. These replacements compare lengths in the original surface, which may include the discarded region.
 
-For an unrestricted $6.15$ theorem along this route the missing estimate is the existence of a genus-reducing choice with $\sum_i B_i-\operatorname{Area}(M\setminus P)\le 2\pi-6.15$ in every putative smaller filling. The argument gives the bound whenever the displayed condition holds.
+For an unrestricted $6.15$ theorem along this route the missing estimate is the existence of a genus-reducing choice with $\sum_i B_i-\mathrm{Area}(M\setminus P)\le 2\pi-6.15$ in every putative smaller filling. The argument gives the bound whenever the displayed condition holds.

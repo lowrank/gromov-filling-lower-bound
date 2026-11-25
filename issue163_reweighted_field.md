@@ -3,7 +3,7 @@
 Every compact connected orientable Riemannian surface with one boundary component isometrically filling the intrinsic circle of length $2\pi$ satisfies
 
 $$
- \operatorname{Area}(M)\ \ge\
+ \mathrm{Area}(M)\ \ge\
  \frac{617165758412709490}{10^{18}}\pi^2
  \ >\ 6.091181885431729436.
 $$
@@ -49,7 +49,7 @@ Weak coupling between the dyadic residue classes slowed individual gradient upda
 
 The checker reconstructs the original diagonals on all four terminal levels and checks their SHA-256 hashes against the finite input certificate. At level 112 it canonicalizes the even and odd projections of all 116,986 cells, restores all 28 additional parent rows, interleaves the transported diagonals and adds the exact endpoint edge repairs. This recovers the original full child-diagonal hash. Each stored diagonal gives a fresh exact trace after rescaling.
 
-For a row exceeding the target trace, the checker can substitute an improved diagonal for the corresponding unscaled matrix $W$, including the signed increments at level 112. Floating-point block-coordinate ascent and Cholesky factorization only propose witnesses. For acceptance, let $d$ be the proposed integer diagonal, $G$ the integer Hermitian matrix for $\operatorname{diag}(d)+iW/2$ in common units, and $L$ a rational lower-triangular factor. Clear denominators in $G-LL^*$. The code checks for every row that its real diagonal dominates the sum of the absolute real and imaginary parts of all off-diagonal entries. Hermitian diagonal dominance gives $G-LL^*\succeq0$, hence $G\succeq0$. Only a reduction in the exact weighted trace is retained. An unsuccessful proposal leaves the previous exact witness available.
+For a row exceeding the target trace, the checker can substitute an improved diagonal for the corresponding unscaled matrix $W$, including the signed increments at level 112. Floating-point block-coordinate ascent and Cholesky factorization only propose witnesses. For acceptance, let $d$ be the proposed integer diagonal, $G$ the integer Hermitian matrix for $\mathrm{diag}(d)+iW/2$ in common units, and $L$ a rational lower-triangular factor. Clear denominators in $G-LL^*$. The code checks for every row that its real diagonal dominates the sum of the absolute real and imaginary parts of all off-diagonal entries. Hermitian diagonal dominance gives $G-LL^*\succeq0$, hence $G\succeq0$. Only a reduction in the exact weighted trace is retained. An unsuccessful proposal leaves the previous exact witness available.
 
 | Anchor pairs | Reached cells | Accepted replacement diagonals |
 |---:|---:|---:|

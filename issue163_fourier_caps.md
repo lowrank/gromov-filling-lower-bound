@@ -3,7 +3,7 @@
 For a compact connected orientable Riemannian surface with one boundary component isometrically filling the intrinsic circle of length $2\pi$, the following computer-assisted bound holds in every genus.
 
 $$
-\operatorname{Area}(M)\ \ge\
+\mathrm{Area}(M)\ \ge\
 \frac{616679280604206359}{10^{18}}\,\pi^2
 \ >\ 6.086380541911894628 .
 $$
@@ -54,11 +54,11 @@ Monotonicity encloses each $g(F_k)$. For every polygon normal, sum signed interv
 
 ## Local norm and averaging
 
-Write $z_i=(\nabla F_i)_1+i(\nabla F_i)_2$ in an oriented orthonormal frame. On a terminal cell the finite quadratic form is $Q_W(z)=z^*(-iW/2)z$, with $|z_i|\le1$. The finite input gives $D+iW/2\succeq0$ with $D=\operatorname{diag}(d_i)$, $\operatorname{tr}D\le U$. For this paragraph $d_i$ have their physical scale. With $\mathrm i=\sqrt{-1}$, put $v_j=g'(F_j)e^{\mathrm i\pi j/n}/n$. The certificate for shell density $b$ is
+Write $z_i=(\nabla F_i)_1+i(\nabla F_i)_2$ in an oriented orthonormal frame. On a terminal cell the finite quadratic form is $Q_W(z)=z^*(-iW/2)z$, with $|z_i|\le1$. The finite input gives $D+iW/2\succeq0$ with $D=\mathrm{diag}(d_i)$, $\mathrm{tr}D\le U$. For this paragraph $d_i$ have their physical scale. With $\mathrm i=\sqrt{-1}$, put $v_j=g'(F_j)e^{\mathrm i\pi j/n}/n$. The certificate for shell density $b$ is
 $$
  Q_W(z)+b|v^*z|^2\le U .
 $$
-One admissible rate is $(U-\operatorname{tr}D)/(\sum_i |g'(F_i)|/n)^2$, by the triangle inequality. For a sharper rate put $H=D+(U-\operatorname{tr}D)I/n+iW/2$ and $\mu=(U-\operatorname{tr}D)/n$. For $\mu>0$ the rank-one update criterion gives any $b\le1/(v^*H^{-1}v)$. To verify an inverse vector, round a numerical proposal $x$ to a rational vector. If each real and imaginary residual component of $v-Hx$ is bounded by $\epsilon$, then
+One admissible rate is $(U-\mathrm{tr}D)/(\sum_i |g'(F_i)|/n)^2$, by the triangle inequality. For a sharper rate put $H=D+(U-\mathrm{tr}D)I/n+iW/2$ and $\mu=(U-\mathrm{tr}D)/n$. For $\mu>0$ the rank-one update criterion gives any $b\le1/(v^*H^{-1}v)$. To verify an inverse vector, round a numerical proposal $x$ to a rational vector. If each real and imaginary residual component of $v-Hx$ is bounded by $\epsilon$, then
 $$
  v^*H^{-1}v \le \Re(v^*x)+2\max_i|g'(F_i)|\,\epsilon/\mu .
 $$
@@ -70,7 +70,7 @@ Let $P=N^{-1}\sum_k e^{-ikh}g'(F_k)z_k$. It is the weighted average of the leaf 
 
 A bounded planar shell density has a Lipschitz primitive here. For each convex polygon containing the origin one may use $\tfrac12\min(1,r_0^2/\rho(y)^2)(y_1\,dy_2-y_2\,dy_1)$ for its indicator, with $r_0$ in physical units. Differentiating on the sectors gives the indicator times planar area, using the homogeneity of $\rho$. Subtract primitives for nested polygons. Stokes' theorem and the boundary winding give each shell's Euclidean area. If $b_j$ is its density, the result is
 $$
- \operatorname{Area}(M)\ge
+ \mathrm{Area}(M)\ge
  \pi^2\left[A+
  \frac{2N\tan(\pi/(2N))}{U\,5000^2}\sum_{j=0}^{1952}(2j+1)b_j\right].
 $$

@@ -13,7 +13,7 @@ For these forms the independent-gradient comass is at most one on the hemisphere
 Use $g'(s)=\sec^3s$, $g(0)=0$, $e_t=(\cos t,\sin t)$ and $G(f)=\pi^{-1}\int g(f(t))e_t\,dt$. Integrals cover a full turn, and $\langle\cdot\rangle$ denotes the average over that turn. Use an odd, smoothly bounded increasing extension $g_C$ agreeing with $g$ on $[-C,C]$, for $C<\pi/2$ sufficiently close to $\pi/2$. Use this extension in $G$ on the entire profile space. For a profile with maximum absolute value $M$, rotate its positive maximum to angle zero. The Lipschitz condition gives
 
 $$
- \operatorname{Re}G\ \ge\ \frac4\pi\int_0^{\pi/2}g_C(M-t)\cos t\,dt .
+ \ReG\ \ge\ \frac4\pi\int_0^{\pi/2}g_C(M-t)\cos t\,dt .
 $$
 
 Indeed the projection folds onto $[-\pi/2,\pi/2]$ by antiperiodicity. At $M=C>\pi/4$ the right side equals the expression for $g$ and tends to infinity as $C\uparrow\pi/2$, by the quadratic pole of $g$ near the endpoint. Choose it greater than $105$. Then $|G|\le105$ forces $M<C$, so all calculations there use the original $g$. The boundary triangles have $|G|>105$ and their images wind once.
@@ -28,7 +28,7 @@ Both quantities are smooth functions of finitely many Lipschitz moments on a fil
 
 $$
  b(s)=\frac12\int_0^s\rho(v)\,dv,\qquad c=b(\infty),\qquad
- \alpha_0=\frac{b(s)}s\,\operatorname{Im}(\overline G\,dG).
+ \alpha_0=\frac{b(s)}s\,\Im(\overline G\,dG).
 $$
 
 The smooth quotient at $s=0$ equals $1/2$, and $d\alpha_0=\rho(s)\,dG_1\wedge dG_2$. Choose smooth cutoffs with values in $[0,1]$, depending smoothly on $s$ when expressed through the radius:
@@ -49,7 +49,7 @@ The term involving $d\arg G$ is supported away from $G=0$. On the boundary $\bet
 
 ## The hemisphere and all centered profiles
 
-On the unit hemisphere $\sin f=x\cdot e_t$ where the untruncated $G$ is in use. Consequently $E=dE=0$, $\chi=0$ near that profile and $d\beta=d\alpha_0$ there. On longitude zero put $z=(1+s)^{-1/2}$ and $q(t)^2=z^2\cos^2t+\sin^2t$. The kernel of $dG$ is $q^{-3}e_t/\pi$. Multiplication by the ellipse matrix $\operatorname{diag}(z,1)$ gives an integrated kernel length $(1/\pi)\int q^{-2}=2/z$. For any unit-disk gradients the nuclear norm of the resulting two-by-two matrix is at most this length. Its determinant is at most a quarter of its squared nuclear norm. Dividing by the ellipse determinant $z$ gives comass at most $z^{-3}$ for $dG_1\wedge dG_2$, canceled by $\rho\le z^3$. Where the truncation changes the profile calculation, $|G|>105$ and $d\beta=0$.
+On the unit hemisphere $\sin f=x\cdot e_t$ where the untruncated $G$ is in use. Consequently $E=dE=0$, $\chi=0$ near that profile and $d\beta=d\alpha_0$ there. On longitude zero put $z=(1+s)^{-1/2}$ and $q(t)^2=z^2\cos^2t+\sin^2t$. The kernel of $dG$ is $q^{-3}e_t/\pi$. Multiplication by the ellipse matrix $\mathrm{diag}(z,1)$ gives an integrated kernel length $(1/\pi)\int q^{-2}=2/z$. For any unit-disk gradients the nuclear norm of the resulting two-by-two matrix is at most this length. Its determinant is at most a quarter of its squared nuclear norm. Dividing by the ellipse determinant $z$ gives comass at most $z^{-3}$ for $dG_1\wedge dG_2$, canceled by $\rho\le z^3$. Where the truncation changes the profile calculation, $|G|>105$ and $d\beta=0$.
 
 For any profile with $G=0$, its maximum absolute value is less than $\pi/4$. In fact at $M=\pi/4$ pairing $t$ with $\pi/2-t$ in the lower projection above gives a lower bound $4/\pi-1>1/4$, since $g(\pi/4-t)\ge\pi/4-t$ for $0\le t\le\pi/4$. Monotonicity gives the same restriction on $M$ whenever $|G|\le1/4$. For $v=\sin^2 f\le1/2$, the chord upper bound for the convex function $(1-v)^{-3/2}$ gives $\sec^3 f\le1+(4\sqrt2-2)v\le1+4v$. On $G=0$ we have $E=\langle\sin^2 f\rangle$. With the identity ellipse, the independent-gradient comass of $dG_1\wedge dG_2$ is at most $\langle\sec^3 f\rangle^2$. There $\alpha_0=0$ as a covector and $\chi$ vanishes nearby. Thus $d\beta=(1+4E)^{-2}d\alpha_0$ has comass at most one, for every centered profile.
 
@@ -88,7 +88,7 @@ $$
 
 Thus $\chi=1$ with zero derivative on both families at radii $1\le R\le100$. Since $d(d\arg G)=0$ there, $d\beta=\tfrac23d\alpha_0$ on *all* their independent planar gradients. The integer ellipse test gives bounds of $1.454743493396$ and $1.361929744282$ for the full uncorrected hemisphere-weighted norm, respectively. After multiplication by $2/3$ the folded norm is below $0.970$ and the clipped norm below $0.908$.
 
-For each amplitude interval the replay chooses a fixed ellipse $L=\operatorname{diag}(l,1)$ with $l$ a rational lower approximation to the cosine of the left endpoint. The nuclear-norm bound from above gives
+For each amplitude interval the replay chooses a fixed ellipse $L=\mathrm{diag}(l,1)$ with $l$ a rational lower approximation to the cosine of the left endpoint. The nuclear-norm bound from above gives
 
 $$
  \|\,(1+R^2)^{-3/2}dG_1\wedge dG_2\,\|
