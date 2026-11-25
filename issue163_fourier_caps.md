@@ -54,7 +54,7 @@ Monotonicity encloses each $g(F_k)$. For every polygon normal, sum signed interv
 
 ## Local norm and averaging
 
-Write $z_i=(\nabla F_i)_1+i(\nabla F_i)_2$ in an oriented orthonormal frame. On a terminal cell the finite quadratic form is $Q_W(z)=z^*(-iW/2)z$, with $|z_i|\le1$. The finite input gives $D+iW/2\succeq0$ with $D=\operatorname{diag}(d_i)$, $\operatorname{tr}D\le U$. For this paragraph $d_i$ have their physical scale. Put $v_i=g'(F_i)e^{i\pi i/n}/n$. The certificate for shell density $b$ is
+Write $z_i=(\nabla F_i)_1+i(\nabla F_i)_2$ in an oriented orthonormal frame. On a terminal cell the finite quadratic form is $Q_W(z)=z^*(-iW/2)z$, with $|z_i|\le1$. The finite input gives $D+iW/2\succeq0$ with $D=\operatorname{diag}(d_i)$, $\operatorname{tr}D\le U$. For this paragraph $d_i$ have their physical scale. With $\mathrm i=\sqrt{-1}$, put $v_j=g'(F_j)e^{\mathrm i\pi j/n}/n$. The certificate for shell density $b$ is
 $$
  Q_W(z)+b|v^*z|^2\le U .
 $$

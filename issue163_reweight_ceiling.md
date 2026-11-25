@@ -1,4 +1,49 @@
-# A local ceiling for the 15 scalar multipliers
+# How much can these coefficients improve the certificate?
+
+With the 15 scalar multipliers in the latest lower-bound certificate fixed, let the three raw endpoint coefficients in classes 1, 115 and 280 range independently over all real numbers. Keep every other raw coefficient fixed. For certificates that bound each terminal cell separately, the optimal area bound lies in the following intervals.
+
+| Norm test | Achieved lower bound | Certified upper bound |
+|---|---:|---:|
+| Independent planar gradients | $6.090475197311347654$ | $6.090480263618$ |
+| Diagonal Hermitian PSD witnesses | $6.090475197311347654$ | $6.090475261348$ |
+
+The distance to the second upper endpoint is less than $6.404\cdot10^{-8}$. [Lower-bound proof](issue163_reweighted_field.md)
+
+### Varying the endpoint coefficients and all 15 multipliers together
+
+Let $s_*$ be the multiplier vector in the lower-bound proof. Allow all three endpoint coefficients to vary freely as above and allow any positive rescaling of $s$ to lie in the indicated box. Rescaling leaves the normalized action invariant.
+
+| Multiplier box | Upper bound using independent planar gradients |
+|---|---:|
+| $\|s-s_*\|_\infty\le 0.02$ | $6.093053684618$ |
+| $\|s-s_*\|_\infty\le 0.05$ | $6.097833910032$ |
+
+The upper bounds concern this family of certificates. The filling-area inequality and calibrations coupling gradients across different cells have a different scope.
+
+### Four-profile proof for fixed multipliers
+
+Write $u_1,u_2,u_3$ for the three changes in the physical coefficients of the reference field. With fixed multipliers the boundary action divided by $\pi^2$ is the affine function $a_0+\sum_j a_j u_j$. Every chosen profile and rational unit-ball vector gives a necessary inequality $b_p+\sum_j g_{pj}u_j\le U$ for a claimed norm budget $U$. For a diagonal PSD budget one can also sum several planar columns if at each anchor the sum of their squared absolute values is at most one.
+
+Take the terminal profiles $(14,2846)$, $(112,0)$, $(112,12)$ and $(112,67)$, with zero-based row indices. The replay constructs two separate mixtures using rational data. In each it solves the four equations
+$$
+ \sum_p\lambda_p b_p=a_0,\qquad
+ \sum_p\lambda_p g_{pj}=a_j\quad (j=1,2,3).
+$$
+Integer determinants give the weights. A subsequent multiplication checks all four identities and the nonnegativity of every weight. Consequently the action is bounded by $\pi^2 U\sum_p\lambda_p$ for every real choice of the three coefficients. Upward rounding of $\pi^2\sum_p\lambda_p$ gives the first table.
+
+### Joint proof
+
+Every edge in endpoint orbit $j$ has the same unordered pair $(a_j,b_j)$ of absolute scalar bins. Its boundary-action and profile-test slopes both acquire the factor $s_{a_j}s_{b_j}$. Thus matching the three unweighted slopes cancels **all dependence on the free endpoint coefficients for every multiplier vector**.
+
+Use 17 rank-one planar tests. The checker rounds the proposed mixture weights to rationals and solves a three-by-three system for three of them. It checks all three cancellations exactly and verifies positivity. A further nonnegative weight on the coarse profile $(14,2846)$ preserves the cancellations because that profile contains no 112-point correction.
+
+For the resulting mixture, write $H=\sum_p\lambda_p M_p-A$, where $s^TM_p s$ is the test value and $\pi^2s^TAs$ is the boundary action on the reference field. Both are quadratic in $s$. The three cancellations make the same difference matrix valid for every choice of endpoint coefficients. For each radius the checker verifies
+$$
+ s_*^T Hs_*-2r\sum_i |(Hs_*)_i|-r^2\sum_{i,j}|H_{ij}|>0
+$$
+in integer arithmetic. Expanding at $s_*$ proves $s^T Hs>0$ throughout the box, and the normalized boundary action is at most $\pi^2\sum_p\lambda_p$. In all of these tests the complex witness vectors, scalar values and weights have exact rational representations.
+
+### Earlier fixed-field multiplier test
 
 Fix the 112-point transported field and the three coefficient increments from commit <code>5426ac4</code>. In units of $1/(16\cdot10^{12})$ these are $(1,6714930082)$, $(115,49203043)$ and $(280,10427640066)$. Allow all 15 real interval multipliers to vary. A common rescaling cancels from the ratio of boundary action to norm. The bounds below apply if some positive rescaling of the multiplier vector $s$ satisfies $\|s-c\|_\infty\le r$. The reference vector $c$, recorded exactly in the witness file, is the one in that commit. Each bound covers the entire box.
 
@@ -9,7 +54,7 @@ Fix the 112-point transported field and the three coefficient increments from co
 
 The entries are upper bounds on the area lower bound this fixed-field certificate can yield. The planar column permits exact maximization over all planar gradient vectors at each single cell. The PSD column permits arbitrary feasible diagonal witnesses at each cell. Coupled tests across cells, other endpoint coefficients and other closed forms are open directions.
 
-## Proof
+### Fixed-field proof
 
 Write the normalized boundary action as $s^T A s$ in units of $\pi^2$. The endpoint orbit sums determine the symmetric rational matrix $A$. On a fixed terminal profile $p$, take rational complex vectors $z_i\in\mathbb C^k$ satisfying $\|z_i\|_2\le1$. Summing the $k$ quadratic-form evaluations gives another quadratic polynomial $s^TM_p s$. For $k=1$ it is a planar test. For any $k$, every PSD diagonal bound $U$ satisfies $s^T M_p s\le U$, since the contribution of its diagonal is at most $\sum_i d_i\|z_i\|_2^2\le\sum_i d_i$. Thus a vector of nonnegative rational weights $\lambda_p$ for which
 $$
@@ -25,8 +70,10 @@ All four strict comparisons pass in integer arithmetic. The reported upper endpo
 
 ## Replay
 
-Place the two lower-bound checkers, the ceiling checker and its JSON witness in the same directory. Run
+Keep the three JavaScript checkers and both JSON witness files together and run
 
 ~~~sh
 node issue163_reweight_ceiling.cjs /path/to/bundle/research/output/improve112_6081_certificate
 ~~~
+
+The replay checks the signed rational tests against the supplied finite input, constructs each mixture, and prints all bounds with directed rounding. The public Lean repository verifies the earlier Fourier work. The upper bounds here have independent integer replays.

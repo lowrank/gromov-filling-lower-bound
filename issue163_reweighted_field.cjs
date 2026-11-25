@@ -5,7 +5,7 @@ const {INPUT,npzReader,reconstruct,piInterval,assert}=require("./issue163_fourie
 const D=32000000000000, T0=31970639125404, Z=100000000;
 const K=[0,8,16,24,32,36,40,42,44,46,48,50,52,54,55,56];
 const SIGMA=[100265936,100252506,100262495,100257567,100240481,100250394,100231550,100236549,100213980,100206332,100040363,99795356,99619763,100704371,100516523];
-const ENDPOINT_STEPS=[[1,6714930082],[115,49203043],[280,10427640066]];
+const ENDPOINT_STEPS=[[1,19231000000],[115,54300000],[280,12621700000]];
 const ENDPOINT_FILE="agent_n112_uniform_patterns.npz";
 const ENDPOINT_HASH="8df3c962bddb82441b0cc7f833058ba7e07c25d9989a1fab97a80540003e9da6";
 function group(x){
@@ -28,7 +28,7 @@ function canonicalParent(b){
   for(let j=0;j<n;j++){out.push(at(start,rev,j));const i=(start+j)%n;perm.push(rev?n-1-i:i);}
   return [String.fromCharCode(...out),perm];
 }
-function endpointState(doc,st56,field,maps,endpoint,hash){
+function endpointState(doc,st56,field,maps,endpoint,hash,increments){
   const n=112,boxes=endpoint("boxes"), count=boxes.length/n;
   assert(count===116986,"endpoint count");
   const parentBoxes=doc.levels.find(l=>l.n===56).pattern_boxes;
@@ -91,7 +91,7 @@ function endpointState(doc,st56,field,maps,endpoint,hash){
   }
   assert(hash(new Uint8Array(diagonal.buffer))===field("diagonal_sha256_112"),"full 112 diagonal hash (little-endian)");
   // The original child diagonal hash was checked above. Spend the new edge budget.
-  const steps=new Map(ENDPOINT_STEPS);
+  const steps=new Map(increments);
   for(const [id,inc] of steps){
     const a=reps[3*id+1],b=reps[3*id+2];assert(inc>0 && Math.min(a,111-a,b,111-b)<2,"new endpoint increment");
     w[id]+=inc;
@@ -108,7 +108,7 @@ function endpointState(doc,st56,field,maps,endpoint,hash){
       }
     }
   }
-  return {n,boxes,count,diagonal,grid:Array.from({length:113},(_,i)=>i-56),edge:(p,i,j)=>w[edgeId(p,i,j)],area};
+  return {n,boxes,count,diagonal,grid:Array.from({length:113},(_,i)=>i-56),edge:(p,i,j)=>w[edgeId(p,i,j)],edgeId,area};
 }
 
 function propose(edge,n,scale,sweeps) {
@@ -179,7 +179,8 @@ function lowerCost(st,p,ids,weights,oldCost,target) {
   }
   const s=Array.from(ids,i=>SIGMA[i]/Z);
   let best=oldCost;
-  for(const sweeps of [n<=28?130:240,n===112?1400:650,3000]){
+  const sweepsList=n===112 && (p===0||p===12||p===67)?[240,1400,4500,16000,40000]:[n<=28?130:240,n===112?1400:650,3000];
+  for(const sweeps of sweepsList){
     const trial=propose(edge,n,s,sweeps);
     const weighted=trial.reduce((v,a,i)=>v+2n*BigInt(a)*weights[ids[i]],0n);
     if(weighted>=best && best<=target)break;
@@ -228,19 +229,19 @@ function verifyField(states,area){
     global_trace_numerator:String(global),trace_denominator:String(2n*BigInt(D)*denS),
     pi_squared_factor_floor_1e18:String(factor),area_floor_1e18:String(factor*pi*pi/(10n**96n))};
 }
-function loadField(raw,io) {
+function loadField(raw,io,increments=ENDPOINT_STEPS) {
   for(const [key,[file,digest]] of Object.entries(INPUT))assert(io.hash(raw[key])===digest,"source hash "+file);
   assert(io.hash(raw.endpoints)===ENDPOINT_HASH,"112 endpoint source hash");
   const doc=JSON.parse(io.utf8(io.ungzip(raw.source)));
   const [old,field,maps,endpoint]=["old","field","maps","endpoints"].map(key=>npzReader(raw[key],io.inflate));
   const states=[14,28,56].map(n=>reconstruct(doc.levels.find(row=>row.n===n),old,field,maps,io.hash));
-  const child=endpointState(doc,states[2],field,maps,endpoint,io.hash);states.push(child);
+  const child=endpointState(doc,states[2],field,maps,endpoint,io.hash,increments);states.push(child);
   return {states,field,maps,child};
 }
 function replayReweight(raw,io) {
   const {states,child}=loadField(raw,io);
   const result=verifyField(states,child.area);
-  assert(BigInt(result.pi_squared_factor_floor_1e18)>=617078748832284295n,"certified area coefficient");
+  assert(BigInt(result.pi_squared_factor_floor_1e18)>=617094155935886429n,"certified area coefficient");
   return result;
 }
 if(typeof module!=="undefined" && require.main===module){
