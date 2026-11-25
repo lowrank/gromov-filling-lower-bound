@@ -5,6 +5,7 @@ const {INPUT,npzReader,reconstruct,piInterval,assert}=require("./issue163_fourie
 const D=32000000000000, T0=31970639125404, Z=100000000;
 const K=[0,8,16,24,32,36,40,42,44,46,48,50,52,54,55,56];
 const SIGMA=[100259911,100259899,100257343,100258354,100241253,100250506,100231480,100236670,100214191,100206599,100040345,99799793,99606872,100703694,100522025];
+const ENDPOINT_STEPS=[[1,6714930082],[115,49203043],[280,10427640066]];
 const ENDPOINT_FILE="agent_n112_uniform_patterns.npz";
 const ENDPOINT_HASH="8df3c962bddb82441b0cc7f833058ba7e07c25d9989a1fab97a80540003e9da6";
 function group(x){
@@ -89,6 +90,24 @@ function endpointState(doc,st56,field,maps,endpoint,hash){
     for(let j=0;j<n;j++){assert(Number.isSafeInteger(d[j]),"child diagonal units");diagonal[n*p+j]=BigInt(d[j]);}
   }
   assert(hash(new Uint8Array(diagonal.buffer))===field("diagonal_sha256_112"),"full 112 diagonal hash (little-endian)");
+  // The original child diagonal hash was checked above. Spend the new edge budget.
+  const steps=new Map(ENDPOINT_STEPS);
+  for(const [id,inc] of steps){
+    const a=reps[3*id+1],b=reps[3*id+2];assert(inc>0 && Math.min(a,111-a,b,111-b)<2,"new endpoint increment");
+    w[id]+=inc;
+    area+=BigInt(2*objN[id]/objD[id])*BigInt(inc)*BigInt(SIGMA[group(a-55.5)])*BigInt(SIGMA[group(b-55.5)]);
+  }
+  for(let p=0;p<count;p++){
+    const b=boxes.subarray(p*n,(p+1)*n);
+    for(let i=0;i<n;i++){
+      if(Math.min(b[i],111-b[i])>=2)continue;
+      for(let j=0;j<n;j++){
+        if(j===i||(j<i&&Math.min(b[j],111-b[j])<2))continue;
+        const inc=steps.get(edgeId(p,Math.min(i,j),Math.max(i,j)));if(!inc)continue;
+        diagonal[p*n+i]+=2n*BigInt(inc);diagonal[p*n+j]+=2n*BigInt(inc);
+      }
+    }
+  }
   return {n,boxes,count,diagonal,grid:Array.from({length:113},(_,i)=>i-56),edge:(p,i,j)=>w[edgeId(p,i,j)],area};
 }
 
@@ -205,7 +224,7 @@ function verifyField(states,area){
   }
   const numerator=2n*area,denominator=112n**2n*global,unit=10n**18n;
   const factor=numerator*unit/denominator,pi=piInterval()[0];
-  return {slopes:SIGMA,scale_denominator:Z,levels:report,objective_twice_scaled:String(area),
+  return {endpoint_steps:ENDPOINT_STEPS,slopes:SIGMA,scale_denominator:Z,levels:report,objective_twice_scaled:String(area),
     global_trace_numerator:String(global),trace_denominator:String(2n*BigInt(D)*denS),
     pi_squared_factor_floor_1e18:String(factor),area_floor_1e18:String(factor*pi*pi/(10n**96n))};
 }
@@ -216,7 +235,9 @@ function replayReweight(raw,io) {
   const [old,field,maps,endpoint]=["old","field","maps","endpoints"].map(key=>npzReader(raw[key],io.inflate));
   const states=[14,28,56].map(n=>reconstruct(doc.levels.find(row=>row.n===n),old,field,maps,io.hash));
   const child=endpointState(doc,states[2],field,maps,endpoint,io.hash);states.push(child);
-  return verifyField(states,child.area);
+  const result=verifyField(states,child.area);
+  assert(BigInt(result.pi_squared_factor_floor_1e18)>=617071518788759584n,"certified area coefficient");
+  return result;
 }
 if(typeof module!=="undefined" && require.main===module){
   const fs=require("node:fs"),path=require("node:path"),zlib=require("node:zlib"),crypto=require("node:crypto");
@@ -227,3 +248,5 @@ if(typeof module!=="undefined" && require.main===module){
     ungzip:zlib.gunzipSync,inflate:zlib.inflateRawSync};
   console.log(JSON.stringify(replayReweight(raw,io),null,2));
 }
+
+if(typeof module!=="undefined")module.exports={endpointState,ENDPOINT_FILE,ENDPOINT_HASH,ENDPOINT_STEPS,group};
