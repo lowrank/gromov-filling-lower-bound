@@ -4,7 +4,7 @@
 const {INPUT,npzReader,reconstruct,piInterval,assert}=require("./issue163_fourier_caps.cjs");
 const D=32000000000000, T0=31970639125404, Z=100000000;
 const K=[0,8,16,24,32,36,40,42,44,46,48,50,52,54,55,56];
-const SIGMA=[100259911,100259899,100257343,100258354,100241253,100250506,100231480,100236670,100214191,100206599,100040345,99799793,99606872,100703694,100522025];
+const SIGMA=[100265936,100252506,100262495,100257567,100240481,100250394,100231550,100236549,100213980,100206332,100040363,99795356,99619763,100704371,100516523];
 const ENDPOINT_STEPS=[[1,6714930082],[115,49203043],[280,10427640066]];
 const ENDPOINT_FILE="agent_n112_uniform_patterns.npz";
 const ENDPOINT_HASH="8df3c962bddb82441b0cc7f833058ba7e07c25d9989a1fab97a80540003e9da6";
@@ -201,7 +201,7 @@ function lowerCost(st,p,ids,weights,oldCost,target) {
 }
 function verifyField(states,area){
   const denS=BigInt(Z)**2n,weights=SIGMA.map(s=>BigInt(s)**2n);
-  const target=2n*BigInt(T0)*denS,report=[];
+  const target=2n*(BigInt(T0)-3840000000n)*denS,report=[];
   let global=0n;
   for(const st of states){
     const n=st.n;
@@ -228,15 +228,19 @@ function verifyField(states,area){
     global_trace_numerator:String(global),trace_denominator:String(2n*BigInt(D)*denS),
     pi_squared_factor_floor_1e18:String(factor),area_floor_1e18:String(factor*pi*pi/(10n**96n))};
 }
-function replayReweight(raw,io) {
+function loadField(raw,io) {
   for(const [key,[file,digest]] of Object.entries(INPUT))assert(io.hash(raw[key])===digest,"source hash "+file);
   assert(io.hash(raw.endpoints)===ENDPOINT_HASH,"112 endpoint source hash");
   const doc=JSON.parse(io.utf8(io.ungzip(raw.source)));
   const [old,field,maps,endpoint]=["old","field","maps","endpoints"].map(key=>npzReader(raw[key],io.inflate));
   const states=[14,28,56].map(n=>reconstruct(doc.levels.find(row=>row.n===n),old,field,maps,io.hash));
   const child=endpointState(doc,states[2],field,maps,endpoint,io.hash);states.push(child);
+  return {states,field,maps,child};
+}
+function replayReweight(raw,io) {
+  const {states,child}=loadField(raw,io);
   const result=verifyField(states,child.area);
-  assert(BigInt(result.pi_squared_factor_floor_1e18)>=617071518788759584n,"certified area coefficient");
+  assert(BigInt(result.pi_squared_factor_floor_1e18)>=617078748832284295n,"certified area coefficient");
   return result;
 }
 if(typeof module!=="undefined" && require.main===module){
@@ -249,4 +253,4 @@ if(typeof module!=="undefined" && require.main===module){
   console.log(JSON.stringify(replayReweight(raw,io),null,2));
 }
 
-if(typeof module!=="undefined")module.exports={endpointState,ENDPOINT_FILE,ENDPOINT_HASH,ENDPOINT_STEPS,group};
+if(typeof module!=="undefined")module.exports={loadField,ENDPOINT_FILE,ENDPOINT_STEPS,group};

@@ -4,11 +4,11 @@ Every compact connected orientable Riemannian surface with one boundary componen
 
 $$
  \operatorname{Area}(M)\ \ge\
- \frac{617071518788759584}{10^{18}}\pi^2
- \ >\ 6.090251777624436438.
+ \frac{617078748832284295}{10^{18}}\pi^2
+ \ >\ 6.090323135293827993.
 $$
 
-This finite result uses 112 antipodal anchor pairs. The annular Fourier certificate on this branch first gave $6.086380541911894628$. Reweighting the finite form gave $6.090117449247249322$, and three changes to its endpoint coefficients give the bound displayed above. Both take the transported finite calibration in the 25 November 2026 bundle as a theorem. The following argument consists of a pairwise closed form, an exact boundary-action calculation, and integer matrix and trace certificates. The earlier Fourier theorems have a separate Lean verification. [Earlier Fourier formalization](https://github.com/lowrank/gromov-filling-lower-bound)
+This finite result uses 112 antipodal anchor pairs. The annular Fourier certificate on this branch first gave $6.086380541911894628$. Reweighting the finite form gave $6.090117449247249322$, and three changes to its endpoint coefficients gave $6.090251777624436438$. Updating the scalar weights and recomputing the nearby diagonal witnesses gives the bound displayed above. Both take the transported finite calibration in the 25 November 2026 bundle as a theorem. The following argument consists of a pairwise closed form, an exact boundary-action calculation, and integer matrix and trace certificates. The earlier Fourier theorems have a separate Lean verification. [Earlier Fourier formalization](https://github.com/lowrank/gromov-filling-lower-bound)
 
 ## Changing the finite form
 
@@ -21,9 +21,9 @@ Let $h=\pi/112$. Split $|F_i|/h$ at the knots
 On successive intervals use the multipliers $\sigma=S_j/10^8$ given by
 
 ~~~
-100259911 100259899 100257343 100258354 100241253
-100250506 100231480 100236670 100214191 100206599
-100040345  99799793  99606872 100703694 100522025
+100265936 100252506 100262495 100257567 100240481
+100250394 100231550 100236549 100213980 100206332
+100040363  99795356  99619763 100704371 100516523
 ~~~
 
 First add the following increments to the unscaled final coefficient numerators, using the zero-based orbit indices in `reps_112`.
@@ -43,7 +43,7 @@ $$
  \frac{\sum_o(2\omega_o)w_o S_a S_b}
  {112^2\,(32\cdot10^{12})\, (10^8)^2}.
 $$
-The integer numerator is $2474701746017983670807146346984704$. Before applying the three increments, substitution of unit multipliers reproduces the archived finite action exactly.
+The integer numerator is $2474730754763857165547633034769088$. Before applying the three increments, substitution of unit multipliers reproduces the archived finite action exactly.
 
 ## Certifying the norm
 
@@ -53,14 +53,14 @@ For a row exceeding the target trace, the checker can substitute an improved dia
 
 | Anchor pairs | Reached cells | Accepted replacement diagonals |
 |---:|---:|---:|
-| 14 | 53,100 | 64 |
-| 28 | 29,410 | 27 |
-| 56 | 14,562 | 49 |
-| 112 | 116,986 | 30 |
+| 14 | 53,100 | 341 |
+| 28 | 29,410 | 35 |
+| 56 | 14,562 | 77 |
+| 112 | 116,986 | 58 |
 
 The largest raw trace is bounded by
 $$
- \frac{639412781378330309465819737102}
+ \frac{639412784840905449134842077640}
  {640000000000000000000000000000}.
 $$
 The denominator here is $64\cdot10^{12}(10^8)^2$. Dividing the exact action by this trace bounds the area. The checker rounds the resulting $\pi^2$ coefficient down to 18 decimal places and uses a directed rational enclosure of $\pi$ for the stated decimal.
