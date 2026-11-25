@@ -68,6 +68,8 @@ $$
 $$
 since $C/T>0.61>32/224$. This proves exhaustion for any number of doublings with these starting coefficients and witnesses, direct-sum inheritance, and nonnegative increments charged edge by edge to diagonal trace.
 
+The absolute-value trace charge also settles signed increments under this same rule. Each triple has nonnegative boundary weight in the chosen orientation. Replacing an increment $x_o$ by $|x_o|$ preserves its contribution to every edgewise trace charge and weakly increases its boundary action. The inherited trace at each later level is consequently the same. Applying this replacement at every level reduces signed increments to the nonnegative case proved above. To benefit from coefficient cancellation one must change the norm witness or the charging rule.
+
 ### Replay
 
 Keep the three lower-bound JavaScript files together and run
