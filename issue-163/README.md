@@ -3,11 +3,13 @@
 For every compact connected orientable Riemannian surface whose single boundary component is an isometrically embedded intrinsic circle of length $2\pi$,
 
 ```math
- \mathrm{Area}(M)\ge \frac{2213637594435078034608195815563}{3583999641600000000000000000000}\pi^2
- >6.095906676681434095 .
+ \mathrm{Area}(M)\ge \frac{2213638768213206034608195815563}{3583999641600000000000000000000}\pi^2
+ >6.095909909027119498 .
 ```
 
-On one matrix of the bisected-gap certificate the semidefinite relaxation admits a value above $0.9999998$. Actual planar gradients give at most $0.9997999$. Four comparisons of one complex phase prove this in each of three chambers. Their pair projections have mandatory total area at least $\pi^2/112$, giving the new unconditional bound. A genuine planar test in a neighboring chamber places a ceiling of $6.09774$ on rescaling this field. The $6.15$ target remains open. [Comass proof and integer replay](issue163_planar_comass.md)
+The boundary forces area into three chambers in known proportions. Weighing their separate planar comass gains gives the displayed bound and retains at least 95 percent of the earlier diagonal penalty. One can now charge the actual extra length of each antipodal route through each point. In a filling of area below $6.15$, for example, pairs for which both anchors are farther than $\pi/2$ from the point can carry less than $0.879853$ percent of the diagonal weight for the clipped profile. The required lower bound on this fraction remains open. [Distance comparison and exact replay](issue163_detour_comparison.md)
+
+On one current matrix the semidefinite relaxation admits a value above $0.9999998$, while planar gradients give at most $0.9997999$. In a neighboring chamber an explicit planar test survives even when routes through the test patch are arbitrarily close to shortest for every boundary label. It keeps global rescaling of this calibration below $6.09774$. The same construction realizes the continuum obstruction to the proposed form with action $6.22$ on genuine fillings. [Planar comparison](issue163_planar_comass.md) · [Short routes and tests on actual fillings](issue163_short_routes.md)
 
 A separate shortest-path obstruction applies in every positive genus. For each fixed anchor the squared gradient of its antipodal distance difference must drop below $1/2+\eta$ on a set of positive area for every $`\eta\gt 0`$. Conversely, any finite admissible profile and planar gradients can be approximated on a small patch with arbitrarily small added area. Together these results distinguish an impossible global occupation from a permissible local test. [Geometric proofs](issue163_gradient_constraints.md)
 
@@ -22,7 +24,8 @@ There are smooth disks passing all 112 sampled antipodal tests with an unsampled
 | Joint changes to the four finite levels | $6.095000609501857507$ |
 | Closed correction on each boundary gap and its two halves | $6.095889052386098292$ |
 | Full antipodal traces and angular difference energy | Exact bisected-gap bound plus $2^{-1372}$ |
-| Planar phase comparison on the mandatory adjacent-anchor regions | **$6.095906676681434095$** |
+| Planar phase comparison on the mandatory adjacent-anchor regions | $6.095906676681434095$ |
+| Separate chamber gains with the detour penalty retained | **$6.095909909027119498$** |
 
 The 224-point construction uses signed changes in 65 endpoint coefficients, three positive increments after doubling, and an average of two Fourier corrections supported away from those increments. The integer replays check the five archived input hashes, the finite extension on 214,058 terminal cells, all 1,898,400 rooted children at 224, and the additional Fourier action. The transported finite theorem supplies the original coverage and PSD certificates. The Lean development verifies the earlier Fourier result. [Combined proof and replay](issue163_combined.md) · [Signed field](issue163_reweighted_field.md) · [Earlier Lean development](https://github.com/lowrank/gromov-filling-lower-bound)
 
