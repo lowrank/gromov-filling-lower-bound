@@ -1,11 +1,13 @@
 # Progress on circle filling area
 
 For every compact connected orientable Riemannian surface whose single boundary component is an isometrically embedded intrinsic circle of length $2\pi$,
-$$
- \mathrm{Area}(M)\ge \frac{316186938521718142086885116509}{511999948800000000000000000000}\pi^2
- >6.095000609501857507 .
-$$
-This raises the previous displayed constant by $0.003812479712800058$. The November 25 note gave $6.082181436172889493\ldots$. The conjectural lower bound is $2\pi$. The new finite proof rechecks all 214,058 matrices with integer arithmetic. [Proof and replay](issue163_free_field.md)
+
+```math
+ \mathrm{Area}(M)\ge \frac{737877064811692678202731938521}{1194666547200000000000000000000}\pi^2
+ >6.095889052386098292 .
+```
+
+A correction between consecutive boundary anchors raises the previous constant by more than $0.000888442884240785$. It uses the ordering of the distance coordinates on each gap and its two halves. Three local matrix checks suffice for the improvement. The conjectural lower bound is $2\pi$. A separate hemisphere test places a ceiling of $6.139705261$ on changes confined to intrinsic midpoint balls with the exterior calibration fixed. [Midpoint proof and replay](issue163_midpoint.md) · [Repairing finite-test fillings](issue163_sampling.md)
 
 | Construction | Certified area lower bound |
 |---|---:|
@@ -13,7 +15,8 @@ This raises the previous displayed constant by $0.003812479712800058$. The Novem
 | Signed coefficients and scalar reweighting at 112 anchor pairs | $6.091181885431729436$ |
 | Optimal nonnegative endpoint lift for that field at 224 pairs | $6.091181920033558876$ |
 | Lift plus two rotated Fourier shell corrections | $6.091188129789057449$ |
-| Joint changes to the four finite levels | **$6.095000609501857507$** |
+| Joint changes to the four finite levels | $6.095000609501857507$ |
+| Closed correction on each boundary gap and its two halves | **$6.095889052386098292$** |
 
 The 224-point construction uses signed changes in 65 endpoint coefficients, three positive increments after doubling, and an average of two Fourier corrections supported away from those increments. The integer replays check the five archived input hashes, the finite extension on 214,058 terminal cells, all 1,898,400 rooted children at 224, and the additional Fourier action. The transported finite theorem supplies the original coverage and PSD certificates. The Lean development verifies the earlier Fourier result. [Combined proof and replay](issue163_combined.md) · [Signed field](issue163_reweighted_field.md) · [Earlier Lean development](https://github.com/lowrank/gromov-filling-lower-bound)
 
@@ -31,9 +34,9 @@ A closed interior Fourier correction now has raw boundary action at least $6.220
 
 In the continuum, a rotating family of folded triangle profiles puts an upper bound of $5.786100794611$ on the single gnomonic Fourier coordinate with arbitrary target density under independent planar tests. A Lorentz-equivariant center which also uses a scalar normalization has the analytic ceiling $6.07098103\ldots$ under those tests. These calculations identify explicit profiles against which to check other interior corrections. [Continuum tests and replay](issue163_continuum_tests.md)
 
-The five hash-pinned finite inputs are included in the branch directory named **issue163_inputs**. From the branch root run the small symmetry test and the all-genus finite certificate with
+The five hash-pinned finite inputs are included in the branch directory named **issue163_inputs**. From the branch root, the first command replays the new local improvement. The second independently replays its finite base.
 
 ~~~sh
-python3 issue163_symmetry.py
+node issue163_midpoint.cjs issue163_inputs
 node issue163_free_field.cjs issue163_inputs
 ~~~
