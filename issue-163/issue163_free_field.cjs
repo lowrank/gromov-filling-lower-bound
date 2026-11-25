@@ -172,4 +172,4 @@ if (require.main === module) {
   if (!process.argv[2]) throw Error("Pass the directory of the five finite inputs.");
   console.log(JSON.stringify(replay(process.argv[2], process.argv[3]), null, 2));
 }
-module.exports = {replay};
+module.exports = {replay, readCorrection, makeLevel};

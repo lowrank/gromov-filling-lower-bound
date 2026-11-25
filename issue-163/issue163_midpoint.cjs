@@ -127,6 +127,7 @@ function bisection(w, record, den, cap) {
   const unit = HERM_DEN/(2n*den), traces = [];
   for (const [name,row] of [["parent_diagonal",null],["left_diagonal",0],["right_diagonal",N-1]]) {
     const d = integers(record[name],N), im = d.map((_,i) => Array(i+1).fill(0n));
+    assert(d.every(x => 16n*BigInt(N)*x*UNIT >= cap*den), "local normalized diagonal floor");
     for (let i = 1; i < N; ++i) for (let j = 0; j < i; ++j) {
       let delta = j === 0 ? -parent[i] : 0n;
       if (row === 0 && j === 0) delta -= child[i];
@@ -136,7 +137,8 @@ function bisection(w, record, den, cap) {
     traces.push(checkChamber(d,im,den,cap));
   }
   const gainNum = (2n*sum(parent)+sum(child))*UNIT, gainDen = 4n*BigInt(N)*den*cap;
-  return {positive_leading_minors:[N,N,N], traces, parent_sum:String(sum(parent)), child_sum:String(sum(child)),
+  return {positive_leading_minors:[N,N,N], normalized_diagonal_floor:"1/(16n)",
+    traces, parent_sum:String(sum(parent)), child_sum:String(sum(child)),
     ...actionReport(gainNum,gainDen)};
 }
 
@@ -174,4 +176,4 @@ if (require.main === module) {
   console.log(JSON.stringify(verify(dir,file),null,2));
 }
 
-module.exports = {loadCorner, HERM_DEN, BASE_NUM, BASE_DEN};
+module.exports = {loadCorner, pinned, HERM_DEN, BASE_NUM, BASE_DEN};

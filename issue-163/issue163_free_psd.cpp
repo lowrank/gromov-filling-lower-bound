@@ -121,14 +121,17 @@ struct Work {
     }
 
     bool accept(int n, const std::uint8_t* cells, const std::int32_t* sigma, const I* d, I cap) {
+        const Wide budget = Wide(cap)*(den/digits)*scalar_den*scalar_den;
         Wide sum = 0;
         for (int i = 0; i < n; ++i) {
             if (d[i] < 0 || d[i] > 2*den) return false;
             const I s = sigma[cells[i]];
-            sum += Wide(d[i])*s*s;
+            const Wide weight = Wide(d[i])*s*s;
+            if (Wide(16)*n*weight < budget) return false;
+            sum += weight;
         }
         // den is divisible by digits, so every multiplication fits the checked input ranges.
-        if (sum > Wide(cap)*(den/digits)*scalar_den*scalar_den) return false;
+        if (sum > budget) return false;
         return positive(n,d,1.2e-8) || positive(n,d,3.e-9);
     }
 };
@@ -225,7 +228,8 @@ int main(int argc, char** argv) try {
     free_psd(rows,n,bins,cap,3,box.data(),idx.data(),w.data(),s.data(),d.data(),pos.data(),data.data(),status.data());
     const auto bad = std::find(status.begin(),status.end(),-1);
     if (bad!=status.end()) throw std::runtime_error("uncertified row at level "+std::to_string(n)+", index "+std::to_string(bad-status.begin()));
-    std::cout << n << " anchors, " << rows << " exact PSD checks, " << count << " supplied diagonals\n";
+    std::cout << n << " anchors, " << rows << " exact PSD checks, " << count
+              << " supplied diagonals, normalized diagonal floor 1/(16n)\n";
     return 0;
 } catch (const std::exception& e) { std::cerr << e.what() << '\n'; return 1; }
 #endif

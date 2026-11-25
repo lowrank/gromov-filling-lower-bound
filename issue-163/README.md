@@ -3,11 +3,13 @@
 For every compact connected orientable Riemannian surface whose single boundary component is an isometrically embedded intrinsic circle of length $2\pi$,
 
 ```math
- \mathrm{Area}(M)\ge \frac{737877064811692678202731938521}{1194666547200000000000000000000}\pi^2
+ \mathrm{Area}(M)\ge \frac{737877064811692678202731938521}{1194666547200000000000000000000}\pi^2+2^{-1372}
  >6.095889052386098292 .
 ```
 
-A correction between consecutive boundary anchors raises the previous constant by more than $0.000888442884240785$. It uses the ordering of the distance coordinates on each gap and its two halves. Three local matrix checks suffice for the improvement. The conjectural lower bound is $2\pi$. A separate hemisphere test places a ceiling of $6.139705261$ on changes confined to intrinsic midpoint balls with the exterior calibration fixed. [Midpoint proof and replay](issue163_midpoint.md) · [Repairing finite-test fillings](issue163_sampling.md)
+The bisected-gap calibration gives the displayed multiple of $\pi^2$. The term $2^{-1372}$ comes from the Dirichlet energy forced by the full family of antipodal distances. The decimal remains $6.095889052386098292$ to 18 places when rounded down. The same argument bounds the improvement from every uniform angular split of this field by $2\times10^{-25}$. The unconditional $6.15$ target remains open. [Energy proof and exact replay](issue163_angular_energy.md) · [Bisected-gap proof](issue163_midpoint.md)
+
+There are smooth disks passing all 112 sampled antipodal tests with an unsampled pair at distance below $\pi-0.0116$. For 15 equally spaced tests the construction already has area below $6.15$. This gives a geometric example of the information lost by sampling. [Construction and area calculation](issue163_sampled_disk.md) · [Repairing finite-test fillings](issue163_sampling.md)
 
 | Construction | Certified area lower bound |
 |---|---:|
@@ -16,7 +18,8 @@ A correction between consecutive boundary anchors raises the previous constant b
 | Optimal nonnegative endpoint lift for that field at 224 pairs | $6.091181920033558876$ |
 | Lift plus two rotated Fourier shell corrections | $6.091188129789057449$ |
 | Joint changes to the four finite levels | $6.095000609501857507$ |
-| Closed correction on each boundary gap and its two halves | **$6.095889052386098292$** |
+| Closed correction on each boundary gap and its two halves | $6.095889052386098292$ |
+| Full antipodal traces and angular difference energy | Exact bisected-gap bound plus $2^{-1372}$ |
 
 The 224-point construction uses signed changes in 65 endpoint coefficients, three positive increments after doubling, and an average of two Fourier corrections supported away from those increments. The integer replays check the five archived input hashes, the finite extension on 214,058 terminal cells, all 1,898,400 rooted children at 224, and the additional Fourier action. The transported finite theorem supplies the original coverage and PSD certificates. The Lean development verifies the earlier Fourier result. [Combined proof and replay](issue163_combined.md) · [Signed field](issue163_reweighted_field.md) · [Earlier Lean development](https://github.com/lowrank/gromov-filling-lower-bound)
 
@@ -34,9 +37,11 @@ A closed interior Fourier correction now has raw boundary action at least $6.220
 
 In the continuum, a rotating family of folded triangle profiles puts an upper bound of $5.786100794611$ on the single gnomonic Fourier coordinate with arbitrary target density under independent planar tests. A Lorentz-equivariant center which also uses a scalar normalization has the analytic ceiling $6.07098103\ldots$ under those tests. These calculations identify explicit profiles against which to check other interior corrections. [Continuum tests and replay](issue163_continuum_tests.md)
 
-The five hash-pinned finite inputs are included in [issue163_inputs](issue163_inputs/). From the repository root, enter this directory with <code>cd issue-163</code>. The first command replays the new local improvement. The second independently replays its finite base.
+The five hash-pinned finite inputs are included in [issue163_inputs](issue163_inputs/). From the repository root, enter this directory with <code>cd issue-163</code>. The first two commands check the angular and disk calculations. The last two replay the underlying matrix certificates.
 
 ~~~sh
+node issue163_angular_energy.cjs issue163_inputs
+node issue163_sampled_disk.cjs
 node issue163_midpoint.cjs issue163_inputs
 node issue163_free_field.cjs issue163_inputs
 ~~~
