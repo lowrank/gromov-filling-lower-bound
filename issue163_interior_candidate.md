@@ -6,7 +6,7 @@ $$
  2\pi\left(1-\frac{1}{\sqrt{10001}}\right)=6.22035659546\ldots .
 $$
 
-For these forms the independent-gradient comass is at most one on the hemisphere profiles, on **every** profile with zero nonlinear Fourier coordinate, and on the folded and clipped families throughout $1\le |G|\le100$. The estimates also give comass below $1.011$ for every profile with $|G|\le1/40000$. A **global** bound of $1.0114$ would imply the all-genus lower bound $6.15$. Control of other profiles and the derivatives of the transition functions is open.
+For these forms the independent-gradient comass is at most one on the hemisphere profiles, on **every** profile with zero nonlinear Fourier coordinate, and on the folded and clipped families throughout $1\le |G|\le100$. The estimates also give comass below $1.011$ for every profile with $|G|\le1/40000$. The action would require a global comass bound of $1.0114$ to reach $6.15$. A rotating path of profiles forces the global independent-gradient comass above $491$ for every choice of the prescribed cutoffs. The local estimates below still hold. [Rotating-path obstruction](#a-rotating-path-obstruction)
 
 ## The primitive and its boundary value
 
@@ -97,7 +97,7 @@ $$
 
 The amplitude intervals halve in width towards $\pi/2$. On each of 256 angular intervals the replay bounds the full scalar range, the kernel, the angular ellipse length and the upper height by directed integer arithmetic. The intervals cover radius $100$ for both profiles. [Integer norm and obstruction replay](issue163_radial_ceiling.cjs) · [Folded and clipped profile construction](issue163_continuum_tests.md)
 
-## What is needed for the target
+## The transition terms
 
 For the proposed forms one must still bound the full derivative. With $\alpha_1=2\alpha_0/3+(c/3)d\arg G$, the terms on $G\ne0$ are
 
@@ -107,4 +107,57 @@ $$
         +d\chi\wedge(\alpha_1-a\alpha_0).
 $$
 
-In particular the transition terms are part of the comass problem. A bound of $1.0114$ for this expression at every admissible profile would suffice since $6.22035659546/1.0114>6.15$. The local estimates do not supply that inequality over the remaining profile space.
+In particular the transition terms are part of the comass problem. The integral over the following cylinder bounds the size of this expression from below, including all three terms.
+
+## A rotating-path obstruction
+
+For a rotation-invariant one-form $\beta$ on profile space, write $P(f)$ for its integral around the rotated copies $f(t-\theta)$ divided by $2\pi$. Suppose $d\beta$ has independent planar-gradient comass at most $K$. Every smooth path $f_\lambda$ of admissible profiles, $0\le\lambda\le1$, obeys
+
+$$
+ |P(f_1)-P(f_0)|
+ \le 2K\int_0^1\|\partial_\lambda f_\lambda\|_\infty
+                         \|\partial_t f_\lambda\|_\infty\,d\lambda .
+$$
+
+Indeed pull back $\beta$ to the cylinder $(\lambda,\theta)\mapsto f_\lambda(t-\theta)$. At a fixed point divide its two profile derivatives by $\sqrt2$ times their respective supremum norms. For each $t$ the resulting two components form an admissible vector in the unit disk. The comass bound and bilinearity bound the pullback of $d\beta$ by the integrand on the right. A vanishing derivative gives zero directly. Stokes and integration in $\theta$ give the claim.
+
+Take $R_0=64$, $r=64/\sqrt{4097}$ and $\varepsilon=64^{-3}$. With $u=\cos t$ set
+
+$$
+ f_\lambda(t)=\arcsin\bigl((r+\lambda\varepsilon(1-u^2))u\bigr).
+$$
+
+These profiles are even and antiperiodic. We have $r+\varepsilon<100/\sqrt{10001}<1$. For example $1-r>1/(65\cdot129)$ while $1-100/\sqrt{10001}<1/20000$. The denominator in the derivative of the arcsine is therefore at least $|\sin t|$. Direct differentiation gives
+
+$$
+ \|\partial_\lambda f_\lambda\|_\infty\le
+ \varepsilon\sup_t|\cos t\sin t|=\varepsilon/2,
+ \qquad
+ \|\partial_t f_\lambda\|_\infty\le r+\varepsilon<1 .
+$$
+
+In the second estimate the remaining factor is $|r+\lambda\varepsilon(1-3u^2)|\le r+\varepsilon$. All profiles on the cylinder are admissible. The radial coordinate $R_\lambda=|G(f_\lambda)|$ lies in $[64,100)$. To see this, bound the positive-cosine projection integrand between those for hemisphere profiles with sine coordinates $ru$ and $(r+\varepsilon)u$, and use antiperiodicity on the other half. The underlying $g$ is unchanged on this scalar range. Indeed the cutoff criterion above also applies to the untruncated hemisphere of radius $100$ and gives maximum strictly below $C$. The hemisphere identity gives output radius $v/\sqrt{1-v^2}$ at sine amplitude $v$. The angular coordinate along every orbit is $\theta$.
+
+At $\lambda=0$ the residual vanishes, so $P(f_0)=b(64^2)$. At $\lambda=1$, the identity $u(1-u^2)=(\cos t-\cos3t)/4$ gives $Y_3=-\varepsilon/4$. Orthogonality gives $2E\ge|Y_3|^2$ and hence
+
+$$
+ D\ge (1+64^2)^3\varepsilon^2/16>1/16.
+$$
+
+The prescribed cutoffs give $\chi=1$ there. Thus $P(f_1)=(2b(R_1^2)+c)/3$. Monotonicity of $b$ and its known density through radius $100$ imply
+
+$$
+ P(f_1)-P(f_0)\ge \frac{c-b(64^2)}3
+ \ge \frac13\left(\frac1{\sqrt{4097}}-\frac1{\sqrt{10001}}\right).
+$$
+
+The cylinder inequality bounds this difference above by $K\varepsilon$. In particular
+
+$$
+ K\ge \frac{64^3}{3}\left(\frac1{\sqrt{4097}}-\frac1{\sqrt{10001}}\right)
+ >\frac{64^3}{3}\left(\frac{100}{6401}-\frac1{100}\right)>491.
+$$
+
+This obstruction uses only the values of the primitive on the two end orbits and applies to every smooth interpolation between them. It concerns the independent-gradient norm. Whether a filling realizes the offending test plane is a separate geometric question.
+
+The same calculation gives a quantitative design constraint. If the first orbit still has period $b(64^2)$ and the second uses $(1-\gamma)b(R_1^2)+\gamma c$, with $0\le\gamma\le1$, a target $K\le1.0114$ requires $\gamma\le 1.0114\varepsilon/(c-b(64^2))<0.00069$. The proposed choice was $1/3$. Any new primitive using this model can be tested on these periods before estimating its derivatives on the whole profile space.
