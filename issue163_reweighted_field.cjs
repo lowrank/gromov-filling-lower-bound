@@ -189,7 +189,7 @@ function checkGram(d,edge,n,xy) {
   }
   return surplus.every(x=>x>=0n);
 }
-function lowerCost(st,p,ids,weights,oldCost,target) {
+function lowerCost(st,p,ids,weights,oldCost,target,onAccept=null) {
   const n=st.n,edge=new Float64Array(n*n);
   for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
     const w=st.edge(p,i,j);assert(Number.isSafeInteger(w),"matrix coefficient");
@@ -216,11 +216,11 @@ function lowerCost(st,p,ids,weights,oldCost,target) {
       if(res){hi=mid;xy=res;}else lo=mid;}
     const d=trial.map(v=>v+hi);
     const cost=d.reduce((v,a,i)=>v+2n*BigInt(a)*weights[ids[i]],0n);
-    if(cost<best && checkGram(d,edge,n,xy)){best=cost;if(best<=target)break;}
+    if(cost<best && checkGram(d,edge,n,xy)){best=cost;if(onAccept)onAccept(d);if(best<=target)break;}
   }
   return best;
 }
-function verifyField(states,area,endpointTraces=null){
+function verifyField(states,area,endpointTraces=null,saveLeaf=null){
   const denS=BigInt(Z)**2n,weights=SIGMA.map(s=>BigInt(s)**2n);
   const target=2n*(BigInt(T0)-3840000000n)*denS,report=[];
   let global=0n;
@@ -237,7 +237,9 @@ function verifyField(states,area,endpointTraces=null){
       }
       let cost=0n;for(let j=0;j<sums.length;j++){assert(Number.isSafeInteger(sums[j]),"group trace");cost+=BigInt(sums[j])*weights[j];}
       if(n<112)cost*=2n;
-      if(cost>target){attempts++;const replacement=lowerCost(st,p,ids,weights,cost,target);if(replacement<cost)repairs++;cost=replacement;}
+      let diagonal=null;
+      if(cost>target){attempts++;const replacement=lowerCost(st,p,ids,weights,cost,target,saveLeaf&&n<112?d=>{diagonal=d;}:null);if(replacement<cost)repairs++;cost=replacement;}
+      if(saveLeaf&&n<112)saveLeaf(st,p,cost,diagonal);
       if(endpointTraces && n===112)endpointTraces[p]=cost;
       if(cost>largest){largest=cost;worst=p;}
     }
@@ -275,4 +277,4 @@ if(typeof module!=="undefined" && require.main===module){
   console.log(JSON.stringify(replayReweight(raw,io),null,2));
 }
 
-if(typeof module!=="undefined")module.exports={loadField,verifyField,canonicalParent,ENDPOINT_FILE,ENDPOINT_STEPS,group};
+if(typeof module!=="undefined")module.exports={loadField,verifyField,canonicalParent,ENDPOINT_FILE,ENDPOINT_STEPS,group,SIGMA};

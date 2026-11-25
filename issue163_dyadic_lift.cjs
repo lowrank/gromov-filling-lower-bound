@@ -112,3 +112,5 @@ if(typeof module!=="undefined" && require.main===module){
     ungzip:zlib.gunzipSync,inflate:zlib.inflateRawSync};
   console.log(JSON.stringify(replayLift(raw,io),null,2));
 }
+
+if(typeof module!=="undefined")module.exports={lift};

@@ -128,38 +128,53 @@ function linearSolve(diag,off,rhsR,rhsI) {
   return [x,y];
 }
 // A numerical inverse proposes a vector. A rational residual decides the rate.
-function certifiedRate(st,p,slope,C,S) {
-  const n=st.n, start=n*p, t=T-st.trace[p], smax=Math.max(...slope);
-  if(t===0||smax===0)return 0;
-  const H=Array.from({length:n},(_,i)=>n*st.diagonal[start+i]+t);
-  const W=new Float64Array(n*n);
+function certifiedRate(st,p,slope,C,S,local=null) {
+  const n=st.n, t=local?local.slack:asInt(T-st.trace[p]), smax=Math.max(...slope);
+  if(t===0n||smax===0)return 0;
+  const qd=local?local.denominator:BigInt(QD), multiplier=BigInt(n);
+  const H=Array.from({length:n},(_,i)=>multiplier*(local?local.diagonal[i]:asInt(st.diagonal[n*p+i]))+t);
+  const W=Array(n*n).fill(0n);
   for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
-    const a=st.edge(p,i,j);W[i*n+j]=n*a;W[j*n+i]=-n*a;
+    const a=local?local.edge(i,j):asInt(st.edge(p,i,j));
+    W[i*n+j]=multiplier*a;W[j*n+i]=-multiplier*a;
   }
   const rh=slope.map((v,i)=>v*Number(C[i])/(n*SLOPE_DEN*Number(TRIG)));
   const ih=slope.map((v,i)=>v*Number(S[i])/(n*SLOPE_DEN*Number(TRIG)));
-  const xy=linearSolve(H.map(x=>x/(n*QD)),W.map(x=>x/(n*QD)),rh,ih);
+  const scale=Number(multiplier*qd);
+  const xy=linearSolve(H.map(x=>Number(x)/scale),W.map(x=>Number(x)/scale),rh,ih);
   if(!xy)return 0;
-  const proposed=xy.map(row=>row.map(v=>Math.round(SOLVE*v)));
+  let resolution=SOLVE;
+  if(local){
+    const largest=Math.max(...xy[0].map(Math.abs),...xy[1].map(Math.abs));
+    while(resolution>1 && largest*resolution>Number.MAX_SAFE_INTEGER/2)resolution/=10;
+  }
+  const proposed=xy.map(row=>row.map(v=>Math.round(resolution*v)));
   if(!proposed.every(row=>row.every(Number.isSafeInteger)))return 0;
   const [x,y]=proposed.map(row=>row.map(BigInt));
-  const DC=BigInt(SLOPE_DEN)*TRIG, mult=BigInt(QD)*BigInt(SOLVE);
-  let e=0n,dot=0n;
+  const DC=BigInt(SLOPE_DEN)*TRIG, mult=qd*BigInt(resolution);
+  let e=0n,dot=0n,energy=0n,realLower=0n;
   for(let i=0;i<n;i++){
-    let r=asInt(H[i])*x[i],s=asInt(H[i])*y[i];
-    for(let j=0;j<n;j++)if(W[i*n+j]!==0){const w=asInt(W[i*n+j]);r-=w*y[j];s+=w*x[j];}
+    let r=H[i]*x[i],s=H[i]*y[i];
+    for(let j=0;j<n;j++)if(W[i*n+j]!==0n){const w=W[i*n+j];r-=w*y[j];s+=w*x[j];}
     const v=BigInt(slope[i]);
     const er=abs(v*C[i]*mult-r*DC),ei=abs(v*S[i]*mult-s*DC);
     if(er>e)e=er;if(ei>e)e=ei;
-    dot+=v*(C[i]*x[i]+S[i]*y[i]+abs(x[i])+abs(y[i]));
+    const center=C[i]*x[i]+S[i]*y[i],error=abs(x[i])+abs(y[i]);
+    dot+=v*(center+error);
+    if(local){energy+=x[i]*r+y[i]*s;realLower+=v*(center-error);}
+  }
+  if(local && realLower>0n){
+    assert(energy>=0n,"nonnegative quadratic form");
+    const up=ceilDiv(BigInt(local.rateDen)*BigInt(n)*DC**2n*energy,qd*realLower**2n);
+    if(up<BigInt(local.upper))local.upper=Number(up);
   }
   e+=BigInt(smax)*mult;
-  const num=dot*BigInt(SLOPE_DEN)*asInt(t)+2n*BigInt(n*smax)*e;
-  const den=BigInt(n*SLOPE_DEN)*DC*BigInt(SOLVE)*asInt(t);
+  const num=dot*BigInt(SLOPE_DEN)*t+2n*BigInt(n*smax)*e;
+  const den=BigInt(n*SLOPE_DEN)*DC*BigInt(resolution)*t;
   assert(num>0n,"inverse-vector bound");
-  return Number(BigInt(RATE_DEN)*den/num);
+  return Number(BigInt(local?local.rateDen:RATE_DEN)*den/num);
 }
-function verify(states,q=Q) {
+function verify(states,q=Q,field=null) {
   const pi=piInterval(),cos=cosineTable(pi), val=makeShape(q);
   const cs=Array.from({length:2*N+1},(_,i)=>Number(roundedCos(cos,2*(i-N),BigInt(ANGLE))));
   const den=BigInt(N*N*SLOPE_DEN)*BigInt(ANGLE);
@@ -167,7 +182,9 @@ function verify(states,q=Q) {
   const top=first(54), boundary=first(56);
   const cosHalf=cos(1)[0];
   assert(top>0 && BigInt(top)*SCALE*SCALE<BigInt(boundary)*cosHalf*cosHalf,"boundary winding");
-  const rates=new Int32Array(top).fill(RATE_DEN/40);
+  const rateDen=field?1000000000000:RATE_DEN;
+  const rates=new Float64Array(top).fill(rateDen/40);
+  const upperRates=field?new Float64Array(top).fill(rateDen/40):null;
   const records=[];
   for(const st of states){
     const n=st.n,minimum=n===14?0:first(n===28?48:52);
@@ -177,12 +194,12 @@ function verify(states,q=Q) {
     });
     const C=[],S=[];
     for(let i=0;i<n;i++){C[i]=roundedCos(cos,224*i/n,TRIG);S[i]=roundedCos(cos,112-224*i/n,TRIG);}
-    const cheap=new Int32Array(st.count),maxRate=RATE_DEN/40;
+    const cheap=new Float64Array(st.count),maxRate=rateDen/40;
     for(let p=0;p<st.count;p++){
       let sum=0;for(let i=0;i<n;i++)sum+=slopes[st.boxes[n*p+i]];
-      const slack=asInt(T-st.trace[p]);assert(slack>=0n,"input trace exceeds budget");
-      const num=BigInt(RATE_DEN)*slack*BigInt(n*SLOPE_DEN)**2n;
-      const d=BigInt(QD)*BigInt(sum)**2n;
+      const slack=field?field.budget-field.trace(st,p):asInt(T-st.trace[p]);assert(slack>=0n,"input trace exceeds budget");
+      const num=BigInt(rateDen)*slack*BigInt(n*SLOPE_DEN)**2n;
+      const d=(field?field.denominator:BigInt(QD))*BigInt(sum)**2n;
       cheap[p]=!d||num>=BigInt(maxRate)*d?maxRate:Number(num/d);
     }
     const order=Array.from({length:st.count},(_,i)=>i).sort((a,b)=>cheap[a]-cheap[b]);
@@ -195,23 +212,38 @@ function verify(states,q=Q) {
       let needed=0;for(let j=a;j<b;j++)needed=Math.max(needed,rates[j]);
       if(cheap[p]>=needed)continue;
       const s=Array.from(st.boxes.subarray(n*p,n*p+n),v=>slopes[v]);
-      const allowed=Math.max(cheap[p],certifiedRate(st,p,s,C,S));inverse++;
-      for(let j=a;j<b;j++)rates[j]=Math.min(rates[j],allowed);
+      const local=field?{...field.matrix(st,p),rateDen,upper:maxRate}:null;
+      const allowed=Math.max(cheap[p],certifiedRate(st,p,s,C,S,local));inverse++;
+      for(let j=a;j<b;j++){
+        rates[j]=Math.min(rates[j],allowed);
+        if(local)upperRates[j]=Math.min(upperRates[j],Math.max(cheap[p]+1,local.upper));
+      }
     }
     records.push({anchors:n,profiles:st.count,range_checks:ranges,inverse_attempts:inverse});
   }
   // Integrate exactly over polygonal shells. tan(pi/224) is bounded from below.
   const sinHalf=cos(111)[0],cosHi=cos(1)[1];
   let sum=0n;for(let j=0;j<rates.length;j++)sum+=BigInt(2*j+1)*BigInt(rates[j]);
-  const ad=3552293236156n,an=2182536605945n;
-  const bd=BigInt(T)*BigInt(RATE_DEN)*BigInt(BINS)**2n*cosHi;
-  const bn=BigInt(2*N)*BigInt(QD)*sinHalf*sum;
+  const ad=field?10n**18n:3552293236156n,an=field?field.factor:2182536605945n;
+  const bd=(field?field.budget:BigInt(T))*BigInt(rateDen)*BigInt(BINS)**2n*cosHi;
+  const bn=BigInt(2*N)*(field?field.denominator:BigInt(QD))*sinHalf*sum;
   const unit=10n**18n;
   const factor=(an*bd+bn*ad)*unit/(ad*bd);
   const area=factor*pi[0]*pi[0]/(SCALE*SCALE);
-  return {slope_numerators:q,slope_denominator:SLOPE_DEN,bin_denominator:BINS,shells:top,records,
-    weighted_rate_numerator:String(sum),pi_squared_factor_floor_1e18:String(factor),
+  const report={slope_numerators:q,slope_denominator:SLOPE_DEN,bin_denominator:BINS,shells:top,records,
+    rate_denominator:rateDen,weighted_rate_numerator:String(sum),pi_squared_factor_floor_1e18:String(factor),
     area_floor_1e18:String(area)};
+  if(field){
+    let upperSum=0n;for(let j=0;j<upperRates.length;j++){
+      assert(rates[j]<=upperRates[j],"two-sided shell comparison");
+      upperSum+=BigInt(2*j+1)*BigInt(upperRates[j]);
+    }
+    const du=field.budget*BigInt(rateDen)*BigInt(BINS)**2n*cos(1)[0];
+    const nu=BigInt(2*N)*field.denominator*cos(111)[1]*upperSum;
+    const up=ceilDiv(10n**12n*pi[1]**2n*((an+1n)*du+nu*ad),SCALE**2n*du*ad);
+    report.fixed_shell_rule_upper_1e12=String(up);
+  }
+  return report;
 }
 
 const INPUT = {
@@ -313,7 +345,7 @@ function replay(raw,io) {
   assert(states.map(s=>s.count).join(",")==="53100,29410,14562","leaf coverage");
   return verify(states);
 }
-if(typeof module!=="undefined") module.exports={INPUT,npzReader,reconstruct,piInterval,assert};
+if(typeof module!=="undefined") module.exports={INPUT,npzReader,reconstruct,piInterval,assert,verify};
 if(typeof module!=="undefined" && require.main===module){
   const fs=require("node:fs"),path=require("node:path"),zlib=require("node:zlib"),crypto=require("node:crypto");
   const dir=process.argv[2];
