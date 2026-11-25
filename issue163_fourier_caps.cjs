@@ -247,9 +247,9 @@ function npzReader(raw,inflate) {
     if(dtype.startsWith("<U")){
       result="";for(let k=0;k<v.byteLength;k+=4){const s=v.getUint32(k,true);if(s)result+=String.fromCodePoint(s);}
     }else{
-      assert(dtype==="<i8" || dtype==="<i4","NPY integer format "+dtype);
-      const width=dtype==="<i8"?8:4;result=new Float64Array(v.byteLength/width);
-      for(let j=0;j<result.length;j++){result[j]=width===4?v.getInt32(j*4,true):Number(v.getBigInt64(j*8,true));assert(Number.isSafeInteger(result[j]),"NPY integer magnitude");}
+      assert(["<i8","<i4","|u1"].includes(dtype),"NPY integer format "+dtype);
+      const width=dtype==="<i8"?8:dtype==="<i4"?4:1;result=width===1?new Uint8Array(v.byteLength):new Float64Array(v.byteLength/width);
+      for(let j=0;j<result.length;j++){result[j]=width===1?v.getUint8(j):width===4?v.getInt32(j*4,true):Number(v.getBigInt64(j*8,true));assert(Number.isSafeInteger(result[j]),"NPY integer magnitude");}
     }
     cache.set(key,result);return result;
   };
@@ -313,6 +313,7 @@ function replay(raw,io) {
   assert(states.map(s=>s.count).join(",")==="53100,29410,14562","leaf coverage");
   return verify(states);
 }
+if(typeof module!=="undefined") module.exports={INPUT,npzReader,reconstruct,piInterval,assert};
 if(typeof module!=="undefined" && require.main===module){
   const fs=require("node:fs"),path=require("node:path"),zlib=require("node:zlib"),crypto=require("node:crypto");
   const dir=process.argv[2];
