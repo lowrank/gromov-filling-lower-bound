@@ -15,6 +15,17 @@ Fix the multiplier vector and the three-coefficient calibration from the first t
 
 The checker enumerates every endpoint orbit having a scalar label in the two outermost cells at either end. A mixture of three planar unit-vector tests bounds both the constant term in the action and its slope in each of the 330 directions. Four tests suffice for the PSD mixture. Every inequality is rational. Since the changes are nonnegative, summing these slope inequalities against the changes proves the bound simultaneously on the entire nonnegative orthant. Allowing a coefficient to decrease removes this implication.
 
+### Required size of the coefficient decreases
+
+Keep the same scalar multipliers and let all 330 endpoint coefficients change with either sign. Measure their physical changes $t_j$ relative to the three-coefficient checkpoint, before applying the scalar multipliers. Write $r_-=\sum_j\max(0,-t_j)$. These comparisons put no limit on positive changes.
+
+| Norm test | Bound on $r_-$ | Upper bound on the attainable area certificate |
+|---|---:|---:|
+| Independent planar gradients | $1/160$ | $6.099901142931$ |
+| Independent diagonal PSD witnesses | $1/80$ | $6.099787086674$ |
+
+Thus reaching $6.1$ by this route requires $r_->1/160$ for planar tests and $r_->1/80$ for diagonal PSD witnesses. To see this, let $h_j\ge0$ be the excess of the monotone dual mixture's physical slope over the action slope for class $j$. Arbitrary signed changes reduce the mixture's domination margin by at most $r_-\max_j h_j$. An interior test with positive value $b_q$ has zero slope on every endpoint class. Adding weight $r_-\max_j h_j/b_q$ to that test restores domination. The replay rounds the extra weight upward and checks the cross-multiplied inequality.
+
 ### Varying the endpoint coefficients and all 15 multipliers together
 
 Let $s_*$ be the multiplier vector in the lower-bound proof. Allow all three endpoint coefficients to vary freely as above and allow any positive rescaling of $s$ to lie in the indicated box. Rescaling leaves the normalized action invariant.

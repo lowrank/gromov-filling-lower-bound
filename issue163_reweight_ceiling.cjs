@@ -175,12 +175,13 @@ function monotoneCeiling(states,maps,A,data){
   const moved={...child,edge:(p,i,j)=>child.edge(p,i,j)+(step.get(child.edgeId(p,i,j))||0)};
   const report={};
   for(const [type,entries] of Object.entries(data.families)){
-    const slopes=ids.map(()=>0n);let constant=0n,total=0n;
+    const slopes=ids.map(()=>0n);let constant=0n,total=0n,coarse=0n;
     for(const {weight,witness:w} of entries){
       assert(type==="sdp"||(type==="planar"&&w.rank===1),"test rank");
       const t=BigInt(weight);assert(t>=0n,"dual weight");total+=t;
       const st=w.n===112?moved:states.find(s=>s.n===w.n),M=phaseMatrix(st,w,V);
-      constant+=t*N*N*M.reduce((a,v,k)=>a+v*S[Math.floor(k/NB)]*S[k%NB],0n);
+      const value=N*N*M.reduce((a,v,k)=>a+v*S[Math.floor(k/NB)]*S[k%NB],0n);
+      constant+=t*value;if(w.n<112 && value>coarse)coarse=value;
       if(w.n===112){const r=w.rank,a=w.real.map(BigInt),b=w.imag.map(BigInt);
         for(let i=0;i<112;i++)for(let j=i+1;j<112;j++){
           const k=index.get(child.edgeId(w.p,i,j));if(k===undefined)continue;
@@ -193,7 +194,22 @@ function monotoneCeiling(states,maps,A,data){
     for(let j=0;j<ids.length;j++)assert(slopes[j]>=E*V*V*twice(ids[j]),"endpoint slope domination");
     const pi=piInterval()[1],d=E*10n**96n,up=(10n**12n*pi*pi*total+d-1n)/d;
     assert(up<6090490000000n,"all-endpoint ceiling");
-    report[type]={area_upper_units_1e12:String(up),classes:ids.length,tests:entries.length};
+    let largest=0n;
+    for(let j=0;j<ids.length;j++){
+      const id=ids[j],excess=(slopes[j]-E*V*V*twice(id))*S[group(rep[3*id+1]-55.5)]*S[group(rep[3*id+2]-55.5)];
+      if(excess>largest)largest=excess;
+    }
+    assert(coarse>0n,"positive interior phase");
+    const downward=[];
+    for(const rd of [400n,200n,160n,100n,80n]){
+      // A total decrease of 1/rd in the physical coefficients is allowed.
+      const need=32000000000000n*largest,unit=2n*rd*coarse;
+      const extra=(need+unit-1n)/unit;
+      assert(extra*unit>=need,"signed endpoint allowance");
+      const upper=(10n**12n*pi*pi*(total+extra)+d-1n)/d;
+      downward.push({total_decrease:"1/"+rd,area_upper_units_1e12:String(upper)});
+    }
+    report[type]={area_upper_units_1e12:String(up),classes:ids.length,tests:entries.length,downward};
   }
   assert(report.sdp&&report.planar,"two endpoint families");return report;
 }

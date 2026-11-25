@@ -5,7 +5,25 @@ const {INPUT,npzReader,reconstruct,piInterval,assert}=require("./issue163_fourie
 const D=32000000000000, T0=31970639125404, Z=100000000;
 const K=[0,8,16,24,32,36,40,42,44,46,48,50,52,54,55,56];
 const SIGMA=[100265936,100252506,100262495,100257567,100240481,100250394,100231550,100236549,100213980,100206332,100040363,99795356,99619763,100704371,100516523];
-const ENDPOINT_STEPS=[[0,23280000000],[1,20719575947],[112,23280000000],[115,1113151894],[278,-375168608],[280,15098809146],[498,-21004343868],[770,-715918],[5418,-8604371575],[5420,-1358754408],[55978,36167562]];
+const ENDPOINT_STEPS = [
+  [0, 43668913703], [1, 70055704000], [113, 7756937478], [115, 2340378812],
+  [278, 16640209809], [280, 12621700000], [502, 224295942], [771, -287185473],
+  [1096, -240129297], [1469, -692218022], [1471, 788762913], [1892, -150907202],
+  [1893, -809582939], [1894, -1466957483], [1897, -46621], [2364, -910575530],
+  [2365, -16362794452], [2367, 1499096495], [3451, -4062271525], [4721, -31765327],
+  [5418, -2098474312], [5420, -4212142948], [5421, -203154519], [6160, -744589091],
+  [6161, -744966347], [6944, -499488617], [6945, -1050294697], [6949, -95073251],
+  [7768, -907405388], [13508, -377990413], [13509, -188395802], [15700, -319535650],
+  [15701, -1085794900], [19223, -623167649], [20454, -268992908], [20455, -269346841],
+  [25649, -177438682], [29794, -86864070], [31218, -1200479298], [31219, -168149963],
+  [32662, -11028788], [32667, -1057954726], [34124, -54037869], [35609, -81466436],
+  [37100, -627415358], [37101, -2039831688], [38617, -291709621], [41683, -68540737],
+  [43230, -640274461], [43231, -889014608], [44796, -1045310], [44799, -86831411],
+  [46368, -1375047162], [46369, -778242789], [47954, -347744111], [47957, -447417633],
+  [49544, -152429422], [49545, -359822917], [51149, -331947521], [54363, -323487983],
+  [54364, -530079607], [54367, -1378190], [55978, -226854550], [55979, -160580335],
+  [57600, -1355893], [60845, -33922500]
+];
 const ENDPOINT_FILE="agent_n112_uniform_patterns.npz";
 const ENDPOINT_HASH="8df3c962bddb82441b0cc7f833058ba7e07c25d9989a1fab97a80540003e9da6";
 function group(x){
@@ -200,7 +218,7 @@ function lowerCost(st,p,ids,weights,oldCost,target) {
   }
   return best;
 }
-function verifyField(states,area){
+function verifyField(states,area,endpointTraces=null){
   const denS=BigInt(Z)**2n,weights=SIGMA.map(s=>BigInt(s)**2n);
   const target=2n*(BigInt(T0)-3840000000n)*denS,report=[];
   let global=0n;
@@ -218,6 +236,7 @@ function verifyField(states,area){
       let cost=0n;for(let j=0;j<sums.length;j++){assert(Number.isSafeInteger(sums[j]),"group trace");cost+=BigInt(sums[j])*weights[j];}
       if(n<112)cost*=2n;
       if(cost>target){attempts++;const replacement=lowerCost(st,p,ids,weights,cost,target);if(replacement<cost)repairs++;cost=replacement;}
+      if(endpointTraces && n===112)endpointTraces[p]=cost;
       if(cost>largest){largest=cost;worst=p;}
     }
     if(largest>global)global=largest;
@@ -241,7 +260,7 @@ function loadField(raw,io,increments=ENDPOINT_STEPS) {
 function replayReweight(raw,io) {
   const {states,child}=loadField(raw,io);
   const result=verifyField(states,child.area);
-  assert(BigInt(result.pi_squared_factor_floor_1e18)>=617103883127679565n,"certified area coefficient");
+  assert(BigInt(result.pi_squared_factor_floor_1e18)>=617154280862042281n,"certified area coefficient");
   return result;
 }
 if(typeof module!=="undefined" && require.main===module){
@@ -254,4 +273,4 @@ if(typeof module!=="undefined" && require.main===module){
   console.log(JSON.stringify(replayReweight(raw,io),null,2));
 }
 
-if(typeof module!=="undefined")module.exports={loadField,ENDPOINT_FILE,ENDPOINT_STEPS,group};
+if(typeof module!=="undefined")module.exports={loadField,verifyField,canonicalParent,ENDPOINT_FILE,ENDPOINT_STEPS,group};
