@@ -152,7 +152,53 @@ function jointCeiling(states,maps,A,center,data){
   return report;
 }
 
-function verifyCeilings(raw,io,data,cuts){
+// A nonnegative change in every one of the fresh endpoint coefficients is allowed here.
+function monotoneCeiling(states,maps,A,data){
+  const S=data.multipliers.map(BigInt),E=BigInt(data.weight_denominator),V=BigInt(data.phase_denominator);
+  const rep=maps("reps_112"),on=maps("objective_num_112"),od=maps("objective_den_112");
+  const ids=[],index=new Map();
+  for(let id=0;id<on.length;id++){
+    const a=rep[3*id+1],b=rep[3*id+2];
+    if(Math.min(a,111-a,b,111-b)<2){index.set(id,ids.length);ids.push(id);}
+  }
+  assert(ids.length===330 && E>0n && V>0n && S.length===NB,"all endpoint classes");
+  const step=new Map(data.baseline);
+  for(const [id,q] of REFERENCE_STEPS)step.set(id,(step.get(id)||0)-q);
+  const twice=id=>{const v=2n*BigInt(on[id]),d=BigInt(od[id]);assert(v%d===0n,"polygon units");return v/d;};
+  let a0=A.reduce((a,v,k)=>a+v*S[Math.floor(k/NB)]*S[k%NB],0n)/2n;
+  for(const [id,q] of step){
+    assert(index.has(id)&&Number.isSafeInteger(q),"baseline support");
+    a0+=twice(id)*BigInt(q)*S[group(rep[3*id+1]-55.5)]*S[group(rep[3*id+2]-55.5)];
+  }
+  assert(a0===2474792543365714200297945588499712n,"baseline boundary action");
+  const child=states.find(s=>s.n===112);
+  const moved={...child,edge:(p,i,j)=>child.edge(p,i,j)+(step.get(child.edgeId(p,i,j))||0)};
+  const report={};
+  for(const [type,entries] of Object.entries(data.families)){
+    const slopes=ids.map(()=>0n);let constant=0n,total=0n;
+    for(const {weight,witness:w} of entries){
+      assert(type==="sdp"||(type==="planar"&&w.rank===1),"test rank");
+      const t=BigInt(weight);assert(t>=0n,"dual weight");total+=t;
+      const st=w.n===112?moved:states.find(s=>s.n===w.n),M=phaseMatrix(st,w,V);
+      constant+=t*N*N*M.reduce((a,v,k)=>a+v*S[Math.floor(k/NB)]*S[k%NB],0n);
+      if(w.n===112){const r=w.rank,a=w.real.map(BigInt),b=w.imag.map(BigInt);
+        for(let i=0;i<112;i++)for(let j=i+1;j<112;j++){
+          const k=index.get(child.edgeId(w.p,i,j));if(k===undefined)continue;
+          let g=0n;for(let h=0;h<r;h++)g+=a[i*r+h]*b[j*r+h]-b[i*r+h]*a[j*r+h];
+          slopes[k]+=2n*N*N*t*g;
+        }
+      }
+    }
+    assert(constant>=E*V*V*a0,"constant term domination");
+    for(let j=0;j<ids.length;j++)assert(slopes[j]>=E*V*V*twice(ids[j]),"endpoint slope domination");
+    const pi=piInterval()[1],d=E*10n**96n,up=(10n**12n*pi*pi*total+d-1n)/d;
+    assert(up<6090490000000n,"all-endpoint ceiling");
+    report[type]={area_upper_units_1e12:String(up),classes:ids.length,tests:entries.length};
+  }
+  assert(report.sdp&&report.planar,"two endpoint families");return report;
+}
+
+function verifyCeilings(raw,io,data,cuts,monotone){
   const {states,field,maps}=loadField(raw,io,REFERENCE_STEPS);
   const center=data.center.map(BigInt),V=BigInt(data.phase_denominator),W=BigInt(data.weight_denominator);
   assert(center.length===NB && V>0n && W>0n,"normalizations");
@@ -185,7 +231,7 @@ function verifyCeilings(raw,io,data,cuts){
     }
   }
   assert(report.length===4,"four local ceilings");
-  return {multiplier_boxes:report,free_endpoints:endpointCeiling(states,maps,A,cuts),joint_planar:jointCeiling(states,maps,A,cuts.multipliers.map(BigInt),cuts.joint)};
+  return {multiplier_boxes:report,free_endpoints:endpointCeiling(states,maps,A,cuts),joint_planar:jointCeiling(states,maps,A,cuts.multipliers.map(BigInt),cuts.joint),monotone_endpoints:monotoneCeiling(states,maps,A,monotone)};
 }
 
 if(typeof module!=="undefined" && require.main===module){
@@ -197,5 +243,6 @@ if(typeof module!=="undefined" && require.main===module){
     ungzip:zlib.gunzipSync,inflate:zlib.inflateRawSync};
   const data=JSON.parse(fs.readFileSync(path.join(__dirname,"issue163_reweight_phases.json"),"utf8"));
   const cuts=JSON.parse(fs.readFileSync(path.join(__dirname,"issue163_endpoint_cuts.json"),"utf8"));
-  console.log(JSON.stringify(verifyCeilings(raw,io,data,cuts),null,2));
+  const monotone=JSON.parse(fs.readFileSync(path.join(__dirname,"issue163_monotone_endpoint_cuts.json"),"utf8"));
+  console.log(JSON.stringify(verifyCeilings(raw,io,data,cuts,monotone),null,2));
 }

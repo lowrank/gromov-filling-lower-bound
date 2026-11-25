@@ -1,13 +1,19 @@
 # How much can these coefficients improve the certificate?
 
-With the 15 scalar multipliers in the latest lower-bound certificate fixed, let the three raw endpoint coefficients in classes 1, 115 and 280 range independently over all real numbers. Keep every other raw coefficient fixed. For certificates that bound each terminal cell separately, the optimal area bound lies in the following intervals.
+With the 15 scalar multipliers from the three-coefficient checkpoint fixed, let the three raw endpoint coefficients in classes 1, 115 and 280 range independently over all real numbers. Keep every other raw coefficient fixed. For certificates that bound each terminal cell separately, the optimal area bound lies in the following intervals.
 
 | Norm test | Achieved lower bound | Certified upper bound |
 |---|---:|---:|
 | Independent planar gradients | $6.090475197311347654$ | $6.090480263618$ |
 | Diagonal Hermitian PSD witnesses | $6.090475197311347654$ | $6.090475261348$ |
 
-The distance to the second upper endpoint is less than $6.404\cdot10^{-8}$. [Lower-bound proof](issue163_reweighted_field.md)
+The distance to the second upper endpoint is less than $6.404\cdot10^{-8}$. The signed changes in the later lower bound use additional endpoint classes. [Lower-bound proof](issue163_reweighted_field.md)
+
+### All 330 nonnegative endpoint changes
+
+Fix the multiplier vector and the three-coefficient calibration from the first table at commit <code>0a29d2a</code>. Starting from that field, allow independent **nonnegative increments of arbitrary size** in all 330 fresh endpoint classes at level 112. The action obtainable by independent planar tests is at most $6.090478414162$. For the diagonal PSD norm test the upper bound is $6.090475297341$.
+
+The checker enumerates every endpoint orbit having a scalar label in the two outermost cells at either end. A mixture of three planar unit-vector tests bounds both the constant term in the action and its slope in each of the 330 directions. Four tests suffice for the PSD mixture. Every inequality is rational. Since the changes are nonnegative, summing these slope inequalities against the changes proves the bound simultaneously on the entire nonnegative orthant. Allowing a coefficient to decrease removes this implication.
 
 ### Varying the endpoint coefficients and all 15 multipliers together
 
@@ -70,7 +76,7 @@ All four strict comparisons pass in integer arithmetic. The reported upper endpo
 
 ## Replay
 
-Keep the three JavaScript checkers and both JSON witness files together and run
+Keep the three JavaScript checkers and the three JSON witness files together and run
 
 ~~~sh
 node issue163_reweight_ceiling.cjs /path/to/bundle/research/output/improve112_6081_certificate

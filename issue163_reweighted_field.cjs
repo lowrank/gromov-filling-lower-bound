@@ -5,7 +5,7 @@ const {INPUT,npzReader,reconstruct,piInterval,assert}=require("./issue163_fourie
 const D=32000000000000, T0=31970639125404, Z=100000000;
 const K=[0,8,16,24,32,36,40,42,44,46,48,50,52,54,55,56];
 const SIGMA=[100265936,100252506,100262495,100257567,100240481,100250394,100231550,100236549,100213980,100206332,100040363,99795356,99619763,100704371,100516523];
-const ENDPOINT_STEPS=[[1,19231000000],[115,54300000],[280,12621700000]];
+const ENDPOINT_STEPS=[[0,23280000000],[1,20719575947],[112,23280000000],[115,1113151894],[278,-375168608],[280,15098809146],[498,-21004343868],[770,-715918],[5418,-8604371575],[5420,-1358754408],[55978,36167562]];
 const ENDPOINT_FILE="agent_n112_uniform_patterns.npz";
 const ENDPOINT_HASH="8df3c962bddb82441b0cc7f833058ba7e07c25d9989a1fab97a80540003e9da6";
 function group(x){
@@ -93,7 +93,7 @@ function endpointState(doc,st56,field,maps,endpoint,hash,increments){
   // The original child diagonal hash was checked above. Spend the new edge budget.
   const steps=new Map(increments);
   for(const [id,inc] of steps){
-    const a=reps[3*id+1],b=reps[3*id+2];assert(inc>0 && Math.min(a,111-a,b,111-b)<2,"new endpoint increment");
+    const a=reps[3*id+1],b=reps[3*id+2];assert(Number.isSafeInteger(inc) && inc!==0 && Math.min(a,111-a,b,111-b)<2,"new endpoint increment");
     w[id]+=inc;
     area+=BigInt(2*objN[id]/objD[id])*BigInt(inc)*BigInt(SIGMA[group(a-55.5)])*BigInt(SIGMA[group(b-55.5)]);
   }
@@ -104,7 +104,7 @@ function endpointState(doc,st56,field,maps,endpoint,hash,increments){
       for(let j=0;j<n;j++){
         if(j===i||(j<i&&Math.min(b[j],111-b[j])<2))continue;
         const inc=steps.get(edgeId(p,Math.min(i,j),Math.max(i,j)));if(!inc)continue;
-        diagonal[p*n+i]+=2n*BigInt(inc);diagonal[p*n+j]+=2n*BigInt(inc);
+        diagonal[p*n+i]+=2n*BigInt(Math.abs(inc));diagonal[p*n+j]+=2n*BigInt(Math.abs(inc));
       }
     }
   }
@@ -241,7 +241,7 @@ function loadField(raw,io,increments=ENDPOINT_STEPS) {
 function replayReweight(raw,io) {
   const {states,child}=loadField(raw,io);
   const result=verifyField(states,child.area);
-  assert(BigInt(result.pi_squared_factor_floor_1e18)>=617094155935886429n,"certified area coefficient");
+  assert(BigInt(result.pi_squared_factor_floor_1e18)>=617103883127679565n,"certified area coefficient");
   return result;
 }
 if(typeof module!=="undefined" && require.main===module){
