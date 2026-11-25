@@ -18,4 +18,18 @@ The last construction uses signed changes in 65 endpoint coefficients, three pos
 
 Two saturated profiles rule out further gains at every subsequent doubling with the same inheritance and absolute edgewise trace charges. This includes signed increments, since replacing each by its absolute value preserves those charges and weakly increases the boundary action. The fixed shell-density rule for the last row has an upper bound of $6.091188129791$. At 112 points, any real rescaling of the final signed update from the three-coefficient checkpoint gives at most $6.091183831488$ with independent diagonal PSD bounds. These are ceilings on specified constructions. The full filling-area problem remains open. [Dyadic optimality proof](issue163_dyadic_lift.md) · [Coefficient ceilings](issue163_reweight_ceiling.md)
 
-One open calculation is to allow signed coefficient changes at 224 points and solve for new PSD diagonals on the two saturated profiles. A signed perturbation can cancel an existing matrix entry. The fixed rule charges its absolute value edge by edge and loses this cancellation. A certificate using it would also have to check every other rooted profile and its boundary action.
+## Progress toward 6.15
+
+A geometric genus-reduction estimate reaches **$6.16$** for fillings admitting a disjoint system of curves that cuts the genus to at most one, with total cut length at most $2$ and each curve at distance at least $1.54$ from the external boundary. At depth $\pi/2$ it yields the sharp **$2\pi$** for any cut lengths. At arbitrary depths the estimate still gives $6.15$ when $\sum_j\ell_j^2\le\pi(2\pi-6.15)$. Finding a sufficiently inexpensive cut system in every putative smaller filling is open. [Proof, cap costs and intrinsic cut criterion](issue163_genus_reduction.md)
+
+Recomputing the 224-point diagonal witnesses for all **666 arbitrary signed endpoint coefficients** gives a certified method ceiling of $6.137425468261$. Even the less restrictive independent planar-gradient model has ceiling $6.147258810636$. Both allow the parent to be scaled and include the prior Fourier correction. A separate test on the genuine hemisphere gives $6.145994304998$ for arbitrary calibrated changes supported only on the endpoint bands from 448 onward. Coordinated changes from 224 onward have the weaker geometric ceiling $6.168642868649$. [Endpoint proofs and exact replays](issue163_endpoint_limits.md)
+
+A closed interior Fourier correction now has raw boundary action at least $6.22035659546\ldots$. Its comass is at most one on the hemisphere, on every zero-output profile, and on two explicit off-hemisphere families throughout radii $1$ to $100$. A global comass at most $1.0114$ would yield $6.15$. The full transition and other-profile estimates remain open. [Interior construction and verified norm estimates](issue163_interior_candidate.md)
+
+In the continuum, a rotating family of folded triangle profiles puts an upper bound of $5.786100794611$ on the single gnomonic Fourier coordinate with arbitrary target density under independent planar tests. A Lorentz-equivariant center which also uses a scalar normalization has the analytic ceiling $6.07098103\ldots$ under those tests. These calculations identify explicit profiles against which to check other interior corrections. [Continuum tests and replay](issue163_continuum_tests.md)
+
+The five hash-pinned finite inputs are included in the branch directory named **issue163_inputs**. From the branch root the combined lower-bound replay is
+
+~~~sh
+node issue163_combined.cjs issue163_inputs
+~~~
