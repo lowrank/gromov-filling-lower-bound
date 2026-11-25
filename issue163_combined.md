@@ -37,6 +37,8 @@ $$
 $$
 The checker uses the rational inverse proposal as $x$, obtains $x^*Hx$ exactly and rounds $\Re(v^*x)$ downward. It takes the larger local upper allowance from the two rules. On each shell, every profile retained by the fixed range test imposes its allowance. Taking the minimum over even a subset of these profiles gives an upper bound. Integrating the resulting shell envelope uses upward rational enclosures of $\tan(\pi/224)$ and $\pi^2$. This ceiling concerns density selection within the stated rule. Changing the Fourier shape, the finite field, or the local norm certificate remains possible.
 
+One tested change moved every integer multiplier $S_j$ to $\operatorname{round}(10^8+1.025(S_j-10^8))$, rounding half-integers upward. On that field the zero endpoint profile exhausted the 112-point budget, leaving zero gain from the 224-point positive repairs. With the same Fourier shape, its full replay gave $6.091067300485864298$.
+
 ## Replay
 
 Place the four lower-bound JavaScript files together. From the bundle root run
