@@ -140,11 +140,11 @@ We can bound this quantity for arbitrary changes on either family of supports us
 | Intrinsic balls $`P\gt 0`$ centered at gap midpoints | $[6.138850561,\ 6.139705261]$ |
 | Larger regions $`L\gt 0`$ determined by adjacent anchors | $[6.150978383,\ 6.152493731]$ |
 
-Thus changes confined to the actual midpoint balls cannot reach $6.15$ with this exterior form fixed. For the adjacent-anchor regions, the hemisphere test alone allows only a narrow margin above $6.15$. Its upper endpoint also rules out $2\pi$ for all corrections with this support. These are ceilings on calibration actions. [One-dimensional interval replay](issue163_midpoint_budget.cjs)
+Thus changes confined to the actual midpoint balls cannot reach $6.15$ with this exterior form fixed. For the adjacent-anchor regions, the hemisphere test alone allows only a narrow margin above $6.15$. Its upper endpoint also rules out $2\pi$ for all corrections with this support. These are ceilings on calibration actions. [One-dimensional interval replay](issue163_midpoint_budget.cjs) A subsequent flat profile comparison sharpens the ceiling on the aligned adjacent-anchor supports to $6.107523028$. [Flat collar proof](issue163_flat_collar.md)
 
 On the hemisphere $F_i(x)=\pi/2-d(x,\gamma(ih))$. Each larger region is the upper half of the lens common to two spherical caps of radius $h$ whose centers are at distance $h$. Set $\beta=\arccos(\cos h/(1+\cos h))$, the angle of the equilateral spherical triangle of side $h$. The area of one half-lens is $\pi-(1+2\cos h)\beta$, obtained by subtracting the excess $3\beta-\pi$ of one triangle from two sectors of total area $2\beta(1-\cos h)$. The area of a single midpoint half-ball is $\pi(1-\cos R)$.
 
-In either region the primitive of the old form is $`\tfrac12(F-c)^T W\,dF`$ before division by $U$. It vanishes on the bottom edge since $F-c=t\mathbf1$ there. By reflection it suffices to integrate the arc from the left boundary endpoint to the highest point. Write $r=h$ and $a=\beta$ for the lens, or $r=R$ and $a=\pi/2$ for the ball. The arc has length $\ell=a\sin r$. With $\delta_i$ the positive angular difference from its cap center to the $i$th anchor, its distances satisfy
+In either region the primitive of the old form is $`\tfrac12(F-c)^T W\,dF`$ before division by $U$. It vanishes on the bottom edge since $F-c=t\mathbf1$ there. By reflection it suffices to integrate the arc from the left boundary endpoint to the highest point. Write $r=h$ and $a=\beta$ for the lens, or $r=R$ and $a=\pi/2$ for the ball. The arc has length $\ell=a\sin r$. With $\delta_i$ the positive angular difference from its cap center to anchor $i$, its distances satisfy
 
 ```math
  \cos d_i(t)=\cos r\cos\delta_i-\sin r\sin\delta_i\cos t,\qquad 0\le t\le a .

@@ -3,11 +3,13 @@
 For every compact connected orientable Riemannian surface whose single boundary component is an isometrically embedded intrinsic circle of length $2\pi$,
 
 ```math
- \mathrm{Area}(M)\ge \frac{2213638768213206034608195815563}{3583999641600000000000000000000}\pi^2
- >6.095909909027119498 .
+ \mathrm{Area}(M)\ge \frac{2213639035555078034608195815563}{3583999641600000000000000000000}\pi^2
+ >6.095910645232136335 .
 ```
 
-The boundary forces area into three chambers in known proportions. Weighing their separate planar comass gains gives the displayed bound and retains at least 95 percent of the earlier diagonal penalty. One can now charge the actual extra length of each antipodal route through each point. In a filling of area below $6.15$, for example, pairs for which both anchors are farther than $\pi/2$ from the point can carry less than $0.879853$ percent of the diagonal weight for the clipped profile. The required lower bound on this fraction remains open. [Distance comparison and exact replay](issue163_detour_comparison.md)
+Two of the comass comparisons would require different values for the same gradient vector to attain their separate bounds. Charging the resulting squared error gives the displayed constant with the twelve existing matrix witnesses. Any filling below $6.15$ must also have weighted root mean square directional imbalance below $0.132362$. A small quadrature gives about $0.156$ on the round hemisphere. A uniform lower estimate for this imbalance on putative smaller fillings remains open. [Proof, exact replay and hemisphere test](issue163_comass_residual.md)
+
+The bound retains at least 95 percent of the earlier diagonal penalty for excess length of antipodal routes. In a filling of area below $6.15$, pairs for which both anchors are farther than $\pi/2$ from the point can carry less than $0.879853$ percent of the diagonal weight for the clipped profile. [Distance comparison](issue163_detour_comparison.md)
 
 On one current matrix the semidefinite relaxation admits a value above $0.9999998$, while planar gradients give at most $0.9997999$. In a neighboring chamber an explicit planar test survives even when routes through the test patch are arbitrarily close to shortest for every boundary label. It keeps global rescaling of this calibration below $6.09774$. The same construction realizes the continuum obstruction to the proposed form with action $6.22$ on genuine fillings. [Planar comparison](issue163_planar_comass.md) · [Short routes and tests on actual fillings](issue163_short_routes.md)
 
@@ -25,7 +27,8 @@ There are smooth disks passing all 112 sampled antipodal tests with an unsampled
 | Closed correction on each boundary gap and its two halves | $6.095889052386098292$ |
 | Full antipodal traces and angular difference energy | Exact bisected-gap bound plus $2^{-1372}$ |
 | Planar phase comparison on the mandatory adjacent-anchor regions | $6.095906676681434095$ |
-| Separate chamber gains with the detour penalty retained | **$6.095909909027119498$** |
+| Separate chamber gains with the detour penalty retained | $6.095909909027119498$ |
+| Shared gradient vector in the planar comass comparisons | **$6.095910645232136335$** |
 
 The 224-point construction uses signed changes in 65 endpoint coefficients, three positive increments after doubling, and an average of two Fourier corrections supported away from those increments. The integer replays check the five archived input hashes, the finite extension on 214,058 terminal cells, all 1,898,400 rooted children at 224, and the additional Fourier action. The transported finite theorem supplies the original coverage and PSD certificates. The Lean development verifies the earlier Fourier result. [Combined proof and replay](issue163_combined.md) · [Signed field](issue163_reweighted_field.md) · [Earlier Lean development](https://github.com/lowrank/gromov-filling-lower-bound)
 
@@ -33,9 +36,11 @@ Two saturated profiles rule out further gains at every subsequent doubling with 
 
 ## Progress toward 6.15
 
+A flat comparison surface puts an upper bound of **6.107523028** on the action of any closed planar-comass-one calibration that agrees with the normalized free field outside the adjacent-anchor regions of the 112-pair grid. Widening the aligned gaps fourfold still gives a ceiling of **6.142450184**. Using twice the original gap width at every rotation gives **6.145244034**. The proof integrates an explicit field over small polygons. [Support conditions, comparison surfaces and exact check](issue163_flat_collar.md)
+
 A geometric comparison reaches **$6.155019283$** in every genus when the orientation double cover of the antipodal quotient admits a compatible hyperelliptic involution of singular-value ratio at most $1.6$. The same argument gives **$2\pi$** if every angle-distorted region has singular-value ratio at most $3$ and the two exchanged area densities differ by a factor of at least $4$. On paired flat collars, spreading a fixed twist uniformly minimizes the cost among all shear interpolations. The proof reduces the numerical test to one scalar variable. Finding a sufficiently inexpensive involution on every smaller filling remains open. [Proof, collar experiment and exact inequalities](issue163_symmetry.md)
 
-A geometric genus-reduction estimate reaches **$6.16$** for fillings admitting a disjoint system of curves that cuts the genus to at most one, with total cut length at most $2$ and each curve at distance at least $1.54$ from the external boundary. At depth $\pi/2$ it yields the sharp **$2\pi$** for any cut lengths. At arbitrary depths the estimate still gives $6.15$ when $`\sum_j\ell_j^2\le\pi(2\pi-6.15)`$. Finding a sufficiently inexpensive cut system in every putative smaller filling is open. [Proof, cap costs and intrinsic cut criterion](issue163_genus_reduction.md)
+A geometric genus-reduction estimate reaches **$6.16$** for fillings admitting a disjoint system of curves that cuts the genus to at most one, with total cut length at most $2$ and each curve at distance at least $1.54$ from the external boundary. At depth $\pi/2$ it yields the sharp **$2\pi$** for any cut lengths. At arbitrary depths the estimate still gives $6.15$ when $`\sum_j\ell_j^2\le\pi(2\pi-6.15)`$. For an interior homological systole the two cut copies can be capped independently. Thin spherical lunes can retain the needed distances even at shallow depth. Finding a sufficiently inexpensive cut system in every putative smaller filling is open. [Proof, cap costs and intrinsic cut criterion](issue163_genus_reduction.md)
 
 Recomputing the 224-point diagonal witnesses for all **666 arbitrary signed endpoint coefficients** gives a certified method ceiling of $6.137425468261$. Even the less restrictive independent planar-gradient model has ceiling $6.147258810636$. Both allow the parent to be scaled and include the prior Fourier correction. A separate test on the genuine hemisphere gives $6.145994304998$ for arbitrary calibrated changes supported only on the endpoint bands from 448 onward. Coordinated changes from 224 onward have the weaker geometric ceiling $6.168642868649$. [Endpoint proofs and exact replays](issue163_endpoint_limits.md)
 
@@ -43,10 +48,12 @@ A closed interior Fourier correction now has raw boundary action at least $6.220
 
 In the continuum, a rotating family of folded triangle profiles puts an upper bound of $5.786100794611$ on the single gnomonic Fourier coordinate with arbitrary target density under independent planar tests. A Lorentz-equivariant center which also uses a scalar normalization has the analytic ceiling $6.07098103\ldots$ under those tests. These calculations identify explicit profiles against which to check other interior corrections. [Continuum tests and replay](issue163_continuum_tests.md)
 
-The five hash-pinned finite inputs are included in [issue163_inputs](issue163_inputs/). From the repository root, enter this directory with <code>cd issue-163</code>. The first command checks the new planar comparison. The other commands replay the geometric calculations and their finite base.
+The five hash-pinned finite inputs are included in [issue163_inputs](issue163_inputs/). From the repository root, enter this directory with <code>cd issue-163</code>. The first two commands verify the planar comparison and its sharper area constant. The next command checks the ceilings for changes near the boundary anchors.
 
 ~~~sh
 node issue163_planar_comass.cjs issue163_inputs
+node issue163_comass_residual.cjs
+node issue163_flat_collar.cjs issue163_inputs
 node issue163_angular_energy.cjs issue163_inputs
 node issue163_sampled_disk.cjs
 node issue163_midpoint.cjs issue163_inputs

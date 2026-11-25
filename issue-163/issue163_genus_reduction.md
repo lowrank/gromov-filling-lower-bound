@@ -50,3 +50,50 @@ for every pair of short collars $i,j$ and every $s,t$ on the external boundary. 
 One may also use $h_i=\mathrm{diam}_M(C_i)/2$ for an individual seam when this is less than $L_i/4$. Any excursion from that seam through its closing disk and back then costs at least its original ambient diameter. Replace it by an original path of no greater length between its endpoints. Such a seam needs no pairwise external test. These replacements compare lengths in the original surface, which may include the discarded region.
 
 For an unrestricted $6.15$ theorem along this route the missing estimate is the existence of a genus-reducing choice with $\sum_i B_i-\mathrm{Area}(M\setminus P)\le 2\pi-6.15$ in every putative smaller filling. The argument gives the bound whenever the displayed condition holds.
+
+## Independent caps on the two sides of a shortest nonseparating loop
+
+Suppose $`C`$ is a smooth simple interior loop of length $`L`$ realizing the shortest length of a closed curve with nonzero mod-two homology in $`M`$. Cut along it, keep the connected cut surface $`P`$, and denote the two seam copies by $`C_+`$ and $`C_-`$. The boundary distances stay protected when each seam is capped independently according to the test below.
+
+First $`C`$ is an isometric metric circle in $`M`$. A path shorter than its shorter arc would split $`C`$ into two loops both shorter than $`L`$, at least one homologous to a nonzero class. Second, $`d_P(C_+,C_-)\ge L/2`$. A path between the two copies, closed in $`M`$ by a shorter seam arc, has odd intersection with $`C`$ and length at most the path length plus $`L/2`$. One sees the odd intersection by moving the closing arc slightly to one side. Paths with other seam contacts are approximated in the interior of $`P`$. These two metric properties suffice for the following argument.
+
+For each copy $`i`$ and arclength parameters $`s,t`$ on it put
+
+~~~math
+ D_i(s,t)=\max_{a\in\partial M}
+ [\pi-d_P(a,C_i(s))-d_P(\bar a,C_i(t))]_+ ,
+~~~
+
+where $`\bar a`$ is antipodal to $`a`$ on the external boundary. Always $`D_i(s,t)\le d_C(s,t)`$. A cap whose seam distances are at least $`D_i(s,t)`$ for every $`s,t`$ suffices, provided its rim has its old arclength. For a path visiting just this cap, between the first and last visit replace any intervening excursions through $`P`$ by seam arcs. The isometry of $`C`$ ensures this costs no more. The cap test now protects every external antipodal pair. Any shorter external route would extend along the boundary to a shorter antipodal route.
+
+For a path visiting both caps let $`i,j`$ denote the first and last copies, possibly equal. Its intermediate portion contains a crossing in $`P`$ between the two copies of length at least $`L/2`$. In the original surface the nearest points on $`C`$ to the two external endpoints, reached from their respective copies in $`P`$, can be joined by a seam arc of length at most $`L/2`$. The initial and terminal distances to the copies plus $`L/2`$ thus already dominate the external boundary distance. There is no joint cap constraint in this case.
+
+### A spherical lune with two prescribed arms
+
+Choose a reflection $`R`$ of a seam fixing points $`p,q`$ at distance $`L/2`$. The two arcs between them are the arms. Put $`u(s)=d_C(p,s)`$, $`r_0=L/(2\pi)`$. A lune of angle $`\gamma`$ in the round sphere of radius $`r_0`$ has these arms as its bounding meridians and area $`2r_0^2\gamma`$. Distances along an arm are $`|u-v|`$. For opposite arms its intrinsic seam distance $`d_\gamma`$ satisfies
+
+~~~math
+ \sin^2\!\bigl(d_\gamma/(2r_0)\bigr)
+ =\sin^2\!\bigl((u-v)/(2r_0)\bigr)
+   +\sin(u/r_0)\sin(v/r_0)\sin^2(\gamma/2).
+~~~
+
+This is the spherical cosine law on the convex lune. At angle $`\pi`$ it gives precisely the original seam-circle distance. For each seam let $`q_i`$ be the supremum over opposite-arm nonpole pairs of
+
+~~~math
+ \frac{
+ [\sin^2(D_i(s,t)/(2r_0))-\sin^2((u(s)-u(t))/(2r_0))]_+
+ }{\sin(u(s)/r_0)\sin(u(t)/r_0)} .
+~~~
+
+Then $`0\le q_i\le1`$. At the poles the arm-distance test holds automatically. The least area in this lune family protecting all external routes, in the limiting sense at zero angle, is $`4r_0^2\arcsin\sqrt{q_i}`$. In particular, if every reflected pair satisfies $`d_P(a,C_i(s))+d_P(\bar a,C_i(Rs))\ge\pi`$ for every anchor, one may cap this copy at arbitrarily small area. For points on opposite arms, traveling on the second arm from $`Rs`$ to $`t`$ gives $`D_i(s,t)\le |u(s)-u(t)|`$ in this case.
+
+There is also a bound depending just on the worst reflected-pair deficit $`\Delta_i=\max_s D_i(s,Rs)`$. Insert a flat product cylinder of height $`b`$ before the thin lune. Projection of the lune to the meridian coordinate $`u`$ is 1-Lipschitz. Every route entering the lune and returning to the outer rim has length at least $`\sqrt{(u(s)-u(t))^2+4b^2}`$ by the triangle inequality for the absolute horizontal and vertical displacements. A route entirely in the cylinder costs at least $`d_C(s,t)`$. On the other hand $`D_i(s,t)\le\min(L/2,|u(s)-u(t)|+\Delta_i)`$, by traveling from $`Rs`$ to $`t`$ on their shared arm in the opposite-arm case. Maximizing $`\min(L/2,x+\Delta_i)^2-x^2`$ for $`0\le x\le L/2`$ gives $`L\Delta_i-\Delta_i^2`$. Thus a second available cost per copy is
+
+~~~math
+ Lb=\tfrac L2\sqrt{L\Delta_i-\Delta_i^2}.
+~~~
+
+The lune and cylinder have the exact prescribed rim lengths. Along smooth gluing arcs use smoothing from above as in the first proof. At either lune vertex the total angle after gluing is $`\pi+\gamma\le2\pi`$. Locally each sector admits radial coordinates based at the vertex with metric $`d\rho^2+G^2d\theta^2`$, with $`G/\rho\to1`$ uniformly on each side (use boundary straightening on the smooth side). Rescale the angular sectors proportionally to fill a $`2\pi`$ disk. A fixed multiple of the Euclidean metric dominates the sector metrics in these coordinates. Replace the tensor by this upper metric near the origin and interpolate in a shrinking annulus, then smooth the remaining arcs from above. The added area tends to zero and the original external boundary is untouched.
+
+For example, in genus two a cut with $`L=2`$ and both $`\Delta_i\le1/500`$ gives $`A\ge2\pi-2\sqrt{0.003996}\gt6.15675`$. More generally each operation removes one handle and has the stated cost for that step's cut metric. A bound at $`6.15`$ for all genera would follow from a sequence down to genus one costing in total at most $`2\pi-6.15`$. The existence of such cuts in every putative smaller filling is open.
