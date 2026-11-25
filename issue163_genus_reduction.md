@@ -6,18 +6,18 @@ Let $M$ be a compact connected orientable Riemannian surface with one boundary c
 
 Cut $M$ along a disjoint collection of smooth simple closed interior curves. One may also discard components away from the external boundary. Let $P$ be the retained connected surface, with the original boundary and new seam circles $C_i$. Assume that capping all its seams gives a surface of genus at most one. Write
 
-$$
+```math
  L_i=\mathrm{length}(C_i),\quad
  d_i=d_M(C_i,\partial M),\quad
  H_i=\left(\frac\pi2-d_i\right)_+,\quad
  B_i=\frac{L_i^2}{2\pi}\sin\!\left(\min\left\{\frac\pi2,\frac{2\pi H_i}{L_i}\right\}\right).
-$$
+```
 
 Distances here are measured before cutting. Count both copies of a nonseparating cut if both are retained. Then
 
-$$
+```math
  \boxed{\mathrm{Area}(M)\ \ge\ 2\pi+\mathrm{Area}(M\setminus P)-\sum_i B_i.}
-$$
+```
 
 The discarded area means $\mathrm{Area}(M)-\mathrm{Area}(P)$, so merely cutting a curve discards zero area.
 
@@ -31,7 +31,7 @@ The discarded area means $\mathrm{Area}(M)-\mathrm{Area}(P)$, so merely cutting 
 
 For one seam of length $L$, put $r=L/(2\pi)$. A round hemisphere of radius $r$ has that seam as its equator. Between two points on the equator their distance in the hemisphere equals the shorter equatorial arc. Consequently each excursion through a whole cap can be replaced in $M$ by an arc of no greater length.
 
-For $0\le H<L/4$, keep only the zone from the equator to meridional distance $H$. In coordinates with $0\le t\le H$ the metric is $dt^2+r^2\cos^2(t/r)\,d\theta^2$. Its area is $2\pi r^2\sin(H/r)$. Close its inner circle by a disk of arbitrarily small area. For example, use a meridional interval of length $\varepsilon$ with a bounded warping radius decreasing from the inner circle radius to zero and equal to distance from the tip near the tip. This costs $O(L\varepsilon)$. For $H=0$ attach the small disk directly. For $H\ge L/4$ take the whole hemisphere.
+For $`0\le H\lt L/4`$, keep only the zone from the equator to meridional distance $H$. In coordinates with $0\le t\le H$ the metric is $`dt^2+r^2\cos^2(t/r)\,d\theta^2`$. Its area is $2\pi r^2\sin(H/r)$. Close its inner circle by a disk of arbitrarily small area. For example, use a meridional interval of length $\varepsilon$ with a bounded warping radius decreasing from the inner circle radius to zero and equal to distance from the tip near the tip. This costs $O(L\varepsilon)$. For $H=0$ attach the small disk directly. For $H\ge L/4$ take the whole hemisphere.
 
 Consider a path between external boundary points. If it avoids every small closing disk, each excursion through a spherical zone or a whole hemisphere costs at least the shorter seam arc. It gives a path in the original surface of no greater length. If it visits closing disks, consider its first and last such visits. Before the first it travels from the external boundary to the corresponding seam and crosses that seam's zone. The first part costs at least $d_i$, since any earlier spherical excursion can be replaced in $M$. The crossing costs at least $H_i$ by the $dt^2$ term in the metric. Thus this initial part costs at least $d_i+H_i\ge\pi/2$. The terminal part similarly costs at least $\pi/2$, including when both visits are at the same disk. A path of length at least $\pi$ cannot shorten an intrinsic boundary arc. The shorter boundary arc itself is always available. It suffices to test transverse piecewise smooth paths by length approximation.
 
@@ -41,9 +41,9 @@ The glued metrics are continuous across the seams in arclength and inward-normal
 
 The depth estimate uses the uniform upper bound $\pi$ for every external boundary distance. Finer data give a smaller cap when a shallow seam is localized. Choose a proposed collar height $h_i\ge0$ for each seam. Heights at least $L_i/4$ give whole hemispheres with cost $L_i^2/(2\pi)$. For seams with shorter collars set $a_i(s)=d_M(\gamma(s),C_i)$. It suffices to have
 
-$$
+```math
  a_i(s)+h_i+h_j+a_j(t)\ \ge\ d_{S^1}(s,t)
-$$
+```
 
 for every pair of short collars $i,j$ and every $s,t$ on the external boundary. The first and last visits in the proof give exactly this inequality. The cost of a short collar is then $L_i^2\sin(2\pi h_i/L_i)/(2\pi)$.
 

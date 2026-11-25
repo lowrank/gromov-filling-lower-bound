@@ -1,24 +1,27 @@
 # The finite certificate above 6.095
 
 For a compact connected orientable Riemannian surface whose single boundary is an isometrically embedded intrinsic circle of length $2\pi$, in every genus,
-$$
+
+```math
  \mathrm{Area}(M)\ge
  \frac{316186938521718142086885116509}{511999948800000000000000000000}\pi^2
  >6.095000609501857507.
-$$
+```
+
 The displayed decimal improves the previous $6.091188129789057449$ by $0.003812479712800058$. The construction uses the four existing anchor levels and changes the 829 active master coefficients jointly. Its mathematical inputs are the distance-coordinate Stokes argument and the coverage of the transported finite hierarchy. The supplied verifier checks every local positive semidefinite bound for the new field from scratch. The repository's Lean development covers the earlier Fourier theorem. [Geometric setup and scalar weights](issue163_reweighted_field.md) · [Earlier Fourier theorem](docs/current-manuscript.md)
 
 ## The changed form and its boundary action
 
-Write $F_i$ for half the difference of distances to two antipodal anchors. The form is a sum of $W_{ij}(F_i,F_j)\sigma(|F_i|)\sigma(|F_j|)\,dF_i\wedge dF_j$. Each term is a pullback from a plane. It has a primitive for the Stokes computation, including the piecewise-constant coefficient case by the finite source argument. The 15 scalar multipliers have denominator $10^8$ and are even. On the interior of every reached terminal scalar bin the replay checks that the multiplier is constant. On a fixed scalar facet the corresponding coordinate differential vanishes almost everywhere on its preimage. The source extension treats these facets.
+Write $F_i$ for half the difference of distances to two antipodal anchors. The form is a sum of $`W_{ij}(F_i,F_j)\sigma(|F_i|)\sigma(|F_j|)\,dF_i\wedge dF_j`$. Each term is a pullback from a plane. It has a primitive for the Stokes computation, including the piecewise-constant coefficient case by the finite source argument. The 15 scalar multipliers have denominator $10^8$ and are even. On the interior of every reached terminal scalar bin the replay checks that the multiplier is constant. On a fixed scalar facet the corresponding coordinate differential vanishes almost everywhere on its preimage. The source extension treats these facets.
 
 The integer master changes have units $1/(2\cdot10^{12})$. Start from the 65 signed endpoint changes in the previous 112-point field. At each of the four levels reconstruct every pair coefficient using the signed master changes and archived dyadic scales. Away from the two-step endpoint band, a child coefficient vanishes at odd separation and equals half its parent's at even separation. The verifier checks these identities directly on 1,206, 7,930 and 61,326 classes at the successive doublings. Since the scalar multipliers are functions of the coordinates themselves, the identities also hold after multiplication. Thus the two parity blocks inherit the parental comass bound on every region covered by the finite hierarchy.
 
 On the final grid take $h=\pi/112$, and use integer coefficients $w_o$ in units $1/(16\cdot10^{12})$. For separation $k$, the scalar pair cell $(a,b)$ belongs to its boundary polygon when $|a-b|\le k$ and $|a+b-111|\le112-k$. Its area is $h^2/2$ if an equality holds and $h^2$ otherwise. There are $112-k$ index pairs at this separation. The replay counts all 480,704 positive-area cells, compares every orbit's weight with the source, and reproduces the previous field's action as a second normalization check. The new raw action is
-$$
+
+```math
  \pi^2\frac{2478905598010270233961179313430560}
  {112^2(32\cdot10^{12})(10^8)^2}.
-$$
+```
 
 ## Integer norm verification
 

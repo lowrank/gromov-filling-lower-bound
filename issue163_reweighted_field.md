@@ -2,11 +2,11 @@
 
 Every compact connected orientable Riemannian surface with one boundary component isometrically filling the intrinsic circle of length $2\pi$ satisfies
 
-$$
- \mathrm{Area}(M)\ \ge\
+```math
+ \mathrm{Area}(M)\ \ge
  \frac{617165758412709490}{10^{18}}\pi^2
  \ >\ 6.091181885431729436.
-$$
+```
 
 This finite certificate uses 112 antipodal anchor pairs. The supplied note gave $6.082181436172889493\ldots$. A shell-dependent Fourier correction gave $6.086380541911894628$ on this branch. Reweighting the finite form and changing three endpoint coefficients gave $6.090475197311347654$. The new 112-point bound uses signed changes in 65 endpoint classes. A further lift to 224 anchor pairs gives $6.091181920033558876$. [Dyadic refinement](issue163_dyadic_lift.md) It relies on the bundle’s transported finite theorem for profile coverage and positive semidefinite witnesses. The earlier Fourier theorems have a separate Lean verification. [Earlier Fourier formalization](https://github.com/lowrank/gromov-filling-lower-bound)
 
@@ -33,10 +33,12 @@ Each orbit has at least one coordinate in the two outermost cells at either end 
 Multiply each resulting coefficient $W_{ij}(F_i,F_j)$ by $\sigma(|F_i|)\sigma(|F_j|)$, with the interval of each scalar understood in units of $h$. Each term still pulls back a planar two-form, so the boundary Stokes calculation applies. The new coefficient array at a profile is $SWS$ with $S$ diagonal. Writing the gradients in an oriented orthonormal frame as complex numbers $z_i$ gives $|z_i|\le1$. The form evaluates to $Q_{SWS}(z)=z^*(-iSWS/2)z$. Complex conjugation reverses its sign. Any old witness $D+iW/2\succeq0$ gives $SDS+iSWS/2\succeq0$. The raw trace is now $\sum_i d_i\sigma_i^2$. Since the multipliers are even, all signed dihedral reductions still apply. The extra knot $55h$ occurs only in terminal 112-point cells. Every reached ancestor cell is explicitly checked for constancy of its weights. Dyadic direct-sum inheritance commutes with this diagonal multiplication. The source zero-coordinate extension handles scalar grid facets.
 
 The source stores matrix coefficient numerators $w_o$ in units of $1/(16\cdot 10^{12})$. Here $o$ indexes the 61,656 final pair classes. Let $\omega_o$ be the source's boundary polygon weight in units of $h^2$. The unordered pair of absolute scalar intervals $(a,b)$ is invariant on each orbit. The raw action in units of $\pi^2$ is therefore
-$$
+
+```math
  \frac{\sum_o(2\omega_o)w_o S_a S_b}
  {112^2\,(32\cdot10^{12})\, (10^8)^2}.
-$$
+```
+
 The integer numerator is $2475080672199852607407123768951328$. Before applying the signed increments, substitution of unit multipliers reproduces the archived finite action exactly.
 
 ### Discovering signed changes
@@ -49,7 +51,7 @@ Weak coupling between the dyadic residue classes slowed individual gradient upda
 
 The checker reconstructs the original diagonals on all four terminal levels and checks their SHA-256 hashes against the finite input certificate. At level 112 it canonicalizes the even and odd projections of all 116,986 cells, restores all 28 additional parent rows, interleaves the transported diagonals and adds the exact endpoint edge repairs. This recovers the original full child-diagonal hash. Each stored diagonal gives a fresh exact trace after rescaling.
 
-For a row exceeding the target trace, the checker can substitute an improved diagonal for the corresponding unscaled matrix $W$, including the signed increments at level 112. Floating-point block-coordinate ascent and Cholesky factorization only propose witnesses. For acceptance, let $d$ be the proposed integer diagonal, $G$ the integer Hermitian matrix for $\mathrm{diag}(d)+iW/2$ in common units, and $L$ a rational lower-triangular factor. Clear denominators in $G-LL^*$. The code checks for every row that its real diagonal dominates the sum of the absolute real and imaginary parts of all off-diagonal entries. Hermitian diagonal dominance gives $G-LL^*\succeq0$, hence $G\succeq0$. Only a reduction in the exact weighted trace is retained. An unsuccessful proposal leaves the previous exact witness available.
+For a row exceeding the target trace, the checker can substitute an improved diagonal for the corresponding unscaled matrix $W$, including the signed increments at level 112. Floating-point block-coordinate ascent and Cholesky factorization only propose witnesses. For acceptance, let $d$ be the proposed integer diagonal, $G$ the integer Hermitian matrix for $\mathrm{diag}(d)+iW/2$ in common units, and $L$ a rational lower-triangular factor. Clear denominators in $`G-LL^*`$. The code checks for every row that its real diagonal dominates the sum of the absolute real and imaginary parts of all off-diagonal entries. Hermitian diagonal dominance gives $`G-LL^*\succeq0`$, hence $G\succeq0$. Only a reduction in the exact weighted trace is retained. An unsuccessful proposal leaves the previous exact witness available.
 
 | Anchor pairs | Reached cells | Accepted replacement diagonals |
 |---:|---:|---:|
@@ -59,10 +61,12 @@ For a row exceeding the target trace, the checker can substitute an improved dia
 | 112 | 116,986 | 293 |
 
 The largest raw trace is bounded by
-$$
+
+```math
  \frac{639413036587531299403539588646}
  {640000000000000000000000000000}.
-$$
+```
+
 The denominator here is $64\cdot10^{12}(10^8)^2$. Dividing the exact action by this trace bounds the area. At the earlier three-coefficient checkpoint, increasing all 330 endpoint coefficients arbitrarily could give at most $6.090478414162$ under independent planar tests. Signed changes escape this ceiling. [Exact dual bounds](issue163_reweight_ceiling.md)
 
 The checker rounds the resulting $\pi^2$ coefficient down to 18 decimal places and uses a directed rational enclosure of $\pi$ for the stated decimal.
