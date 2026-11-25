@@ -3,7 +3,7 @@
 const {INPUT,assert,piInterval}=require("./issue163_fourier_caps.cjs");
 const {loadField,verifyField,canonicalParent,ENDPOINT_FILE}=require("./issue163_reweighted_field.cjs");
 const N=224;
-const NEW=[[1,0,0],[1,0,1],[2,1,2]];
+const FIXED=[[1,0,0],[1,0,1]];
 function orbit(rep){
   const seen=new Map(),stack=[rep];
   while(stack.length){
@@ -42,14 +42,17 @@ function frozenUpper(){
     orbits.set(r.join(","),r);
   }
   assert(orbits.size===666,"fresh endpoint classes");
+  const alternatives=[];
   for(const r of orbits.values()){
     const {terms,weight}=orbitData(r);
     const ca=count(terms,0,1,1,1),cb=count(terms,1,1,2,3);
     assert(2*N*(ca+2*cb)>=weight,"two-profile dual coverage");
+    if(ca===0 && cb===2 && weight===8*N)alternatives.push({rep:r,terms,weight});
   }
+  assert(alternatives.length===220,"boundary-compatible third orbits");return alternatives;
 }
 function lift(boxes,trace,U,action){
-  frozenUpper();
+  const alternatives=frozenUpper();
   const parentIndex=new Map(),n=N/2;
   for(let i=0;i<trace.length;i++){
     parentIndex.set(String.fromCharCode(...boxes.subarray(n*i,n*(i+1))),i);
@@ -62,17 +65,21 @@ function lift(boxes,trace,U,action){
     assert(id!==undefined,"canonical 112-point parent");lookup[key]=id;return id;
   }
   assert(parent(0,1)===0 && parent(0,112)===0,"both dual rows project to parent zero");
-  const cls=NEW.map(orbitData),q=[2,1,2];
-  assert(cls.reduce((v,o,j)=>v+q[j]*o.weight,0)===24*N,"three-orbit action");
-  const maxLoad=BigInt(cls.reduce((v,o,j)=>v+q[j]*o.terms.length,0));
-  const slack=U-trace[0];assert(slack>=0n,"parent budget");
-  let ln=slack,ld=1n,rows=0;
+  const fixed=FIXED.map(orbitData);
+  assert(fixed[0].weight===2*N && fixed[1].weight===4*N,"boundary action of the fixed orbits");
+  const maxLoad=BigInt(2*fixed[0].terms.length+fixed[1].terms.length+2*Math.max(...alternatives.map(o=>o.terms.length)));
+  const slack=U-trace[0];assert(slack>=0n,"parent budget");let rows=0;
+  for(const o of alternatives){o.ln=slack;o.ld=1n;}
   function inspect(t,a,b,c,i,j){
     rows++;
     const avail=2n*(2n*U-trace[i]-trace[j]);assert(avail>=0n,"inherited trace");
-    if(avail*ld>=ln*maxLoad)return;
-    const g=BigInt(cls.reduce((v,o,k)=>v+q[k]*count(o.terms,t,a,a+b,a+b+c),0));
-    if(g>0n && avail*ld<ln*g){ln=avail;ld=g;}
+    if(avail>=slack*maxLoad)return;
+    const ab=a+b,abc=ab+c,base=2*count(fixed[0].terms,t,a,ab,abc)+count(fixed[1].terms,t,a,ab,abc);
+    for(const o of alternatives){
+      if(avail*o.ld>=o.ln*maxLoad)continue;
+      const g=BigInt(base+2*count(o.terms,t,a,ab,abc));
+      if(g>0n && avail*o.ld<o.ln*g){o.ln=avail;o.ld=g;}
+    }
   }
   for(let a=1;a<=N;a++)inspect(0,a,0,0,parent(0,Math.ceil(a/2)),parent(0,n));
   for(let a=1;a<N;a++)for(let b=0;b<=N-a;b++)for(let c=0;c<=N-a-b;c++){
@@ -80,10 +87,11 @@ function lift(boxes,trace,U,action){
     inspect(1,a,b,c,parent(0,Math.ceil((a+b)/2)),parent(Math.floor(a/2),Math.floor((a+b+c)/2)));
   }
   assert(rows===1898400,"complete rooted 224 endpoint enumeration");
+  const best=alternatives.reduce((a,b)=>a.ln*b.ld>=b.ln*a.ld?a:b),{ln,ld}=best;
   const n2=112n**2n,unit=10n**18n;
   const num=2n*action*224n*ld+3n*ln*n2,den=n2*224n*ld*U;
   const factor=num*unit/den,pi=piInterval()[0];
-  return {rooted_profiles:rows,distinct_parent_lookups:lookup.reduce((a,v)=>a+Number(v>=0),0),dual_classes:666,
+  return {rooted_profiles:rows,distinct_parent_lookups:lookup.reduce((a,v)=>a+Number(v>=0),0),dual_classes:666,third_orbit:best.rep,third_orbits_tested:alternatives.length,
     parent_zero_trace:String(trace[0]),raw_budget:String(U),increment_numerator:String(ln),
     increment_denominator:String(ld),dual_slack_numerator:String(slack),attains_frozen_upper:ln===ld*slack,
     pi_squared_factor_floor_1e18:String(factor),area_floor_1e18:String(factor*pi*pi/(10n**96n))};
@@ -92,7 +100,7 @@ function replayLift(raw,io){
   const {states,child}=loadField(raw,io),trace=Array(child.count);
   const result=verifyField(states,child.area,trace);
   const out=lift(child.boxes,trace,BigInt(result.global_trace_numerator),child.area);
-  assert(BigInt(out.pi_squared_factor_floor_1e18)>=617154280862042281n,"certified lifted coefficient");
+  assert(BigInt(out.pi_squared_factor_floor_1e18)>=617165761918607805n,"certified lifted coefficient");
   return {parent:result,lift:out};
 }
 if(typeof module!=="undefined" && require.main===module){

@@ -153,6 +153,37 @@ function jointCeiling(states,maps,A,center,data){
 }
 
 // A nonnegative change in every one of the fresh endpoint coefficients is allowed here.
+function signedRay(maps,moved,S,V,a0,data,baseSteps){
+  const rep=maps("reps_112"),on=maps("objective_num_112"),od=maps("objective_den_112");
+  const diff=new Map(data.endpoint_steps);
+  for(const [id,k] of baseSteps)diff.set(id,(diff.get(id)||0)-k);
+  let a1=0n;for(const [id,k] of diff){
+    assert(Number.isSafeInteger(k),"signed ray step");
+    const d=BigInt(od[id]),n=2n*BigInt(on[id]);assert(n%d===0n,"ray action weight");
+    a1+=(n/d)*BigInt(k)*S[group(rep[3*id+1]-55.5)]*S[group(rep[3*id+2]-55.5)];
+  }
+  const target=[a0*V*V,a1*V*V],columns=data.witnesses.map(w=>{
+    assert(w.n===112,"ray profile");
+    const M=phaseMatrix(moved,w,V),r=w.rank,rr=w.real.map(BigInt),ii=w.imag.map(BigInt);
+    const c=[N*N*M.reduce((v,t,j)=>v+t*S[Math.floor(j/NB)]*S[j%NB],0n),0n];
+    const bins=Array.from(moved.boxes.subarray(112*w.p,112*(w.p+1)),z=>group(z-55.5));
+    for(let i=0;i<112;i++)for(let j=i+1;j<112;j++){
+      const k=diff.get(moved.edgeId(w.p,i,j));if(!k)continue;
+      let g=0n;for(let h=0;h<r;h++)g+=rr[i*r+h]*ii[j*r+h]-ii[i*r+h]*rr[j*r+h];
+      c[1]+=2n*N*N*BigInt(k)*g*S[bins[i]]*S[bins[j]];
+    }
+    return c;
+  });
+  assert(columns.length===2,"two ray profiles");const [v,w]=columns;
+  let den=v[0]*w[1]-v[1]*w[0],u=target[0]*w[1]-target[1]*w[0],z=v[0]*target[1]-v[1]*target[0];
+  if(den<0n){den=-den;u=-u;z=-z;}
+  assert(den>0n && u>=0n && z>=0n,"nonnegative ray mixture");
+  for(let k=0;k<2;k++)assert(u*v[k]+z*w[k]===den*target[k],"signed ray identity");
+  const pi=piInterval()[1],d=den*10n**96n,upper=(10n**12n*pi*pi*(u+z)+d-1n)/d;
+  assert(upper<6091200000000n,"signed ray ceiling");
+  return {profiles:data.witnesses.map(w=>w.p),area_upper_units_1e12:String(upper)};
+}
+
 function monotoneCeiling(states,maps,A,data){
   const S=data.multipliers.map(BigInt),E=BigInt(data.weight_denominator),V=BigInt(data.phase_denominator);
   const rep=maps("reps_112"),on=maps("objective_num_112"),od=maps("objective_den_112");
@@ -211,7 +242,8 @@ function monotoneCeiling(states,maps,A,data){
     }
     report[type]={area_upper_units_1e12:String(up),classes:ids.length,tests:entries.length,downward};
   }
-  assert(report.sdp&&report.planar,"two endpoint families");return report;
+  assert(report.sdp&&report.planar,"two endpoint families");
+  report.signed_ray=signedRay(maps,moved,S,V,a0,data.ray,data.baseline);return report;
 }
 
 function verifyCeilings(raw,io,data,cuts,monotone){

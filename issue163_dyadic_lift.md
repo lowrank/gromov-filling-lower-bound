@@ -2,9 +2,13 @@
 
 For the same orientable circle fillings, the signed 112-point certificate gives
 $$
- \operatorname{Area}(M)\ge \frac{617154280862042281}{10^{18}}\pi^2>6.091068606547150624 .
+ \operatorname{Area}(M)\ge \frac{617165758412709490}{10^{18}}\pi^2>6.091181885431729436 .
 $$
-The 224-point lift preserves this bound. Its two-profile dual limits every additional nonnegative endpoint repair for the stated inherited trace rule. The two calculations use the finite transported certificate in the supplied bundle. The 224-point replay first checks the full signed 112-point field and then checks 1,898,400 rooted child profiles. [Signed 112-point proof](issue163_reweighted_field.md)
+The 224-point construction gives
+$$
+ \operatorname{Area}(M)\ge \frac{617165761918607805}{10^{18}}\pi^2>6.091181920033558876 .
+$$
+Both statements use the finite transported certificate in the supplied bundle. The 224-point replay first checks the full signed 112-point field and then checks 1,898,400 rooted child profiles. [Signed 112-point proof](issue163_reweighted_field.md)
 
 ### Inheritance
 
@@ -33,9 +37,9 @@ Use the three dihedral orbits with representatives $(1,0,0)$, $(1,0,1)$ and $(2,
 $$
   L(2c_0+c_1+2c_2) \le 2(2U-P_i-P_j).
 $$
-The checker starts at $L=U-P_0$ and takes the minimum of all positive-load ratios. If an earlier ratio has already decreased $L$, every earlier inequality continues to hold. Rows with zero load satisfy the inherited inequality. Every admissible occurrence of a pair of labels $x,y$ at separation $k$ is counted by testing the indices in $[x-1,x+2]\cap[y-k-1,y-k+2]\cap[0,223-k]$, using the four possible offsets.
+The checker compares the 220 third-orbit choices having the same boundary weight and the same two dual-row counts. For each choice it starts at $L=U-P_0$ and takes the minimum of all positive-load ratios. If an earlier ratio has already decreased $L$, every earlier inequality continues to hold. Rows with zero load satisfy the inherited inequality. Every admissible occurrence of a pair of labels $x,y$ at separation $k$ is counted by testing the indices in $[x-1,x+2]\cap[y-k-1,y-k+2]\cap[0,223-k]$, using the four possible offsets.
 
-In units of $1/(2\cdot224^2)$ the three raw boundary-action weights are $448,896,1792$. The normalized area gain is exactly $\pi^2(3/224)L/U$. The replay gives $U=639414960924605591061056558420$, $P_0=639414960924605591061056558420$ and $L=0$ in the common trace units.
+In units of $1/(2\cdot224^2)$ the three raw boundary-action weights are $448,896,1792$. The normalized area gain is exactly $\pi^2(3/224)L/U$. The replay gives $U=639413036587531299403539588646$, $P_0=639412869205988776176689091810$ and $L=167381542523226850496836$ in the common trace units.
 
 ### A two-profile upper bound on all 666 positive edge repairs
 
@@ -43,7 +47,26 @@ Consider any nonnegative physical increments $x_o$ on all 666 fresh endpoint cla
 $$
   \omega_o\le \frac{c_{Ao}+2c_{Bo}}{224}\qquad(1\le o\le666).
 $$
-Multiplying by $x_o$ and summing shows that the normalized area gain for this whole family is at most $\pi^2(3/224)(U-P_0)/U$. Here $P_0=U$, so the upper bound on the additional action is exactly zero. Every one of the 666 classes has positive multiplicity in at least one of the two saturated rows.
+Multiplying by $x_o$ and summing shows that the normalized area gain for this whole family is at most $\pi^2(3/224)(U-P_0)/U$. The three chosen increments attain this upper bound exactly. This solves the entire nonnegative 224-point edge-repair problem for this fixed parent certificate.
+
+The optimal three-orbit choice uses the full budget on both dual rows. Its 224-point row $A_{224}$ is therefore saturated.
+
+### All later dyadic levels
+
+The two saturated rows also give a uniform argument for an arbitrarily long chain of nonnegative repairs. Let $N=2m\ge8$. Consider the rooted profiles
+$$
+ A_N=(0,0,1,2,\ldots,N-2),\qquad B_N=(1,1,1,1,2,3,\ldots,N-3).
+$$
+The even and odd parents of $A_N$ are $A_m$ and the straight row $(0,1,\ldots,m-1)$, which is a signed cyclic shift of $A_m$. Both parents of $B_N$ are $A_m$. Every new endpoint orbit occurs in at least one of $A_N,B_N$. Indeed, use the orbit symmetries to put the separation at $1\le k\le N/2$ and the first label at $x=0$ or $1$. Compatibility forces $k-1\le y\le k$ for $x=0$ and $k-2\le y\le k+1$ for $x=1$, subject to valid labels. The first two entries of $A_N$ realize both choices for $x=0$. For $x=1$ and $k\ge3$, the first four entries of $B_N$ realize all four choices. For $k=1,2$ that row supplies all positive choices, and swapping the pair handles $y=0$.
+
+On a profile whose inherited trace equals the common budget, every orbit present must have zero nonnegative increment under the edgewise trace repair rule. If the starting $A_m$ is saturated, both displayed children are saturated, every new increment is zero, and $A_N$ is saturated again. Induction covers every subsequent doubling.
+
+The conclusion also holds if we raise the common trace budget. Start at the optimized 224-point field and write its raw action as $\pi^2 C$ and its certified budget in physical units as $T$. The saturated profile $A_{224}$ has trace $T$. At all later levels the inherited traces of $A_N$ and $B_N$ are at least $T$. If a budget $U'\ge T$ applies at every stage, each row has room for total increment at most $U'-T$. Every endpoint orbit appears in at least one of the two rows. An orbit contains at most 16 triples, obtained by changing the separation between $k$ and $N-k$, swapping the labels, and complementing either label. Each triple has raw boundary weight at most $\pi^2/N$. Consequently the raw action gain at level $N$ is at most $\pi^2(32/N)(U'-T)$. Summing for $N=448,896,\ldots$ gives
+$$
+ \frac{\text{certified area}}{\pi^2}
+ \le \frac{C+(32/224)(U'-T)}{U'} \le \frac{C}{T},
+$$
+since $C/T>0.61>32/224$. This proves exhaustion for any number of doublings with these starting coefficients and witnesses, direct-sum inheritance, and nonnegative increments charged edge by edge to diagonal trace.
 
 ### Replay
 

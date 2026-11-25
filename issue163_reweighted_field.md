@@ -4,11 +4,11 @@ Every compact connected orientable Riemannian surface with one boundary componen
 
 $$
  \operatorname{Area}(M)\ \ge\
- \frac{617154280862042281}{10^{18}}\pi^2
- \ >\ 6.091068606547150624.
+ \frac{617165758412709490}{10^{18}}\pi^2
+ \ >\ 6.091181885431729436.
 $$
 
-This finite certificate uses 112 antipodal anchor pairs. The supplied note gave $6.082181436172889493\ldots$. A shell-dependent Fourier correction gave $6.086380541911894628$ on this branch. Reweighting the finite form and changing three endpoint coefficients gave $6.090475197311347654$. The new bound uses signed changes in 66 endpoint classes. It relies on the bundle’s transported finite theorem for profile coverage and positive semidefinite witnesses. The earlier Fourier theorems have a separate Lean verification. [Earlier Fourier formalization](https://github.com/lowrank/gromov-filling-lower-bound)
+This finite certificate uses 112 antipodal anchor pairs. The supplied note gave $6.082181436172889493\ldots$. A shell-dependent Fourier correction gave $6.086380541911894628$ on this branch. Reweighting the finite form and changing three endpoint coefficients gave $6.090475197311347654$. The new 112-point bound uses signed changes in 65 endpoint classes. A further lift to 224 anchor pairs gives $6.091181920033558876$. [Dyadic refinement](issue163_dyadic_lift.md) It relies on the bundle’s transported finite theorem for profile coverage and positive semidefinite witnesses. The earlier Fourier theorems have a separate Lean verification. [Earlier Fourier formalization](https://github.com/lowrank/gromov-filling-lower-bound)
 
 ## Changing the finite form
 
@@ -37,7 +37,7 @@ $$
  \frac{\sum_o(2\omega_o)w_o S_a S_b}
  {112^2\,(32\cdot10^{12})\, (10^8)^2}.
 $$
-The integer numerator is $2475042091354999762510970141278304$. Before applying the signed increments, substitution of unit multipliers reproduces the archived finite action exactly.
+The integer numerator is $2475080672199852607407123768951328$. Before applying the signed increments, substitution of unit multipliers reproduces the archived finite action exactly.
 
 ### Discovering signed changes
 
@@ -56,11 +56,11 @@ For a row exceeding the target trace, the checker can substitute an improved dia
 | 14 | 53,100 | 341 |
 | 28 | 29,410 | 35 |
 | 56 | 14,562 | 77 |
-| 112 | 116,986 | 270 |
+| 112 | 116,986 | 293 |
 
 The largest raw trace is bounded by
 $$
- \frac{639414960924605591061056558420}
+ \frac{639413036587531299403539588646}
  {640000000000000000000000000000}.
 $$
 The denominator here is $64\cdot10^{12}(10^8)^2$. Dividing the exact action by this trace bounds the area. At the earlier three-coefficient checkpoint, increasing all 330 endpoint coefficients arbitrarily could give at most $6.090478414162$ under independent planar tests. Signed changes escape this ceiling. [Exact dual bounds](issue163_reweight_ceiling.md)
@@ -75,4 +75,4 @@ Keep the two JavaScript files together and run
 node issue163_reweighted_field.cjs /path/to/bundle/research/output/improve112_6081_certificate
 ~~~
 
-The replay uses Node.js built-ins. It pins the transported compact certificate, baseline compact certificate, source geometry, hierarchy maps, and endpoint profile file by hash. The bundle's original entry point is <code>python3 verify_improved.py</code> in that input directory. The reweighting checker uses its established coverage, inheritance and PSD theorems. The new bound has no Lean theorem on this branch.
+The replay uses Node.js built-ins. It pins the transported compact certificate, baseline compact certificate, source geometry, hierarchy maps, and endpoint profile file by hash. The bundle's original entry point is <code>python3 verify_improved.py</code> in that input directory. The reweighting checker uses its established coverage, inheritance and PSD theorems. The new bound is verified by the integer replay.

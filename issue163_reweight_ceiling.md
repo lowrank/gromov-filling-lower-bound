@@ -28,7 +28,7 @@ Thus reaching $6.1$ by this route requires $r_->1/160$ for planar tests and $r_-
 
 ### Varying the endpoint coefficients and all 15 multipliers together
 
-Let $s_*$ be the multiplier vector in the lower-bound proof. Allow all three endpoint coefficients to vary freely as above and allow any positive rescaling of $s$ to lie in the indicated box. Rescaling leaves the normalized action invariant.
+Let $s_*$ be the multiplier vector at the three-coefficient checkpoint. Allow all three endpoint coefficients to vary freely as above and allow any positive rescaling of $s$ to lie in the indicated box. Rescaling leaves the normalized action invariant.
 
 | Multiplier box | Upper bound using independent planar gradients |
 |---|---:|
@@ -84,6 +84,12 @@ $$
   c^T Hc-2r\sum_i |(Hc)_i|-r^2\sum_{i,j}|H_{ij}|>0.
 $$
 All four strict comparisons pass in integer arithmetic. The reported upper endpoints use an upper rational enclosure of $\pi$ and upward rounding. The proof only uses the 18 distinct stored configurations; finding them again by numerical optimization is unnecessary.
+
+### Scaling the final signed update
+
+Let $W_0$ be the three-coefficient field in the first table and $W_1$ the final signed 112-point field. Fix their common 15 interval multipliers. For every real $t$, the area certificate from $W_0+t(W_1-W_0)$ with independent diagonal PSD bounds is at most $6.091183831488$. At $t=1$ the certified bound is $6.091181885431729436$, within $1.947\cdot10^{-6}$ of this ceiling. This comparison concerns the finite 112-point form before the separate 224-point increment. [Signed 112-point field](issue163_reweighted_field.md)
+
+The zero-based terminal rows $(112,0)$ and $(112,67)$ supply two rational rank-three tests. Each gives an affine lower bound on the required trace budget, valid along the whole line. The replay solves the two linear equations matching the constant and slope of the boundary action to a mixture of the two tests. It checks both rational identities and nonnegativity of both weights exactly, then rounds $\pi^2$ times their sum upward.
 
 ## Replay
 
