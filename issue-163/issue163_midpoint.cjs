@@ -24,8 +24,8 @@ function key(k, a, b) {
   return (k * N + a) * N + b;
 }
 
-// Index just the pair cells of the one decreasing bin profile.
-function cornerField(inputDir, correction) {
+// Index only the pair cells used by the requested profile.
+function profileField(inputDir, correction, bins) {
   const archive = name => npzReader(pinned(inputDir, ...INPUT[name]), zlib.inflateRawSync);
   const maps = archive("maps"), master = archive("field")("master_numerators");
   const reps = maps("reps_112"), ids = maps("class_variable_112");
@@ -33,7 +33,7 @@ function cornerField(inputDir, correction) {
   const delta = new Map(correction.master_delta), endpoint = new Map(ENDPOINT_STEPS);
   const cells = new Map();
   for (let i = 0; i < N; ++i)
-    for (let j = i+1; j < N; ++j) cells.set(key(j-i,N-1-i,N-1-j), null);
+    for (let j = i+1; j < N; ++j) cells.set(key(j-i,bins[i],bins[j]), null);
   for (let o = 0; o < ids.length; ++o) {
     const k = reps[3*o], a = reps[3*o+1], b = reps[3*o+2];
     const orbit = [[k,a,b], [k,b,a], [N-k,b,N-1-a], [N-k,N-1-a,b]];
@@ -50,15 +50,13 @@ function cornerField(inputDir, correction) {
     }
   }
   const w = Array.from({length:N}, () => Array(N).fill(0n));
-  const sigma = Array.from({length:N}, (_,i) => BigInt(SIGMA[group((N-1)/2-i)]));
+  const sigma = bins.map(i => BigInt(SIGMA[group(i-(N-1)/2)]));
   for (let i = 0; i < N; ++i) for (let j = i+1; j < N; ++j) {
-    const cell = cells.get(key(j-i,N-1-i,N-1-j));
-    assert(typeof cell === "bigint", "missing corner coefficient");
+    const cell = cells.get(key(j-i,bins[i],bins[j]));
+    assert(typeof cell === "bigint", "missing profile coefficient");
     w[i][j] = cell * sigma[i] * sigma[j]; // HERM_DEN times W_ij/2
     w[j][i] = -w[i][j];
   }
-  for (let i = 0; i < N; ++i) for (let j = 0; j < N; ++j)
-    assert(w[N-1-i][N-1-j] === -w[i][j], "corner reflection");
   return w;
 }
 
@@ -142,12 +140,22 @@ function bisection(w, record, den, cap) {
     ...actionReport(gainNum,gainDen)};
 }
 
-function loadCorner(inputDir) {
+function loadProfile(inputDir, bins) {
+  assert(bins.length === N && bins.every(x => Number.isInteger(x) && x >= 0 && x < N),
+    "invalid profile bins");
   const correction = JSON.parse(pinned(__dirname, "issue163_free_coefficients.json",
     "254eee5682f2dbd27510523684e67e3e2d88ea14344ba2836fe1be155041beea"));
   const cap = BigInt(correction.budget_units_1e12);
   assert(cap === 999999900000n, "previous comass budget");
-  return {w:cornerField(inputDir, correction), cap};
+  return {w:profileField(inputDir, correction, bins), cap};
+}
+
+function loadCorner(inputDir) {
+  const result = loadProfile(inputDir, Array.from({length:N},(_,i) => N-1-i));
+  const w = result.w;
+  for (let i = 0; i < N; ++i) for (let j = 0; j < N; ++j)
+    assert(w[N-1-i][N-1-j] === -w[i][j], "corner reflection");
+  return result;
 }
 
 function verify(inputDir, witnessFile) {
@@ -176,4 +184,4 @@ if (require.main === module) {
   console.log(JSON.stringify(verify(dir,file),null,2));
 }
 
-module.exports = {loadCorner, pinned, HERM_DEN, BASE_NUM, BASE_DEN};
+module.exports = {loadCorner, loadProfile, positiveDefinite, pinned, HERM_DEN, BASE_NUM, BASE_DEN};
