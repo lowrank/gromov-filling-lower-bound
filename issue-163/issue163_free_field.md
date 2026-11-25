@@ -8,7 +8,7 @@ For a compact connected orientable Riemannian surface whose single boundary is a
  >6.095000609501857507.
 ```
 
-The displayed decimal improves the previous $6.091188129789057449$ by $0.003812479712800058$. The construction uses the four existing anchor levels and changes the 829 active master coefficients jointly. Its mathematical inputs are the distance-coordinate Stokes argument and the coverage of the transported finite hierarchy. The supplied verifier checks every local positive semidefinite bound for the new field from scratch. The repository's Lean development covers the earlier Fourier theorem. [Geometric setup and scalar weights](issue163_reweighted_field.md) · [Earlier Fourier theorem](docs/current-manuscript.md)
+The displayed decimal improves the previous $6.091188129789057449$ by $0.003812479712800058$. The construction uses the four existing anchor levels and changes the 829 active master coefficients jointly. Its mathematical inputs are the distance-coordinate Stokes argument and the coverage of the transported finite hierarchy. The supplied verifier checks every local positive semidefinite bound for the new field from scratch. The repository's Lean development covers the earlier Fourier theorem. [Geometric setup and scalar weights](issue163_reweighted_field.md) · [Earlier Fourier theorem](../docs/current-manuscript.md)
 
 ## The changed form and its boundary action
 
@@ -41,7 +41,7 @@ The discovery search alternated between changing coefficients and testing indivi
 
 ## Replay
 
-From the branch root, with Node.js and a C++17 compiler supporting signed 128-bit integers, run
+From the <code>issue-163</code> directory, with Node.js and a C++17 compiler supporting signed 128-bit integers, run
 
 ~~~sh
 node issue163_free_field.cjs issue163_inputs

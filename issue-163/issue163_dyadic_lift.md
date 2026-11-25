@@ -89,7 +89,7 @@ The absolute-value trace charge also settles signed increments under this same r
 Keep the three lower-bound JavaScript files together and run
 
 ~~~sh
-node issue163_dyadic_lift.cjs /path/to/bundle/research/output/improve112_6081_certificate
+node issue163_dyadic_lift.cjs issue163_inputs
 ~~~
 
 The certificates use integer arithmetic for the trace, orbit counts and action comparisons. The displayed decimals use a directed rational lower enclosure of $\pi$.

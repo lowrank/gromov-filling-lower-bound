@@ -49,7 +49,7 @@ The integer replay partitions the folded amplitudes into 512 intervals and uses 
 
 A second test uses the clipped triangle $f_A=\mathrm{clip}(b,-A,A)$. It has $R(A)=(4/\pi)\tan A$, since $R'(A)=(4/\pi)\sec^3(A)\cos A$. Its weight in the quadrant is $\sec^3A$ until $\pi/2-A$ and $\csc^3 t$ thereafter. Integrating the two moments on 32 angular sectors gives the independent upper bound $6.111821294544$. Neither calculation assumes a proposed density. These tests can also be made with strictly Lipschitz profiles by multiplying by $1-\varepsilon$ and adjusting $A$ to keep the same finite radius. Continuity, strict increase of the unperturbed radius, and bracketing by adjacent amplitudes justify the limit.
 
-All acceptance comparisons use integers, including the unit-vector checks, trigonometric enclosures and directed square roots. The overly optimistic estimate obtained just by testing the hemisphere would be $2\pi$. Run the following from the branch root. [Integer radial replay](issue163_radial_ceiling.cjs)
+All acceptance comparisons use integers, including the unit-vector checks, trigonometric enclosures and directed square roots. The overly optimistic estimate obtained just by testing the hemisphere would be $2\pi$. Run the following from the <code>issue-163</code> directory. [Integer radial replay](issue163_radial_ceiling.cjs)
 
 ~~~sh
 node issue163_radial_ceiling.cjs

@@ -117,13 +117,13 @@ Adding the old action proves the bound at the top of this note. Both constructio
 
 ## Exact local replay
 
-From the branch root with Node.js, run
+From the <code>issue-163</code> directory with Node.js, run
 
 ~~~sh
 node issue163_midpoint.cjs issue163_inputs
 ~~~
 
-The checker reconstructs the constant corner field from the pinned archives and the previous master corrections. It clears the denominators and performs fraction-free elimination over the Gaussian integers. At each step both divisions must be exact and the next leading principal minor must be real and strictly positive. The checker tests 113 leading minors for the first construction and 112 for each of the three matrices in the bisected construction. It also checks the trace bounds, reflection identity, boundary actions and rounded-down areas. The earlier all-genus certificate is used as a lemma. Its independent full replay is documented in the [previous note](issue163_free_field.md). The repository's [Lean statements](docs/current-manuscript.md) concern the earlier Fourier bound.
+The checker reconstructs the constant corner field from the pinned archives and the previous master corrections. It clears the denominators and performs fraction-free elimination over the Gaussian integers. At each step both divisions must be exact and the next leading principal minor must be real and strictly positive. The checker tests 113 leading minors for the first construction and 112 for each of the three matrices in the bisected construction. It also checks the trace bounds, reflection identity, boundary actions and rounded-down areas. The earlier all-genus certificate is used as a lemma. Its independent full replay is documented in the [previous note](issue163_free_field.md). The repository's [Lean statements](../docs/current-manuscript.md) concern the earlier Fourier bound.
 
 ## Which supports leave room for 6.15?
 
@@ -152,7 +152,7 @@ In either region the primitive of the old form is $`\tfrac12(F-c)^T W\,dF`$ befo
 
 Stokes gives minus the sum of the chord terms $(F_k-c)^TW(F_{k+1}-c)$ for the two oriented arcs together, up to the polygonal error. On reflection the offsets transform by negative coordinate reversal and $W$ changes sign, which gives the factor of two.
 
-For arbitrary real vectors $u,v$ with sup norm at most one we have $|u^TWv|\le2U$ because the planar vectors $(u_i,v_i)/\sqrt2$ are allowed by the old diagonal certificate. In arclength $F$ is 1-Lipschitz in the sup norm. On a segment of length $b$, replacing the primitive integral by its chord value therefore costs at most $Ub^2/2$. With $K=256$ equal segments per half-arc the normalized total error per region is at most $\ell^2/K$. Rounding every offset at a vertex to sup error $\varepsilon$ adds at most $2K\varepsilon(2R+\varepsilon)$, because the true offsets have sup norm at most $R$. The verifier encloses every vertex by directed cosine comparisons, uses $\varepsilon=6\pi/(224\cdot10^8)$, and includes both errors. From the branch root, run
+For arbitrary real vectors $u,v$ with sup norm at most one we have $|u^TWv|\le2U$ because the planar vectors $(u_i,v_i)/\sqrt2$ are allowed by the old diagonal certificate. In arclength $F$ is 1-Lipschitz in the sup norm. On a segment of length $b$, replacing the primitive integral by its chord value therefore costs at most $Ub^2/2$. With $K=256$ equal segments per half-arc the normalized total error per region is at most $\ell^2/K$. Rounding every offset at a vertex to sup error $\varepsilon$ adds at most $2K\varepsilon(2R+\varepsilon)$, because the true offsets have sup norm at most $R$. The verifier encloses every vertex by directed cosine comparisons, uses $\varepsilon=6\pi/(224\cdot10^8)$, and includes both errors. From the <code>issue-163</code> directory, run
 
 ~~~sh
 node issue163_midpoint_budget.cjs issue163_inputs

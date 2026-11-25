@@ -76,7 +76,7 @@ The checker rounds the resulting $\pi^2$ coefficient down to 18 decimal places a
 Keep the two JavaScript files together and run
 
 ~~~sh
-node issue163_reweighted_field.cjs /path/to/bundle/research/output/improve112_6081_certificate
+node issue163_reweighted_field.cjs issue163_inputs
 ~~~
 
-The replay uses Node.js built-ins. It pins the transported compact certificate, baseline compact certificate, source geometry, hierarchy maps, and endpoint profile file by hash. The bundle's original entry point is <code>python3 verify_improved.py</code> in that input directory. The reweighting checker uses its established coverage, inheritance and PSD theorems. The new bound is verified by the integer replay.
+The replay uses Node.js built-ins. It pins the transported compact certificate, baseline compact certificate, source geometry, hierarchy maps, and endpoint profile file by hash. The bundle's original entry point is <code>python3 verify_improved.py</code> in the original research bundle’s <code>research/output/improve112_6081_certificate</code> directory. The reweighting checker uses its established coverage, inheritance and PSD theorems. The new bound is verified by the integer replay.

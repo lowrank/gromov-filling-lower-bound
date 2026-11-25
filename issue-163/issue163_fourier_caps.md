@@ -91,7 +91,7 @@ The replay gives $\sum_j(2j+1)10^9 b_j=18103006738917$. It reconstructs all $53{
 Run the standalone checker with Node.js and the supplied finite certificate directory.
 
 ~~~sh
-node issue163_fourier_caps.cjs /path/to/bundle/research/output/improve112_6081_certificate
+node issue163_fourier_caps.cjs issue163_inputs
 ~~~
 
-The checker pins its four source files by SHA-256. The bundle's separate command for the finite input theorem is <code>python3 verify_improved.py</code> in that same certificate directory. The new replay reconstructs its inputs and proves the annular extension. The original finite hierarchy supplies its PSD and coverage theorems. The calculation gives no upper bound for the full family of calibrations or for the filling area.
+The checker pins its four source files by SHA-256. The bundle's separate command for the finite input theorem is <code>python3 verify_improved.py</code> in the original research bundle’s <code>research/output/improve112_6081_certificate</code> directory. The new replay reconstructs its inputs and proves the annular extension. The original finite hierarchy supplies its PSD and coverage theorems. The calculation gives no upper bound for the full family of calibrations or for the filling area.

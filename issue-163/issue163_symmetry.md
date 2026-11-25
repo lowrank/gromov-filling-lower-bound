@@ -124,7 +124,7 @@ The sum counts collars on $X$, including both members of each pair. Piecewise sm
 
 A sufficient target on a general filling is $R_J\le 2\pi/6.15=1.021656\ldots$ for some comparison involution. The test suggests spreading twists over available collar width and pairing regions with different area densities when constructing one. The missing step is a geometric estimate on the integrated cost of such a pairing for every putative filling below $6.15$. The sharper target $R_J\le1$ would yield $2\pi$.
 
-The entire numerical experiment has one scalar variable. The program uses rational bounds on the angular integral and on $\pi$ for each quoted inequality. With $x=\tanh^2s$, the mean $p(s)/\sqrt{\cosh s}$ has initial terms $1-x/16-15x^2/1024$. The absolute successive term ratio from index $m\ge1$ is $x(16m^2-1)/(16(m+1)^2)$. A geometric tail bound encloses the integral. The unequal-area search selects a rational trial reference and verifies its cost independently. From the branch root run
+The entire numerical experiment has one scalar variable. The program uses rational bounds on the angular integral and on $\pi$ for each quoted inequality. With $x=\tanh^2s$, the mean $p(s)/\sqrt{\cosh s}$ has initial terms $1-x/16-15x^2/1024$. The absolute successive term ratio from index $m\ge1$ is $x(16m^2-1)/(16(m+1)^2)$. A geometric tail bound encloses the integral. The unequal-area search selects a rational trial reference and verifies its cost independently. From the <code>issue-163</code> directory run
 
 ~~~sh
 python3 issue163_symmetry.py

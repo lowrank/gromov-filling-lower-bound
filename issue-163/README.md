@@ -34,7 +34,7 @@ A closed interior Fourier correction now has raw boundary action at least $6.220
 
 In the continuum, a rotating family of folded triangle profiles puts an upper bound of $5.786100794611$ on the single gnomonic Fourier coordinate with arbitrary target density under independent planar tests. A Lorentz-equivariant center which also uses a scalar normalization has the analytic ceiling $6.07098103\ldots$ under those tests. These calculations identify explicit profiles against which to check other interior corrections. [Continuum tests and replay](issue163_continuum_tests.md)
 
-The five hash-pinned finite inputs are included in the branch directory named **issue163_inputs**. From the branch root, the first command replays the new local improvement. The second independently replays its finite base.
+The five hash-pinned finite inputs are included in [issue163_inputs](issue163_inputs/). From the repository root, enter this directory with <code>cd issue-163</code>. The first command replays the new local improvement. The second independently replays its finite base.
 
 ~~~sh
 node issue163_midpoint.cjs issue163_inputs

@@ -49,10 +49,10 @@ One tested change moved every integer multiplier $S_j$ to $\mathrm{round}(10^8+1
 
 ## Replay
 
-Place the four lower-bound JavaScript files together. From the bundle root run
+From the <code>issue-163</code> directory, run
 
 ~~~sh
-node research/issue163_combined.cjs research/output/improve112_6081_certificate
+node issue163_combined.cjs issue163_inputs
 ~~~
 
-In the Git branch, run the same entry point from its root with the absolute path to the supplied certificate directory. It uses Node.js built-ins and checks the five input hashes. The new result is an integer-verified extension of the finite source theorem. The public Lean development covers the earlier Fourier result. [Lean manuscript ledger](https://github.com/lowrank/gromov-filling-lower-bound/blob/main/docs/current-manuscript.md)
+The checker uses Node.js built-ins and verifies the hashes of the five bundled inputs. The new result is an integer-verified extension of the finite source theorem. The public Lean development covers the earlier Fourier result. [Lean manuscript ledger](https://github.com/lowrank/gromov-filling-lower-bound/blob/main/docs/current-manuscript.md)

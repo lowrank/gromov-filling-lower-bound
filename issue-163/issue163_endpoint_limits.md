@@ -62,7 +62,7 @@ Divide $[0,\pi]$ into 114,688 equal intervals. The mesh contains the turning poi
 
 ## Reproduction
 
-From the branch root, with Node.js and the supplied inputs, run
+From the <code>issue-163</code> directory, with Node.js and the supplied inputs, run
 
 ~~~sh
 node issue163_signed_endpoint_ceiling.cjs issue163_inputs

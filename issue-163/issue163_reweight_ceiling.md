@@ -104,7 +104,7 @@ The zero-based terminal rows $(112,0)$ and $(112,67)$ supply two rational rank-t
 Keep the three JavaScript checkers and the three JSON witness files together and run
 
 ~~~sh
-node issue163_reweight_ceiling.cjs /path/to/bundle/research/output/improve112_6081_certificate
+node issue163_reweight_ceiling.cjs issue163_inputs
 ~~~
 
 The replay checks the signed rational tests against the supplied finite input, constructs each mixture, and prints all bounds with directed rounding. The public Lean repository verifies the earlier Fourier work. The upper bounds here have independent integer replays.
