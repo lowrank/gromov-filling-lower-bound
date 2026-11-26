@@ -27,11 +27,13 @@ function addAnchors(w,two) {
 const scale=1000000000n;
 assert(H%scale===0n && H%(2n*micro)===0n, "diagonal and anchor units");
 let tested=0, worst=0n;
+const traces=[];
 function check(w) {
   const raw=diagonals[tested++];
   assert(Array.isArray(raw) && raw.length===n && raw.every(x=>Number.isSafeInteger(x) && x>0),
     "positive diagonal entries");
   const trace=sum(raw.map(BigInt));
+  traces.push(trace);
   assert(trace*capDen<=scale*capNum,"trace "+tested);
   if (trace>worst) worst=trace;
   const d=raw.map(v=>BigInt(v)*(H/scale)), edge=w.flat();
@@ -81,6 +83,27 @@ const g=gcd(num,den); num/=g; den/=g;
 const [lo,hi]=piInterval(), places=10n**18n, piUnits=10n**96n;
 const floor=num*lo**2n*places/(den*piUnits);
 assert(floor===num*hi**2n*places/(den*piUnits) && floor>6096200000000000000n, "directed area floor");
+// The three double-anchor chambers carry fixed fractions of a projected triangle.
+const rawCap=scale*capNum/capDen;
+assert(rawCap*capDen===scale*capNum,"raw trace units");
+const [parentLoss,leftLoss,rightLoss]=traces.slice(0,3).map(t=>rawCap-t);
+const minimumLoss=rawCap-worst;
+const qDen=12n*N*num, qNum=18n*N*num-7n*den;
+assert(100n*qNum>149n*qDen && minimumLoss>0n, "mean area covered by a rotated grid");
+const reserveNum=((2n*parentLoss+leftLoss+rightLoss)*qDen+
+  4n*minimumLoss*(qNum-qDen))*capDen;
+const reserveDen=4n*qDen*scale*N*capNum;
+let occupationNum=num*reserveDen+den*reserveNum, occupationDen=den*reserveDen;
+const divisor=gcd(occupationNum,occupationDen);
+occupationNum/=divisor;
+occupationDen/=divisor;
+const finalFloor=occupationNum*lo**2n*places/(occupationDen*piUnits);
+assert(finalFloor===occupationNum*hi**2n*places/(occupationDen*piUnits) &&
+  finalFloor===6096292737690900167n,"area floor after grid rotation");
+const lowerDecimal=v=>(v/places)+"."+(v%places).toString().padStart(18,"0");
 console.log(JSON.stringify({chambers:tested,maximum_trace_in_billionths:String(worst),
   sum_microcoefficients:String(sum(c)),pi_squared_factor:num+"/"+den,
-  area_floor:(floor/places)+"."+(floor%places).toString().padStart(18,"0")},null,2));
+  area_floor:lowerDecimal(floor),
+  double_anchor_raw_reserves_in_billionths:[parentLoss,leftLoss,rightLoss].map(String),
+  occupation_pi_squared_factor:occupationNum+"/"+occupationDen,
+  occupation_area_floor:lowerDecimal(finalFloor)},null,2));

@@ -3,11 +3,12 @@
 For every compact connected orientable Riemannian surface whose single boundary component is an isometrically embedded intrinsic circle of length $2\pi$,
 
 ```math
- \mathrm{Area}(M)\ge \frac{2213775623134282058736195815563}{3583999641600000000000000000000}\pi^2
- >6.096286779581369797 .
+ \mathrm{Area}(M)\ge \frac{4900807299305452903120181318626856678763424416160470713006969}
+ {7934171039896083567183835951925211702220800000000000000000000}\pi^2
+ >6.096292737690900167 .
 ```
 
-One high anchor already fixes the integrated derivatives of every other distance coordinate along its levels. A signed combination of these identities adds positive boundary action on the original grid. Angular Lipschitz continuity reduces its global comass verification to 58 new local matrices. The improvement over the previous all-genus certificate is **0.000376134349233462…**. [Proof and integer replay](issue163_anchor.md)
+Averaging the 112-pair grid over its rotations forces the region with a high anchor to have more than 1.491567 times the area required by the adjacent-pair projection. The unused trace from the previous 58 matrix checks then gives the displayed bound. The underlying signed correction uses the prescribed flux of the other distance coordinates along each high anchor's levels. [Compulsory area and new bound](issue163_anchor_occupation.md) · [Signed correction and integer replay](issue163_anchor.md)
 
 Two of the comass comparisons would require different values for the same gradient vector to attain their separate bounds. Charging the resulting squared error gave the previous bound of 6.095910645232136335 with twelve matrix witnesses. Any filling below $6.15$ must also have weighted root mean square directional imbalance below $0.132362$. A small quadrature gives about $0.156$ on the round hemisphere. A uniform lower estimate for this imbalance on putative smaller fillings remains open. [Proof, exact replay and hemisphere test](issue163_comass_residual.md)
 
@@ -35,13 +36,18 @@ There are smooth disks passing all 112 sampled antipodal tests with an unsampled
 | Planar phase comparison on the mandatory adjacent-anchor regions | $6.095906676681434095$ |
 | Separate chamber gains with the detour penalty retained | $6.095909909027119498$ |
 | Shared gradient vector in the planar comass comparisons | $6.095910645232136335$ |
-| Signed correction using the levels of each high anchor | **$6.096286779581369797$** |
+| Signed correction using the levels of each high anchor | $6.096286779581369797$ |
+| High-anchor area forced by rotation over the metric collar | **$6.096292737690900167$** |
 
 The 224-point construction uses signed changes in 65 endpoint coefficients, three positive increments after doubling, and an average of two Fourier corrections supported away from those increments. The integer replays check the five archived input hashes, the finite extension on 214,058 terminal cells, all 1,898,400 rooted children at 224, and the additional Fourier action. The transported finite theorem supplies the original coverage and PSD certificates. The Lean development verifies the earlier Fourier result. [Combined proof and replay](issue163_combined.md) · [Signed field](issue163_reweighted_field.md) · [Earlier Lean development](https://github.com/lowrank/gromov-filling-lower-bound)
 
 Two saturated profiles rule out further gains at every subsequent doubling with the same inheritance and absolute edgewise trace charges. This includes signed increments, since replacing each by its absolute value preserves those charges and weakly increases the boundary action. The fixed shell-density rule for that construction has an upper bound of $6.091188129791$. At 112 points, any real rescaling of the final signed update from the three-coefficient checkpoint gives at most $6.091183831488$ with independent diagonal PSD bounds. These are ceilings on specified constructions. The full filling-area problem remains open. [Dyadic optimality proof](issue163_dyadic_lift.md) · [Coefficient ceilings](issue163_reweight_ceiling.md)
 
 ## Progress toward 6.15
+
+The total pair weight of Züst's continuum form is at most $`\pi^2/2`$, with equality precisely on open-hemisphere profiles. A Hilbert-transform sum of squares proves the estimate in Question 2 of the 2021 paper and charges every higher odd Fourier mode of the sine profile. For the threefold triangular profile it bounds the raw planar comass by 1.003268. [Proof of the sharp weight and Fourier deficit](issue163_zust_mass.md)
+
+An explicit profile with two perpendicular gradient groups makes the original form's raw comass tend to 1.103708. Even arbitrary signed symmetric weights depending on the inferred angle between the two gradients have a certified area ceiling of **5.843897829067**. A change depending also on the external label separation has action above 6.170387 and passes every round profile and the limiting test. A 32-by-32 rational calculation detects excessive comass at a finite width. [Analytic obstruction, modified form and finite test](issue163_zust_angles.md)
 
 Even arbitrary closed comass-one changes at both shallow and deep distance profiles have boundary action at most **6.148325785606** if the normalized free field is kept at profile depths between $`h=\pi/112`$ and $`10h`$. Keeping it through $`12h`$ lowers the ceiling to **6.141013708383**. A calibration reaching 6.15 must gain at least **0.008986291617** on one explicit cylinder in that band. Two loop integrals of its primitive suffice to test this requirement. [Comparison surface and three depth tests](issue163_middle_band.md)
 
@@ -59,10 +65,11 @@ A closed interior Fourier correction now has raw boundary action at least $6.220
 
 In the continuum, a rotating family of folded triangle profiles puts an upper bound of $5.786100794611$ on the single gnomonic Fourier coordinate with arbitrary target density under independent planar tests. A Lorentz-equivariant center which also uses a scalar normalization has the analytic ceiling $6.07098103\ldots$ under those tests. These calculations identify explicit profiles against which to check other interior corrections. [Continuum tests and replay](issue163_continuum_tests.md)
 
-The five hash-pinned finite inputs are included in [issue163_inputs](issue163_inputs/). From the repository root, enter this directory with <code>cd issue-163</code>. The first command verifies the new lower bound. The next two check the middle-depth requirement and the ceilings on nonnegative corrections.
+The five hash-pinned finite inputs are included in [issue163_inputs](issue163_inputs/). From the repository root, enter this directory with <code>cd issue-163</code>. The first command verifies the new lower bound. The second checks the continuum comparisons. The next two check the middle-depth requirement and the ceilings on nonnegative corrections.
 
 ~~~sh
 node issue163_anchor.cjs issue163_inputs
+python3 issue163_zust_check.py
 node issue163_middle_band.cjs issue163_inputs
 node issue163_anchor_cone.cjs issue163_inputs
 node issue163_planar_comass.cjs issue163_inputs

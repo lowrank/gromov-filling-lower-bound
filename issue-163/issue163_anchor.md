@@ -9,6 +9,8 @@ For every compact connected orientable Riemannian surface whose single boundary 
 
 The gain over the previous all-genus bound is $`(2134180925062877/55999994400000000000)\pi^2\gt0.000376134349233462`$. The previous gap correction requires two adjacent distance coordinates to be high. A single high coordinate already determines the signed integral against every other coordinate along its levels. Using these identities simultaneously gives a correction with positive boundary integral on the original grid. Only 58 local matrix tests change. [Level identities](issue163_slice_comass.md) · [Previous all-genus bound](issue163_comass_residual.md) · [Integer replay](issue163_anchor.cjs)
 
+Averaging the occupied area of these chambers over grid rotations gives a further all-genus bound of **6.096292737690900167** with the same matrices. [Compulsory area calculation](issue163_anchor_occupation.md)
+
 ## A primitive with positive boundary integral
 
 Write $`n=112`$, $`h=\pi/n`$, let $`a`$ run through the $`2n`$ signed anchor indices modulo $`2n`$, and use the antipodal distance differences
