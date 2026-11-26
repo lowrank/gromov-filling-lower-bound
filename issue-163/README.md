@@ -45,6 +45,10 @@ Two saturated profiles rule out further gains at every subsequent doubling with 
 
 ## Progress toward 6.15
 
+A new pair form has exact action **6.1543800083824…** and net density at most one on the round, eroded, folded and clipped families, including limits of fillings with oscillating gradients. Reaching 6.15 with this form requires controlling its exterior positive excess to 0.00438. [Height-dependent comparison](issue163_profile_occupation.md#a-modified-form-with-boundary-action-above-615)
+
+For Züst’s original form, a filling of area at most 6.15 would need **more than 0.01349 positive continuum comass excess** a uniform positive distance from the round hemisphere and the eroded, folded and clipped triangle profiles. Stokes forces the net density on clipped triangles below 0.848827 even for oscillating gradients. An explicit arclength map also bounds how much area a filling can place near these profiles. [Occupation theorem, proof and scalar replay](issue163_profile_occupation.md)
+
 The total pair weight of Züst's continuum form is at most $`\pi^2/2`$, with equality precisely on open-hemisphere profiles. A Hilbert-transform sum of squares proves the estimate in Question 2 of the 2021 paper and charges every higher odd Fourier mode of the sine profile. For the threefold triangular profile it bounds the raw planar comass by 1.003268. [Proof of the sharp weight and Fourier deficit](issue163_zust_mass.md)
 
 An explicit profile with two perpendicular gradient groups makes the original form's raw comass tend to 1.103708. Even arbitrary signed symmetric weights depending on the inferred angle between the two gradients have a certified area ceiling of **5.843897829067**. A change depending also on the external label separation has action above 6.170387 and passes every round profile and the limiting test. A 32-by-32 rational calculation detects excessive comass at a finite width. [Analytic obstruction, modified form and finite test](issue163_zust_angles.md)
