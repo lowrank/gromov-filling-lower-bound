@@ -97,3 +97,28 @@ There is also a bound depending just on the worst reflected-pair deficit $`\Delt
 The lune and cylinder have the exact prescribed rim lengths. Along smooth gluing arcs use smoothing from above as in the first proof. At either lune vertex the total angle after gluing is $`\pi+\gamma\le2\pi`$. Locally each sector admits radial coordinates based at the vertex with metric $`d\rho^2+G^2d\theta^2`$, with $`G/\rho\to1`$ uniformly on each side (use boundary straightening on the smooth side). Rescale the angular sectors proportionally to fill a $`2\pi`$ disk. A fixed multiple of the Euclidean metric dominates the sector metrics in these coordinates. Replace the tensor by this upper metric near the origin and interpolate in a shrinking annulus, then smooth the remaining arcs from above. The added area tends to zero and the original external boundary is untouched.
 
 For example, in genus two a cut with $`L=2`$ and both $`\Delta_i\le1/500`$ gives $`A\ge2\pi-2\sqrt{0.003996}\gt6.15675`$. More generally each operation removes one handle and has the stated cost for that step's cut metric. A bound at $`6.15`$ for all genera would follow from a sequence down to genus one costing in total at most $`2\pi-6.15`$. The existence of such cuts in every putative smaller filling is open.
+
+## Splitting genus two along a minimizing diameter
+
+Suppose a minimizing arc $`c:[0,\pi]\to M`$ between boundary antipodes has interior in the interior of $`M`$, meets the boundary transversely, and separates $`M`$ into two one-holed tori. Each piece has a boundary semicircle $`b_\pm(s)`$ and a copy of $`c(t)`$. Measure both arclength parameters from the same endpoint. Let $`d_\pm(s,t)`$ be the intrinsic distance in the piece from $`b_\pm(s)`$ to $`c(t)`$, and define
+
+~~~math
+ d_\alpha(s,t)=\arccos(\cos s\cos t+\sin s\sin t\cos\alpha).
+~~~
+
+For each side let $`\alpha_\pm`$ be the largest angle in $`[0,\pi]`$ such that $`d_\pm(s,t)\ge d_{\alpha_\pm}(s,t)`$ for all $`s,t`$. Angle zero is allowed since distance to the common endpoint gives $`d_\pm(s,t)\ge |s-t|`$. Then
+
+~~~math
+ A\ge 2(\alpha_++\alpha_-).
+~~~
+
+In particular the complementary-angle condition $`\alpha_++\alpha_-\ge\pi`$ proves the hemisphere bound. Attach a unit spherical lune of angle $`\pi-\alpha_\pm`$ to each piece along the minimizing seam. For a path from $`b_\pm(s)`$ to its antipode on the new boundary arc, take its first contact $`c(t)`$. Any later excursion into the original piece between seam parameters $`u,v`$ can be replaced by the seam segment of length $`|u-v|`$, because the seam minimizes. The total length is at least
+
+~~~math
+ d_\pm(s,t)+d_{\pi-\alpha_\pm}(t,\pi-s)
+ =d_\pm(s,t)+\pi-d_{\alpha_\pm}(s,t)\ \ge\ \pi .
+~~~
+
+This also protects the two seam endpoints. Each completed piece therefore has the full boundary distance property. Its area includes a lune of area $`2(\pi-\alpha_\pm)`$. The genus-one bound gives original area at least $`2\alpha_\pm`$. For a zero-angle lune take positive angles decreasing to zero. To apply the smooth theorem at corners, identify antipodes of the completed piece. As above, every orientation-reversing loop costs at least $`\pi`$. Smooth the closed quotient from above across the seams and the finitely many positive-angle sector vertices, with area error tending to zero as in the lune construction. Apply the relative Pu inequality on its nonorientable genus-three quotient and take the limit. [Bangert, Croke, Ivanov and Katz, Theorem 1.7 and its genus-one application](https://arxiv.org/pdf/math/0405583)
+
+Boundary isometry directly compares the distances at matched arguments, since $`d_+(s,t)+d_-(\pi-s,t)\ge\pi`$. The criterion requires a bound on the two separate infima over arguments; their minimizing pairs can differ. Neither that implication nor the existence of a separating minimizing diameter in an arbitrary genus-two filling is established here. The projective-line criterion gives a different sufficient condition on the conformal structure. [Nonhyperelliptic examples](issue163_projective_lines.md)

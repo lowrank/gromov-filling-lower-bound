@@ -1,4 +1,4 @@
-"""Rational checks for the area thresholds and the path law on a spherical belt."""
+"""Rational checks for the conformal path and projective-line estimates."""
 
 from fractions import Fraction as F
 
@@ -16,6 +16,29 @@ def tanh_bounds(t):
     assert 0 < ratio < 1
     upper = total + term*ratio/(1-ratio)
     return (total-1)/(total+1), (upper-1)/(upper+1)
+
+
+def check_projective_lines(pi_lo, pi_hi):
+    # Successive differences of 1/(2*(k-1/2)^2) equal
+    # k^(-3) * (1-1/(4*k^2))^(-2), so the tail bounds telescope.
+    m = 64
+    partial = sum(F(1, k**3) for k in range(1, m+1))
+    tail_upper = F(2, (2*m+1)**2)
+    tail_lower = tail_upper * (1-F(1, 4*(m+1)**2))**2
+    d_lo = F(1, 3) + 13*(partial+tail_lower)/(12*pi_hi**2)
+    d_hi = F(1, 3) + 13*(partial+tail_upper)/(12*pi_lo**2)
+    assert F(13504192, 10**6) < 2*pi_lo/d_hi <= 2*pi_hi/d_lo < F(13504193, 10**6)
+    assert F(2149258, 10**6) < 1/d_hi <= 1/d_lo < F(2149259, 10**6)
+    assert 2*pi_lo*(1-F(2, 3)*F(317, 10000)) > F(123, 20)
+    assert F(1, 3) + F(8, 3)*F(1, 20) == F(7, 15)
+    r, delta = F(1, 16), F(1, 10**6)
+    assert delta <= r**3/40 and 2*delta/(1+delta**2) < F(1, 20)
+    assert F(11, 10)**2 * F(101, 100) < 2*F(9, 10)*F(99, 100)**2
+    assert 2*pi_lo*(1-r**2)/(1+r**2) > F(623428, 10**5)
+    for shift in range(3):
+        assert sum((shift-j) % 3 == j for j in range(3)) == 1
+    print('Cyclic genus-two example gives area > 13.504192 and distortion threshold > 2.149258.')
+    print('Clustered branch points: the second projection gives area > 6.23428.')
 
 
 def main():
@@ -37,6 +60,7 @@ def main():
         height_lo, _ = tanh_bounds(width)
         assert 2*p_lo*count*height_lo > lower > target
     assert 4*p_lo*F(3, 5)/(1+F(22, 100)) > F(618018, 10**5)
+    check_projective_lines(p_lo, p_hi)
 
     # Independent height check. After dividing height by the belt height,
     # z = sqrt(1-u^2) sin(t), with u uniform on [0,1], t uniform on [0,pi].

@@ -28,6 +28,7 @@ const scale=1000000000n;
 assert(H%scale===0n && H%(2n*micro)===0n, "diagonal and anchor units");
 let tested=0, worst=0n;
 const traces=[];
+const schurScale=10n**12n, childSchurFloors=[];
 function check(w) {
   const raw=diagonals[tested++];
   assert(Array.isArray(raw) && raw.length===n && raw.every(x=>Number.isSafeInteger(x) && x>0),
@@ -39,6 +40,17 @@ function check(w) {
   const d=raw.map(v=>BigInt(v)*(H/scale)), edge=w.flat();
   const xy=cholesky(d.map(Number),edge.map(Number),n,1e-9,Number(H));
   assert(xy && checkGram(d,edge,n,xy,H), "integer Gram residual "+tested);
+  if (tested===2 || tested===3) {
+    // The Hermitian imaginary part is w/H. Test the real Schur complement
+    // against the common boundary tangent (1,...,1), rounding each cost up.
+    let floor=trace*schurScale/scale;
+    for (let j=0;j<n;++j) {
+      const rowSum=sum(w[j]), denominator=H*d[j];
+      floor-=(schurScale*rowSum**2n+denominator-1n)/denominator;
+    }
+    assert(floor>=478n*schurScale/100000n,"boundary tangent Schur complement");
+    childSchurFloors.push(String(floor));
+  }
 }
 const {w:corner}=loadCorner(input);
 const halfParent=gap.bisection.parent_half;
@@ -101,9 +113,19 @@ const finalFloor=occupationNum*lo**2n*places/(occupationDen*piUnits);
 assert(finalFloor===occupationNum*hi**2n*places/(occupationDen*piUnits) &&
   finalFloor===6096292737690900167n,"area floor after grid rotation");
 const lowerDecimal=v=>(v/places)+"."+(v%places).toString().padStart(18,"0");
+// Four disjoint balls of radius pi/(8n) per signed boundary gap.
+// If A <= 6.09631, the phase estimate gives total ball area below 11/100.
+assert(609631n*10n**6n-609628n*991n**2n<11000n*10n**6n,"collar area ceiling");
+assert(10000n*(224n-1n)>99n**2n*224n,"phase square-root bound");
+assert(4n*201n*1000n<9n*100n*(8n*N),"phase factor exceeds 991/1000");
+const gainFloor=478n*100n*lo**4n*places/(100000n*11n*(8n*N)**2n*piUnits**2n);
+const ballFloor=finalFloor+gainFloor;
+assert(ballFloor===6096298010216328189n,"area floor including the distance balls");
 console.log(JSON.stringify({chambers:tested,maximum_trace_in_billionths:String(worst),
   sum_microcoefficients:String(sum(c)),pi_squared_factor:num+"/"+den,
   area_floor:lowerDecimal(floor),
   double_anchor_raw_reserves_in_billionths:[parentLoss,leftLoss,rightLoss].map(String),
   occupation_pi_squared_factor:occupationNum+"/"+occupationDen,
-  occupation_area_floor:lowerDecimal(finalFloor)},null,2));
+  occupation_area_floor:lowerDecimal(finalFloor),
+  child_schur_lower_in_trillionths:childSchurFloors,
+  distance_ball_area_floor:lowerDecimal(ballFloor)},null,2));

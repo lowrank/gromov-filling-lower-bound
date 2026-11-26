@@ -3,12 +3,12 @@
 For every compact connected orientable Riemannian surface whose single boundary component is an isometrically embedded intrinsic circle of length $2\pi$,
 
 ```math
- \mathrm{Area}(M)\ge \frac{4900807299305452903120181318626856678763424416160470713006969}
- {7934171039896083567183835951925211702220800000000000000000000}\pi^2
- >6.096292737690900167 .
+ \mathrm{Area}(M)>6.096298010216328189 .
 ```
 
-Averaging the 112-pair grid over its rotations forces the region with a high anchor to have more than 1.491567 times the area required by the adjacent-pair projection. The unused trace from the previous 58 matrix checks then gives the displayed bound. The underlying signed correction uses the prescribed flux of the other distance coordinates along each high anchor's levels. [Compulsory area and new bound](issue163_anchor_occupation.md) · [Signed correction and integer replay](issue163_anchor.md)
+The conjectured $`2\pi`$ lower bound now follows for a nonhyperelliptic family of genus-two fillings. On the quotient with orientation double $`y^3=z^6+1`$, selected lifts of projective lines give an area lower bound of **13.50419…**. This proves $`2\pi`$ even for conformal distortions up to $`2.149258\ldots`$ from this example. An odd cyclic covering criterion applies in every filling genus $`g\ge2`$. In a second genus-two family, one projection gives a certificate below 3 while another gives **6.23428** on the same surfaces. [Covering theorem and comparison of the two projections](issue163_projective_lines.md)
+
+Two row sums from the existing matrices give the unrestricted bound above. On an intrinsic ball centered between boundary anchors, Stokes fixes the mean transverse derivative of every distance coordinate. Its quadratic cost adds $`0.000005272525428022\ldots`$ to the preceding constant. For that earlier constant, averaging the 112-pair grid over its rotations forces the region with a high anchor to have more than 1.491567 times the area required by the adjacent-pair projection. The unrestricted target of $`6.15`$ remains open. [Distance-ball proof and integer replay](issue163_distance_balls.md) · [Preceding area estimate](issue163_anchor_occupation.md)
 
 Two of the comass comparisons would require different values for the same gradient vector to attain their separate bounds. Charging the resulting squared error gave the previous bound of 6.095910645232136335 with twelve matrix witnesses. Any filling below $6.15$ must also have weighted root mean square directional imbalance below $0.132362$. A small quadrature gives about $0.156$ on the round hemisphere. A uniform lower estimate for this imbalance on putative smaller fillings remains open. [Proof, exact replay and hemisphere test](issue163_comass_residual.md)
 
