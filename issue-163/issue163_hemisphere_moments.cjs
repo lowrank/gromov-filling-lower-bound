@@ -9,7 +9,7 @@ const crypto = require("node:crypto");
 const zlib = require("node:zlib");
 const {INPUT,assert} = require("./issue163_fourier_caps.cjs");
 const {loadField, ENDPOINT_FILE, SIGMA, group} = require("./issue163_reweighted_field.cjs");
-const dir = process.argv[2] || path.join(__dirname,"issue163_inputs");
+const dir = process.argv.slice(2).find(arg=>arg!=="--collars") || path.join(__dirname,"issue163_inputs");
 const read = f=>fs.readFileSync(path.join(dir,f));
 const raw={endpoints:read(ENDPOINT_FILE)};
 for (const [key,[file]] of Object.entries(INPUT)) raw[key]=read(file);
@@ -102,12 +102,22 @@ function sample(height,offset) {
   const momentSq=[near(x)**2+near(y)**2,far(x)**2+far(y)**2];
   return [trace,[momentSq[0]/trace[1],momentSq[1]/trace[0]]];
 }
-function quadrature(radial,angular) {
+function quadrature(radial,angular,height=1) {
   const mass=[0,0], variance=[0,0];
   for (let i=0; i<radial; ++i) for (let j=0; j<angular; ++j) {
-    const t=(i+.5)/radial, [tr,v]=sample(t*t,(j+.5)/(2*angular));
+    const t=(i+.5)/radial, [tr,v]=sample(height*t*t,(j+.5)/(2*angular));
     for (let k=0;k<2;++k) {mass[k]+=2*t*tr[k]; variance[k]+=2*t*v[k];}
   }
   return {radial,angular,rms_range:[Math.sqrt(variance[0]/mass[1]),Math.sqrt(variance[1]/mass[0])]};
 }
-for (const [r,a] of [[12,4],[24,6],[48,8],[96,8]]) console.log(JSON.stringify(quadrature(r,a)));
+if (process.argv.includes("--collars")) {
+  // On the unit hemisphere the metric depth is latitude and the area element
+  // is ds dz for z = sin(latitude). The common height factor cancels in the RMS.
+  for (const width of [.05,.10,.22,.40]) {
+    for (const [radial,angular] of [[24,6],[48,8],[96,8]]) {
+      console.log(JSON.stringify({width,...quadrature(radial,angular,Math.sin(width))}));
+    }
+  }
+} else {
+  for (const [r,a] of [[12,4],[24,6],[48,8],[96,8]]) console.log(JSON.stringify(quadrature(r,a)));
+}

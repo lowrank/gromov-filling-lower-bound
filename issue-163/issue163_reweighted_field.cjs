@@ -156,10 +156,10 @@ function propose(edge,n,scale,sweeps) {
   }
   return Array.from(diag,(v,i)=>Math.ceil(v*D/scale[i]**2));
 }
-function cholesky(d,edge,n,shift) {
+function cholesky(d,edge,n,shift,denominator=D) {
   const a=new Float64Array(n*n),b=new Float64Array(n*n);
   for(let i=0;i<n;i++)for(let j=0;j<=i;j++){
-    let r=i===j?d[i]/D-shift:0,s=edge[i*n+j]/D;
+    let r=i===j?d[i]/denominator-shift:0,s=edge[i*n+j]/denominator;
     for(let k=0;k<j;k++){
       const ar=a[n*i+k],ai=b[n*i+k],br=a[n*j+k],bi=b[n*j+k];
       r-=ar*br+ai*bi;s-=ai*br-ar*bi;
@@ -169,8 +169,8 @@ function cholesky(d,edge,n,shift) {
   }
   return [a,b];
 }
-function checkGram(d,edge,n,xy) {
-  const X=1000000000000000, xx=BigInt(X)**2n, den=BigInt(D);
+function checkGram(d,edge,n,xy,denominator=D) {
+  const X=1000000000000000, xx=BigInt(X)**2n, den=BigInt(denominator);
   const [a,b]=xy.map(row=>Array.from(row,v=>{
     const i=Math.round(v*X);assert(Number.isSafeInteger(i),"Gram witness magnitude");return BigInt(i);
   }));
@@ -277,4 +277,4 @@ if(typeof module!=="undefined" && require.main===module){
   console.log(JSON.stringify(replayReweight(raw,io),null,2));
 }
 
-if(typeof module!=="undefined")module.exports={loadField,verifyField,canonicalParent,ENDPOINT_FILE,ENDPOINT_STEPS,group,SIGMA};
+if(typeof module!=="undefined")module.exports={cholesky,checkGram,loadField,verifyField,canonicalParent,ENDPOINT_FILE,ENDPOINT_STEPS,group,SIGMA};
